@@ -61,3 +61,4 @@ export async function runChecksOnFiles(
 }
 
 export { assembleHtml } from "./assemble";
+export type { FileSet, CheckDef, CheckResult, CheckerContext } from "./types";

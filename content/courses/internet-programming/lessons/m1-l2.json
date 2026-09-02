@@ -1,0 +1,53 @@
+{
+  "id": "m1-l2",
+  "moduleId": "m1-html",
+  "slug": "text-and-headings",
+  "order": 2,
+  "title": { "mn": "Текст ба гарчиг" },
+  "why": { "mn": "Shop.mn-ийн нүүрэнд уриа үг нэмж, хэрэглэгчийг угтъя." },
+  "buildsInProject": "Hero хэсгийн уриа үг",
+  "skills": ["html"],
+  "concepts": ["p", "strong"],
+  "prerequisites": ["m1-l1"],
+  "execution": { "tier": 1, "runtime": "static", "entry": "index.html", "autoRun": true },
+  "workspace": {
+    "patch": [],
+    "visibleFiles": ["index.html"],
+    "openFiles": ["index.html"],
+    "activeFile": "index.html"
+  },
+  "tasks": [
+    {
+      "id": "m1-l2-t1",
+      "order": 1,
+      "title": { "mn": "Уриа үг нэм" },
+      "statement": { "mn": "`<h1>`-ийн доор `<p>` элемент нэмээд, дотор нь дэлгүүрийн уриа үг бич." },
+      "expected": { "description": { "mn": "Гарчгийн доор нэг мөр текст харагдана." } },
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.exists",
+          "args": { "selector": "p", "min": 1 },
+          "onFail": { "mn": "`<p>` элемент олдсонгүй." }
+        }
+      ],
+      "hints": [
+        { "level": 1, "xpCost": 0, "text": { "mn": "`<p>` бол догол мөрийн элемент." } },
+        { "level": 2, "xpCost": 1, "text": { "mn": "`<h1>`-ийн дараа шинэ мөрөнд бич." } },
+        { "level": 3, "xpCost": 3, "text": { "mn": "Жишээ:" }, "code": "<p>Хямд" }
+      ],
+      "solution": {
+        "patch": [{ "op": "append", "path": "index.html", "content": "\n<p>Монголын шилдэг онлайн дэлгүүр</p>" }],
+        "explanation": { "mn": "`<p>` нь энгийн догол мөрийн текстийг агуулна." },
+        "xpPenalty": 6
+      },
+      "xp": 10,
+      "estimatedMinutes": 4,
+      "skills": ["html"]
+    }
+  ],
+  "completion": { "xp": 15 },
+  "status": "published",
+  "version": 1,
+  "authors": ["delgermaa"]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "m1-l5",
+  "moduleId": "m1-html",
+  "slug": "product-card",
+  "order": 5,
+  "title": { "mn": "Бүтээгдэхүүний карт хийцгээе" },
+  "why": { "mn": "Shop.mn дээр олон бүтээгдэхүүн ижил хэлбэрийн картад харагдана. Эхлээд нэгийг сайн хийе." },
+  "buildsInProject": "Нүүр хуудасны бүтээгдэхүүний карт",
+  "skills": ["html"],
+  "concepts": ["article", "class"],
+  "prerequisites": ["m1-l2"],
+  "execution": { "tier": 1, "runtime": "static", "entry": "index.html", "autoRun": true },
+  "workspace": {
+    "patch": [{ "op": "create", "path": "index.html", "content": "<main>\n  <!-- энд бичнэ үү -->\n</main>\n" }],
+    "visibleFiles": ["index.html", "styles/main.css"],
+    "openFiles": ["index.html"],
+    "activeFile": "index.html"
+  },
+  "tasks": [
+    {
+      "id": "m1-l5-t1",
+      "order": 1,
+      "title": { "mn": "Картын араг ясыг үүсгэ" },
+      "statement": { "mn": "`<main>` дотор `<article>` элемент нэмээд, түүнд `product-card` class өг." },
+      "requirements": [{ "mn": "`<article>` байх" }, { "mn": "`class=\"product-card\"` байх" }],
+      "expected": { "description": { "mn": "Одоохондоо юу ч харагдахгүй — карт хоосон хайрцаг." } },
+      "targetFile": "index.html",
+      "marker": "<!-- энд бичнэ үү -->",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.exists",
+          "args": { "selector": "main article.product-card", "min": 1 },
+          "onFail": { "mn": "`product-card` class-тай `<article>` олдсонгүй. Зураас (-) байгаа эсэхээ шалга." }
+        }
+      ],
+      "hints": [
+        { "level": 1, "xpCost": 0, "text": { "mn": "`<article>` бол бие даасан агуулгыг илэрхийлдэг." } },
+        { "level": 2, "xpCost": 1, "text": { "mn": "Class-ийг нээх tag дотор бичнэ: `class=\"...\"`." } },
+        { "level": 3, "xpCost": 3, "text": { "mn": "Ингэж эхэл:" }, "code": "<article class=\"pro" }
+      ],
+      "solution": {
+        "patch": [{ "op": "insertAfter", "path": "index.html", "anchor": "<!-- энд бичнэ үү -->", "content": "<article class=\"product-card\"></article>" }],
+        "explanation": { "mn": "`<article>` нь бие даан утга агуулах хэсгийг заана." },
+        "xpPenalty": 6
+      },
+      "xp": 10,
+      "estimatedMinutes": 4,
+      "skills": ["html"]
+    }
+  ],
+  "completion": { "xp": 15, "badge": "ui-builder" },
+  "status": "published",
+  "version": 1,
+  "authors": ["delgermaa"]
+}

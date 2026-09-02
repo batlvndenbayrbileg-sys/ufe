@@ -1,0 +1,16 @@
+{
+  "id": "ip-101",
+  "slug": "internet-programming",
+  "title": { "mn": "Интернэт программчлал", "en": "Internet Programming" },
+  "description": { "mn": "Shop.mn дэлгүүрийг эхнээс нь өөрөө бүтээ." },
+  "level": "beginner",
+  "stages": [
+    {
+      "id": "s1",
+      "order": 1,
+      "title": { "mn": "HTML + CSS" },
+      "badgeId": "first-website",
+      "moduleIds": ["m1-html"]
+    }
+  ]
+}

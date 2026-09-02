@@ -1,0 +1,56 @@
+{
+  "id": "m1-l1",
+  "moduleId": "m1-html",
+  "slug": "first-page",
+  "order": 1,
+  "title": { "mn": "Анхны хуудас" },
+  "why": { "mn": "Энэ бол Shop.mn-ийн эхний мөр. Эндээс бүх дэлгүүр эхэлнэ." },
+  "buildsInProject": "Нүүр хуудасны гарчиг",
+  "skills": ["html"],
+  "concepts": ["doctype", "h1"],
+  "prerequisites": [],
+  "execution": { "tier": 1, "runtime": "static", "entry": "index.html", "autoRun": true },
+  "workspace": {
+    "patch": [{ "op": "create", "path": "index.html", "content": "<!-- энд бичнэ үү -->\n" }],
+    "visibleFiles": ["index.html"],
+    "openFiles": ["index.html"],
+    "activeFile": "index.html"
+  },
+  "tasks": [
+    {
+      "id": "m1-l1-t1",
+      "order": 1,
+      "title": { "mn": "Гарчиг нэм" },
+      "statement": { "mn": "`index.html` дотор `<h1>` элемент нэмээд, дотор нь Shop.mn гэж бич." },
+      "requirements": [{ "mn": "`<h1>` байх" }, { "mn": "Текст нь Shop.mn" }],
+      "expected": { "description": { "mn": "Дэлгэц дээр том Shop.mn гарчиг харагдана." } },
+      "targetFile": "index.html",
+      "marker": "<!-- энд бичнэ үү -->",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.text",
+          "args": { "selector": "h1", "contains": "Shop.mn" },
+          "onFail": { "mn": "`<h1>` дотроос Shop.mn текст олдсонгүй. Бичлэгээ шалгаарай." }
+        }
+      ],
+      "hints": [
+        { "level": 1, "xpCost": 0, "text": { "mn": "`<h1>` бол хамгийн том гарчгийн элемент." } },
+        { "level": 2, "xpCost": 1, "text": { "mn": "Нээх ба хаах tag хэрэгтэй: `<h1>` ... `</h1>`." } },
+        { "level": 3, "xpCost": 3, "text": { "mn": "Ингэж эхэл:" }, "code": "<h1>Sh" }
+      ],
+      "solution": {
+        "patch": [{ "op": "insertAfter", "path": "index.html", "anchor": "<!-- энд бичнэ үү -->", "content": "<h1>Shop.mn</h1>" }],
+        "explanation": { "mn": "`<h1>` нь хуудасны хамгийн чухал гарчгийг илэрхийлнэ." },
+        "xpPenalty": 6
+      },
+      "xp": 10,
+      "estimatedMinutes": 3,
+      "skills": ["html"]
+    }
+  ],
+  "completion": { "xp": 15, "celebration": "large", "milestone": true },
+  "status": "published",
+  "version": 1,
+  "authors": ["delgermaa"]
+}

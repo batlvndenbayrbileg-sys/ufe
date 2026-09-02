@@ -38,6 +38,12 @@ importers:
 
   apps/web:
     dependencies:
+      '@khiye/checkers':
+        specifier: workspace:*
+        version: link:../../packages/checkers
+      '@khiye/content-sdk':
+        specifier: workspace:*
+        version: link:../../packages/content-sdk
       '@khiye/editor':
         specifier: workspace:*
         version: link:../../packages/editor
