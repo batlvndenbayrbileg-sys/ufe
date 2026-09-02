@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./browser": "./src/browser.ts",
     "./server": "./src/server.ts"
   },
   "main": "./src/index.ts",

@@ -12,6 +12,7 @@
     "clean": "rimraf .next .turbo"
   },
   "dependencies": {
+    "@khiye/preview": "workspace:*",
     "@khiye/shared": "workspace:*",
     "@khiye/ui": "workspace:*",
     "next": "15.1.6",

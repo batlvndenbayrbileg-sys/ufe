@@ -6,7 +6,7 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const nextConfig = {
   reactStrictMode: true,
   // Workspace packages ship as TypeScript source and are transpiled by Next.
-  transpilePackages: ["@khiye/shared", "@khiye/ui"],
+  transpilePackages: ["@khiye/shared", "@khiye/ui", "@khiye/preview"],
   poweredByHeader: false,
 };
 
