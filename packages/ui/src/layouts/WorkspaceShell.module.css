@@ -1,0 +1,120 @@
+.shell {
+  display: grid;
+  grid-template-rows: 56px minmax(0, 1fr) 64px;
+  height: 100dvh;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 var(--space-5);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.panes {
+  display: grid;
+  min-height: 0;
+}
+
+.pane {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+}
+
+.instructions {
+  position: relative;
+  border-right: 1px solid var(--border);
+}
+.paneScroll {
+  overflow-y: auto;
+  padding: var(--space-5);
+}
+.collapsedRail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--space-6);
+  color: var(--text-muted);
+}
+.collapseBtn {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-2);
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  z-index: 2;
+}
+.collapseBtn:hover {
+  background: var(--bg-muted);
+  color: var(--text);
+}
+
+.editor {
+  background: var(--code-bg);
+  border-right: 1px solid var(--border);
+}
+.preview {
+  background: var(--bg-subtle);
+}
+
+.resizer {
+  cursor: col-resize;
+  background: transparent;
+  position: relative;
+}
+.resizer::after {
+  content: "";
+  position: absolute;
+  inset: 0 2px;
+  background: var(--border);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.resizer:hover::after {
+  background: var(--accent);
+}
+.resizer[data-disabled] {
+  cursor: default;
+  pointer-events: none;
+}
+
+.actionBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-5);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+/* Below the 3-pane threshold, stack. Full mobile tab UX arrives in E7. */
+@media (max-width: 1023px) {
+  .panes {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    grid-template-columns: none !important;
+  }
+  .resizer {
+    display: none;
+  }
+  .pane {
+    min-height: 280px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}

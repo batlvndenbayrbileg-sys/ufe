@@ -1,0 +1,248 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Хийе design tokens. See docs/blueprint/14-design-system.md §14.2–14.4.
+
+   Theme has THREE states:
+     • bare :root                       → complete light palette
+     • @media (prefers-color-scheme:dark) guarded :root:not([data-theme=light])
+     • :root[data-theme=dark]           → explicit dark wins the toggle
+   Style everything through these tokens, never a raw hex behind a media query.
+   ──────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Neutrals — ~90% of the product */
+  --bg: #f2f4f7;
+  --bg-subtle: #fafafa;
+  --bg-muted: #f4f4f5;
+  --surface: #ffffff;
+  --surface-2: #ffffff;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --text: #18181b;
+  --text-muted: #64646d;
+  --text-subtle: #a1a1aa;
+
+  /* Accent — a single trustworthy blue */
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-active: #1e40af;
+  --accent-subtle: #eff6ff;
+  --accent-text: #1e40af;
+  --on-accent: #ffffff;
+
+  /* Semantic (separate from the accent) */
+  --success: #0a7a35;
+  --success-subtle: #f0fdf4;
+  --warning: #96590a;
+  --warning-subtle: #fffbeb;
+  --danger: #c81e1e;
+  --danger-subtle: #fef2f2;
+  --danger-hover: #b91c1c;
+  --info: #0e7490;
+  --info-subtle: #ecfeff;
+
+  /* Progress / gamification — muted on purpose */
+  --xp: #7c3aed;
+  --streak: #ea580c;
+
+  /* Code surfaces */
+  --code-bg: #fafafa;
+  --code-border: #e4e4e7;
+  --code-text: #18181b;
+
+  /* Focus ring */
+  --ring: var(--accent);
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.12);
+
+  /* Typography — families set by the app via next/font (see app/fonts.ts) */
+  --font-sans:
+    var(--font-inter), "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    var(--font-jetbrains-mono), ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+
+  /* Type scale (rem) */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  /* Cyrillic reads denser → a touch more line-height than a Latin design */
+  --leading-body: 1.65;
+  --leading-prose: 1.7;
+  --leading-tight: 1.1;
+
+  /* Spacing scale (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur: 200ms;
+
+  color-scheme: light;
+}
+
+/* System dark (no explicit choice stamped) — but never override an explicit light */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #09090b;
+    --bg-subtle: #0f0f11;
+    --bg-muted: #18181b;
+    --surface: #111113;
+    --surface-2: #17171a;
+    --border: #27272a;
+    --border-strong: #3f3f46;
+    --text: #fafafa;
+    --text-muted: #a1a1aa;
+    --text-subtle: #71717a;
+
+    --accent: #3b82f6;
+    --accent-hover: #60a5fa;
+    --accent-active: #93c5fd;
+    --accent-subtle: #172554;
+    --accent-text: #93c5fd;
+    --on-accent: #0b0d11;
+
+    --success: #22c55e;
+    --success-subtle: #052e16;
+    --warning: #f59e0b;
+    --warning-subtle: #451a03;
+    --danger: #ef4444;
+    --danger-subtle: #360808;
+    --danger-hover: #f87171;
+    --info: #22d3ee;
+    --info-subtle: #082f36;
+
+    --xp: #a78bfa;
+    --streak: #fb923c;
+
+    --code-bg: #0d0d0f;
+    --code-border: #27272a;
+    --code-text: #fafafa;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 12px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+
+    color-scheme: dark;
+  }
+}
+
+/* Explicit dark — wins the toggle in both directions */
+:root[data-theme="dark"] {
+  --bg: #09090b;
+  --bg-subtle: #0f0f11;
+  --bg-muted: #18181b;
+  --surface: #111113;
+  --surface-2: #17171a;
+  --border: #27272a;
+  --border-strong: #3f3f46;
+  --text: #fafafa;
+  --text-muted: #a1a1aa;
+  --text-subtle: #71717a;
+
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-active: #93c5fd;
+  --accent-subtle: #172554;
+  --accent-text: #93c5fd;
+  --on-accent: #0b0d11;
+
+  --success: #22c55e;
+  --success-subtle: #052e16;
+  --warning: #f59e0b;
+  --warning-subtle: #451a03;
+  --danger: #ef4444;
+  --danger-subtle: #360808;
+  --danger-hover: #f87171;
+  --info: #22d3ee;
+  --info-subtle: #082f36;
+
+  --xp: #a78bfa;
+  --streak: #fb923c;
+
+  --code-bg: #0d0d0f;
+  --code-border: #27272a;
+  --code-text: #fafafa;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+
+  color-scheme: dark;
+}
+
+/* ── Base element styles ─────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+:where(a) {
+  color: var(--accent);
+  text-underline-offset: 2px;
+}
+
+:where(:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background: var(--accent-subtle);
+  color: var(--accent-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

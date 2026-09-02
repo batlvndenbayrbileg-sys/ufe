@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@khiye/shared": "workspace:*",
+    "@khiye/ui": "workspace:*",
     "next": "15.1.6",
     "next-intl": "3.26.3",
     "react": "19.0.0",

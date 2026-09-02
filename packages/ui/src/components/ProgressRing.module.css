@@ -1,0 +1,23 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.svg {
+  transform: rotate(-90deg);
+}
+.trackCircle {
+  stroke: var(--bg-muted);
+}
+.valueCircle {
+  stroke: var(--accent);
+  transition: stroke-dashoffset var(--dur) var(--ease-out);
+}
+.label {
+  position: absolute;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
