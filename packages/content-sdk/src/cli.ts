@@ -82,11 +82,23 @@ async function main(): Promise<number> {
       return runBuild(dir, out);
     case "sync":
       return runSync(dir);
-    case "test":
-      // Full checker-based testing (reference solution passes, bad fixtures fail
-      // distinctly) arrives with the checker runtime in E6.
-      process.stdout.write("content test: running lint --strict (checker tests land in E6)\n");
-      return runLint(dir, true);
+    case "test": {
+      // Lint first, then run each task's checks against its reference solution.
+      const lintCode = runLint(dir, false);
+      if (lintCode !== 0) return lintCode;
+      const course = loadCourse(dir);
+      const { testCourse } = await import("./test-runner");
+      const report = await testCourse(course);
+      for (const r of report.results.filter((x) => !x.passed)) {
+        for (const f of r.failures) {
+          process.stdout.write(`  ✖ ${r.lessonId}/${r.taskId} [${f.checkId}]: ${f.onFail ?? ""} (got ${f.actual ?? "—"})\n`);
+        }
+      }
+      process.stdout.write(
+        `content test: ${report.passedTasks}/${report.totalTasks} reference solutions pass their checks\n`,
+      );
+      return report.ok ? 0 : 1;
+    }
     default:
       fail(`unknown command: ${cmd}`);
   }

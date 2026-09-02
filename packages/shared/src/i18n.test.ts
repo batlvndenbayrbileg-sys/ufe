@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_LOCALE, isLocale, pick, resolveLocale } from "./i18n";
-import { translateRuntimeError } from "./errors/mn";
+import { translateRuntimeError, RUNTIME_ERROR_RULE_COUNT } from "./errors/mn";
 
 describe("i18n", () => {
   it("mn is the default source locale", () => {
@@ -28,6 +28,13 @@ describe("runtime error translation", () => {
     expect(t).not.toBeNull();
     expect(t?.what).toContain(".map");
     expect(t?.howToFind).toContain("console.log");
+  });
+
+  it("covers the common beginner errors (≥ 20 rules)", () => {
+    expect(RUNTIME_ERROR_RULE_COUNT).toBeGreaterThanOrEqual(20);
+    expect(translateRuntimeError("Cannot read properties of null (reading 'addEventListener')")?.what).toContain("null");
+    expect(translateRuntimeError("Assignment to constant variable.")?.howToFind).toContain("let");
+    expect(translateRuntimeError("Identifier 'cart' has already been declared")?.what).toContain("cart");
   });
 
   it("returns null for an unknown error", () => {

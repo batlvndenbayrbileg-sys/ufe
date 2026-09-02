@@ -71,6 +71,141 @@ const RULES: Rule[] = [
       howToFind: "Функц ямар нөхцөлд зогсох ёстойгоо шалгаарай.",
     }),
   },
+  {
+    // Cannot read properties of null (reading 'X')
+    match: /Cannot read propert(?:y|ies) of null \(reading '([^']+)'\)/,
+    build: (m) => ({
+      what: `Элемент олдоогүй тул \`null\` буцаж, \`.${m[1]}\` ажиллахгүй байна.`,
+      why: "`querySelector` тухайн сонголтод тохирох элемент олдохгүй бол `null` буцаадаг.",
+      howToFind: "Selector-оо (id, class) HTML дээрхтэй яг таарч байгаа эсэхийг шалгаарай.",
+    }),
+  },
+  {
+    // Cannot set properties of null (setting 'X')
+    match: /Cannot set propert(?:y|ies) of null \(setting '([^']+)'\)/,
+    build: (m) => ({
+      what: `Элемент \`null\` байгаа тул \`.${m[1]}\`-д утга онооход алдаа гарлаа.`,
+      why: "Ихэвчлэн `querySelector`/`getElementById` элемент олдохгүй үед тохиолддог.",
+      howToFind: "Скрипт ажиллахаас өмнө тухайн элемент HTML дээр байгаа эсэх, selector зөв эсэхийг шалга.",
+    }),
+  },
+  {
+    // Assignment to constant variable
+    match: /Assignment to constant variable/,
+    build: () => ({
+      what: "`const`-оор зарласан хувьсагчид дахин утга онооё гэсэн байна.",
+      why: "`const` хувьсагчийн утгыг дахин өөрчилж болдоггүй.",
+      howToFind: "Утга нь өөрчлөгддөг хувьсагчийг `let`-ээр зарлаарай.",
+    }),
+  },
+  {
+    // X has already been declared
+    match: /Identifier '([^']+)' has already been declared/,
+    build: (m) => ({
+      what: `\`${m[1]}\` хувьсагчийг хоёр удаа зарлажээ.`,
+      why: "Нэг хувьсагчийг `let`/`const`-оор дахин зарлаж болохгүй.",
+      howToFind: `\`${m[1]}\`-ийг хаана давхар зарласнаа хараад нэгийг нь ус.`,
+    }),
+  },
+  {
+    // Cannot access 'X' before initialization
+    match: /Cannot access '([^']+)' before initialization/,
+    build: (m) => ({
+      what: `\`${m[1]}\`-ийг зарлахаас өмнө ашиглалаа.`,
+      why: "`let`/`const` хувьсагчийг зарлахаас нь өмнө ашиглаж болохгүй.",
+      howToFind: `\`${m[1]}\`-ийг ашиглахаасаа өмнө дээр талд нь зарлаарай.`,
+    }),
+  },
+  {
+    // X is not iterable
+    match: /(\w+) is not iterable|is not iterable/,
+    build: () => ({
+      what: "Давтаж болохгүй зүйлийг давтахыг оролдлоо.",
+      why: "`for...of` эсвэл `...` тархалт нь зөвхөн массив зэрэг давтагдах зүйлд ажилладаг.",
+      howToFind: "Тухайн хувьсагч массив мөн эсэхийг `console.log`-оор шалгаарай.",
+    }),
+  },
+  {
+    // Cannot read properties of undefined (reading 'length')
+    match: /Cannot read propert(?:y|ies) of undefined \(reading 'length'\)/,
+    build: () => ({
+      what: "`undefined` хувьсагчийн `.length`-ийг уншиж чадсангүй.",
+      why: "Массив/текст хараахан утга аваагүй (`undefined`) байна.",
+      howToFind: "`.length`-ийн өмнө тухайн хувьсагчид юу байгааг `console.log`-оор хараарай.",
+    }),
+  },
+  {
+    // Unexpected end of input
+    match: /Unexpected end of input/,
+    build: () => ({
+      what: "Код дуусахад хаалт дутуу байна.",
+      why: "Нээсэн `{`, `(`, `[` -ийн аль нэг нь хаагдаагүй үлдсэн байна.",
+      howToFind: "Функц/блок бүрийн хаах хаалтаа гүйцээж бичсэн эсэхээ шалгаарай.",
+    }),
+  },
+  {
+    // Invalid or unexpected token
+    match: /Invalid or unexpected token/,
+    build: () => ({
+      what: "Кодод буруу тэмдэгт орсон байна.",
+      why: "Ихэвчлэн хаалтгүй хашилт `\"` эсвэл буруу тэмдэгтээс болдог.",
+      howToFind: "Алдаа заасан мөрийн хашилт, тэмдэгтүүдийг сайтар шалгаарай.",
+    }),
+  },
+  {
+    // missing ) after argument list
+    match: /missing \) after argument list/,
+    build: () => ({
+      what: "Функц дуудахад хаах хаалт `)` дутуу байна.",
+      why: "Аргументуудын дараа `)` бичигдээгүй.",
+      howToFind: "Тухайн мөрийн `(` бүрд тохирох `)` байгаа эсэхийг шалгаарай.",
+    }),
+  },
+  {
+    // await is only valid in async functions
+    match: /await is only valid in async/,
+    build: () => ({
+      what: "`await`-ийг `async` биш функц дотор ашиглалаа.",
+      why: "`await` зөвхөн `async` функц дотор ажилладаг.",
+      howToFind: "Функцийнхээ өмнө `async` гэж нэмээрэй: `async function ...`.",
+    }),
+  },
+  {
+    // Failed to fetch
+    match: /Failed to fetch|NetworkError|fetch failed/,
+    build: () => ({
+      what: "Сервер рүү илгээсэн хүсэлт амжилтгүй болов.",
+      why: "URL буруу, эсвэл сервер хариу өгөхгүй байж магадгүй.",
+      howToFind: "`fetch()`-д өгсөн URL зөв эсэх, Network хэсэгт хүсэлт харагдаж байгааг шалгаарай.",
+    }),
+  },
+  {
+    // Unexpected token in JSON
+    match: /Unexpected token.*JSON|is not valid JSON/,
+    build: () => ({
+      what: "JSON өгөгдлийг уншиж чадсангүй.",
+      why: "Серверээс ирсэн хариу JSON биш, эсвэл гэмтэлтэй байна.",
+      howToFind: "Хариуг `.json()` хийхээсээ өмнө `console.log`-оор шалгаарай.",
+    }),
+  },
+  {
+    // return outside of function
+    match: /(?:Illegal )?return statement.*outside|return.*outside of function/i,
+    build: () => ({
+      what: "`return`-ийг функцийн гадна бичсэн байна.",
+      why: "`return` зөвхөн функц дотор ажилладаг.",
+      howToFind: "`return` мөр функцийн `{ }` дотор байгаа эсэхийг шалгаарай.",
+    }),
+  },
+  {
+    // Adding null/undefined — heuristic for NaN-producing ops is hard; catch TypeError add
+    match: /Cannot convert undefined or null to object/,
+    build: () => ({
+      what: "`null` эсвэл `undefined`-ийг объект мэт ашиглалаа.",
+      why: "`Object.keys`, тархалт зэрэг үйлдэл `null`/`undefined`-д ажилладаггүй.",
+      howToFind: "Тухайн хувьсагчид утга орсон эсэхийг эхлээд шалгаарай.",
+    }),
+  },
 ];
 
 /**

@@ -1,0 +1,106 @@
+import { registerChecker } from "../registry";
+import { fail, pass, type CheckerContext } from "../types";
+
+function win(ctx: CheckerContext): Window & typeof globalThis {
+  if (!ctx.window) throw new Error("no window in context");
+  return ctx.window;
+}
+function doc(ctx: CheckerContext): Document {
+  if (!ctx.document) throw new Error("no document in context");
+  return ctx.document;
+}
+
+/** Evaluate an expression in the page's global scope (so it sees student globals). */
+function evalInPage(ctx: CheckerContext, setup: string | undefined, expr: string): unknown {
+  const w = win(ctx) as unknown as { eval: (s: string) => unknown };
+  const code = `(function(){ ${setup ? setup + ";" : ""} return (${expr}); })()`;
+  return w.eval(code);
+}
+
+function stringify(v: unknown): string {
+  if (typeof v === "string") return v;
+  try {
+    return JSON.stringify(v);
+  } catch {
+    return String(v);
+  }
+}
+
+// ── js.evaluate ──────────────────────────────────────────────────────────────
+registerChecker("js.evaluate", (args, ctx) => {
+  const result = evalInPage(ctx, args.setup as string | undefined, String(args.expr));
+  if ("equals" in args) {
+    const eq = stringify(result) === stringify(args.equals);
+    return eq ? pass({ actual: stringify(result) }) : fail(stringify(result), stringify(args.equals));
+  }
+  if (typeof args.matches === "string") {
+    return new RegExp(args.matches, "u").test(String(result))
+      ? pass({ actual: String(result) })
+      : fail(String(result), `/${args.matches}/`);
+  }
+  return result ? pass({ actual: stringify(result) }) : fail(stringify(result), "a truthy value");
+});
+
+// ── js.consoleClean ──────────────────────────────────────────────────────────
+registerChecker("js.consoleClean", (args, ctx) => {
+  const allow = (args.allow as string[]) ?? [];
+  const errors = ctx.consoleErrors.filter((e) => !allow.some((a) => e.includes(a)));
+  return errors.length === 0
+    ? pass()
+    : fail(errors[0], "no uncaught errors in the console");
+});
+
+// ── js.interaction ───────────────────────────────────────────────────────────
+interface Step {
+  click?: string;
+  type?: { selector: string; text: string };
+  waitFor?: string;
+  expectText?: { selector: string; equals?: string; contains?: string };
+  expectEval?: { expr: string; equals: unknown };
+}
+
+async function waitFor(ctx: CheckerContext, selector: string, capMs = 3000): Promise<Element | null> {
+  const start = Date.now();
+  while (Date.now() - start < capMs) {
+    const el = doc(ctx).querySelector(selector);
+    if (el) return el;
+    await new Promise((r) => setTimeout(r, 20));
+  }
+  return null;
+}
+
+registerChecker("js.interaction", async (args, ctx) => {
+  const steps = (args.steps as Step[]) ?? [];
+  const w = win(ctx);
+  for (const [i, step] of steps.entries()) {
+    if (step.click !== undefined) {
+      const el = doc(ctx).querySelector(step.click);
+      if (!el) return fail(`step ${i + 1}: no element ${step.click}`, "clickable element");
+      el.dispatchEvent(new w.MouseEvent("click", { bubbles: true, cancelable: true }));
+    } else if (step.type !== undefined) {
+      const el = doc(ctx).querySelector<HTMLInputElement>(step.type.selector);
+      if (!el) return fail(`step ${i + 1}: no input ${step.type.selector}`, "an input");
+      el.value = step.type.text;
+      el.dispatchEvent(new w.Event("input", { bubbles: true }));
+      el.dispatchEvent(new w.Event("change", { bubbles: true }));
+    } else if (step.waitFor !== undefined) {
+      const el = await waitFor(ctx, step.waitFor);
+      if (!el) return fail(`step ${i + 1}: ${step.waitFor} never appeared`, "element to appear");
+    } else if (step.expectText !== undefined) {
+      const el = doc(ctx).querySelector(step.expectText.selector);
+      const text = (el?.textContent ?? "").trim();
+      if (step.expectText.equals !== undefined && text !== step.expectText.equals) {
+        return fail(text || "(none)", step.expectText.equals);
+      }
+      if (step.expectText.contains !== undefined && !text.includes(step.expectText.contains)) {
+        return fail(text || "(none)", `contains "${step.expectText.contains}"`);
+      }
+    } else if (step.expectEval !== undefined) {
+      const result = evalInPage(ctx, undefined, step.expectEval.expr);
+      if (stringify(result) !== stringify(step.expectEval.equals)) {
+        return fail(stringify(result), stringify(step.expectEval.equals));
+      }
+    }
+  }
+  return pass();
+});

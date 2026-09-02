@@ -2,6 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
+    // DOM lib is needed because @khiye/checkers (consumed as TS source) references
+    // DOM types (Document/Window/Element). content-sdk itself uses no DOM APIs.
+    "lib": ["DOM", "DOM.Iterable", "ES2023"],
     "types": ["node"]
   },
   "include": ["src/**/*.ts"]

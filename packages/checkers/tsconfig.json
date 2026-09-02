@@ -1,5 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "rootDir": "src" },
+  "compilerOptions": {
+    "rootDir": "src",
+    "lib": ["DOM", "DOM.Iterable", "ES2023"],
+    "types": ["node"]
+  },
   "include": ["src/**/*.ts"]
 }
