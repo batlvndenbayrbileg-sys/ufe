@@ -1,0 +1,57 @@
+/* Minimal base styles for E0. The full design system (tokens, Cyrillic
+   typography, components) arrives in E1 — see docs/blueprint/14-design-system.md. */
+
+:root {
+  --bg: #f2f4f7;
+  --card: #ffffff;
+  --ink: #0e1218;
+  --ink-2: #4a5462;
+  --ink-3: #7c8797;
+  --rule: #d8dee7;
+  --blue: #1f44c8;
+  --blue-soft: #e5eafa;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0d11;
+    --card: #12151b;
+    --ink: #edf0f4;
+    --ink-2: #a3aebd;
+    --ink-3: #6e7a8a;
+    --rule: #232833;
+    --blue: #7a9bff;
+    --blue-soft: #161e33;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family:
+    "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--blue);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 3px;
+}

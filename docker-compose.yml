@@ -1,0 +1,58 @@
+# Local dev services for Хийе. Start with: docker compose up -d
+# The Tier-1 MVP only strictly needs Postgres; Redis + MinIO are here for
+# later phases (queues, rate limiting, snapshot/asset storage).
+name: khiye
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: khiye-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: khiye
+      POSTGRES_PASSWORD: khiye
+      POSTGRES_DB: khiye
+    ports:
+      - "5432:5432"
+    volumes:
+      - khiye-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U khiye -d khiye"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: khiye-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: khiye-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: khiye
+      MINIO_ROOT_PASSWORD: khiye-secret
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - khiye-minio:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  khiye-pgdata:
+  khiye-minio:

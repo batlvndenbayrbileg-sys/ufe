@@ -1,0 +1,14 @@
+{
+  "app": {
+    "name": "Khiye",
+    "tagline": "Learn by doing, not by reading."
+  },
+  "home": {
+    "eyebrow": "Internet Programming",
+    "title": "Build it yourself. See it live.",
+    "lede": "Mongolian students build a real online store, Shop.mn, from scratch — writing every line themselves and seeing the result instantly.",
+    "status": "E0 — Foundations are in place.",
+    "healthLink": "Check system health",
+    "next": "Next up: E1 Design system, E2 Data layer, E3 Content SDK"
+  }
+}

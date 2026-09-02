@@ -1,0 +1,25 @@
+# Normalize line endings to LF in the repo (checkout as-is on all platforms).
+* text=auto eol=lf
+
+# Explicit text types
+*.ts   text eol=lf
+*.tsx  text eol=lf
+*.js   text eol=lf
+*.mjs  text eol=lf
+*.json text eol=lf
+*.css  text eol=lf
+*.md   text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.sh   text eol=lf
+
+# Lockfile: managed by pnpm, keep LF, mark for cleaner diffs
+pnpm-lock.yaml -diff linguist-generated
+
+# Binaries
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff2 binary
