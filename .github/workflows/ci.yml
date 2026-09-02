@@ -12,11 +12,28 @@ concurrency:
 env:
   NODE_VERSION: "22"
   PNPM_VERSION: "9.15.0"
+  DATABASE_URL: "postgresql://khiye:khiye@localhost:5432/khiye?schema=public"
 
 jobs:
   verify:
     name: typecheck · lint · test · build
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: khiye
+          POSTGRES_PASSWORD: khiye
+          POSTGRES_DB: khiye
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U khiye -d khiye"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
     steps:
       - uses: actions/checkout@v4
 
@@ -34,13 +51,19 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Prisma generate
+        run: pnpm --filter @khiye/db exec prisma generate
+
+      - name: Apply migrations
+        run: pnpm --filter @khiye/db exec prisma migrate deploy
+
       - name: Typecheck
         run: pnpm typecheck
 
       - name: Lint
         run: pnpm lint
 
-      - name: Test
+      - name: Test (incl. DB integration)
         run: pnpm test
 
       - name: Build
