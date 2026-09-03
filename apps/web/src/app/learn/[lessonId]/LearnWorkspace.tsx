@@ -6,6 +6,7 @@ import { EditorPane, workspaceStore, useWorkspace, type CodeMirrorHandle } from 
 import { PreviewFrame, type ConsoleEntry, type FileSet } from "@khiye/preview";
 import { applyPatch } from "@khiye/content-sdk/patch";
 import type { LessonPublic } from "@/lib/content";
+import { awardBadge, recordTaskPass } from "@/lib/progress";
 import { ResultPanel, type SubmitResult } from "./ResultPanel";
 import { HintLadder } from "./HintLadder";
 import { SolutionGate } from "./SolutionGate";
@@ -70,14 +71,19 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
       if (!data) return;
       setResult(data);
       if (data.passed) {
-        setStatuses((s) => s.map((st, i) => (i === taskIndex ? "passed" : st)));
+        recordTaskPass(task.id, data.xpAwarded, task.skills);
+        const nextStatuses = statuses.map((st, i) => (i === taskIndex ? ("passed" as Status) : st));
+        setStatuses(nextStatuses);
+        if (nextStatuses.every((st) => st === "passed") && lesson.completion.badge) {
+          awardBadge(lesson.completion.badge);
+        }
       } else {
         setAttempts((a) => a.map((n, i) => (i === taskIndex ? n + 1 : n)));
       }
     } finally {
       setChecking(false);
     }
-  }, [task.id, taskIndex, attempts, hintsUsed, startedAt]);
+  }, [task.id, task.skills, taskIndex, attempts, hintsUsed, startedAt, statuses, lesson.completion.badge]);
 
   const nextTask = useCallback(() => {
     setResult(null);
