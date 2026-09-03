@@ -1,0 +1,190 @@
+{
+  "id": "m2-l6",
+  "moduleId": "m2-css",
+  "slug": "flexbox-header",
+  "order": 6,
+  "title": {
+    "mn": "Flexbox: Header-ээ эмхлэх"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн header дотор лого, цэс хоёр дээр доор нь байна. Бодит дэлгүүрт лого зүүн талд, цэс баруун талд, нэг эгнээнд байдаг. Үүнийг Flexbox-оор шийднэ."
+  },
+  "buildsInProject": "Header-ийн байрлал",
+  "difficulty": "beginner",
+  "estimatedMinutes": 12,
+  "skills": [
+    "css"
+  ],
+  "concepts": [
+    "flexbox",
+    "align-items",
+    "justify-content"
+  ],
+  "prerequisites": [
+    "m2-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <header>\n      <img src=\"images/logo.png\" alt=\"Shop.mn лого\">\n      <nav>\n        <ul>\n          <li><a href=\"index.html\">Нүүр</a></li>\n          <li><a href=\"cart.html\">Сагс</a></li>\n        </ul>\n      </nav>\n    </header>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <section class=\"product-grid\">\n        <article class=\"product-card\">\n          <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n          <h3>Монгол дээл</h3>\n          <p class=\"price\">₮ 129,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n        <article class=\"product-card\">\n          <img src=\"images/malgai.jpg\" alt=\"Малгай\">\n          <h3>Малгай</h3>\n          <p class=\"price\">₮ 45,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n      </section>\n    </main>\n    <footer>\n      <address>Утас: 7000-0000</address>\n      <p>© 2026 Shop.mn</p>\n    </footer>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "/* Shop.mn-ийн загвар */\n\nbody {\n  background-color: #f5f6f8;\n  color: #18181b;\n}\n\nbody {\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n}\n\nh1 {\n  font-size: 36px;\n}\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n}\n.product-grid {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 16px;\n}\n/* энд бичнэ үү */\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css"
+    ],
+    "openFiles": [
+      "styles/main.css"
+    ],
+    "activeFile": "styles/main.css"
+  },
+  "tasks": [
+    {
+      "id": "m2-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Flexbox: Header-ээ эмхлэх"
+      },
+      "statement": {
+        "mn": "`header` сонгогчид `display: flex` өгөөд, `align-items`-ээр төвд зэрэгцүүл, `justify-content`-оор лого ба цэсийг хоёр тийш нь тараа. `padding` бас нэм."
+      },
+      "requirements": [
+        {
+          "mn": "`display: flex`"
+        },
+        {
+          "mn": "`align-items: center`"
+        },
+        {
+          "mn": "`justify-content` тодорхойлсон"
+        },
+        {
+          "mn": "`padding` 8px-ээс их"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Лого зүүн, цэс баруун талд, нэг эгнээнд зэрэгцэн харагдана."
+        }
+      },
+      "targetFile": "styles/main.css",
+      "marker": "/* энд бичнэ үү */",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.layout",
+          "args": {
+            "selector": "header",
+            "mode": "flex"
+          },
+          "onFail": {
+            "mn": "`header`-д `display: flex` өгөөгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "css.computed",
+          "args": {
+            "selector": "header",
+            "prop": "align-items",
+            "equals": "center"
+          },
+          "onFail": {
+            "mn": "`align-items: center` өгвөл лого, цэс хоёр босоо тэнхлэгт төвлөрнө."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "css.computed",
+          "args": {
+            "selector": "header",
+            "prop": "justify-content",
+            "notEquals": ""
+          },
+          "onFail": {
+            "mn": "`justify-content` тодорхойлоогүй байна. `space-between` нь хоёр тийш нь тараадаг."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "css.numeric",
+          "args": {
+            "selector": "header",
+            "prop": "padding-top",
+            "min": 8
+          },
+          "onFail": {
+            "mn": "Header-т `padding` 8px-ээс их өгөөрэй."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`display: flex` нь доторх элементүүдийг нэг эгнээнд зэрэгцүүлнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`align-items` нь босоо тэнхлэгт (төвлөрүүлэх), `justify-content` нь хэвтээ тэнхлэгт (тараах) байрлалыг хариуцна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц нь ийм, үлдсэнийг өөрөө гүйцээ:"
+          },
+          "code": "header {\n  display: flex;\n  align-items: center;\n  /* justify-content ба padding-аа өөрөө нэм */\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "insertAfter",
+            "path": "styles/main.css",
+            "anchor": "/* энд бичнэ үү */",
+            "content": "\nheader {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 12px 16px;\n}"
+          }
+        ],
+        "explanation": {
+          "mn": "Flexbox: Header-ээ эмхлэх: CSS сонгогч нь аль элементэд загвар өгөхийг заана, `{ }` дотор шинж бүрийг `шинж: утга;` хэлбэрээр бичнэ."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 10,
+      "skills": [
+        "css"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 15,
+    "badge": "ui-builder",
+    "milestone": true,
+    "celebration": "large"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

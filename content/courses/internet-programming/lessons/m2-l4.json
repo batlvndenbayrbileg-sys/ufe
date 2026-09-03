@@ -1,0 +1,188 @@
+{
+  "id": "m2-l4",
+  "moduleId": "m2-css",
+  "slug": "button-style",
+  "order": 4,
+  "title": {
+    "mn": "«Сагсанд хийх» товчны загвар"
+  },
+  "why": {
+    "mn": "Товч бол хэрэглэгчийн хамгийн их дардаг зүйл. Shop.mn-ийн худалдан авах товчийг анхаарал татахуйц, дарахад ойлгомжтой болгоё. Өнгө сонгохдоо уншигдахуйц ялгарлыг заавал шалгана."
+  },
+  "buildsInProject": "«Сагсанд хийх» товчны загвар",
+  "difficulty": "beginner",
+  "estimatedMinutes": 12,
+  "skills": [
+    "css"
+  ],
+  "concepts": [
+    "button",
+    "cursor",
+    "contrast",
+    "border-radius"
+  ],
+  "prerequisites": [
+    "m2-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <header>\n      <img src=\"images/logo.png\" alt=\"Shop.mn лого\">\n      <nav>\n        <ul>\n          <li><a href=\"index.html\">Нүүр</a></li>\n          <li><a href=\"cart.html\">Сагс</a></li>\n        </ul>\n      </nav>\n    </header>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <section class=\"product-grid\">\n        <article class=\"product-card\">\n          <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n          <h3>Монгол дээл</h3>\n          <p class=\"price\">₮ 129,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n        <article class=\"product-card\">\n          <img src=\"images/malgai.jpg\" alt=\"Малгай\">\n          <h3>Малгай</h3>\n          <p class=\"price\">₮ 45,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n      </section>\n    </main>\n    <footer>\n      <address>Утас: 7000-0000</address>\n      <p>© 2026 Shop.mn</p>\n    </footer>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "/* Shop.mn-ийн загвар */\n\nbody {\n  background-color: #f5f6f8;\n  color: #18181b;\n}\n\nbody {\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n}\n\nh1 {\n  font-size: 36px;\n}\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n/* энд бичнэ үү */\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css"
+    ],
+    "openFiles": [
+      "styles/main.css"
+    ],
+    "activeFile": "styles/main.css"
+  },
+  "tasks": [
+    {
+      "id": "m2-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "«Сагсанд хийх» товчны загвар"
+      },
+      "statement": {
+        "mn": "`.btn-add` товчид: дэвсгэр өнгө, текстийн өнгө, `padding` (8px-ээс их), `border-radius`, мөн `cursor: pointer` өг. Өнгө нь 4.5:1 ялгаралтай байх ёстой."
+      },
+      "requirements": [
+        {
+          "mn": "Дэвсгэр ба текстийн ялгарал 4.5:1-ээс их"
+        },
+        {
+          "mn": "`padding` 8px-ээс их"
+        },
+        {
+          "mn": "`border-radius` өгсөн"
+        },
+        {
+          "mn": "`cursor: pointer`"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Товч өнгөтэй болж, хулгана дээр нь очиход гарын хэлбэр гарч ирнэ."
+        }
+      },
+      "targetFile": "styles/main.css",
+      "marker": "/* энд бичнэ үү */",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.contrast",
+          "args": {
+            "selector": ".btn-add",
+            "min": 4.5
+          },
+          "onFail": {
+            "mn": "Товчны текст ба дэвсгэрийн ялгарал 4.5:1-ээс бага байна. Цайвар дэвсгэр дээр бараан текст (эсвэл эсрэгээр) хэрэглээрэй."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "css.numeric",
+          "args": {
+            "selector": ".btn-add",
+            "prop": "padding-left",
+            "min": 8
+          },
+          "onFail": {
+            "mn": "Товчны `padding` 8px-ээс их байвал дарахад тухтай. Одоо {actual}."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "css.numeric",
+          "args": {
+            "selector": ".btn-add",
+            "prop": "border-radius",
+            "min": 2
+          },
+          "onFail": {
+            "mn": "`border-radius` өгөөгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "css.computed",
+          "args": {
+            "selector": ".btn-add",
+            "prop": "cursor",
+            "equals": "pointer"
+          },
+          "onFail": {
+            "mn": "`cursor: pointer` өгөөгүй байна. Энэ нь «энд дарж болно» гэдгийг хэрэглэгчид хэлдэг."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Товчны анхдагч саарал загварыг дарахын тулд `background-color`, `color`, `border` гурвыг өөрөө тодорхойлно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`cursor: pointer` нь хулганы заагчийг гар болгож, дарж болохыг илэрхийлнэ. `border: none` нь анхдагч хүрээг арилгана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц нь ийм, өнгөө өөрөө сонго:"
+          },
+          "code": ".btn-add {\n  background-color: /* өнгө */;\n  color: /* текстийн өнгө */;\n  cursor: pointer;\n  /* padding ба border-radius-аа өөрөө нэм */\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "insertAfter",
+            "path": "styles/main.css",
+            "anchor": "/* энд бичнэ үү */",
+            "content": "\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n}"
+          }
+        ],
+        "explanation": {
+          "mn": "«Сагсанд хийх» товчны загвар: CSS сонгогч нь аль элементэд загвар өгөхийг заана, `{ }` дотор шинж бүрийг `шинж: утга;` хэлбэрээр бичнэ."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 10,
+      "skills": [
+        "css"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 15
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "id": "m2-l1",
+  "moduleId": "m2-css",
+  "slug": "link-css",
+  "order": 1,
+  "title": { "mn": "CSS-ээ холбоё" },
+  "why": { "mn": "Shop.mn одоо ажиллаж байгаа ч цагаан цаас шиг харагдаж байна. HTML нь бүтэц, CSS нь гадаад төрх хариуцдаг. Эхлээд загварын файлаа хуудастай холбож, дэвсгэр өнгийг өөрчилье." },
+  "buildsInProject": "Хуудасны дэвсгэр өнгө ба CSS холболт",
+  "difficulty": "beginner",
+  "estimatedMinutes": 10,
+  "skills": ["css"],
+  "concepts": ["link", "stylesheet", "selector", "background-color", "color"],
+  "prerequisites": ["m1-l6"],
+  "execution": { "tier": 1, "runtime": "static", "entry": "index.html", "autoRun": true },
+  "workspace": {
+    "patch": [
+      { "op": "create", "path": "index.html", "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Shop.mn</title>\n    <!-- энд бичнэ үү -->\n  </head>\n  <body>\n    <header>\n      <img src=\"images/logo.png\" alt=\"Shop.mn лого\">\n      <nav>\n        <ul>\n          <li><a href=\"index.html\">Нүүр</a></li>\n          <li><a href=\"cart.html\">Сагс</a></li>\n        </ul>\n      </nav>\n    </header>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <section class=\"product-grid\">\n        <article class=\"product-card\">\n          <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n          <h3>Монгол дээл</h3>\n          <p class=\"price\">₮ 129,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n        <article class=\"product-card\">\n          <img src=\"images/malgai.jpg\" alt=\"Малгай\">\n          <h3>Малгай</h3>\n          <p class=\"price\">₮ 45,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n      </section>\n    </main>\n    <footer>\n      <address>Утас: 7000-0000</address>\n      <p>© 2026 Shop.mn</p>\n    </footer>\n  </body>\n</html>\n" },
+      { "op": "create", "path": "styles/main.css", "content": "/* Shop.mn-ийн загвар */\n\n/* энд бичнэ үү */\n" }
+    ],
+    "visibleFiles": ["index.html", "styles/main.css"],
+    "openFiles": ["index.html", "styles/main.css"],
+    "activeFile": "index.html"
+  },
+  "tasks": [
+    {
+      "id": "m2-l1-t1",
+      "order": 1,
+      "title": { "mn": "Загварын файлаа холбож, өнгө өг" },
+      "statement": { "mn": "Хоёр зүйл хий. 1) `index.html`-ийн `<head>` дотор `<link rel=\"stylesheet\" href=\"styles/main.css\">` нэм. 2) `styles/main.css` дотор `body` сонгогчид `background-color` ба `color` хоёрыг өг." },
+      "requirements": [
+        { "mn": "`<head>` дотор `<link>` байх" },
+        { "mn": "`body`-д `background-color` тодорхойлсон байх" },
+        { "mn": "`body`-д `color` тодорхойлсон байх" },
+        { "mn": "Текст, дэвсгэр хоёрын ялгарал хангалттай (4.5:1)" }
+      ],
+      "expected": { "description": { "mn": "Preview дээр хуудасны дэвсгэр өнгө өөрчлөгдөнө. Одоохондоо бусад нь хэвээрээ." } },
+      "targetFile": "index.html",
+      "marker": "<!-- энд бичнэ үү -->",
+      "checks": [
+        { "id": "c2", "type": "css.computed", "args": { "selector": "body", "prop": "background-color", "notEquals": "" }, "onFail": { "mn": "`body`-д `background-color` хүрч ажиллахгүй байна. Хоёр зүйлийг шалга: 1) `<head>` дотор `<link rel=\"stylesheet\" href=\"styles/main.css\">` бичсэн үү? 2) CSS дотор `body { background-color: ...; }` гэж бичсэн үү?" } },
+        { "id": "c3", "type": "css.computed", "args": { "selector": "body", "prop": "color", "notEquals": "" }, "onFail": { "mn": "`body`-д текстийн `color` өгөөгүй байна." } },
+        { "id": "c4", "type": "css.contrast", "args": { "selector": "body", "min": 4.5 }, "onFail": { "mn": "Текст, дэвсгэр хоёрын ялгарал сул байна. Бараан текст дээр цайвар дэвсгэр (эсвэл эсрэгээр) сонгоорой." } }
+      ],
+      "hints": [
+        { "level": 1, "xpCost": 0, "text": { "mn": "`<link>` нь `<head>` дотор бичигддэг бөгөөд өөрөө хаагддаг (хаах tag хэрэггүй)." } },
+        { "level": 2, "xpCost": 1, "text": { "mn": "CSS-д дүрэм ингэж бичнэ: сонгогч, дараа нь `{ }`, дотор нь `шинж: утга;`. Жишээ нь `body { color: #111; }`." } },
+        { "level": 3, "xpCost": 3, "text": { "mn": "HTML талд нь ингэнэ, CSS-ээ өөрөө бич:" }, "code": "<link rel=\"stylesheet\" href=\"styles/main.css\">" }
+      ],
+      "solution": {
+        "patch": [
+          { "op": "insertAfter", "path": "index.html", "anchor": "<!-- энд бичнэ үү -->", "content": "\n    <link rel=\"stylesheet\" href=\"styles/main.css\">" },
+          { "op": "insertAfter", "path": "styles/main.css", "anchor": "/* энд бичнэ үү */", "content": "\nbody {\n  background-color: #f5f6f8;\n  color: #18181b;\n}" }
+        ],
+        "explanation": { "mn": "`<link>` нь гадаад CSS файлыг хуудастай холбоно. `body` сонгогч нь хуудасны бүх агуулгад нөлөөлдөг тул ерөнхий өнгө, фонтыг энд тавьдаг." },
+        "xpPenalty": 6
+      },
+      "xp": 10,
+      "estimatedMinutes": 8,
+      "skills": ["css"]
+    }
+  ],
+  "completion": { "xp": 15 },
+  "status": "published",
+  "version": 1,
+  "authors": ["delgermaa"]
+}

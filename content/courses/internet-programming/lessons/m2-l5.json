@@ -1,0 +1,173 @@
+{
+  "id": "m2-l5",
+  "moduleId": "m2-css",
+  "slug": "product-grid",
+  "order": 5,
+  "title": {
+    "mn": "Grid: бүтээгдэхүүний сүлжээ"
+  },
+  "why": {
+    "mn": "Одоо Shop.mn дээр картууд дээрээс доош дараалж байна. Жинхэнэ дэлгүүрт бүтээгдэхүүнүүд хажуу хажуугаа сүлжээ хэлбэрээр байрладаг. CSS Grid ашиглан 2 баганад байрлуулъя."
+  },
+  "buildsInProject": "Бүтээгдэхүүний 2 баганат сүлжээ",
+  "difficulty": "beginner",
+  "estimatedMinutes": 12,
+  "skills": [
+    "css"
+  ],
+  "concepts": [
+    "display",
+    "grid",
+    "grid-template-columns",
+    "gap"
+  ],
+  "prerequisites": [
+    "m2-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <header>\n      <img src=\"images/logo.png\" alt=\"Shop.mn лого\">\n      <nav>\n        <ul>\n          <li><a href=\"index.html\">Нүүр</a></li>\n          <li><a href=\"cart.html\">Сагс</a></li>\n        </ul>\n      </nav>\n    </header>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <section class=\"product-grid\">\n        <article class=\"product-card\">\n          <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n          <h3>Монгол дээл</h3>\n          <p class=\"price\">₮ 129,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n        <article class=\"product-card\">\n          <img src=\"images/malgai.jpg\" alt=\"Малгай\">\n          <h3>Малгай</h3>\n          <p class=\"price\">₮ 45,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n      </section>\n    </main>\n    <footer>\n      <address>Утас: 7000-0000</address>\n      <p>© 2026 Shop.mn</p>\n    </footer>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "/* Shop.mn-ийн загвар */\n\nbody {\n  background-color: #f5f6f8;\n  color: #18181b;\n}\n\nbody {\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n}\n\nh1 {\n  font-size: 36px;\n}\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n}\n/* энд бичнэ үү */\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css"
+    ],
+    "openFiles": [
+      "styles/main.css"
+    ],
+    "activeFile": "styles/main.css"
+  },
+  "tasks": [
+    {
+      "id": "m2-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Grid: бүтээгдэхүүний сүлжээ"
+      },
+      "statement": {
+        "mn": "`.product-grid`-д `display: grid` өгөөд `grid-template-columns`-оор 2 багана үүсгэ. Картуудын хооронд `gap` (8px-ээс их) нэм."
+      },
+      "requirements": [
+        {
+          "mn": "`display: grid`"
+        },
+        {
+          "mn": "Яг 2 багана"
+        },
+        {
+          "mn": "`gap` 8px-ээс их"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Хоёр карт зэрэгцэн, хооронд нь зайтай харагдана."
+        }
+      },
+      "targetFile": "styles/main.css",
+      "marker": "/* энд бичнэ үү */",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.layout",
+          "args": {
+            "selector": ".product-grid",
+            "mode": "grid"
+          },
+          "onFail": {
+            "mn": "`.product-grid`-д `display: grid` өгөөгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "css.layout",
+          "args": {
+            "selector": ".product-grid",
+            "mode": "grid",
+            "columns": 2
+          },
+          "onFail": {
+            "mn": "`grid-template-columns`-оор яг 2 багана зааж өгөх ёстой. Жишээ нь хоёр утга бичнэ."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "css.numeric",
+          "args": {
+            "selector": ".product-grid",
+            "prop": "gap",
+            "min": 8
+          },
+          "onFail": {
+            "mn": "Картуудын хооронд `gap` 8px-ээс их байх ёстой. Одоо {actual}."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`display: grid` нь элементийг сүлжээ болгоно. Багануудыг `grid-template-columns` шинжээр тодорхойлно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`1fr` гэдэг нь «үлдсэн зайн нэг хувь». Хоёр тэнцүү багана хийхийн тулд хоёр удаа бичнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц нь ийм, багануудаа өөрөө гүйцээ:"
+          },
+          "code": ".product-grid {\n  display: grid;\n  grid-template-columns: /* хоёр багана */;\n  /* gap-аа өөрөө нэм */\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "insertAfter",
+            "path": "styles/main.css",
+            "anchor": "/* энд бичнэ үү */",
+            "content": "\n.product-grid {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 16px;\n}"
+          }
+        ],
+        "explanation": {
+          "mn": "Grid: бүтээгдэхүүний сүлжээ: CSS сонгогч нь аль элементэд загвар өгөхийг заана, `{ }` дотор шинж бүрийг `шинж: утга;` хэлбэрээр бичнэ."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 10,
+      "skills": [
+        "css"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 15
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}
