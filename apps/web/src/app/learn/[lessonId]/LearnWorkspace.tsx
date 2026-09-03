@@ -10,6 +10,7 @@ import { awardBadge, recordTaskPass } from "@/lib/progress";
 import { ResultPanel, type SubmitResult } from "./ResultPanel";
 import { HintLadder } from "./HintLadder";
 import { SolutionGate } from "./SolutionGate";
+import s from "./learn.module.css";
 
 type Status = "current" | "passed" | "locked";
 
@@ -17,21 +18,22 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
   const { resolvedTheme } = useTheme();
   const dark = resolvedTheme === "dark";
   const editorRef = useRef<CodeMirrorHandle>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
   const tasks = lesson.tasks;
 
   const [taskIndex, setTaskIndex] = useState(0);
   const [statuses, setStatuses] = useState<Status[]>(() => tasks.map((_, i) => (i === 0 ? "current" : "locked")));
   const [attempts, setAttempts] = useState<number[]>(() => tasks.map(() => 0));
-  const [hintsUsed] = useState<number[]>(() => tasks.map(() => 0));
+  const [hintsUsed, setHintsUsed] = useState<number[]>(() => tasks.map(() => 0));
   const [startedAt] = useState<number[]>(() => tasks.map(() => Date.now()));
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [checking, setChecking] = useState(false);
   const [logs, setLogs] = useState<ConsoleEntry[]>([]);
 
   const task = tasks[taskIndex]!;
-  const files = useWorkspace((s) => s.files) as FileSet;
+  const files = useWorkspace((st) => st.files) as FileSet;
+  const solved = statuses[taskIndex] === "passed";
 
-  // Init the workspace once from the lesson's workspace patch.
   useEffect(() => {
     const initial = applyPatch({}, lesson.workspace.patch) as FileSet;
     workspaceStore.getState().init({
@@ -42,26 +44,24 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
       openFiles: lesson.workspace.openFiles,
       activeFile: lesson.workspace.activeFile,
     });
-  }, [lesson.id]);
+  }, [lesson.id, lesson.workspace]);
 
-  // Jump to the current task's marker.
   useEffect(() => {
     if (task.targetFile) workspaceStore.getState().setActive(task.targetFile);
     const t = setTimeout(() => {
       if (task.marker) editorRef.current?.scrollToMarker(task.marker);
-    }, 120);
+    }, 140);
     return () => clearTimeout(t);
   }, [taskIndex, task.marker, task.targetFile]);
 
   const check = useCallback(async () => {
     setChecking(true);
     try {
-      const current = workspaceStore.getState().files;
       const res = await fetch(`/api/tasks/${task.id}/submit`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          files: current,
+          files: workspaceStore.getState().files,
           attemptNo: attempts[taskIndex]! + 1,
           hintsUsed: hintsUsed[taskIndex],
           durationMs: Date.now() - startedAt[taskIndex]!,
@@ -72,9 +72,9 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
       setResult(data);
       if (data.passed) {
         recordTaskPass(task.id, data.xpAwarded, task.skills);
-        const nextStatuses = statuses.map((st, i) => (i === taskIndex ? ("passed" as Status) : st));
-        setStatuses(nextStatuses);
-        if (nextStatuses.every((st) => st === "passed") && lesson.completion.badge) {
+        const next = statuses.map((st, i) => (i === taskIndex ? ("passed" as Status) : st));
+        setStatuses(next);
+        if (next.every((st) => st === "passed") && lesson.completion.badge) {
           awardBadge(lesson.completion.badge);
         }
       } else {
@@ -89,20 +89,24 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
     setResult(null);
     if (taskIndex < tasks.length - 1) {
       const ni = taskIndex + 1;
-      setStatuses((s) => s.map((st, i) => (i === ni ? "current" : st)));
+      setStatuses((st) => st.map((v, i) => (i === ni ? "current" : v)));
       setTaskIndex(ni);
     }
   }, [taskIndex, tasks.length]);
 
-  const revealSolution = useCallback((patch: unknown, _explanation: { mn: string }) => {
+  const revealSolution = useCallback((patch: unknown) => {
     workspaceStore.getState().applyContentPatch(patch as never, { force: true });
   }, []);
 
-  const passedCount = statuses.filter((s) => s === "passed").length;
+  const passedCount = statuses.filter((v) => v === "passed").length;
   const percent = Math.round((passedCount / tasks.length) * 100);
   const lessonDone = passedCount === tasks.length;
 
-  // Ctrl+Enter run (auto for tier1) / Ctrl+Shift+Enter check.
+  // The verdict must be visible the moment it arrives.
+  useEffect(() => {
+    if (result) resultRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [result]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.key === "Enter") {
@@ -117,65 +121,88 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
   const header = useMemo(
     () => (
       <>
-        <a href="/app/course/ip-101" style={{ color: "var(--text-muted)", textDecoration: "none", fontSize: 13 }}>← Буцах</a>
-        <strong style={{ fontSize: 14 }}>{lesson.title.mn}</strong>
-        <TaskPips statuses={statuses} />
-        <div style={{ marginLeft: "auto", display: "flex", gap: 10, alignItems: "center" }}>
-          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{percent}%</span>
+        <a href={`/app/course/${"internet-programming"}`} className={s.back}>
+          ← Хичээлүүд
+        </a>
+        <span className={s.lessonTitle}>{lesson.title.mn}</span>
+        <div className={s.pips} role="img" aria-label={`${passedCount}/${tasks.length} даалгавар`}>
+          {statuses.map((v, i) => (
+            <span key={i} className={`${s.pip} ${v === "passed" ? s.pipDone : v === "current" ? s.pipCurrent : ""}`} />
+          ))}
+        </div>
+        <div className={s.headerRight}>
+          <span>{percent}%</span>
           <ThemeToggle />
         </div>
       </>
     ),
-    [lesson.title.mn, statuses, percent],
+    [lesson.title.mn, statuses, percent, passedCount, tasks.length],
   );
 
   return (
     <WorkspaceShell
       storageKey={`khiye-panes-${lesson.id}`}
       header={header}
-      collapsedRail={<span style={{ writingMode: "vertical-rl", fontSize: 12 }}>Заавар</span>}
+      collapsedRail={<span style={{ writingMode: "vertical-rl", fontSize: 12, color: "var(--text-muted)" }}>Заавар</span>}
       instructions={
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <section>
-            <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-subtle)" }}>
+        <div className={s.pane}>
+          <div>
+            <div className={s.eyebrow}>
               Даалгавар {taskIndex + 1}/{tasks.length}
             </div>
-            <h2 style={{ fontSize: 18, margin: "6px 0 0" }}>{task.title.mn}</h2>
-          </section>
+            <h1 className={s.taskTitle}>{task.title.mn}</h1>
+          </div>
 
-          <p style={{ margin: 0, lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: mdInline(task.statement.mn) }} />
+          {result ? (
+            <div ref={resultRef}>
+              <ResultPanel
+                result={result}
+                onDismiss={() => setResult(null)}
+                onNext={nextTask}
+                isLastTask={taskIndex === tasks.length - 1}
+              />
+            </div>
+          ) : null}
+
+          <p className={s.statement} dangerouslySetInnerHTML={{ __html: mdInline(task.statement.mn) }} />
 
           {task.requirements?.length ? (
-            <ul style={{ margin: 0, paddingLeft: 18, display: "flex", flexDirection: "column", gap: 4 }}>
+            <ul className={s.reqList}>
               {task.requirements.map((r, i) => (
-                <li key={i} style={{ color: statuses[taskIndex] === "passed" ? "var(--success)" : "var(--text-muted)" }}>
-                  {r.mn}
-                </li>
+                <li
+                  key={i}
+                  className={`${s.req} ${solved ? s.reqDone : ""}`}
+                  dangerouslySetInnerHTML={{ __html: mdInline(r.mn) }}
+                />
               ))}
             </ul>
           ) : null}
 
-          <details>
-            <summary style={{ cursor: "pointer", fontSize: 13, color: "var(--text-muted)" }}>Яагаад?</summary>
-            <p style={{ margin: "6px 0 0", fontSize: 13.5, color: "var(--text-muted)", lineHeight: 1.6 }}>{lesson.why.mn}</p>
-          </details>
-
           {task.expected?.description ? (
-            <div style={{ padding: "10px 12px", background: "var(--bg-muted)", borderRadius: 6, fontSize: 13 }}>
-              <b>Хүлээгдэж буй үр дүн:</b> {task.expected.description.mn}
+            <div className={s.expected}>
+              <span className={s.expectedLabel}>Үр дүн:</span>
+              <span>{task.expected.description.mn}</span>
             </div>
           ) : null}
 
-          {result ? (
-            <ResultPanel result={result} onDismiss={() => setResult(null)} onNext={nextTask} isLastTask={taskIndex === tasks.length - 1} />
-          ) : (
+          <details className={s.why}>
+            <summary className={s.whySummary}>Яагаад үүнийг сурах вэ?</summary>
+            <p className={s.whyBody}>{lesson.why.mn}</p>
+          </details>
+
+          {result ? null : (
             <>
-              <HintLadder taskId={task.id} hints={task.hints} />
+              <HintLadder
+                key={task.id}
+                taskId={task.id}
+                hints={task.hints}
+                onHintViewed={(lvl) => setHintsUsed((h) => h.map((n, i) => (i === taskIndex ? Math.max(n, lvl) : n)))}
+              />
               {attempts[taskIndex]! >= 2 ? (
                 <SolutionGate
                   taskId={task.id}
                   attempts={attempts[taskIndex]!}
-                  hintsUsed={task.hints.length}
+                  hintsUsed={hintsUsed[taskIndex]!}
                   minutes={Math.floor((Date.now() - startedAt[taskIndex]!) / 60000)}
                   onReveal={revealSolution}
                 />
@@ -184,25 +211,32 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
           )}
 
           {lessonDone ? (
-            <div style={{ padding: 14, background: "var(--success-subtle)", borderRadius: 8, textAlign: "center" }}>
-              🎉 <b>Хичээл дууслаа!</b>
-              <div style={{ marginTop: 6 }}>
-                <Badge tone="success">{lesson.completion.badge ?? "дуусгав"}</Badge>
-              </div>
+            <div className={s.completion}>
+              <span className={s.completionTitle}>🎉 Хичээл дууслаа!</span>
+              {lesson.completion.badge ? <Badge tone="success" size="md">{lesson.completion.badge}</Badge> : null}
+              <a href="/app" className={s.back} style={{ marginTop: 4 }}>
+                Хянах самбар руу →
+              </a>
             </div>
           ) : null}
         </div>
       }
       editor={<EditorPane ref={editorRef} dark={dark} showTree showKeyStrip />}
       preview={
-        <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        <div className={s.previewCol}>
           <div style={{ flex: 1, minHeight: 0 }}>
-            <PreviewFrame files={files} entry={lesson.execution.entry} onConsole={(e) => setLogs((l) => [...l.slice(-30), e])} />
+            <PreviewFrame
+              files={files}
+              entry={lesson.execution.entry}
+              onConsole={(e) => setLogs((l) => [...l.slice(-40), e])}
+            />
           </div>
           {logs.length ? (
-            <div style={{ height: 96, overflowY: "auto", background: "var(--code-bg)", color: "#ddd", fontFamily: "monospace", fontSize: 11, padding: 6 }}>
+            <div className={s.consoleStrip}>
               {logs.map((l, i) => (
-                <div key={i} style={{ color: l.level === "error" ? "#ff6b6b" : "#bbb" }}>{l.args.join(" ")}</div>
+                <div key={i} className={l.level === "error" ? s.consoleErr : undefined}>
+                  {l.args.join(" ")}
+                </div>
               ))}
             </div>
           ) : null}
@@ -210,15 +244,14 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
       }
       actionBar={
         <>
-          <ProgressRing value={percent} size={36} showLabel={false} />
-          <span style={{ fontSize: 13, color: "var(--text-muted)" }}>{passedCount}/{tasks.length} даалгавар</span>
-          <div style={{ marginLeft: "auto", display: "flex", gap: 10 }}>
-            <button
-              onClick={check}
-              disabled={checking || statuses[taskIndex] === "passed"}
-              style={{ padding: "10px 22px", borderRadius: 8, border: 0, background: "var(--accent)", color: "var(--on-accent)", cursor: "pointer", fontWeight: 600, fontSize: 14 }}
-            >
-              {checking ? "Шалгаж байна…" : "✓ Шалгах"}
+          <ProgressRing value={percent} size={34} showLabel={false} />
+          <span className={s.barLabel}>
+            {passedCount}/{tasks.length} даалгавар
+          </span>
+          <div className={s.barRight}>
+            <span className={s.kbd}>Ctrl + Enter</span>
+            <button type="button" className={s.primaryBtn} onClick={check} disabled={checking || solved}>
+              {checking ? "Шалгаж байна…" : solved ? "✓ Давсан" : "✓ Шалгах"}
             </button>
           </div>
         </>
@@ -227,27 +260,8 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
   );
 }
 
-function TaskPips({ statuses }: { statuses: Status[] }) {
-  return (
-    <div style={{ display: "flex", gap: 4 }}>
-      {statuses.map((s, i) => (
-        <span
-          key={i}
-          aria-hidden
-          style={{
-            width: 9,
-            height: 9,
-            borderRadius: "50%",
-            background: s === "passed" ? "var(--success)" : s === "current" ? "var(--accent)" : "var(--border-strong)",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/** Minimal inline markdown: `code` spans only (statements are short). */
-function mdInline(s: string): string {
-  const esc = s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  return esc.replace(/`([^`]+)`/g, '<code style="background:var(--bg-muted);padding:1px 5px;border-radius:3px;font-family:var(--font-mono);font-size:.9em">$1</code>');
+/** Inline markdown: `code` spans only (statements are short and controlled). */
+function mdInline(text: string): string {
+  const esc = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return esc.replace(/`([^`]+)`/g, "<code>$1</code>");
 }

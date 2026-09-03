@@ -1,0 +1,19 @@
+{
+  "id": "m4-javascript",
+  "stageId": "s2",
+  "order": 1,
+  "title": {
+    "mn": "JavaScript: Shop.mn-ийг амьд болгох"
+  },
+  "description": {
+    "mn": "Өгөгдөл, функц, event ашиглан статик хуудсыг ажиллаж буй дэлгүүр болгоно — сагс хүртэл."
+  },
+  "estimatedHours": 4,
+  "lessons": [
+    "m4-l1",
+    "m4-l2",
+    "m4-l3",
+    "m4-l4",
+    "m4-l5"
+  ]
+}

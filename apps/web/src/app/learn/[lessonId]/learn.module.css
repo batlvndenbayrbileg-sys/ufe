@@ -1,0 +1,401 @@
+/* Learning workspace — design-system driven (docs/blueprint/14). All colour,
+   spacing and type comes from tokens so light/dark both work. */
+
+/* ── header ─────────────────────────────────────────────────────────────── */
+.back {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.back:hover {
+  background: var(--bg-muted);
+  color: var(--text);
+}
+.lessonTitle {
+  font-size: var(--text-base);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 34ch;
+}
+.pips {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.pip {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--border-strong);
+  transition: all var(--dur) var(--ease-out);
+}
+.pipDone {
+  background: var(--success);
+}
+.pipCurrent {
+  background: var(--accent);
+  width: 20px;
+}
+.headerRight {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── instruction pane ───────────────────────────────────────────────────── */
+.pane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 62ch;
+}
+.eyebrow {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-subtle);
+  font-weight: 500;
+}
+.taskTitle {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 6px 0 0;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.statement {
+  margin: 0;
+  line-height: var(--leading-prose);
+  color: var(--text);
+}
+.statement code {
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  white-space: nowrap;
+}
+
+/* requirements checklist */
+.reqList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.req {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  font-size: var(--text-base);
+  color: var(--text-muted);
+}
+.req::before {
+  content: "○";
+  color: var(--text-subtle);
+  font-size: 0.85em;
+  flex-shrink: 0;
+}
+.reqDone {
+  color: var(--success);
+}
+.reqDone::before {
+  content: "✓";
+  color: var(--success);
+}
+.req code {
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  padding: 0 4px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+}
+
+/* collapsible "why" */
+.why {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0;
+  overflow: hidden;
+}
+.whySummary {
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  padding: 10px var(--space-4);
+  list-style: none;
+  user-select: none;
+}
+.whySummary::-webkit-details-marker {
+  display: none;
+}
+.whySummary::before {
+  content: "▸ ";
+  color: var(--text-subtle);
+}
+details[open] > .whySummary::before {
+  content: "▾ ";
+}
+.whySummary:hover {
+  background: var(--bg-muted);
+  color: var(--text);
+}
+.whyBody {
+  margin: 0;
+  padding: 0 var(--space-4) var(--space-4);
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  line-height: var(--leading-prose);
+}
+
+/* expected result */
+.expected {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--accent-subtle);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: var(--radius);
+  font-size: var(--text-base);
+  line-height: 1.55;
+}
+.expectedLabel {
+  font-weight: 600;
+  color: var(--accent-text);
+  white-space: nowrap;
+}
+
+/* ── result panel ───────────────────────────────────────────────────────── */
+.result {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface);
+}
+.resultHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  font-weight: 600;
+}
+.resultPass .resultHead {
+  background: var(--success-subtle);
+  color: var(--success);
+}
+.resultFail .resultHead {
+  background: var(--danger-subtle);
+  color: var(--danger);
+}
+.xpBadge {
+  margin-left: auto;
+  color: var(--xp);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.checkList {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+}
+.checkRow {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+.checkMark {
+  flex-shrink: 0;
+  font-weight: 700;
+}
+.checkPass .checkMark {
+  color: var(--success);
+}
+.checkFail .checkMark {
+  color: var(--danger);
+}
+.checkDetail {
+  margin: 6px 0 0 22px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-muted);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-x: auto;
+}
+.checkDetail b {
+  color: var(--text);
+  font-weight: 600;
+}
+.resultActions {
+  display: flex;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+/* ── hints ──────────────────────────────────────────────────────────────── */
+.hintStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.hint {
+  border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent);
+  border-left: 3px solid var(--warning);
+  background: var(--warning-subtle);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+  line-height: 1.55;
+}
+.hintLabel {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--warning);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.hintCode {
+  margin: var(--space-2) 0 0;
+  padding: var(--space-3);
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--code-text);
+}
+.ghostBtn {
+  align-self: flex-start;
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-family: inherit;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.ghostBtn:hover:not(:disabled) {
+  background: var(--bg-muted);
+}
+.ghostBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.gateNote {
+  font-size: var(--text-sm);
+  color: var(--text-subtle);
+  line-height: 1.5;
+}
+
+/* ── action bar ─────────────────────────────────────────────────────────── */
+.barLabel {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.barRight {
+  margin-left: auto;
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+.kbd {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+}
+.primaryBtn {
+  padding: 10px 24px;
+  border-radius: var(--radius);
+  border: 0;
+  background: var(--accent);
+  color: var(--on-accent);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: var(--text-md);
+  font-family: inherit;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.primaryBtn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+.primaryBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── completion ─────────────────────────────────────────────────────────── */
+.completion {
+  padding: var(--space-5);
+  background: var(--success-subtle);
+  border: 1px solid color-mix(in srgb, var(--success) 28%, transparent);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: center;
+}
+.completionTitle {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--success);
+}
+
+/* ── preview column ─────────────────────────────────────────────────────── */
+.previewCol {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.consoleStrip {
+  height: 104px;
+  overflow-y: auto;
+  background: var(--code-bg);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-muted);
+}
+.consoleErr {
+  color: var(--danger);
+}

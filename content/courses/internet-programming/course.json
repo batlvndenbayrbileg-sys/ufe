@@ -22,6 +22,17 @@
         "m2-css",
         "m3-responsive"
       ]
+    },
+    {
+      "id": "s2",
+      "order": 2,
+      "title": {
+        "mn": "JavaScript"
+      },
+      "badgeId": "js-starter",
+      "moduleIds": [
+        "m4-javascript"
+      ]
     }
   ]
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import s from "./learn.module.css";
 
 export function SolutionGate({
   taskId,
@@ -34,13 +35,14 @@ export function SolutionGate({
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <button onClick={request} disabled={busy} style={{ alignSelf: "flex-start", padding: "6px 12px", borderRadius: 6, border: "1px solid var(--border-strong)", background: "var(--surface)", cursor: "pointer", fontSize: 13, color: "var(--text-muted)" }}>
+    <div className={s.hintStack}>
+      <button type="button" className={s.ghostBtn} onClick={request} disabled={busy}>
         Хариулт харах
       </button>
       {locked ? (
-        <span style={{ fontSize: 12, color: "var(--text-subtle)" }}>
-          Хариултыг харахын тулд: {locked.attemptsRequired}+ удаа оролдох ({attempts}), бүх заавар үзэх ({hintsUsed}/{locked.hintsRequired}), {locked.minMinutes}+ минут ажиллах шаардлагатай.
+        <span className={s.gateNote}>
+          Хариултыг харахын тулд: {locked.attemptsRequired}+ удаа оролдох (одоо {attempts}), бүх заавар үзэх ({hintsUsed}/
+          {locked.hintsRequired}), {locked.minMinutes}+ минут ажиллах.
         </span>
       ) : null}
     </div>

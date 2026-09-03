@@ -1,0 +1,218 @@
+{
+  "id": "m4-l2",
+  "moduleId": "m4-javascript",
+  "slug": "data-and-render",
+  "order": 2,
+  "title": {
+    "mn": "Өгөгдлөөс карт үүсгэх"
+  },
+  "why": {
+    "mn": "Одоо Shop.mn дээр бүтээгдэхүүн бүрийн картыг HTML дотор гараар бичсэн байгаа. 100 бүтээгдэхүүн болвол яах вэ? Өгөгдлийг массивт хадгалаад, JavaScript-ээр картуудыг автоматаар үүсгэнэ — жинхэнэ дэлгүүр яг ингэж ажилладаг."
+  },
+  "buildsInProject": "Өгөгдлөөс автоматаар үүсэх бүтээгдэхүүний картууд",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "javascript",
+    "dom"
+  ],
+  "concepts": [
+    "array",
+    "object",
+    "forEach",
+    "createElement",
+    "append"
+  ],
+  "prerequisites": [
+    "m4-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <header>\n      <img src=\"images/logo.png\" alt=\"Shop.mn лого\">\n      <nav>\n        <ul>\n          <li><a href=\"index.html\">Нүүр</a></li>\n          <li><a href=\"cart.html\">Сагс</a></li>\n        </ul>\n      </nav>\n      <span class=\"cart-count\" data-testid=\"cart-count\"></span>\n    </header>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <section class=\"product-grid\" data-testid=\"grid\">\n      </section>\n    </main>\n    <footer>\n      <address>Утас: 7000-0000</address>\n      <p>© 2026 Shop.mn</p>\n    </footer>\n    <script src=\"js/main.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "/* Shop.mn-ийн загвар */\n\nbody {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n}\n\nh1 { font-size: 36px; }\n\nheader {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 8px;\n  padding: 12px 16px;\n}\n\n.cart-count {\n  background-color: #2563eb;\n  color: #ffffff;\n  border-radius: 999px;\n  padding: 2px 10px;\n}\n\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n\n.product-card img { max-width: 100%; height: auto; }\n\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n}\n\n.product-grid {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 16px;\n}\n\n@media (min-width: 768px) {\n  .product-grid { grid-template-columns: 1fr 1fr; }\n  header { flex-direction: row; justify-content: space-between; }\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "js/main.js",
+        "content": "// Shop.mn — JavaScript\n\nconst title = document.querySelector(\"h1\");\ntitle.textContent = \"Shop.mn — Монголын онлайн дэлгүүр\";\n\ndocument.querySelector('[data-testid=\"cart-count\"]').textContent = \"0\";\n\n// энд бичнэ үү\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "js/main.js"
+    ],
+    "openFiles": [
+      "index.html",
+      "js/main.js"
+    ],
+    "activeFile": "js/main.js"
+  },
+  "tasks": [
+    {
+      "id": "m4-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Өгөгдлөөс карт үүсгэх"
+      },
+      "statement": {
+        "mn": "Сүлжээ одоо хоосон байна. `products` нэртэй массив үүсгээд дотор нь 3 бүтээгдэхүүнийг объектоор (`id`, `name`, `price`, `image`) бич. Дараа нь `forEach`-оор давтаж, бүтээгдэхүүн бүрд `article.product-card` үүсгээд `[data-testid=\"grid\"]` дотор нэм. Карт дотор зураг, `<h3>` нэр, `<p class=\"price\">` үнэ, `data-testid=\"add-to-cart\"` бүхий товч байна."
+      },
+      "requirements": [
+        {
+          "mn": "`const products` массив 3 объекттой"
+        },
+        {
+          "mn": "Сүлжээнд 3 карт үүссэн"
+        },
+        {
+          "mn": "Карт бүрд нэр, үнэ, товч байх"
+        },
+        {
+          "mn": "`forEach` ба `createElement` ашигласан"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Хуудсыг ачаалахад 3 бүтээгдэхүүний карт өгөгдлөөс үүсэж гарч ирнэ."
+        }
+      },
+      "targetFile": "js/main.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "js/main.js",
+            "kind": "const",
+            "name": "products"
+          },
+          "onFail": {
+            "mn": "`products` нэртэй массивыг `const`-оор зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"grid\"] article.product-card",
+            "equals": 3
+          },
+          "onFail": {
+            "mn": "Сүлжээнд яг 3 карт үүсэх ёстой. Одоо {actual} байна — массивт 3 бүтээгдэхүүн байгаа эсэх, `forEach` ажиллаж байгаа эсэхээ шалгаарай."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.text",
+          "args": {
+            "selector": ".product-card:nth-of-type(1) h3",
+            "matches": "\\p{L}{3,}"
+          },
+          "onFail": {
+            "mn": "Эхний картын `<h3>` дотор бүтээгдэхүүний нэр алга."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "dom.count",
+          "args": {
+            "selector": ".product-card [data-testid=\"add-to-cart\"]",
+            "equals": 3
+          },
+          "onFail": {
+            "mn": "Карт бүрд `data-testid=\"add-to-cart\"` бүхий товч байх ёстой (нийт 3)."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "js/main.js",
+            "name": "createElement"
+          },
+          "onFail": {
+            "mn": "`document.createElement` ашиглаагүй байна. Картуудыг HTML дотор гараар бус, кодоор үүсгэнэ."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "js/main.js",
+            "name": "forEach"
+          },
+          "onFail": {
+            "mn": "`forEach` ашиглан массиваа давтаагүй байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Массив нь `[ ]`, объект нь `{ }` хаалтаар бичигдэнэ. Бүтээгдэхүүн бүр нэг объект: `{ id: 1, name: \"...\", price: 129000, image: \"...\" }`."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`products.forEach(function (product) { ... })` нь массивын элемент бүр дээр нэг удаа ажиллана. Дотор нь `document.createElement(\"article\")` гэж элемент үүсгээд `.append()`-оор нэмнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Ингэж эхэл — картын доторх элементүүдийг өөрөө гүйцээ:"
+          },
+          "code": "const products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000, image: \"images/deel.jpg\" },\n  /* үлдсэн 2 бүтээгдэхүүнээ нэм */\n];\n\nconst grid = document.querySelector('[data-testid=\"grid\"]');\n\nproducts.forEach(function (product) {\n  const cardEl = document.createElement(\"article\");\n  cardEl.className = \"product-card\";\n  /* зураг, нэр, үнэ, товчоо үүсгээд cardEl-д нэм */\n  grid.append(cardEl);\n});"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "insertAfter",
+            "path": "js/main.js",
+            "anchor": "// энд бичнэ үү",
+            "content": "\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000, image: \"images/deel.jpg\" },\n  { id: 2, name: \"Малгай\", price: 45000, image: \"images/malgai.jpg\" },\n  { id: 3, name: \"Гутал\", price: 89000, image: \"images/gutal.jpg\" },\n];\n\nconst grid = document.querySelector('[data-testid=\"grid\"]');\n\nproducts.forEach(function (product) {\n  const cardEl = document.createElement(\"article\");\n  cardEl.className = \"product-card\";\n\n  const image = document.createElement(\"img\");\n  image.src = product.image;\n  image.alt = product.name;\n\n  const name = document.createElement(\"h3\");\n  name.textContent = product.name;\n\n  const price = document.createElement(\"p\");\n  price.className = \"price\";\n  price.textContent = \"₮ \" + product.price;\n\n  const button = document.createElement(\"button\");\n  button.className = \"btn-add\";\n  button.dataset.testid = \"add-to-cart\";\n  button.textContent = \"Сагсанд хийх\";\n\n  cardEl.append(image, name, price, button);\n  grid.append(cardEl);\n});\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Өгөгдөл (массив) ба дэлгэц (DOM) хоёрыг салгаж бодох нь программчлалын гол зарчим. Өгөгдөл өөрчлөгдөхөд дэлгэцээ дахин зурна — React ч яг энэ санааг автоматжуулдаг."
+        },
+        "xpPenalty": 15
+      },
+      "xp": 25,
+      "estimatedMinutes": 18,
+      "skills": [
+        "javascript",
+        "dom"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 20
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

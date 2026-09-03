@@ -1,5 +1,7 @@
 "use client";
 
+import s from "./learn.module.css";
+
 export interface CheckRow {
   key: string;
   passed: boolean;
@@ -28,29 +30,46 @@ export function ResultPanel({
   isLastTask: boolean;
 }) {
   const firstFailIdx = result.checks.findIndex((c) => !c.passed && c.errorKind !== "infra");
+  const passedCount = result.checks.filter((c) => c.passed).length;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <strong style={{ fontSize: 16, color: result.passed ? "var(--success)" : "var(--text)" }}>
-          {result.feedback.headline}
-        </strong>
-        {result.passed ? <span style={{ marginLeft: "auto", color: "var(--xp)", fontWeight: 600 }}>+{result.xpAwarded} XP</span> : null}
+    <div className={`${s.result} ${result.passed ? s.resultPass : s.resultFail}`} role="status" aria-live="polite">
+      <div className={s.resultHead}>
+        <span>{result.feedback.headline}</span>
+        {result.passed ? (
+          <span className={s.xpBadge}>+{result.xpAwarded} XP</span>
+        ) : (
+          <span className={s.xpBadge} style={{ color: "var(--text-muted)" }}>
+            {passedCount}/{result.checks.length}
+          </span>
+        )}
       </div>
 
-      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
+      <ul className={s.checkList}>
         {result.checks.map((c, i) => {
           const expanded = !c.passed && i === firstFailIdx;
           return (
-            <li key={c.key} style={{ fontSize: 13.5 }}>
-              <div style={{ display: "flex", gap: 8, color: c.passed ? "var(--success)" : "var(--danger)" }}>
-                <span aria-hidden>{c.passed ? "✓" : "✗"}</span>
-                <span style={{ color: "var(--text)" }}>{c.passed ? "Шалгалт давлаа" : c.onFail ?? "Шалгалт давсангүй"}</span>
+            <li key={c.key} className={c.passed ? s.checkPass : s.checkFail}>
+              <div className={s.checkRow}>
+                <span className={s.checkMark} aria-hidden>
+                  {c.passed ? "✓" : "✗"}
+                </span>
+                <span style={{ color: c.passed ? "var(--text-muted)" : "var(--text)" }}>
+                  {c.passed ? "Шалгалт давлаа" : (c.onFail ?? "Шалгалт давсангүй")}
+                </span>
               </div>
               {expanded && (c.actual || c.expected) ? (
-                <div style={{ marginLeft: 20, marginTop: 4, fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-muted)" }}>
-                  {c.actual ? <div>Таны үр дүн: <b style={{ color: "var(--text)" }}>{c.actual}</b></div> : null}
-                  {c.expected ? <div>Хүлээгдсэн: <b style={{ color: "var(--text)" }}>{c.expected}</b></div> : null}
+                <div className={s.checkDetail}>
+                  {c.actual ? (
+                    <span>
+                      Таны үр дүн: <b>{c.actual}</b>
+                    </span>
+                  ) : null}
+                  {c.expected ? (
+                    <span>
+                      Хүлээгдсэн: <b>{c.expected}</b>
+                    </span>
+                  ) : null}
                 </div>
               ) : null}
             </li>
@@ -58,28 +77,17 @@ export function ResultPanel({
         })}
       </ul>
 
-      <div style={{ display: "flex", gap: 8 }}>
+      <div className={s.resultActions}>
         {result.passed ? (
-          <button onClick={onNext} style={btn("primary")}>
+          <button type="button" className={s.primaryBtn} onClick={onNext}>
             {isLastTask ? "Хичээл дуусгах →" : "Дараагийн даалгавар →"}
           </button>
         ) : (
-          <button onClick={onDismiss} style={btn("secondary")}>Дахин оролдох</button>
+          <button type="button" className={s.ghostBtn} onClick={onDismiss}>
+            Дахин оролдох
+          </button>
         )}
       </div>
     </div>
   );
-}
-
-function btn(variant: "primary" | "secondary"): React.CSSProperties {
-  return {
-    padding: "8px 16px",
-    borderRadius: 6,
-    border: variant === "primary" ? 0 : "1px solid var(--border-strong)",
-    background: variant === "primary" ? "var(--accent)" : "var(--surface)",
-    color: variant === "primary" ? "var(--on-accent)" : "var(--text)",
-    cursor: "pointer",
-    fontSize: 13,
-    fontWeight: 500,
-  };
 }

@@ -56,6 +56,9 @@ interface Step {
   type?: { selector: string; text: string };
   waitFor?: string;
   expectText?: { selector: string; equals?: string; contains?: string };
+  /** Assert how many elements match — proves list/state logic (e.g. a repeated
+   *  add must update a quantity, not append a second row). */
+  expectCount?: { selector: string; equals: number };
   expectEval?: { expr: string; equals: unknown };
 }
 
@@ -69,8 +72,15 @@ async function waitFor(ctx: CheckerContext, selector: string, capMs = 3000): Pro
   return null;
 }
 
-registerChecker("js.interaction", async (args, ctx) => {
+registerChecker("js.interaction", async (args, outerCtx) => {
   const steps = (args.steps as Step[]) ?? [];
+  // Each interaction check is an ISOLATED scenario: re-render the page so
+  // clicks from a previous check never leak into this one. (Without this,
+  // several interaction checks on one task silently accumulate state.)
+  const ctx =
+    args.fresh === false || !outerCtx.renderAt
+      ? outerCtx
+      : await outerCtx.renderAt({ width: 1280, height: 800 });
   const w = win(ctx);
   for (const [i, step] of steps.entries()) {
     if (step.click !== undefined) {
@@ -94,6 +104,14 @@ registerChecker("js.interaction", async (args, ctx) => {
       }
       if (step.expectText.contains !== undefined && !text.includes(step.expectText.contains)) {
         return fail(text || "(none)", `contains "${step.expectText.contains}"`);
+      }
+    } else if (step.expectCount !== undefined) {
+      const n = doc(ctx).querySelectorAll(step.expectCount.selector).length;
+      if (n !== step.expectCount.equals) {
+        return fail(
+          `${step.expectCount.selector}: ${n}`,
+          `${step.expectCount.selector}: ${step.expectCount.equals}`,
+        );
       }
     } else if (step.expectEval !== undefined) {
       const result = evalInPage(ctx, undefined, step.expectEval.expr);

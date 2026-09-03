@@ -19,5 +19,19 @@
       "mn": "Responsive"
     },
     "order": 3
+  },
+  {
+    "id": "javascript",
+    "title": {
+      "mn": "JavaScript"
+    },
+    "order": 4
+  },
+  {
+    "id": "dom",
+    "title": {
+      "mn": "DOM"
+    },
+    "order": 5
   }
 ]
