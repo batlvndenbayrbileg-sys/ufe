@@ -1,0 +1,18 @@
+{
+  "id": "m3-responsive",
+  "stageId": "s1",
+  "order": 3,
+  "title": {
+    "mn": "Responsive: бүх төхөөрөмж дээр"
+  },
+  "description": {
+    "mn": "Shop.mn-ийг утас, таблет, компьютер бүх дэлгэцэд зөв харагдуулна."
+  },
+  "estimatedHours": 2,
+  "lessons": [
+    "m3-l1",
+    "m3-l2",
+    "m3-l3",
+    "m3-l4"
+  ]
+}

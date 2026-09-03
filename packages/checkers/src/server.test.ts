@@ -133,3 +133,36 @@ describe("js.* via happy-dom runner", () => {
     expect((await one(cartApp, { type: "js.consoleClean", args: {} })).passed).toBe(true);
   });
 });
+
+describe("css.responsive (media queries)", () => {
+  const responsive: FileSet = {
+    "index.html": { content: `<!doctype html><html><head><link rel="stylesheet" href="s.css"></head><body><section class="grid"></section></body></html>` },
+    "s.css": { content: `.grid{display:grid;grid-template-columns:1fr}\n@media (min-width:768px){.grid{grid-template-columns:1fr 1fr}}` },
+  };
+
+  it("evaluates one column on mobile and two on desktop", async () => {
+    const mobile = await one(responsive, {
+      type: "css.responsive",
+      args: { viewport: { width: 375 }, then: [{ id: "m", type: "css.layout", args: { selector: ".grid", mode: "grid", columns: 1 } }] },
+    });
+    expect(mobile.passed).toBe(true);
+
+    const desktop = await one(responsive, {
+      type: "css.responsive",
+      args: { viewport: { width: 1024 }, then: [{ id: "d", type: "css.layout", args: { selector: ".grid", mode: "grid", columns: 2 } }] },
+    });
+    expect(desktop.passed).toBe(true);
+  });
+
+  it("fails when the breakpoint is missing", async () => {
+    const noMq: FileSet = {
+      "index.html": responsive["index.html"]!,
+      "s.css": { content: `.grid{display:grid;grid-template-columns:1fr}` },
+    };
+    const desktop = await one(noMq, {
+      type: "css.responsive",
+      args: { viewport: { width: 1024 }, then: [{ id: "d", type: "css.layout", args: { selector: ".grid", mode: "grid", columns: 2 } }] },
+    });
+    expect(desktop.passed).toBe(false);
+  });
+});

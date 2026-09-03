@@ -23,6 +23,24 @@ export async function runChecksOnFiles(
   options: RunOptions = {},
 ): Promise<CheckResult[]> {
   const html = assembleHtml(files, options.entry ?? "index.html");
+  // Extra windows opened by css.responsive; closed with the main one.
+  const extraWindows: HappyWindow[] = [];
+
+  const renderAt = async (viewport: { width: number; height: number }): Promise<CheckerContext> => {
+    const w = new HappyWindow({ width: viewport.width, height: viewport.height });
+    extraWindows.push(w);
+    w.document.write(html);
+    await w.happyDOM.waitUntilComplete().catch(() => {});
+    return {
+      document: w.document as unknown as Document,
+      window: w as unknown as Window & typeof globalThis,
+      files,
+      getComputedStyle: (el) => w.getComputedStyle(el as never) as unknown as CSSStyleDeclaration,
+      consoleErrors: [],
+      renderAt,
+    };
+  };
+
   const window = new HappyWindow({
     width: options.viewport?.width ?? 1280,
     height: options.viewport?.height ?? 800,
@@ -51,10 +69,15 @@ export async function runChecksOnFiles(
       getComputedStyle: (el) =>
         window.getComputedStyle(el as never) as unknown as CSSStyleDeclaration,
       consoleErrors,
+      renderAt,
     };
 
     return await runChecks(defs, ctx);
   } finally {
+    for (const w of extraWindows) {
+      await w.happyDOM.abort().catch(() => {});
+      w.close();
+    }
     await window.happyDOM.abort();
     window.close();
   }

@@ -1,5 +1,5 @@
-import { registerChecker } from "../registry";
-import { fail, pass, type CheckerContext } from "../types";
+import { registerChecker, runChecks } from "../registry";
+import { fail, pass, type CheckDef, type CheckerContext } from "../types";
 
 function gcs(ctx: CheckerContext, el: Element): CSSStyleDeclaration {
   if (ctx.getComputedStyle) return ctx.getComputedStyle(el);
@@ -119,6 +119,31 @@ registerChecker("css.noHardcoded", (args, ctx) => {
   return offenders.length === 0
     ? pass()
     : fail(`literal value for ${offenders.join(", ")}`, "CSS custom properties (var(--…))");
+});
+
+// ── css.responsive ───────────────────────────────────────────────────────────
+// Re-renders the workspace at a viewport and runs child checks there, so media
+// queries are actually evaluated (docs/blueprint/05 §5.2).
+registerChecker("css.responsive", async (args, ctx) => {
+  const viewport = args.viewport as { width: number; height?: number } | undefined;
+  const then = (args.then as CheckDef[]) ?? [];
+  if (!viewport?.width) return fail("no viewport", "args.viewport.width");
+  if (!ctx.renderAt) {
+    return { passed: false, errorKind: "infra", raw: "responsive checks need the server runner" };
+  }
+
+  const scoped = await ctx.renderAt({ width: viewport.width, height: viewport.height ?? 800 });
+  const results = await runChecks(then, scoped);
+  const failures = results.filter((r) => !r.passed && r.errorKind !== "infra");
+
+  if (failures.length === 0) {
+    return pass({ actual: `${viewport.width}px дээр ${results.length} шалгалт давлаа` });
+  }
+  const first = failures[0]!;
+  return fail(
+    `${viewport.width}px: ${first.actual ?? "тохирохгүй"}`,
+    `${viewport.width}px: ${first.expected ?? "хүлээгдсэн утга"}`,
+  );
 });
 
 // ── css.box (geometry — truthful in the browser; happy-dom has no layout) ─────

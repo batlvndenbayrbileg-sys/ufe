@@ -1,0 +1,186 @@
+{
+  "id": "m3-l4",
+  "moduleId": "m3-responsive",
+  "slug": "responsive-header",
+  "order": 4,
+  "title": {
+    "mn": "Header-ийг утсанд тохируулах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн header дотор лого, цэс хоёр нэг эгнээнд байвал утасны нарийн дэлгэцэд шахагдана. Утсан дээр дээрээс доош, том дэлгэцэд зэрэгцүүлж байрлуулъя."
+  },
+  "buildsInProject": "Header-ийн responsive байрлал",
+  "difficulty": "beginner",
+  "estimatedMinutes": 14,
+  "skills": [
+    "css",
+    "responsive"
+  ],
+  "concepts": [
+    "flex-direction",
+    "media-query",
+    "mobile-first"
+  ],
+  "prerequisites": [
+    "m3-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <header>\n      <img src=\"images/logo.png\" alt=\"Shop.mn лого\">\n      <nav>\n        <ul>\n          <li><a href=\"index.html\">Нүүр</a></li>\n          <li><a href=\"cart.html\">Сагс</a></li>\n        </ul>\n      </nav>\n    </header>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <section class=\"product-grid\">\n        <article class=\"product-card\">\n          <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n          <h3>Монгол дээл</h3>\n          <p class=\"price\">₮ 129,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n        <article class=\"product-card\">\n          <img src=\"images/malgai.jpg\" alt=\"Малгай\">\n          <h3>Малгай</h3>\n          <p class=\"price\">₮ 45,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n      </section>\n    </main>\n    <footer>\n      <address>Утас: 7000-0000</address>\n      <p>© 2026 Shop.mn</p>\n    </footer>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "/* Shop.mn-ийн загвар */\n\nbody {\n  background-color: #f5f6f8;\n  color: #18181b;\n}\n\nbody {\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n}\n\nh1 {\n  font-size: 36px;\n}\n\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n}\n\n.product-grid {\n  /* Mobile-first: утсан дээр нэг багана */\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 16px;\n}\n\nheader {\n  /* Mobile-first: утсан дээр дээрээс доош */\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 8px;\n  padding: 12px 16px;\n}\n\n@media (min-width: 768px) {\n  .product-grid {\n    grid-template-columns: 1fr 1fr;\n  }\n}\n\n.product-card img {\n  max-width: 100%;\n  height: auto;\n}\n\n/* энд бичнэ үү */\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css"
+    ],
+    "openFiles": [
+      "index.html",
+      "styles/main.css"
+    ],
+    "activeFile": "styles/main.css"
+  },
+  "tasks": [
+    {
+      "id": "m3-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Header-ийг утсанд тохируулах"
+      },
+      "statement": {
+        "mn": "Header-ийн суурь дүрэм одоо `flex-direction: column` (утсанд зориулсан). CSS-ийн төгсгөлд media query нэмээд, `768px`-ээс өргөн дэлгэцэд `header`-ийг `row` болго."
+      },
+      "requirements": [
+        {
+          "mn": "375px дээр `flex-direction: column`"
+        },
+        {
+          "mn": "1024px дээр `flex-direction: row`"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Mobile горимд лого дээр, цэс доор; Desktop горимд хоёулаа нэг эгнээнд."
+        }
+      },
+      "targetFile": "styles/main.css",
+      "marker": "/* энд бичнэ үү */",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.responsive",
+          "args": {
+            "viewport": {
+              "width": 375
+            },
+            "then": [
+              {
+                "id": "m",
+                "type": "css.computed",
+                "args": {
+                  "selector": "header",
+                  "prop": "flex-direction",
+                  "equals": "column"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Утасны өргөнд header нь `column` хэвээр байх ёстой. Суурь дүрмээ бүү өөрчил."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "css.responsive",
+          "args": {
+            "viewport": {
+              "width": 1024
+            },
+            "then": [
+              {
+                "id": "d",
+                "type": "css.computed",
+                "args": {
+                  "selector": "header",
+                  "prop": "flex-direction",
+                  "equals": "row"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Өргөн дэлгэцэд header нь `row` болох ёстой. `@media (min-width: 768px)` дотор `flex-direction: row` зааж өгсөн үү?"
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Өмнөх хичээл дээрх media query-тэй яг ижил бүтэц. Зөвхөн дотор нь өөр сонгогч, өөр шинж бичнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`flex-direction` нь `row` (хэвтээ) эсвэл `column` (босоо) утга авна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц нь ийм, дотор талыг өөрөө гүйцээ:"
+          },
+          "code": "@media (min-width: 768px) {\n  header {\n    /* flex-direction-оо энд зааж өг */\n  }\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "insertAfter",
+            "path": "styles/main.css",
+            "anchor": "/* энд бичнэ үү */",
+            "content": "\n@media (min-width: 768px) {\n  header {\n    flex-direction: row;\n  }\n}"
+          }
+        ],
+        "explanation": {
+          "mn": "Нэг media query-г олон сонгогчид ашиглаж болно. Ихэвчлэн breakpoint-уудаа цөөхөн байлгаж, тухайн цэг дээр хэрэгтэй бүх өөрчлөлтөө нэг дор бичдэг."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "css",
+        "responsive"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 15,
+    "badge": "responsive-master",
+    "milestone": true,
+    "celebration": "large"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

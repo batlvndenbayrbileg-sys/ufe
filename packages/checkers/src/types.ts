@@ -33,6 +33,13 @@ export interface CheckerContext {
   getComputedStyle?: (el: Element, pseudo?: string | null) => CSSStyleDeclaration;
   /** Console errors captured during load + interaction. */
   consoleErrors: string[];
+  /**
+   * Re-render the same workspace at another viewport and return a fresh
+   * context — powers css.responsive (media-query checks). Provided by the
+   * server runner; absent in the browser harness (the host owns the iframe
+   * size), where responsive checks report `infra` and defer to the server.
+   */
+  renderAt?: (viewport: { width: number; height: number }) => Promise<CheckerContext>;
   /** Optional per-check log sink (author debugging). */
   log?: (msg: string) => void;
 }

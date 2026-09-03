@@ -19,7 +19,8 @@
       "badgeId": "first-website",
       "moduleIds": [
         "m1-html",
-        "m2-css"
+        "m2-css",
+        "m3-responsive"
       ]
     }
   ]

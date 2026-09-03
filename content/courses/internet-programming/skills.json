@@ -1,4 +1,23 @@
 [
-  { "id": "html", "title": { "mn": "HTML" }, "order": 1 },
-  { "id": "css", "title": { "mn": "CSS" }, "order": 2 }
+  {
+    "id": "html",
+    "title": {
+      "mn": "HTML"
+    },
+    "order": 1
+  },
+  {
+    "id": "css",
+    "title": {
+      "mn": "CSS"
+    },
+    "order": 2
+  },
+  {
+    "id": "responsive",
+    "title": {
+      "mn": "Responsive"
+    },
+    "order": 3
+  }
 ]
