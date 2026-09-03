@@ -2,8 +2,19 @@
   "id": "m1-html",
   "stageId": "s1",
   "order": 1,
-  "title": { "mn": "HTML: Shop.mn-ийн араг яс" },
-  "description": { "mn": "Эхний хуудас, гарчиг, бүтээгдэхүүний карт." },
-  "estimatedHours": 6,
-  "lessons": ["m1-l1", "m1-l2", "m1-l5"]
+  "title": {
+    "mn": "HTML: Shop.mn-ийн араг яс"
+  },
+  "description": {
+    "mn": "Хоосон файлаас эхлээд Shop.mn-ийн нүүр хуудсыг бүтээнэ: гарчиг, бүтээгдэхүүний карт, сүлжээ, footer, header."
+  },
+  "estimatedHours": 3,
+  "lessons": [
+    "m1-l1",
+    "m1-l2",
+    "m1-l3",
+    "m1-l4",
+    "m1-l5",
+    "m1-l6"
+  ]
 }

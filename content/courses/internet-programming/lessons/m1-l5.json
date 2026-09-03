@@ -1,18 +1,22 @@
 {
   "id": "m1-l5",
   "moduleId": "m1-html",
-  "slug": "product-card",
+  "slug": "footer",
   "order": 5,
-  "title": { "mn": "Бүтээгдэхүүний карт хийцгээе" },
-  "why": { "mn": "Shop.mn дээр олон бүтээгдэхүүн ижил хэлбэрийн картад харагдана. Эхлээд нэгийг сайн хийе." },
-  "buildsInProject": "Нүүр хуудасны бүтээгдэхүүний карт",
+  "title": { "mn": "Footer буюу хөл хэсэг" },
+  "why": { "mn": "Дэлгүүр бүрийн хамгийн доод талд холбоо барих мэдээлэл, эрхийн тайлбар байдаг. Shop.mn-д ч мөн адил footer нэмье." },
+  "buildsInProject": "Нүүр хуудасны footer",
+  "difficulty": "beginner",
+  "estimatedMinutes": 7,
   "skills": ["html"],
-  "concepts": ["article", "class"],
-  "prerequisites": ["m1-l2"],
+  "concepts": ["footer", "address", "semantic-html"],
+  "prerequisites": ["m1-l4"],
   "execution": { "tier": 1, "runtime": "static", "entry": "index.html", "autoRun": true },
   "workspace": {
-    "patch": [{ "op": "create", "path": "index.html", "content": "<main>\n  <!-- энд бичнэ үү -->\n</main>\n" }],
-    "visibleFiles": ["index.html", "styles/main.css"],
+    "patch": [
+      { "op": "create", "path": "index.html", "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Shop.mn</title>\n  </head>\n  <body>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <section class=\"product-grid\">\n        <article class=\"product-card\">\n          <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n          <h3>Монгол дээл</h3>\n          <p class=\"price\">₮ 129,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n        <article class=\"product-card\">\n          <img src=\"images/malgai.jpg\" alt=\"Малгай\">\n          <h3>Малгай</h3>\n          <p class=\"price\">₮ 45,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n      </section>\n    </main>\n    <!-- энд бичнэ үү -->\n  </body>\n</html>\n" }
+    ],
+    "visibleFiles": ["index.html"],
     "openFiles": ["index.html"],
     "activeFile": "index.html"
   },
@@ -20,36 +24,37 @@
     {
       "id": "m1-l5-t1",
       "order": 1,
-      "title": { "mn": "Картын араг ясыг үүсгэ" },
-      "statement": { "mn": "`<main>` дотор `<article>` элемент нэмээд, түүнд `product-card` class өг." },
-      "requirements": [{ "mn": "`<article>` байх" }, { "mn": "`class=\"product-card\"` байх" }],
-      "expected": { "description": { "mn": "Одоохондоо юу ч харагдахгүй — карт хоосон хайрцаг." } },
+      "title": { "mn": "Footer нэм" },
+      "statement": { "mn": "`</main>`-ийн дараа `<footer>` элемент нэм. Дотор нь холбоо барих утсыг `<address>`-д, эрхийн тайлбарыг `<p>`-д бич. Тайлбарт `©` тэмдэгт оруул." },
+      "requirements": [
+        { "mn": "`<footer>` элемент байх" },
+        { "mn": "`<footer>` дотор `<address>` байх" },
+        { "mn": "`©` тэмдэгт агуулсан байх" }
+      ],
+      "expected": { "description": { "mn": "Хуудасны доод талд холбоо барих мэдээлэл, эрхийн тайлбар харагдана." } },
       "targetFile": "index.html",
       "marker": "<!-- энд бичнэ үү -->",
       "checks": [
-        {
-          "id": "c1",
-          "type": "dom.exists",
-          "args": { "selector": "main article.product-card", "min": 1 },
-          "onFail": { "mn": "`product-card` class-тай `<article>` олдсонгүй. Зураас (-) байгаа эсэхээ шалга." }
-        }
+        { "id": "c1", "type": "dom.exists", "args": { "selector": "footer address" }, "onFail": { "mn": "`<footer>` дотроос `<address>` олдсонгүй. `<address>` нь холбоо барих мэдээллийг илэрхийлдэг." } },
+        { "id": "c2", "type": "dom.text", "args": { "selector": "footer", "matches": "©" }, "onFail": { "mn": "`<footer>` дотор `©` тэмдэгт бүхий эрхийн тайлбар алга. Тэмдэгтийг хуулж болно: ©" } },
+        { "id": "c3", "type": "dom.order", "args": { "selectors": ["main", "footer"] }, "onFail": { "mn": "`<footer>` нь `<main>`-ийн ДАРАА байх ёстой." } }
       ],
       "hints": [
-        { "level": 1, "xpCost": 0, "text": { "mn": "`<article>` бол бие даасан агуулгыг илэрхийлдэг." } },
-        { "level": 2, "xpCost": 1, "text": { "mn": "Class-ийг нээх tag дотор бичнэ: `class=\"...\"`." } },
-        { "level": 3, "xpCost": 3, "text": { "mn": "Ингэж эхэл:" }, "code": "<article class=\"pro" }
+        { "level": 1, "xpCost": 0, "text": { "mn": "`<footer>` бол хуудасны хөл хэсгийг илэрхийлэх semantic элемент. Түүнийг `</main>`-ийн дараа бич." } },
+        { "level": 2, "xpCost": 1, "text": { "mn": "Дотор нь `<address>Утас: ...</address>` ба `<p>© 2026 Shop.mn</p>` гэсэн хоёр мөр бич." } },
+        { "level": 3, "xpCost": 3, "text": { "mn": "Эхлэлийг нь өглөө — эрхийн тайлбарыг өөрөө нэм:" }, "code": "<footer>\n  <address>Утас: 7000-0000</address>\n  <!-- © тэмдэгттэй эрхийн тайлбарыг энд нэм -->\n</footer>" }
       ],
       "solution": {
-        "patch": [{ "op": "insertAfter", "path": "index.html", "anchor": "<!-- энд бичнэ үү -->", "content": "<article class=\"product-card\"></article>" }],
-        "explanation": { "mn": "`<article>` нь бие даан утга агуулах хэсгийг заана." },
+        "patch": [{ "op": "insertAfter", "path": "index.html", "anchor": "<!-- энд бичнэ үү -->", "content": "\n    <footer>\n      <address>Утас: 7000-0000</address>\n      <p>© 2026 Shop.mn</p>\n    </footer>" }],
+        "explanation": { "mn": "`<footer>`, `<address>` зэрэг semantic элементүүд нь хуудасны утга агуулгыг browser болон хайлтын системд ойлгомжтой болгодог." },
         "xpPenalty": 6
       },
       "xp": 10,
-      "estimatedMinutes": 4,
+      "estimatedMinutes": 5,
       "skills": ["html"]
     }
   ],
-  "completion": { "xp": 15, "badge": "ui-builder" },
+  "completion": { "xp": 15 },
   "status": "published",
   "version": 1,
   "authors": ["delgermaa"]

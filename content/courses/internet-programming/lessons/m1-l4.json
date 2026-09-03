@@ -1,0 +1,60 @@
+{
+  "id": "m1-l4",
+  "moduleId": "m1-html",
+  "slug": "product-grid",
+  "order": 4,
+  "title": { "mn": "Хоёр дахь бүтээгдэхүүн" },
+  "why": { "mn": "Дэлгүүрт нэг л бүтээгдэхүүн байвал жаахан хоосон. Shop.mn-ийн сүлжээнд дахин нэг карт нэмж, олон бүтээгдэхүүн хэрхэн зэрэгцэн харагдахыг үзье." },
+  "buildsInProject": "Бүтээгдэхүүний сүлжээнд 2 дахь карт",
+  "difficulty": "beginner",
+  "estimatedMinutes": 8,
+  "skills": ["html"],
+  "concepts": ["article", "repetition"],
+  "prerequisites": ["m1-l3"],
+  "execution": { "tier": 1, "runtime": "static", "entry": "index.html", "autoRun": true },
+  "workspace": {
+    "patch": [
+      { "op": "create", "path": "index.html", "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Shop.mn</title>\n  </head>\n  <body>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <section class=\"product-grid\">\n        <article class=\"product-card\">\n          <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n          <h3>Монгол дээл</h3>\n          <p class=\"price\">₮ 129,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n        <!-- энд бичнэ үү -->\n      </section>\n    </main>\n  </body>\n</html>\n" }
+    ],
+    "visibleFiles": ["index.html"],
+    "openFiles": ["index.html"],
+    "activeFile": "index.html"
+  },
+  "tasks": [
+    {
+      "id": "m1-l4-t1",
+      "order": 1,
+      "title": { "mn": "Дахин нэг карт нэм" },
+      "statement": { "mn": "Эхний картыг хараад, яг адилхан бүтэцтэй 2 дахь картыг нэм. Энэ удаад: нэр нь `Малгай`, үнэ `₮ 45,000`, зураг `images/malgai.jpg`." },
+      "requirements": [
+        { "mn": "Нийт 2 `product-card` байх" },
+        { "mn": "2 дахь картын нэр `Малгай`" }
+      ],
+      "expected": { "description": { "mn": "Хоёр карт зэрэгцэн (эсвэл дараалан) харагдана." } },
+      "targetFile": "index.html",
+      "marker": "<!-- энд бичнэ үү -->",
+      "checks": [
+        { "id": "c1", "type": "dom.count", "args": { "selector": "section.product-grid article.product-card", "equals": 2 }, "onFail": { "mn": "`.product-grid` дотор яг 2 `product-card` байх ёстой. Одоо {actual} байна." } },
+        { "id": "c2", "type": "dom.text", "args": { "selector": "article.product-card:nth-of-type(2) h3", "contains": "Малгай" }, "onFail": { "mn": "2 дахь картын `<h3>` дотор `Малгай` гэж бичээгүй байна." } },
+        { "id": "c3", "type": "dom.exists", "args": { "selector": "article.product-card:nth-of-type(2) button[data-testid=\"add-to-cart\"]" }, "onFail": { "mn": "2 дахь картад ч `data-testid=\"add-to-cart\"` бүхий товч байх ёстой." } }
+      ],
+      "hints": [
+        { "level": 1, "xpCost": 0, "text": { "mn": "Хамгийн хялбар нь: эхний `<article>` … `</article>`-ийг бүхэлд нь хуулж, доор нь буулгаад утгыг нь өөрчлөх." } },
+        { "level": 2, "xpCost": 1, "text": { "mn": "Хуулсны дараа `Монгол дээл` → `Малгай`, `₮ 129,000` → `₮ 45,000`, `deel.jpg` → `malgai.jpg` болго." } },
+        { "level": 3, "xpCost": 3, "text": { "mn": "Эхлэлийг нь өглөө — үлдсэн 3 мөрийг өөрөө гүйцээ:" }, "code": "<article class=\"product-card\">\n  <img src=\"images/malgai.jpg\" alt=\"Малгай\">\n  <!-- h3 нэр, p.price үнэ, button товчийг энд нэм -->\n</article>" }
+      ],
+      "solution": {
+        "patch": [{ "op": "insertAfter", "path": "index.html", "anchor": "<!-- энд бичнэ үү -->", "content": "\n        <article class=\"product-card\">\n          <img src=\"images/malgai.jpg\" alt=\"Малгай\">\n          <h3>Малгай</h3>\n          <p class=\"price\">₮ 45,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>" }],
+        "explanation": { "mn": "Одоохондоо картуудыг гараар хууллаа. Хожим React дээр нэг картыг бичээд өгөгдлийг давтаж олон карт автоматаар гаргаж сурна." },
+        "xpPenalty": 6
+      },
+      "xp": 10,
+      "estimatedMinutes": 6,
+      "skills": ["html"]
+    }
+  ],
+  "completion": { "xp": 15 },
+  "status": "published",
+  "version": 1,
+  "authors": ["delgermaa"]
+}

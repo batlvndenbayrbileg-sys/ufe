@@ -4,14 +4,18 @@
   "slug": "first-page",
   "order": 1,
   "title": { "mn": "Анхны хуудас" },
-  "why": { "mn": "Энэ бол Shop.mn-ийн эхний мөр. Эндээс бүх дэлгүүр эхэлнэ." },
+  "why": { "mn": "Энэ бол Shop.mn-ийн эхний мөр. Одоо хоосон хуудас дээр эхний гарчгаа бичнэ. 6 хичээлийн дараа энэ хуудас бүрэн дэлгүүрийн нүүр болно." },
   "buildsInProject": "Нүүр хуудасны гарчиг",
+  "difficulty": "beginner",
+  "estimatedMinutes": 8,
   "skills": ["html"],
-  "concepts": ["doctype", "h1"],
+  "concepts": ["doctype", "h1", "main"],
   "prerequisites": [],
   "execution": { "tier": 1, "runtime": "static", "entry": "index.html", "autoRun": true },
   "workspace": {
-    "patch": [{ "op": "create", "path": "index.html", "content": "<!-- энд бичнэ үү -->\n" }],
+    "patch": [
+      { "op": "create", "path": "index.html", "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Shop.mn</title>\n  </head>\n  <body>\n    <main>\n      <!-- энд бичнэ үү -->\n    </main>\n  </body>\n</html>\n" }
+    ],
     "visibleFiles": ["index.html"],
     "openFiles": ["index.html"],
     "activeFile": "index.html"
@@ -21,31 +25,27 @@
       "id": "m1-l1-t1",
       "order": 1,
       "title": { "mn": "Гарчиг нэм" },
-      "statement": { "mn": "`index.html` дотор `<h1>` элемент нэмээд, дотор нь Shop.mn гэж бич." },
-      "requirements": [{ "mn": "`<h1>` байх" }, { "mn": "Текст нь Shop.mn" }],
-      "expected": { "description": { "mn": "Дэлгэц дээр том Shop.mn гарчиг харагдана." } },
+      "statement": { "mn": "`<main>` дотор `<h1>` элемент нэмээд, дотор нь `Shop.mn` гэж бич. `<h1>` бол хуудасны хамгийн том гарчиг." },
+      "requirements": [{ "mn": "`<h1>` элемент байх" }, { "mn": "Текст нь `Shop.mn`" }],
+      "expected": { "description": { "mn": "Preview дээр том `Shop.mn` гарчиг харагдана." } },
       "targetFile": "index.html",
       "marker": "<!-- энд бичнэ үү -->",
       "checks": [
-        {
-          "id": "c1",
-          "type": "dom.text",
-          "args": { "selector": "h1", "contains": "Shop.mn" },
-          "onFail": { "mn": "`<h1>` дотроос Shop.mn текст олдсонгүй. Бичлэгээ шалгаарай." }
-        }
+        { "id": "c1", "type": "dom.text", "args": { "selector": "main h1", "contains": "Shop.mn" }, "onFail": { "mn": "`<main>` дотроос `Shop.mn` текст бүхий `<h1>` олдсонгүй. Гарчгаа `<main>`-ийн дотор бичсэн эсэхээ шалгаарай." } },
+        { "id": "c2", "type": "html.valid", "args": {}, "onFail": { "mn": "HTML бүтцэд алдаа байна. `<h1>` … `</h1>` гэж нээж хаасан эсэхээ шалгаарай." } }
       ],
       "hints": [
-        { "level": 1, "xpCost": 0, "text": { "mn": "`<h1>` бол хамгийн том гарчгийн элемент." } },
-        { "level": 2, "xpCost": 1, "text": { "mn": "Нээх ба хаах tag хэрэгтэй: `<h1>` ... `</h1>`." } },
-        { "level": 3, "xpCost": 3, "text": { "mn": "Ингэж эхэл:" }, "code": "<h1>Sh" }
+        { "level": 1, "xpCost": 0, "text": { "mn": "`<h1>` бол гарчгийн элемент. Түүнийг `<main>` … `</main>`-ийн дотор бичнэ." } },
+        { "level": 2, "xpCost": 1, "text": { "mn": "Элемент нээх ба хаах хоёр хэсэгтэй: `<h1>` эхэлж, `</h1>` төгсгөнө. Хооронд нь текст бичнэ." } },
+        { "level": 3, "xpCost": 3, "text": { "mn": "Бүтэц нь ийм. Дотор нь дэлгүүрийн нэрийг өөрөө бич:" }, "code": "<h1>ЭНД НЭРИЙГ БИЧ</h1>" }
       ],
       "solution": {
-        "patch": [{ "op": "insertAfter", "path": "index.html", "anchor": "<!-- энд бичнэ үү -->", "content": "<h1>Shop.mn</h1>" }],
-        "explanation": { "mn": "`<h1>` нь хуудасны хамгийн чухал гарчгийг илэрхийлнэ." },
+        "patch": [{ "op": "insertAfter", "path": "index.html", "anchor": "<!-- энд бичнэ үү -->", "content": "\n      <h1>Shop.mn</h1>" }],
+        "explanation": { "mn": "`<h1>` нь хуудасны хамгийн чухал гарчгийг илэрхийлдэг бөгөөд хуудсанд ганц удаа тавихыг зөвлөдөг." },
         "xpPenalty": 6
       },
       "xp": 10,
-      "estimatedMinutes": 3,
+      "estimatedMinutes": 5,
       "skills": ["html"]
     }
   ],

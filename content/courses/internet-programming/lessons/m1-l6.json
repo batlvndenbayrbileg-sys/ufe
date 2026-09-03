@@ -1,0 +1,65 @@
+{
+  "id": "m1-l6",
+  "moduleId": "m1-html",
+  "slug": "checkpoint-header",
+  "order": 6,
+  "title": { "mn": "Checkpoint: Header ба бүтэн бүтэц" },
+  "why": { "mn": "Shop.mn-ийн нүүр хуудсанд дутуу нэг зүйл байна — дээд талын header. Логотип, цэсээ нэмээд хуудсаа бүрэн болгоё. Энэ бол модулийн шалгалт: бүх бүтэц зөв эсэхийг нэг дор шалгана." },
+  "buildsInProject": "Нүүр хуудасны header ба бүрэн бүтэц",
+  "difficulty": "beginner",
+  "estimatedMinutes": 12,
+  "skills": ["html"],
+  "concepts": ["header", "nav", "ul", "li", "a"],
+  "prerequisites": ["m1-l5"],
+  "execution": { "tier": 1, "runtime": "static", "entry": "index.html", "autoRun": true },
+  "workspace": {
+    "patch": [
+      { "op": "create", "path": "index.html", "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Shop.mn</title>\n  </head>\n  <body>\n    <!-- энд бичнэ үү -->\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <section class=\"product-grid\">\n        <article class=\"product-card\">\n          <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n          <h3>Монгол дээл</h3>\n          <p class=\"price\">₮ 129,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n        <article class=\"product-card\">\n          <img src=\"images/malgai.jpg\" alt=\"Малгай\">\n          <h3>Малгай</h3>\n          <p class=\"price\">₮ 45,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>\n      </section>\n    </main>\n    <footer>\n      <address>Утас: 7000-0000</address>\n      <p>© 2026 Shop.mn</p>\n    </footer>\n  </body>\n</html>\n" }
+    ],
+    "visibleFiles": ["index.html"],
+    "openFiles": ["index.html"],
+    "activeFile": "index.html"
+  },
+  "tasks": [
+    {
+      "id": "m1-l6-t1",
+      "order": 1,
+      "title": { "mn": "Header ба цэс нэм" },
+      "statement": { "mn": "`<main>`-ийн ӨМНӨ `<header>` элемент нэм. Дотор нь логотипийн `<img>`, мөн `<nav>` доторх `<ul>` жагсаалтаар дор хаяж 2 холбоос (`Нүүр`, `Сагс`) байрлуул." },
+      "requirements": [
+        { "mn": "`<header>` нь `<main>`-ийн өмнө байх" },
+        { "mn": "Логотипийн `<img>` `alt`-тай байх" },
+        { "mn": "`<nav>` дотор `<ul>` ба дор хаяж 2 `<a>` байх" },
+        { "mn": "Хуудасны бүтэц: header → main → footer" }
+      ],
+      "expected": { "description": { "mn": "Хуудасны дээд талд лого болон цэсний холбоосууд гарч ирнэ. Ингээд Shop.mn-ийн статик нүүр хуудас бүрэн боллоо." } },
+      "targetFile": "index.html",
+      "marker": "<!-- энд бичнэ үү -->",
+      "checks": [
+        { "id": "c1", "type": "dom.exists", "args": { "selector": "body > header" }, "onFail": { "mn": "`<body>` дотроос `<header>` олдсонгүй. `<main>`-ийн өмнө нэмнэ үү." } },
+        { "id": "c2", "type": "dom.attr", "args": { "selector": "header img", "name": "alt", "minLength": 2 }, "onFail": { "mn": "Header доторх логотипийн `<img>`-д `alt` тайлбар алга." } },
+        { "id": "c3", "type": "dom.count", "args": { "selector": "header nav ul li a", "min": 2 }, "onFail": { "mn": "`<nav>` доторх `<ul>`-д дор хаяж 2 холбоос (`<li><a>`) байх ёстой. Одоо {actual} байна." } },
+        { "id": "c4", "type": "dom.order", "args": { "selectors": ["header", "main", "footer"] }, "onFail": { "mn": "Дараалал буруу байна: header → main → footer гэсэн дарааллаар байрлах ёстой." } },
+        { "id": "c5", "type": "dom.count", "args": { "selector": "article.product-card", "equals": 2 }, "onFail": { "mn": "Өмнөх хичээлүүдийн 2 бүтээгдэхүүний карт байсан хэвээрээ байх ёстой." } },
+        { "id": "c6", "type": "html.valid", "args": {}, "onFail": { "mn": "HTML бүтцэд алдаа байна. Нээсэн tag бүрээ хаасан эсэхээ шалгаарай." } }
+      ],
+      "hints": [
+        { "level": 1, "xpCost": 0, "text": { "mn": "`<header>` бол хуудасны дээд хэсэг. Түүнийг `<main>`-ийн өмнөх мөрөнд бич." } },
+        { "level": 2, "xpCost": 1, "text": { "mn": "Цэсийг `<nav>` дотор `<ul>` жагсаалтаар хийнэ. Холбоос бүр `<li><a href=\"...\">Нэр</a></li>` хэлбэртэй." } },
+        { "level": 3, "xpCost": 3, "text": { "mn": "Ингэж эхэл, цэсээ өөрөө гүйцээ:" }, "code": "<header>\n  <img src=\"images/logo.png\" alt=\"Shop.mn лого\">\n  <nav>\n    <ul>\n      <li><a href=\"index.html\">Нүүр</a></li>\n      <!-- Сагс холбоосыг нэм -->\n    </ul>\n  </nav>\n</header>" }
+      ],
+      "solution": {
+        "patch": [{ "op": "insertAfter", "path": "index.html", "anchor": "<!-- энд бичнэ үү -->", "content": "\n    <header>\n      <img src=\"images/logo.png\" alt=\"Shop.mn лого\">\n      <nav>\n        <ul>\n          <li><a href=\"index.html\">Нүүр</a></li>\n          <li><a href=\"cart.html\">Сагс</a></li>\n        </ul>\n      </nav>\n    </header>" }],
+        "explanation": { "mn": "`<header>`, `<nav>` нь semantic элементүүд. Цэсийг `<ul>` жагсаалтаар хийх нь дэлгэц уншигч программуудад \"энэ бол холбоосын жагсаалт\" гэдгийг ойлгуулдаг." },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 12,
+      "skills": ["html"]
+    }
+  ],
+  "completion": { "xp": 25, "badge": "first-website", "milestone": true, "celebration": "large" },
+  "status": "published",
+  "version": 1,
+  "authors": ["delgermaa"]
+}
