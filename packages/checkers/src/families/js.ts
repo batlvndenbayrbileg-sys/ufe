@@ -72,6 +72,20 @@ async function waitFor(ctx: CheckerContext, selector: string, capMs = 3000): Pro
   return null;
 }
 
+/**
+ * Poll an assertion until it holds or the cap elapses. Frameworks (React et al.)
+ * flush state updates asynchronously, so reading the DOM immediately after a
+ * click is a race. Polling keeps interaction checks framework-agnostic.
+ */
+async function until(predicate: () => boolean, capMs = 1000): Promise<boolean> {
+  const start = Date.now();
+  for (;;) {
+    if (predicate()) return true;
+    if (Date.now() - start >= capMs) return false;
+    await new Promise((r) => setTimeout(r, 15));
+  }
+}
+
 registerChecker("js.interaction", async (args, outerCtx) => {
   const steps = (args.steps as Step[]) ?? [];
   // Each interaction check is an ISOLATED scenario: re-render the page so
@@ -97,21 +111,27 @@ registerChecker("js.interaction", async (args, outerCtx) => {
       const el = await waitFor(ctx, step.waitFor);
       if (!el) return fail(`step ${i + 1}: ${step.waitFor} never appeared`, "element to appear");
     } else if (step.expectText !== undefined) {
-      const el = doc(ctx).querySelector(step.expectText.selector);
-      const text = (el?.textContent ?? "").trim();
-      if (step.expectText.equals !== undefined && text !== step.expectText.equals) {
-        return fail(text || "(none)", step.expectText.equals);
-      }
-      if (step.expectText.contains !== undefined && !text.includes(step.expectText.contains)) {
-        return fail(text || "(none)", `contains "${step.expectText.contains}"`);
+      const want = step.expectText;
+      const read = () => (doc(ctx).querySelector(want.selector)?.textContent ?? "").trim();
+      const ok = await until(() => {
+        const t = read();
+        if (want.equals !== undefined) return t === want.equals;
+        if (want.contains !== undefined) return t.includes(want.contains);
+        return t.length > 0;
+      });
+      if (!ok) {
+        const text = read();
+        return fail(
+          text || "(none)",
+          want.equals ?? (want.contains !== undefined ? `contains "${want.contains}"` : "текст"),
+        );
       }
     } else if (step.expectCount !== undefined) {
-      const n = doc(ctx).querySelectorAll(step.expectCount.selector).length;
-      if (n !== step.expectCount.equals) {
-        return fail(
-          `${step.expectCount.selector}: ${n}`,
-          `${step.expectCount.selector}: ${step.expectCount.equals}`,
-        );
+      const want = step.expectCount;
+      const count = () => doc(ctx).querySelectorAll(want.selector).length;
+      const ok = await until(() => count() === want.equals);
+      if (!ok) {
+        return fail(`${want.selector}: ${count()}`, `${want.selector}: ${want.equals}`);
       }
     } else if (step.expectEval !== undefined) {
       const result = evalInPage(ctx, undefined, step.expectEval.expr);

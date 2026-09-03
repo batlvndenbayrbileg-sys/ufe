@@ -1,4 +1,7 @@
+import { transpileJsx, REACT_RUNTIME_JS } from "@khiye/checkers/assemble";
 import type { FileSet } from "./protocol";
+
+const isJsx = (p: string) => /\.(jsx|tsx)$/.test(p);
 
 export interface AssembleOptions {
   /** The pre-bundled harness IIFE, injected first so it runs before student code. */
@@ -40,12 +43,18 @@ export function assembleSrcdoc(files: FileSet, opts: AssembleOptions): string {
     return css ? `<style data-khiye-css="${escAttr(norm(href))}">\n${css.content}\n</style>` : tag;
   });
 
-  // 2. Inline <script src> as a classic inline script (global scope for Tier 1).
+  // 2. Inline <script src> as a classic inline script (global scope for Tier 1),
+  //    transpiling JSX/TSX so React lessons preview without a build step.
+  let needsReact = false;
   html = html.replace(
     /<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>\s*<\/script>/gi,
     (tag, src: string) => {
       const js = fileByPath(src);
       if (!js) return tag;
+      if (isJsx(src)) {
+        needsReact = true;
+        return `<script>\n${transpileJsx(js.content, src)}\n</script>`;
+      }
       const isModule = /type=["']module["']/i.test(tag);
       return `<script${isModule ? ' type="module"' : ""}>\n${js.content}\n</script>`;
     },
@@ -70,7 +79,10 @@ export function assembleSrcdoc(files: FileSet, opts: AssembleOptions): string {
     `style-src 'unsafe-inline'; script-src 'unsafe-inline'; font-src data: https:; ` +
     `connect-src ${opts.connectSrc ?? "'none'"};">`;
 
-  const head = `${cspMeta}\n<base href="${escAttr(opts.cdnBase ?? "about:blank")}">\n<script>\n${opts.harnessJs}\n</script>`;
+  const head =
+    `${cspMeta}\n<base href="${escAttr(opts.cdnBase ?? "about:blank")}">\n` +
+    `<script>\n${opts.harnessJs}\n</script>` +
+    (needsReact ? `\n<script>\n${REACT_RUNTIME_JS}\n</script>` : "");
 
   // Inject head content right after <head>, or synthesize a <head>.
   if (/<head[\s>]/i.test(html)) {

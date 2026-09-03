@@ -1,4 +1,21 @@
+import { transform } from "sucrase";
+import { REACT_RUNTIME_JS } from "./react-runtime.generated";
 import type { FileSet } from "./types";
+
+/** Transpile JSX/TSX to plain JS using the classic runtime (window.React). */
+export function transpileJsx(code: string, path: string): string {
+  const transforms: Array<"jsx" | "typescript"> = ["jsx"];
+  if (path.endsWith(".tsx") || path.endsWith(".ts")) transforms.push("typescript");
+  try {
+    return transform(code, { transforms, jsxRuntime: "classic", production: true }).code;
+  } catch (e) {
+    // Surface syntax errors inside the page so the student sees a real message.
+    const msg = e instanceof Error ? e.message : String(e);
+    return `console.error(${JSON.stringify("JSX алдаа: " + msg)});`;
+  }
+}
+
+const isJsx = (p: string) => /\.(jsx|tsx)$/.test(p);
 
 /**
  * Assemble a single HTML string from a Tier-1 workspace, inlining referenced
@@ -26,19 +43,31 @@ export function assembleHtml(files: FileSet, entry = "index.html"): string {
     },
   );
 
-  // Inline <script src="..."></script>
+  // Inline <script src="..."></script>, transpiling JSX/TSX on the way.
+  let needsReact = false;
   html = html.replace(
     /<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>\s*<\/script>/gi,
     (tag, src: string) => {
       const js = fileByPath(src);
       if (!js) return tag;
       const isModule = /type=["']module["']/i.test(tag);
+      if (isJsx(src)) {
+        needsReact = true;
+        return `<script>\n${transpileJsx(js.content, src)}\n</script>`;
+      }
       return `<script${isModule ? ' type="module"' : ""}>\n${js.content}\n</script>`;
     },
   );
+
+  // React lessons run entirely offline: the runtime is inlined, no CDN needed.
+  if (needsReact) {
+    html = html.replace(/<script>/i, `<script>\n${REACT_RUNTIME_JS}\n</script>\n<script>`);
+  }
 
   if (!/<html[\s>]/i.test(html)) {
     html = `<!doctype html><html><head></head><body>\n${html}\n</body></html>`;
   }
   return html;
 }
+
+export { REACT_RUNTIME_JS, REACT_RUNTIME_BYTES } from "./react-runtime.generated";
