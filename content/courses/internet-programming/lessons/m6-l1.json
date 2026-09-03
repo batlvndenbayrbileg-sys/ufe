@@ -1,0 +1,199 @@
+{
+  "id": "m6-l1",
+  "moduleId": "m6-react",
+  "slug": "first-component",
+  "order": 1,
+  "title": {
+    "mn": "Эхний React component"
+  },
+  "why": {
+    "mn": "Shop.mn-ийг одоо React дээр дахин бүтээнэ. React бол хуудсаа жижиг, дахин ашиглагдах хэсгүүд (component) болгон хуваадаг. Эхлээд бүх хуудсыг нэг component болгож үзье."
+  },
+  "buildsInProject": "React дээрх Shop.mn-ийн суурь",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react",
+    "javascript"
+  ],
+  "concepts": [
+    "component",
+    "JSX",
+    "createRoot",
+    "render"
+  ],
+  "prerequisites": [
+    "m4-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 32px; }\n\n.cart-count {\n  background-color: #2563eb;\n  color: #ffffff;\n  border-radius: 999px;\n  padding: 2px 10px;\n}\n\n.product-grid {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 16px;\n}\n\n@media (min-width: 768px) {\n  .product-grid { grid-template-columns: 1fr 1fr 1fr; }\n}\n\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import React from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\n// энд бичнэ үү\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "m6-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Эхний React component"
+      },
+      "statement": {
+        "mn": "`App` нэртэй функц-component бич. Тэр нь `<main>` дотор `<h1>Shop.mn</h1>` болон уриа үг бүхий `<p>` буцаана. Дараа нь `createRoot(document.getElementById(\"root\")).render(<App />)` гэж хуудсанд холбо."
+      },
+      "requirements": [
+        {
+          "mn": "`App` component зарлагдсан"
+        },
+        {
+          "mn": "`<h1>` дотор `Shop.mn`"
+        },
+        {
+          "mn": "`<p>` уриа үг"
+        },
+        {
+          "mn": "`createRoot(...).render(<App />)`"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Preview дээр Shop.mn гарчиг ба уриа үг харагдана — гэхдээ энэ удаа HTML биш, React зурсан."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/App.jsx",
+            "kind": "function",
+            "name": "App"
+          },
+          "onFail": {
+            "mn": "`App` нэртэй функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.text",
+          "args": {
+            "selector": "#root h1",
+            "contains": "Shop.mn"
+          },
+          "onFail": {
+            "mn": "`#root` дотор `Shop.mn` бүхий `<h1>` харагдахгүй байна. Component-оо render хийсэн эсэхээ шалгаарай."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#root main p"
+          },
+          "onFail": {
+            "mn": "`<main>` дотор уриа үгийн `<p>` алга."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "createRoot"
+          },
+          "onFail": {
+            "mn": "`createRoot` дуудаагүй байна — React хуудсанд холбогдохгүй."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag хаалт) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "React component бол зүгээр нэг функц. Нэр нь ЗААВАЛ том үсгээр эхэлнэ (`App`), ба JSX буцаана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "JSX-д олон элемент буцаахдаа нэг эцэг элемент дотор (жишээ нь `<main>`) багтаана. `return ( ... )` гэж хаалтанд бичвэл олон мөр бичихэд хялбар."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц нь ийм, дотор талыг өөрөө гүйцээ:"
+          },
+          "code": "function App() {\n  return (\n    <main>\n      {/* h1 ба p-гээ энд бич */}\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import React from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nfunction App() {\n  return (\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "React нь чиний бичсэн JSX-ийг харгалзах DOM элемент болгож зурдаг. `createRoot(...).render(...)` нь «энэ component-ийг энэ элемент дотор зур» гэсэн үг."
+        },
+        "xpPenalty": 9
+      },
+      "xp": 15,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -48,6 +48,10 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
 ) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const prevFiles = useRef<FileSet | null>(null);
+  // Always-current files, so the message handler and reload() never close over
+  // a stale set (files often arrive after the first render).
+  const filesRef = useRef<FileSet>(files);
+  filesRef.current = files;
   const lastHeartbeat = useRef<number>(Date.now());
   const readyRef = useRef(false);
   const pending = useRef(new Map<string, (r: HarnessCheckResult[]) => void>());
@@ -64,9 +68,10 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
     readyRef.current = false;
     setLooping(false);
     lastHeartbeat.current = Date.now();
-    iframe.srcdoc = assembleSrcdoc(files, { harnessJs: HARNESS_JS, entry, connectSrc, cdnBase });
-    prevFiles.current = files;
-  }, [files, entry, connectSrc, cdnBase]);
+    const snapshot = filesRef.current;
+    iframe.srcdoc = assembleSrcdoc(snapshot, { harnessJs: HARNESS_JS, entry, connectSrc, cdnBase });
+    prevFiles.current = snapshot;
+  }, [entry, connectSrc, cdnBase]);
 
   // Initial render (mount only).
   const didMount = useRef(false);
@@ -98,14 +103,22 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
       if (!isHarnessMessage(e.data)) return;
       const msg = e.data;
       switch (msg.type) {
-        case "khiye:ready":
+        case "khiye:ready": {
           readyRef.current = true;
           lastHeartbeat.current = Date.now();
+          // Files that arrived while the harness was still booting were dropped
+          // by the change effect (it bails when not ready) — apply them now.
+          const { changed } = diffFiles(prevFiles.current, filesRef.current);
+          if (changed.length > 0) {
+            reload();
+            break;
+          }
           if (scrollPos.current.y || scrollPos.current.x) {
             post({ type: "khiye:scrollTo", ...scrollPos.current });
           }
           onReady?.();
           break;
+        }
         case "khiye:heartbeat":
           lastHeartbeat.current = Date.now();
           break;
@@ -130,17 +143,28 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
     };
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [post, onConsole, onError, onReady]);
+  }, [post, onConsole, onError, onReady, reload]);
 
   // Infinite-loop watchdog: no heartbeat for 3s while "ready" → recover.
+  // Only while the tab is visible: browsers throttle background timers to about
+  // once a minute, so a hidden tab would otherwise "detect" a loop that isn't
+  // there and greet the student with a scary banner on their way back.
   useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") lastHeartbeat.current = Date.now();
+    };
+    document.addEventListener("visibilitychange", onVisible);
     const id = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
       if (readyRef.current && Date.now() - lastHeartbeat.current > HEARTBEAT_TIMEOUT_MS) {
         setLooping(true);
         readyRef.current = false;
       }
     }, 1000);
-    return () => window.clearInterval(id);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+      window.clearInterval(id);
+    };
   }, []);
 
   useImperativeHandle(

@@ -33,5 +33,12 @@
       "mn": "DOM"
     },
     "order": 5
+  },
+  {
+    "id": "react",
+    "title": {
+      "mn": "React"
+    },
+    "order": 6
   }
 ]

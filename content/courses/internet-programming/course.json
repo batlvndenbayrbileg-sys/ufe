@@ -33,6 +33,17 @@
       "moduleIds": [
         "m4-javascript"
       ]
+    },
+    {
+      "id": "s3",
+      "order": 3,
+      "title": {
+        "mn": "React"
+      },
+      "badgeId": "react-dev",
+      "moduleIds": [
+        "m6-react"
+      ]
     }
   ]
 }

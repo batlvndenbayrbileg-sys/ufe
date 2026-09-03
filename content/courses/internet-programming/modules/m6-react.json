@@ -1,0 +1,20 @@
+{
+  "id": "m6-react",
+  "stageId": "s3",
+  "order": 1,
+  "title": {
+    "mn": "React: component-оор бүтээх"
+  },
+  "description": {
+    "mn": "Shop.mn-ийг React дээр дахин бүтээж, component, props, state, жагсаалт, нөхцөлт render сурна."
+  },
+  "estimatedHours": 4,
+  "lessons": [
+    "m6-l1",
+    "m6-l2",
+    "m6-l3",
+    "m6-l4",
+    "m6-l5",
+    "m6-l6"
+  ]
+}

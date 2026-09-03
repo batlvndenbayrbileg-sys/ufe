@@ -1,0 +1,289 @@
+{
+  "id": "m6-l5",
+  "moduleId": "m6-react",
+  "slug": "cart-state",
+  "order": 5,
+  "title": {
+    "mn": "Сагсны бүрэн логик (React)"
+  },
+  "why": {
+    "mn": "Зүгээр тоолуур хангалтгүй — Shop.mn ямар бараа хэд ширхэг байгааг мэдэх ёстой. Vanilla JS дээр хийсэн сагсны логикоо одоо React-ийн state дээр, ӨӨРЧЛӨХГҮЙ (immutable) аргаар дахин бичнэ."
+  },
+  "buildsInProject": "React дээрх ажиллаж буй сагс",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 27,
+  "skills": [
+    "react",
+    "javascript"
+  ],
+  "concepts": [
+    "state array",
+    "immutable update",
+    "spread",
+    "find",
+    "reduce"
+  ],
+  "prerequisites": [
+    "m6-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 32px; }\n\n.cart-count {\n  background-color: #2563eb;\n  color: #ffffff;\n  border-radius: 999px;\n  padding: 2px 10px;\n}\n\n.product-grid {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 16px;\n}\n\n@media (min-width: 768px) {\n  .product-grid { grid-template-columns: 1fr 1fr 1fr; }\n}\n\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import React, { useState } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000 },\n  { id: 2, name: \"Малгай\", price: 45000 },\n  { id: 3, name: \"Гутал\", price: 89000 },\n];\n\nfunction ProductCard({ name, price, onAdd }) {\n  return (\n    <article className=\"product-card\">\n      <h3>{name}</h3>\n      <p className=\"price\">₮ {price.toLocaleString(\"en-US\")}</p>\n      <button className=\"btn-add\" data-testid=\"add-to-cart\" onClick={onAdd}>\n        Сагсанд хийх\n      </button>\n    </article>\n  );\n}\n\nfunction App() {\n  const [cart, setCart] = useState([]);\n\n  // энд бичнэ үү\n\n  const total = 0;\n\n  return (\n    <main>\n      <h1>Shop.mn</h1>\n      <span className=\"cart-count\" data-testid=\"cart-count\">{total}</span>\n      <section className=\"product-grid\">\n        {products.map((product) => (\n          <ProductCard\n            key={product.id}\n            name={product.name}\n            price={product.price}\n            onAdd={() => addToCart(product)}\n          />\n        ))}\n      </section>\n      {/* сагсны жагсаалтаа энд зур */}\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "m6-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Сагсны бүрэн логик (React)"
+      },
+      "statement": {
+        "mn": "1) `addToCart(product)` функц бич: `setCart`-д функц дамжуулж, өмнөх сагсанд тухайн бараа БАЙГАА эсэхийг `find`-аар шалга. Байвал `map`-аар тухайн мөрийн `quantity`-г нэмсэн ШИНЭ массив буцаа, байхгүй бол `[...prev, { ...product, quantity: 1 }]`. 2) `total`-ыг `reduce`-ээр тооц. 3) Сагсыг `<ul data-testid=\"cart-items\">` дотор `<li>`-ээр зур (`нэр × тоо`)."
+      },
+      "requirements": [
+        {
+          "mn": "`addToCart` функц"
+        },
+        {
+          "mn": "Ижил бараа 2 удаа → 1 мөр, тоо 2"
+        },
+        {
+          "mn": "Өөр бараа → шинэ мөр"
+        },
+        {
+          "mn": "Массивыг өөрчлөхгүй (spread/map ашиглах)"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Товч дарахад сагсны жагсаалт гарч ирнэ. Ижил барааг дахин дарвал шинэ мөр биш, тоо нь нэмэгдэнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/App.jsx",
+            "kind": "function",
+            "name": "addToCart"
+          },
+          "onFail": {
+            "mn": "`addToCart` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "find"
+          },
+          "onFail": {
+            "mn": "`find` ашиглан бараа сагсанд байгаа эсэхийг шалгаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"cart-items\"] li",
+                  "equals": 1
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"cart-count\"]",
+                  "equals": "1"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Товч дарахад сагсанд 1 мөр үүсэж, тоолуур 1 болох ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"cart-items\"] li",
+                  "equals": 1
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"cart-count\"]",
+                  "equals": "2"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Ижил барааг 2 удаа нэмэхэд 2 МӨР болох ёсгүй — 1 мөр дээр тоо нь 2 болно. `find`-аар шалгаад `map`-аар шинэчлээрэй."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "click": ".product-card:nth-of-type(2) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"cart-items\"] li",
+                  "equals": 2
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"cart-count\"]",
+                  "equals": "3"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Өөр бараа нэмэхэд шинэ мөр үүсэж, нийт 3 болох ёстой."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"cart-items\"] li",
+                  "contains": "2"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Сагсны мөрөнд тоо ширхэг харагдах ёстой (жишээ нь `Монгол дээл × 2`)."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "React-д массивыг `push`-оор ӨӨРЧИЛЖ болохгүй — React өөрчлөлтийг анзаарахгүй. Үргэлж ШИНЭ массив буцаана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`setCart((prev) => { ... })` гэж функц дамжуулбал өмнөх утгыг найдвартай авна. Шинэчлэхдээ `prev.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item)`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц нь ийм — нөхцөл болон нэмэх хэсгээ өөрөө гүйцээ:"
+          },
+          "code": "function addToCart(product) {\n  setCart((prev) => {\n    const existing = prev.find((item) => item.id === product.id);\n    if (existing) {\n      /* map-аар quantity-г нэмсэн ШИНЭ массив буцаа */\n    }\n    /* байхгүй бол spread-ээр шинэ мөр нэм */\n  });\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import React, { useState } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000 },\n  { id: 2, name: \"Малгай\", price: 45000 },\n  { id: 3, name: \"Гутал\", price: 89000 },\n];\n\nfunction ProductCard({ name, price, onAdd }) {\n  return (\n    <article className=\"product-card\">\n      <h3>{name}</h3>\n      <p className=\"price\">₮ {price.toLocaleString(\"en-US\")}</p>\n      <button className=\"btn-add\" data-testid=\"add-to-cart\" onClick={onAdd}>\n        Сагсанд хийх\n      </button>\n    </article>\n  );\n}\n\nfunction App() {\n  const [cart, setCart] = useState([]);\n\n  function addToCart(product) {\n    setCart((prev) => {\n      const existing = prev.find((item) => item.id === product.id);\n      if (existing) {\n        return prev.map((item) =>\n          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item\n        );\n      }\n      return [...prev, { ...product, quantity: 1 }];\n    });\n  }\n\n  const total = cart.reduce((sum, item) => sum + item.quantity, 0);\n\n  return (\n    <main>\n      <h1>Shop.mn</h1>\n      <span className=\"cart-count\" data-testid=\"cart-count\">{total}</span>\n      <section className=\"product-grid\">\n        {products.map((product) => (\n          <ProductCard\n            key={product.id}\n            name={product.name}\n            price={product.price}\n            onAdd={() => addToCart(product)}\n          />\n        ))}\n      </section>\n      <ul data-testid=\"cart-items\">\n        {cart.map((item) => (\n          <li key={item.id}>{item.name} × {item.quantity}</li>\n        ))}\n      </ul>\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Immutable шинэчлэлт бол React-ийн үндсэн дүрэм: хуучин объектыг өөрчлөхгүй, шинийг үүсгэнэ. Ингэснээр React хуучин ба шинэ хоёрыг харьцуулж, юу өөрчлөгдсөнийг хурдан олдог."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 25,
+      "skills": [
+        "react"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -40,6 +40,86 @@ describe("assembleSrcdoc", () => {
   });
 });
 
+describe("React (JSX) projects", () => {
+  const reactProject: FileSet = {
+    "index.html": {
+      content: `<!doctype html><html><head></head><body><div id="root"></div><script src="src/App.jsx"></script></body></html>`,
+    },
+    "src/App.jsx": {
+      content: [
+        `import React from "react";`,
+        `import { createRoot } from "react-dom/client";`,
+        `function App() { return <h1 data-testid="hi">Сайн уу</h1>; }`,
+        `createRoot(document.getElementById("root")).render(<App />);`,
+      ].join("\n"),
+    },
+  };
+  const html = assembleSrcdoc(reactProject, { harnessJs: "/*H*/" });
+
+  it("transpiles JSX to createElement calls", () => {
+    expect(html).toContain("React.createElement");
+    expect(html).not.toContain("<h1 data-testid");
+  });
+
+  it("inlines the React runtime so Tier 1 needs no CDN", () => {
+    expect(html).toContain("window.React");
+    // …and only for JSX projects.
+    expect(assembleSrcdoc(project, { harnessJs: "/*H*/" })).not.toContain("window.React");
+  });
+
+  it("rewrites react imports onto the globals without self-aliasing", () => {
+    expect(html).not.toMatch(/from ?["']react/);
+    expect(html).not.toContain("const React = React"); // TDZ crash
+    expect(html).toContain("const { createRoot } = ReactDOM");
+  });
+
+  it("mounts and stays interactive: a click updates the rendered state", async () => {
+    // The one that matters for students — proves the inlined runtime really
+    // hydrates events inside the assembled page, not just that JSX compiled.
+    const counter: FileSet = {
+      "index.html": {
+        content: `<!doctype html><html><head></head><body><div id="root"></div><script src="src/App.jsx"></script></body></html>`,
+      },
+      "src/App.jsx": {
+        content: [
+          `import React, { useState } from "react";`,
+          `import { createRoot } from "react-dom/client";`,
+          `function App() {`,
+          `  const [n, setN] = useState(0);`,
+          `  return (`,
+          `    <div>`,
+          `      <span data-testid="n">{n}</span>`,
+          `      <button data-testid="b" onClick={() => setN(n + 1)}>+</button>`,
+          `    </div>`,
+          `  );`,
+          `}`,
+          `createRoot(document.getElementById("root")).render(<App />);`,
+        ].join("\n"),
+      },
+    };
+    const window = new Window({ width: 800, height: 600 });
+    try {
+      window.document.write(assembleSrcdoc(counter, { harnessJs: HARNESS_JS }));
+      const read = () => window.document.querySelector('[data-testid="n"]')?.textContent;
+      // React flushes asynchronously; poll rather than race it.
+      const until = async (want: string) => {
+        for (let i = 0; i < 100; i++) {
+          if (read() === want) return true;
+          await new Promise((r) => setTimeout(r, 10));
+        }
+        return false;
+      };
+      expect(await until("0")).toBe(true); // mounted
+      const btn = window.document.querySelector('[data-testid="b"]')!;
+      btn.dispatchEvent(new window.MouseEvent("click", { bubbles: true, cancelable: true }));
+      expect(await until("1")).toBe(true); // state updated, DOM re-rendered
+    } finally {
+      await window.happyDOM.abort();
+      window.close();
+    }
+  });
+});
+
 describe("diffFiles", () => {
   it("detects a CSS-only change", () => {
     const a: FileSet = { "index.html": { content: "x" }, "styles/main.css": { content: "1" } };
