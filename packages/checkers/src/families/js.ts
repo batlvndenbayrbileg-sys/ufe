@@ -53,6 +53,8 @@ registerChecker("js.consoleClean", (args, ctx) => {
 // ── js.interaction ───────────────────────────────────────────────────────────
 interface Step {
   click?: string;
+  /** Go to a hash route, the way a link click does in a real browser. */
+  navigate?: string;
   type?: { selector: string; text: string };
   waitFor?: string;
   expectText?: { selector: string; equals?: string; contains?: string };
@@ -118,7 +120,13 @@ registerChecker("js.interaction", async (args, outerCtx) => {
       : await outerCtx.renderAt({ width: 1280, height: 800 });
   const w = win(ctx);
   for (const [i, step] of steps.entries()) {
-    if (step.click !== undefined) {
+    if (step.navigate !== undefined) {
+      // happy-dom does not activate <a href="#…"> clicks, so drive the route the
+      // way the browser would and let the page's own hashchange listener run.
+      w.location.hash = step.navigate.startsWith("#") ? step.navigate : `#${step.navigate}`;
+      // Let the hashchange listener run AND the re-render it schedules flush.
+      for (let t = 0; t < 3; t++) await new Promise((r) => setTimeout(r, 0));
+    } else if (step.click !== undefined) {
       const el = doc(ctx).querySelector(step.click);
       if (!el) return fail(`step ${i + 1}: no element ${step.click}`, "clickable element");
       el.dispatchEvent(new w.MouseEvent("click", { bubbles: true, cancelable: true }));

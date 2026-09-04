@@ -11,6 +11,18 @@ export interface RunOptions {
 }
 
 /**
+ * A real (if fictional) page URL, not about:blank: routing lessons set
+ * location.hash, which only behaves on a normal document URL.
+ */
+const PAGE_URL = "https://shop.mn/";
+
+/** Inline scripts still run; external loads are blocked (there is no network). */
+const SETTINGS = {
+  disableJavaScriptFileLoading: true,
+  disableCSSFileLoading: true,
+} as const;
+
+/**
  * Authoritative server-side runner for Tier-1 tasks (docs/blueprint/05 §5.3).
  * Renders the workspace in happy-dom, executes inline scripts, captures console
  * errors, and runs the checks. MUST run inside an isolated worker/VM in
@@ -27,7 +39,12 @@ export async function runChecksOnFiles(
   const extraWindows: HappyWindow[] = [];
 
   const renderAt = async (viewport: { width: number; height: number }): Promise<CheckerContext> => {
-    const w = new HappyWindow({ width: viewport.width, height: viewport.height });
+    const w = new HappyWindow({
+      url: PAGE_URL,
+      width: viewport.width,
+      height: viewport.height,
+      settings: SETTINGS,
+    });
     extraWindows.push(w);
     w.document.write(html);
     await w.happyDOM.waitUntilComplete().catch(() => {});
@@ -42,13 +59,10 @@ export async function runChecksOnFiles(
   };
 
   const window = new HappyWindow({
+    url: PAGE_URL,
     width: options.viewport?.width ?? 1280,
     height: options.viewport?.height ?? 800,
-    settings: {
-      disableJavaScriptFileLoading: true,
-      disableCSSFileLoading: true,
-      // Inline scripts still run; external loads are blocked (no network).
-    },
+    settings: SETTINGS,
   });
 
   const consoleErrors: string[] = [];

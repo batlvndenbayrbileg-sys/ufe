@@ -1,0 +1,307 @@
+{
+  "id": "m8-l4",
+  "moduleId": "m8-router",
+  "slug": "dynamic-route",
+  "order": 4,
+  "title": {
+    "mn": "Checkpoint: динамик зам ба 404"
+  },
+  "why": {
+    "mn": "Shop.mn дээр «Монгол дээл»-ийн дэлгэрэнгүйг харах гэвэл `#/product/1` гэсэн хаяг хэрэгтэй. Зам дотроос утга уншиж авах нь router-ийн хамгийн хүчтэй хэсэг — бас байхгүй хуудсанд эелдэг хариу өгөх нь мэргэжлийн шинж."
+  },
+  "buildsInProject": "Барааны дэлгэрэнгүй хуудас",
+  "difficulty": "advanced",
+  "estimatedMinutes": 26,
+  "skills": [
+    "react"
+  ],
+  "concepts": [
+    "dynamic segment",
+    "route params",
+    "404",
+    "split/filter"
+  ],
+  "prerequisites": [
+    "m8-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 32px; margin-bottom: 8px; }\nh1 a { color: inherit; text-decoration: none; }\n\n.nav {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  padding: 12px 0;\n  margin-bottom: 16px;\n  border-bottom: 1px solid #e4e4e7;\n}\n\n.nav a {\n  color: #3f3f46;\n  text-decoration: none;\n  padding: 4px 2px;\n}\n\n.nav a[aria-current=\"page\"] {\n  color: #1d4ed8;\n  font-weight: 600;\n  border-bottom: 2px solid #1d4ed8;\n}\n\n.cart-count {\n  margin-left: auto;\n  background-color: #2563eb;\n  color: #ffffff;\n  border-radius: 999px;\n  padding: 2px 10px;\n}\n\n.product-grid {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 16px;\n}\n\n@media (min-width: 768px) {\n  .product-grid { grid-template-columns: 1fr 1fr 1fr; }\n}\n\n.product-card,\n.product-detail,\n.cart,\n.not-found {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n\n.product-card h3 a {\n  color: #18181b;\n  text-decoration: none;\n}\n\n.product-card h3 a:hover { text-decoration: underline; }\n\n.price { color: #3f3f46; }\n\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n  font-size: 15px;\n}\n\n.cart ul {\n  list-style: none;\n  padding: 0;\n}\n\n.cart li {\n  padding: 6px 0;\n  border-bottom: 1px solid #e4e4e7;\n}\n\n.cart-total {\n  font-size: 20px;\n  font-weight: 700;\n  text-align: right;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import React, { useState, useEffect } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nconst STORAGE_KEY = \"shopmn-cart\";\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000, description: \"Хонин ноосон дулаан дээл.\" },\n  { id: 2, name: \"Малгай\", price: 45000, description: \"Уламжлалт хээтэй өвлийн малгай.\" },\n  { id: 3, name: \"Гутал\", price: 89000, description: \"Арьсан монгол гутал.\" },\n];\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction loadCart() {\n  try {\n    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));\n    return Array.isArray(saved) ? saved : [];\n  } catch (error) {\n    return [];\n  }\n}\n\nfunction currentRoute() {\n  return window.location.hash.replace(/^#/, \"\") || \"/\";\n}\n\nfunction useHashRoute() {\n  const [route, setRoute] = useState(currentRoute);\n\n  useEffect(() => {\n    function handleHashChange() {\n      setRoute(currentRoute());\n    }\n\n    window.addEventListener(\"hashchange\", handleHashChange);\n    return () => window.removeEventListener(\"hashchange\", handleHashChange);\n  }, []);\n\n  return route;\n}\n\nfunction useCart() {\n  const [cart, setCart] = useState(loadCart);\n\n  useEffect(() => {\n    localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));\n  }, [cart]);\n\n  function addToCart(product) {\n    setCart((prev) => {\n      const existing = prev.find((item) => item.id === product.id);\n      if (existing) {\n        return prev.map((item) =>\n          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item\n        );\n      }\n      return [...prev, { ...product, quantity: 1 }];\n    });\n  }\n\n  const count = cart.reduce((sum, item) => sum + item.quantity, 0);\n  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);\n\n  return { cart, addToCart, count, totalPrice };\n}\n\nfunction ProductCard({ product, onAdd }) {\n  return (\n    <article className=\"product-card\">\n      <h3>\n        <a href={\"#/product/\" + product.id} data-testid=\"product-link\">{product.name}</a>\n      </h3>\n      <p className=\"price\">{formatPrice(product.price)}</p>\n      <button className=\"btn-add\" data-testid=\"add-to-cart\" onClick={() => onAdd(product)}>\n        Сагсанд хийх\n      </button>\n    </article>\n  );\n}\n\nfunction Nav({ route, count }) {\n  return (\n    <nav className=\"nav\">\n      <a\n        href=\"#/\"\n        data-testid=\"nav-home\"\n        aria-current={route === \"/\" ? \"page\" : undefined}\n      >\n        Нүүр\n      </a>\n      <a\n        href=\"#/cart\"\n        data-testid=\"nav-cart\"\n        aria-current={route === \"/cart\" ? \"page\" : undefined}\n      >\n        Сагс\n      </a>\n      <span className=\"cart-count\" data-testid=\"cart-count\">{count}</span>\n    </nav>\n  );\n}\n\nfunction HomePage({ onAdd }) {\n  return (\n    <section className=\"product-grid\" data-testid=\"home\">\n      {products.map((product) => (\n        <ProductCard key={product.id} product={product} onAdd={onAdd} />\n      ))}\n    </section>\n  );\n}\n\nfunction CartPage({ cart, totalPrice }) {\n  return (\n    <section className=\"cart\" data-testid=\"cart-page\">\n      <h2>Таны сагс</h2>\n      {cart.length === 0 ? (\n        <p data-testid=\"cart-empty\">Сагс хоосон байна.</p>\n      ) : (\n        <ul data-testid=\"cart-items\">\n          {cart.map((item) => (\n            <li key={item.id}>\n              {item.name} × {item.quantity}\n            </li>\n          ))}\n        </ul>\n      )}\n      <p className=\"cart-total\" data-testid=\"cart-total\">{formatPrice(totalPrice)}</p>\n    </section>\n  );\n}\n\nfunction ProductPage({ id, onAdd }) {\n  const product = products.find((item) => item.id === id);\n\n  if (!product) {\n    return <NotFoundPage />;\n  }\n\n  return (\n    <section className=\"product-detail\" data-testid=\"product-page\">\n      <h2 data-testid=\"detail-name\">{product.name}</h2>\n      <p className=\"price\" data-testid=\"detail-price\">{formatPrice(product.price)}</p>\n      <p>{product.description}</p>\n      <button className=\"btn-add\" data-testid=\"add-to-cart\" onClick={() => onAdd(product)}>\n        Сагсанд хийх\n      </button>\n    </section>\n  );\n}\n\nfunction NotFoundPage() {\n  return (\n    <section className=\"not-found\" data-testid=\"not-found\">\n      <h2>Хуудас олдсонгүй</h2>\n      <p>Хайсан хуудас чинь байхгүй байна.</p>\n      <a href=\"#/\">Нүүр хуудас руу буцах</a>\n    </section>\n  );\n}\n\nfunction App() {\n  const { cart, addToCart, count, totalPrice } = useCart();\n  const route = useHashRoute();\n\n  return (\n    <main>\n      <h1>\n        <a href=\"#/\">Shop.mn</a>\n      </h1>\n      <Nav route={route} count={count} />\n      {route === \"/cart\" ? (\n        <CartPage cart={cart} totalPrice={totalPrice} />\n      ) : (\n        <HomePage onAdd={addToCart} />\n      )}\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "m8-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Checkpoint: динамик зам ба 404"
+      },
+      "statement": {
+        "mn": "1) `parseRoute(route)` функц бич: замыг `/`-ээр хуваа. Хоосон бол `{ page: \"home\" }`, эхний хэсэг `\"cart\"` бол `{ page: \"cart\" }`, `\"product\"` бөгөөд ард нь утгатай бол `{ page: \"product\", id: Number(...) }`, бусад бүх тохиолдолд `{ page: \"missing\" }`. 2) `App` дотор `const { page, id } = parseRoute(route)` аваад дөрвөн хуудсаа зур (`ProductPage`, `NotFoundPage` бэлэн)."
+      },
+      "requirements": [
+        {
+          "mn": "`parseRoute` функц"
+        },
+        {
+          "mn": "`#/product/2` ажиллана"
+        },
+        {
+          "mn": "`id` нь тоо байна"
+        },
+        {
+          "mn": "Танихгүй зам → 404"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "`#/product/2` дээр «Малгай»-н дэлгэрэнгүй, `#/blah` дээр «Хуудас олдсонгүй» гарч ирнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/App.jsx",
+            "kind": "function",
+            "name": "parseRoute"
+          },
+          "onFail": {
+            "mn": "`parseRoute` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "navigate": "#/product/2"
+              },
+              {
+                "waitFor": "[data-testid=\"product-page\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"detail-name\"]",
+                  "equals": "Малгай"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`#/product/2` дээр «Малгай»-н дэлгэрэнгүй харагдах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "navigate": "#/product/1"
+              },
+              {
+                "waitFor": "[data-testid=\"product-page\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"detail-price\"]",
+                  "equals": "₮ 129,000"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дэлгэрэнгүй хуудсан дээр тухайн барааны үнэ харагдах ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "navigate": "#/blah"
+              },
+              {
+                "waitFor": "[data-testid=\"not-found\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"home\"]",
+                  "equals": 0
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Танихгүй зам дээр 404 хуудас харагдах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "navigate": "#/product/99"
+              },
+              {
+                "waitFor": "[data-testid=\"not-found\"]"
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Байхгүй барааны дугаар дээр ч 404 харагдах ёстой — `id`-г ТОО болгож хувиргасан уу?"
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "navigate": "#/product/2"
+              },
+              {
+                "waitFor": "[data-testid=\"product-page\"]"
+              },
+              {
+                "click": "[data-testid=\"add-to-cart\"]"
+              },
+              {
+                "navigate": "#/cart"
+              },
+              {
+                "waitFor": "[data-testid=\"cart-items\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"cart-items\"]",
+                  "contains": "Малгай"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дэлгэрэнгүй хуудаснаас сагсанд нэмэхэд сагсны хуудсанд харагдах ёстой."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "navigate": "#/"
+              },
+              {
+                "waitFor": "[data-testid=\"home\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"not-found\"]",
+                  "equals": 0
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Нүүр хуудас хэвийн ажиллах ёстой."
+          }
+        },
+        {
+          "id": "c8",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`\"/product/2\".split(\"/\")` нь `[\"\", \"product\", \"2\"]` буцаана. Эхний хоосон мөчлөгөөс салахад `.filter(Boolean)` тусална."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Хаягнаас ирсэн бүхэн ТЕКСТ байдаг. `products.find((p) => p.id === id)` ажиллахын тулд `id`-г `Number(...)`-ээр хувирга — эс бол `\"2\" === 2` худал болно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Замын хэсгүүдээ шалгаж эхэл:"
+          },
+          "code": "function parseRoute(route) {\n  const parts = route.split(\"/\").filter(Boolean);\n\n  /* хоосон → home */\n  /* cart → cart */\n  /* product + дугаар → product */\n\n  return { page: \"missing\" };\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import React, { useState, useEffect } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nconst STORAGE_KEY = \"shopmn-cart\";\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000, description: \"Хонин ноосон дулаан дээл.\" },\n  { id: 2, name: \"Малгай\", price: 45000, description: \"Уламжлалт хээтэй өвлийн малгай.\" },\n  { id: 3, name: \"Гутал\", price: 89000, description: \"Арьсан монгол гутал.\" },\n];\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction loadCart() {\n  try {\n    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));\n    return Array.isArray(saved) ? saved : [];\n  } catch (error) {\n    return [];\n  }\n}\n\nfunction currentRoute() {\n  return window.location.hash.replace(/^#/, \"\") || \"/\";\n}\n\nfunction useHashRoute() {\n  const [route, setRoute] = useState(currentRoute);\n\n  useEffect(() => {\n    function handleHashChange() {\n      setRoute(currentRoute());\n    }\n\n    window.addEventListener(\"hashchange\", handleHashChange);\n    return () => window.removeEventListener(\"hashchange\", handleHashChange);\n  }, []);\n\n  return route;\n}\n\nfunction parseRoute(route) {\n  const parts = route.split(\"/\").filter(Boolean);\n\n  if (parts.length === 0) return { page: \"home\" };\n  if (parts[0] === \"cart\") return { page: \"cart\" };\n  if (parts[0] === \"product\" && parts[1]) return { page: \"product\", id: Number(parts[1]) };\n\n  return { page: \"missing\" };\n}\n\nfunction useCart() {\n  const [cart, setCart] = useState(loadCart);\n\n  useEffect(() => {\n    localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));\n  }, [cart]);\n\n  function addToCart(product) {\n    setCart((prev) => {\n      const existing = prev.find((item) => item.id === product.id);\n      if (existing) {\n        return prev.map((item) =>\n          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item\n        );\n      }\n      return [...prev, { ...product, quantity: 1 }];\n    });\n  }\n\n  const count = cart.reduce((sum, item) => sum + item.quantity, 0);\n  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);\n\n  return { cart, addToCart, count, totalPrice };\n}\n\nfunction ProductCard({ product, onAdd }) {\n  return (\n    <article className=\"product-card\">\n      <h3>\n        <a href={\"#/product/\" + product.id} data-testid=\"product-link\">{product.name}</a>\n      </h3>\n      <p className=\"price\">{formatPrice(product.price)}</p>\n      <button className=\"btn-add\" data-testid=\"add-to-cart\" onClick={() => onAdd(product)}>\n        Сагсанд хийх\n      </button>\n    </article>\n  );\n}\n\nfunction Nav({ route, count }) {\n  return (\n    <nav className=\"nav\">\n      <a\n        href=\"#/\"\n        data-testid=\"nav-home\"\n        aria-current={route === \"/\" ? \"page\" : undefined}\n      >\n        Нүүр\n      </a>\n      <a\n        href=\"#/cart\"\n        data-testid=\"nav-cart\"\n        aria-current={route === \"/cart\" ? \"page\" : undefined}\n      >\n        Сагс\n      </a>\n      <span className=\"cart-count\" data-testid=\"cart-count\">{count}</span>\n    </nav>\n  );\n}\n\nfunction HomePage({ onAdd }) {\n  return (\n    <section className=\"product-grid\" data-testid=\"home\">\n      {products.map((product) => (\n        <ProductCard key={product.id} product={product} onAdd={onAdd} />\n      ))}\n    </section>\n  );\n}\n\nfunction CartPage({ cart, totalPrice }) {\n  return (\n    <section className=\"cart\" data-testid=\"cart-page\">\n      <h2>Таны сагс</h2>\n      {cart.length === 0 ? (\n        <p data-testid=\"cart-empty\">Сагс хоосон байна.</p>\n      ) : (\n        <ul data-testid=\"cart-items\">\n          {cart.map((item) => (\n            <li key={item.id}>\n              {item.name} × {item.quantity}\n            </li>\n          ))}\n        </ul>\n      )}\n      <p className=\"cart-total\" data-testid=\"cart-total\">{formatPrice(totalPrice)}</p>\n    </section>\n  );\n}\n\nfunction ProductPage({ id, onAdd }) {\n  const product = products.find((item) => item.id === id);\n\n  if (!product) {\n    return <NotFoundPage />;\n  }\n\n  return (\n    <section className=\"product-detail\" data-testid=\"product-page\">\n      <h2 data-testid=\"detail-name\">{product.name}</h2>\n      <p className=\"price\" data-testid=\"detail-price\">{formatPrice(product.price)}</p>\n      <p>{product.description}</p>\n      <button className=\"btn-add\" data-testid=\"add-to-cart\" onClick={() => onAdd(product)}>\n        Сагсанд хийх\n      </button>\n    </section>\n  );\n}\n\nfunction NotFoundPage() {\n  return (\n    <section className=\"not-found\" data-testid=\"not-found\">\n      <h2>Хуудас олдсонгүй</h2>\n      <p>Хайсан хуудас чинь байхгүй байна.</p>\n      <a href=\"#/\">Нүүр хуудас руу буцах</a>\n    </section>\n  );\n}\n\nfunction App() {\n  const { cart, addToCart, count, totalPrice } = useCart();\n  const route = useHashRoute();\n  const { page, id } = parseRoute(route);\n\n  return (\n    <main>\n      <h1>\n        <a href=\"#/\">Shop.mn</a>\n      </h1>\n      <Nav route={route} count={count} />\n      {page === \"home\" ? <HomePage onAdd={addToCart} /> : null}\n      {page === \"cart\" ? <CartPage cart={cart} totalPrice={totalPrice} /> : null}\n      {page === \"product\" ? <ProductPage id={id} onAdd={addToCart} /> : null}\n      {page === \"missing\" ? <NotFoundPage /> : null}\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Динамик зам бол бүх router-ийн гол функц: тогтмол хэсэг (`product`) ба хувьсах хэсэг (`2`) хоёрыг ялгаж, хувьсахыг нь параметр болгож өгнө. Танихгүй бүхнийг 404 руу унагаах нь хэрэглэгчийг цав цагаан дэлгэц дээр орхихгүйн баталгаа."
+        },
+        "xpPenalty": 27
+      },
+      "xp": 45,
+      "estimatedMinutes": 24,
+      "skills": [
+        "react"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 20
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -46,6 +46,17 @@
         "m6-react",
         "m7-react-forms"
       ]
+    },
+    {
+      "id": "s4",
+      "order": 4,
+      "title": {
+        "mn": "Router ба олон хуудас"
+      },
+      "badgeId": "router-builder",
+      "moduleIds": [
+        "m8-router"
+      ]
     }
   ]
 }
