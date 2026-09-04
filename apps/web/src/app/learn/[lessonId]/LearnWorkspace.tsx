@@ -228,6 +228,7 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
             <PreviewFrame
               files={files}
               entry={lesson.execution.entry}
+              sqliteUrl={lesson.execution.runtime === "sqlite" ? "/lib/sqlite.js" : undefined}
               onConsole={(e) => setLogs((l) => [...l.slice(-40), e])}
             />
           </div>

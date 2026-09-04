@@ -1,3 +1,5 @@
+import { createRequire } from "node:module";
+import { readFileSync } from "node:fs";
 import { Window as HappyWindow } from "happy-dom";
 import { runChecks } from "./registry";
 import { assembleHtml } from "./assemble";
@@ -6,6 +8,8 @@ import "./index"; // register all families
 
 export interface RunOptions {
   entry?: string;
+  /** SQLite source for lessons whose runtime is "sqlite" (see loadSqliteRuntime). */
+  sqliteRuntime?: string;
   /** Viewport for media-query-dependent checks. */
   viewport?: { width: number; height: number };
 }
@@ -34,7 +38,9 @@ export async function runChecksOnFiles(
   defs: CheckDef[],
   options: RunOptions = {},
 ): Promise<CheckResult[]> {
-  const html = assembleHtml(files, options.entry ?? "index.html");
+  const html = assembleHtml(files, options.entry ?? "index.html", {
+    sqliteRuntime: options.sqliteRuntime,
+  });
   // Extra windows opened by css.responsive; closed with the main one.
   const extraWindows: HappyWindow[] = [];
 
@@ -99,3 +105,18 @@ export async function runChecksOnFiles(
 
 export { assembleHtml } from "./assemble";
 export type { FileSet, CheckDef, CheckResult, CheckerContext } from "./types";
+
+/**
+ * Read the SQLite (sql.js, asm build) source once. Node-only on purpose: it
+ * lives here, not in assemble.ts, so the browser bundle never pulls node:fs.
+ * The asm build is plain JavaScript, so it runs under the preview CSP (which
+ * forbids eval) and inside happy-dom, unchanged.
+ */
+let sqliteRuntime: string | null = null;
+export function loadSqliteRuntime(): string {
+  if (sqliteRuntime === null) {
+    const require_ = createRequire(import.meta.url);
+    sqliteRuntime = readFileSync(require_.resolve("sql.js/dist/sql-asm.js"), "utf8");
+  }
+  return sqliteRuntime;
+}

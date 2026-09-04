@@ -50,7 +50,19 @@ const isJsx = (p: string) => /\.(jsx|tsx)$/.test(p);
  * loading (happy-dom on the server, srcdoc in the browser) renders correctly.
  * Mirrors the browser preview assembler (E5).
  */
-export function assembleHtml(files: FileSet, entry = "index.html"): string {
+/** A `<script src>` the platform provides rather than the workspace. */
+const isSqliteRuntime = (p: string) => /(^|\/)sqlite\.js$/.test(p);
+
+export interface AssembleHtmlOptions {
+  /** SQLite (sql.js, asm build) source, inlined where the page asks for it. */
+  sqliteRuntime?: string;
+}
+
+export function assembleHtml(
+  files: FileSet,
+  entry = "index.html",
+  opts: AssembleHtmlOptions = {},
+): string {
   let html = files[entry]?.content;
   if (html === undefined) {
     const key = Object.keys(files).find((k) => k.endsWith(".html"));
@@ -76,7 +88,14 @@ export function assembleHtml(files: FileSet, entry = "index.html"): string {
     /<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>\s*<\/script>/gi,
     (tag, src: string) => {
       const js = fileByPath(src);
-      if (!js) return tag;
+      if (!js) {
+        // The SQL lessons reference a runtime the platform supplies, not a file
+        // in the workspace — 1.4 MB of SQLite has no business in a lesson patch.
+        if (isSqliteRuntime(src) && opts.sqliteRuntime) {
+          return `<script>\n${opts.sqliteRuntime}\n</script>`;
+        }
+        return tag;
+      }
       const isModule = /type=["']module["']/i.test(tag);
       if (isJsx(src)) {
         needsReact = true;

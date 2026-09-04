@@ -68,6 +68,17 @@
       "moduleIds": [
         "m9-api"
       ]
+    },
+    {
+      "id": "s6",
+      "order": 6,
+      "title": {
+        "mn": "Өгөгдлийн сан ба SQL"
+      },
+      "badgeId": "sql-reader",
+      "moduleIds": [
+        "m10-sql"
+      ]
     }
   ]
 }

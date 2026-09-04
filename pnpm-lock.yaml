@@ -81,6 +81,9 @@ importers:
       eslint:
         specifier: 9.18.0
         version: 9.18.0
+      sql.js:
+        specifier: 1.14.2
+        version: 1.14.2
       typescript:
         specifier: 5.7.3
         version: 5.7.3
@@ -96,6 +99,9 @@ importers:
       happy-dom:
         specifier: 15.11.7
         version: 15.11.7
+      sql.js:
+        specifier: 1.14.2
+        version: 1.14.2
       sucrase:
         specifier: ^3.35.0
         version: 3.35.1
@@ -2069,6 +2075,9 @@ packages:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
 
+  sql.js@1.14.2:
+    resolution: {integrity: sha512-3ZGPovObMFrdw79zrUHbfdE/DLIsy8jdNdssmMSQuRAymedU6q84asPt0kgiqrdMYlPegDItiIMfmIXzZnYFcw==}
+
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
 
@@ -3909,6 +3918,8 @@ snapshots:
     optional: true
 
   source-map-js@1.2.1: {}
+
+  sql.js@1.14.2: {}
 
   stackback@0.0.2: {}
 

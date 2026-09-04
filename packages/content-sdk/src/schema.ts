@@ -93,7 +93,7 @@ export type Task = z.infer<typeof TaskSchema>;
 
 export const ExecutionSchema = z.object({
   tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
-  runtime: z.enum(["static", "vite-react", "next", "node", "postgres", "pglite"]),
+  runtime: z.enum(["static", "sqlite", "vite-react", "next", "node", "postgres", "pglite"]),
   entry: z.string().optional(),
   autoRun: z.boolean().default(false),
   services: z.array(z.enum(["postgres", "mailhog"])).optional(),

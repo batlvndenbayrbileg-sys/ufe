@@ -28,9 +28,25 @@ export interface PreviewHostHandle {
   reload(): void;
 }
 
+/**
+ * SQLite is ~1.4 MB, so it is fetched on demand by the handful of lessons that
+ * need it and never enters the app bundle. One in-flight request per document,
+ * shared across mounts.
+ */
+let sqlitePromise: Promise<string> | null = null;
+function fetchSqlite(url: string): Promise<string> {
+  sqlitePromise ??= fetch(url).then((r) => {
+    if (!r.ok) throw new Error(`sqlite runtime ${r.status}`);
+    return r.text();
+  });
+  return sqlitePromise;
+}
+
 export interface PreviewHostProps {
   files: FileSet;
   entry?: string;
+  /** Same-origin URL of the SQLite runtime; set only for SQL lessons. */
+  sqliteUrl?: string;
   connectSrc?: string;
   cdnBase?: string;
   /** Device viewport; the frame around it is drawn by PreviewFrame. */
@@ -43,7 +59,7 @@ export interface PreviewHostProps {
 }
 
 export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(function PreviewHost(
-  { files, entry, connectSrc, cdnBase, width = "100%", height = "100%", onConsole, onError, onReady, className },
+  { files, entry, sqliteUrl, connectSrc, cdnBase, width = "100%", height = "100%", onConsole, onError, onReady, className },
   ref,
 ) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -58,6 +74,7 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
   const scrollPos = useRef({ x: 0, y: 0 });
   // Survives iframe reloads so storage lessons behave like a real browser.
   const storage = useRef<Record<string, string>>({});
+  const sqlite = useRef<string | undefined>(undefined);
   const [looping, setLooping] = useState(false);
 
   const post = useCallback((msg: HostMessage) => {
@@ -77,9 +94,29 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
       connectSrc,
       cdnBase,
       storage: storage.current,
+      sqliteRuntime: sqlite.current,
     });
     prevFiles.current = snapshot;
   }, [entry, connectSrc, cdnBase]);
+
+  // Pull the SQLite runtime in before the first render of a SQL lesson, so the
+  // page never flashes a "initSqlJs is not defined" error on its way up.
+  useEffect(() => {
+    if (!sqliteUrl || sqlite.current) return;
+    let alive = true;
+    fetchSqlite(sqliteUrl)
+      .then((src) => {
+        if (!alive) return;
+        sqlite.current = src;
+        reload();
+      })
+      .catch(() => {
+        /* the page will surface the missing runtime itself */
+      });
+    return () => {
+      alive = false;
+    };
+  }, [sqliteUrl, reload]);
 
   // Initial render (mount only).
   const didMount = useRef(false);

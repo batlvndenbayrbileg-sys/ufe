@@ -1,0 +1,20 @@
+{
+  "id": "m10-sql",
+  "stageId": "s6",
+  "order": 1,
+  "title": {
+    "mn": "SQL: Shop.mn-ий өгөгдлийн сан"
+  },
+  "description": {
+    "mn": "SELECT, WHERE, ORDER BY, GROUP BY, JOIN, INSERT — хөтчид ажиллаж буй жинхэнэ SQLite дээр."
+  },
+  "estimatedHours": 2,
+  "lessons": [
+    "m10-l1",
+    "m10-l2",
+    "m10-l3",
+    "m10-l4",
+    "m10-l5",
+    "m10-l6"
+  ]
+}

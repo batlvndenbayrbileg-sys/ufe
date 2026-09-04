@@ -1,0 +1,232 @@
+{
+  "id": "m10-l3",
+  "moduleId": "m10-sql",
+  "slug": "group-by",
+  "order": 3,
+  "title": {
+    "mn": "Нэгтгэх: COUNT, AVG, GROUP BY"
+  },
+  "why": {
+    "mn": "«Ангилал бүрд хэдэн бараа байна? Дундаж үнэ нь хэд вэ?» гэсэн асуултууд Shop.mn-ий админ самбарын үндэс. Нэгтгэх функцүүд олон мөрийг НЭГ хариу болгож хураадаг."
+  },
+  "buildsInProject": "Ангиллын тойм",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 22,
+  "skills": [
+    "sql"
+  ],
+  "concepts": [
+    "COUNT",
+    "AVG",
+    "GROUP BY",
+    "alias"
+  ],
+  "prerequisites": [
+    "m10-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "sqlite",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — өгөгдлийн сан</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn өгөгдлийн сан</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"lib/sqlite.js\"></script>\n    <script src=\"src/queries.js\"></script>\n    <script src=\"src/db.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 28px; }\nh2 { font-size: 17px; margin: 0 0 8px; }\n\n.result {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 16px;\n  overflow-x: auto;\n}\n\ntable {\n  border-collapse: collapse;\n  width: 100%;\n  font-size: 14px;\n}\n\nth, td {\n  border-bottom: 1px solid #e4e4e7;\n  padding: 6px 10px;\n  text-align: left;\n}\n\nth {\n  background-color: #f4f4f5;\n  font-weight: 600;\n  white-space: nowrap;\n}\n\ntd { white-space: nowrap; }\n\n.muted { color: #52525b; font-size: 13px; margin: 8px 0 0; }\n\n.sql-error {\n  background-color: #fef2f2;\n  border: 1px solid #fecaca;\n  border-radius: 8px;\n  color: #991b1b;\n  padding: 10px 12px;\n  font-family: ui-monospace, monospace;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/db.js",
+        "content": "// Shop.mn-ий өгөгдлийн сан. Энэ файлыг өөрчлөх шаардлагагүй.\n// src/queries.js дотор бичсэн бүх query энд ажиллаж, доор хүснэгт болж гарна.\n\nconst SCHEMA = `\nCREATE TABLE categories (\n  id    INTEGER PRIMARY KEY,\n  name  TEXT NOT NULL\n);\n\nCREATE TABLE products (\n  id           INTEGER PRIMARY KEY,\n  name         TEXT NOT NULL,\n  price        INTEGER NOT NULL,\n  stock        INTEGER NOT NULL,\n  category_id  INTEGER REFERENCES categories(id)\n);\n\nCREATE TABLE customers (\n  id    INTEGER PRIMARY KEY,\n  name  TEXT NOT NULL,\n  city  TEXT NOT NULL\n);\n\nCREATE TABLE orders (\n  id           INTEGER PRIMARY KEY,\n  customer_id  INTEGER REFERENCES customers(id),\n  created_at   TEXT NOT NULL\n);\n\nCREATE TABLE order_items (\n  order_id    INTEGER REFERENCES orders(id),\n  product_id  INTEGER REFERENCES products(id),\n  quantity    INTEGER NOT NULL\n);\n\nINSERT INTO categories (id, name) VALUES\n  (1, 'Хувцас'), (2, 'Гутал'), (3, 'Гэр ахуй');\n\nINSERT INTO products (id, name, price, stock, category_id) VALUES\n  (1, 'Монгол дээл',   129000, 4,  1),\n  (2, 'Малгай',         45000, 12, 1),\n  (3, 'Ноосон ороолт',  29000, 30, 1),\n  (4, 'Арьсан гутал',   89000, 0,  2),\n  (5, 'Өвлийн гутал',  115000, 7,  2),\n  (6, 'Гэрийн ширдэг', 250000, 2,  3),\n  (7, 'Аяга таваг',     18000, 40, 3);\n\nINSERT INTO customers (id, name, city) VALUES\n  (1, 'Батаа',   'Улаанбаатар'),\n  (2, 'Сараа',   'Дархан'),\n  (3, 'Ганбат',  'Улаанбаатар'),\n  (4, 'Оюунаа',  'Эрдэнэт');\n\nINSERT INTO orders (id, customer_id, created_at) VALUES\n  (1, 1, '2026-01-12'),\n  (2, 2, '2026-01-15'),\n  (3, 1, '2026-02-03'),\n  (4, 3, '2026-02-11');\n\nINSERT INTO order_items (order_id, product_id, quantity) VALUES\n  (1, 1, 1), (1, 2, 2),\n  (2, 4, 1),\n  (3, 6, 1), (3, 7, 4),\n  (4, 2, 1), (4, 3, 3);\n`;\n\nconst output = document.getElementById(\"output\");\n\nfunction renderTable(key, title, result) {\n  const box = document.createElement(\"section\");\n  box.className = \"result\";\n  box.dataset.testid = \"result-\" + key;\n\n  const heading = document.createElement(\"h2\");\n  heading.textContent = title;\n  box.append(heading);\n\n  if (result.error) {\n    const problem = document.createElement(\"p\");\n    problem.className = \"sql-error\";\n    problem.dataset.testid = \"error-\" + key;\n    problem.textContent = result.error;\n    box.append(problem);\n    output.append(box);\n    return;\n  }\n\n  if (result.rows.length === 0) {\n    const empty = document.createElement(\"p\");\n    empty.className = \"muted\";\n    empty.textContent = \"Хоосон үр дүн.\";\n    box.append(empty);\n    output.append(box);\n    return;\n  }\n\n  const table = document.createElement(\"table\");\n  const head = document.createElement(\"tr\");\n  for (const column of result.columns) {\n    const th = document.createElement(\"th\");\n    th.textContent = column;\n    head.append(th);\n  }\n  table.append(head);\n\n  for (const row of result.rows) {\n    const tr = document.createElement(\"tr\");\n    for (const cell of row) {\n      const td = document.createElement(\"td\");\n      td.textContent = cell === null ? \"—\" : String(cell);\n      tr.append(td);\n    }\n    table.append(tr);\n  }\n\n  box.append(table);\n\n  const note = document.createElement(\"p\");\n  note.className = \"muted\";\n  note.dataset.testid = \"count-\" + key;\n  note.textContent = result.rows.length + \" мөр\";\n  box.append(note);\n\n  output.append(box);\n}\n\n(async function () {\n  const SQL = await initSqlJs({});\n  const db = new SQL.Database();\n  db.run(SCHEMA);\n\n  window.db = db;\n  window.RESULTS = {};\n\n  const queries = window.QUERIES || {};\n\n  for (const key of Object.keys(queries)) {\n    const entry = queries[key];\n    const sql = typeof entry === \"string\" ? entry : entry.sql;\n    const title = typeof entry === \"string\" ? key : entry.title;\n\n    let result;\n    try {\n      const out = db.exec(sql);\n      result = out.length === 0\n        ? { columns: [], rows: [] }\n        : { columns: out[0].columns, rows: out[0].values };\n    } catch (problem) {\n      result = { error: problem.message, columns: [], rows: [] };\n    }\n\n    window.RESULTS[key] = result;\n    renderTable(key, title || key, result);\n  }\n\n  document.body.dataset.ready = \"1\";\n})();\n"
+      },
+      {
+        "op": "create",
+        "path": "src/queries.js",
+        "content": "// Shop.mn-ий өгөгдлийн сангаас асуух асуултууд.\n// Query бүр доорх хүснэгт болж харагдана.\n\nwindow.QUERIES = {\n  expensive: {\n    title: \"50,000-аас үнэтэй бараа\",\n    sql: `\n    SELECT name, price\n    FROM products\n    WHERE price > 50000;\n    `,\n  },\n\n  top3: {\n    title: \"Хамгийн үнэтэй 3 бараа\",\n    sql: `\n    SELECT name, price\n    FROM products\n    ORDER BY price DESC\n    LIMIT 3;\n    `,\n  },\n\n  byCategory: {\n    title: \"Ангилал тус бүрийн тойм\",\n    sql: `\n    -- энд бичнэ үү\n    `,\n  },\n};\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/db.js",
+      "src/queries.js"
+    ],
+    "openFiles": [
+      "src/queries.js"
+    ],
+    "activeFile": "src/queries.js"
+  },
+  "tasks": [
+    {
+      "id": "m10-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Нэгтгэх: COUNT, AVG, GROUP BY"
+      },
+      "statement": {
+        "mn": "`byCategory` query-г бич: `products`-оос `category_id`, мөрийн тоог `COUNT(*) AS ширхэг`, дундаж үнийг `AVG(price) AS дундаж` гэж сонгоод, `category_id`-аар нь бүлэглэж, `category_id`-аар эрэмбэл."
+      },
+      "requirements": [
+        {
+          "mn": "`COUNT(*) AS ширхэг`"
+        },
+        {
+          "mn": "`AVG(price) AS дундаж`"
+        },
+        {
+          "mn": "`GROUP BY category_id`"
+        },
+        {
+          "mn": "3 мөр буцна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Гурван ангилал тус бүрийн барааны тоо, дундаж үнэ гарч ирнэ."
+        }
+      },
+      "targetFile": "src/queries.js",
+      "marker": "-- энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"error-byCategory\"]",
+                  "equals": 0
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "SQL алдаатай байна — хүснэгтийн доорх улаан мессежийг уншаарай."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(window.RESULTS.byCategory.columns)",
+                  "equals": "[\"category_id\",\"ширхэг\",\"дундаж\"]"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Багана нь category_id, ширхэг, дундаж байх ёстой — даалгаварт заасан баганаа яг тэр дарааллаар нь сонго."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(window.RESULTS.byCategory.rows)",
+                  "equals": "[[1,3,67666.66666666667],[2,2,102000],[3,2,134000]]"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Үр дүн таарахгүй байна. 3 мөр буцах ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"count-byCategory\"]",
+                  "equals": "3 мөр"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хүснэгтэд 3 мөр харагдах ёстой."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Нэгтгэх функц (`COUNT`, `SUM`, `AVG`, `MIN`, `MAX`) нь бүлэг мөрийг нэг утга болгоно. `GROUP BY` нь бүлгийг ЯМАР баганаар үүсгэхийг заана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`AS` нь баганад нэр өгнө — хүснэгтийн толгойд яг тэр нэр гарна. Бүлэглэсэн үед `SELECT`-д зөвхөн бүлгийн багана эсвэл нэгтгэх функц л байж болно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гурван мөрөө гүйцээ:"
+          },
+          "code": "SELECT category_id, /* тоо */, /* дундаж */\nFROM products\n/* category_id-аар бүлэглэ */\nORDER BY category_id;"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/queries.js",
+            "content": "// Shop.mn-ий өгөгдлийн сангаас асуух асуултууд.\n// Query бүр доорх хүснэгт болж харагдана.\n\nwindow.QUERIES = {\n  expensive: {\n    title: \"50,000-аас үнэтэй бараа\",\n    sql: `\n    SELECT name, price\n    FROM products\n    WHERE price > 50000;\n    `,\n  },\n\n  top3: {\n    title: \"Хамгийн үнэтэй 3 бараа\",\n    sql: `\n    SELECT name, price\n    FROM products\n    ORDER BY price DESC\n    LIMIT 3;\n    `,\n  },\n\n  byCategory: {\n    title: \"Ангилал тус бүрийн тойм\",\n    sql: `\n    SELECT category_id, COUNT(*) AS ширхэг, AVG(price) AS дундаж\n    FROM products\n    GROUP BY category_id\n    ORDER BY category_id;\n    `,\n  },\n};\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`GROUP BY` нь хүснэгтийг бүлэг болгон хувааж, нэгтгэх функц бүрийг бүлэг тус бүрд ажиллуулна. Ингэснээр 7 мөр 3 мөр болж хураагдана. Энэ бол тайлан гаргах бүх ажлын үндэс — хэдэн сая мөрийг ч ижил аргаар нэгтгэнэ."
+        },
+        "xpPenalty": 21
+      },
+      "xp": 35,
+      "estimatedMinutes": 20,
+      "skills": [
+        "sql"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

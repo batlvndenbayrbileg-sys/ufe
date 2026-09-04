@@ -40,5 +40,12 @@
       "mn": "React"
     },
     "order": 6
+  },
+  {
+    "id": "sql",
+    "title": {
+      "mn": "SQL"
+    },
+    "order": 7
   }
 ]

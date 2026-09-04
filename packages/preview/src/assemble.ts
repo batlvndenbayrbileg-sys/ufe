@@ -2,6 +2,8 @@ import { transpileJsx, REACT_RUNTIME_JS } from "@khiye/checkers/assemble";
 import type { FileSet } from "./protocol";
 
 const isJsx = (p: string) => /\.(jsx|tsx)$/.test(p);
+/** A `<script src>` the platform provides rather than the workspace. */
+const isSqliteRuntime = (p: string) => /(^|\/)sqlite\.js$/.test(p);
 
 export interface AssembleOptions {
   /** The pre-bundled harness IIFE, injected first so it runs before student code. */
@@ -11,6 +13,8 @@ export interface AssembleOptions {
   cdnBase?: string;
   /** connect-src for the CSP meta. "'none'" until fetch lessons; then the lesson's allowlist. */
   connectSrc?: string;
+  /** SQLite (sql.js, asm build) source, inlined where the page asks for it. */
+  sqliteRuntime?: string;
   /**
    * Seed for the harness's localStorage shim. Inlined (not postMessaged) because
    * student code reads storage on its very first line, long before any async
@@ -56,7 +60,14 @@ export function assembleSrcdoc(files: FileSet, opts: AssembleOptions): string {
     /<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>\s*<\/script>/gi,
     (tag, src: string) => {
       const js = fileByPath(src);
-      if (!js) return tag;
+      if (!js) {
+        // The SQL lessons reference a runtime the platform supplies, not a file
+        // in the workspace — 1.4 MB of SQLite has no business in a lesson patch.
+        if (isSqliteRuntime(src) && opts.sqliteRuntime) {
+          return `<script>\n${opts.sqliteRuntime}\n</script>`;
+        }
+        return tag;
+      }
       if (isJsx(src)) {
         needsReact = true;
         return `<script>\n${transpileJsx(js.content, src)}\n</script>`;

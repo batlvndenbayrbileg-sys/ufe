@@ -1,4 +1,4 @@
-import { runChecksOnFiles } from "@khiye/checkers/server";
+import { loadSqliteRuntime, runChecksOnFiles } from "@khiye/checkers/server";
 import { applyPatch, type FileSet } from "./patch";
 import { flattenLessons } from "./loader";
 import type { Lesson, ResolvedCourse } from "./schema";
@@ -37,18 +37,24 @@ async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
   const out: TaskTestResult[] = [];
   let files: FileSet = applyPatch({}, lesson.workspace.patch);
 
+  // SQL lessons ask the platform for SQLite; every other runtime needs nothing.
+  const runOptions = {
+    entry: lesson.execution.entry,
+    ...(lesson.execution.runtime === "sqlite" ? { sqliteRuntime: loadSqliteRuntime() } : {}),
+  };
+
   for (const task of [...lesson.tasks].sort((a, b) => a.order - b.order)) {
     if (task.starter) files = applyPatch(files, task.starter);
     const solved = applyPatch(files, task.solution.patch);
     const checks = task.checks.map((c) => ({ id: c.id, type: c.type, args: c.args, onFail: c.onFail }));
 
-    const results = await runChecksOnFiles(solved as FileSet, checks, { entry: lesson.execution.entry });
+    const results = await runChecksOnFiles(solved as FileSet, checks, runOptions);
 
     // A task the student cannot fail teaches nothing: the starter must break at
     // least one check. This catches a marker left in the wrong file, a check
     // that only asserts scaffolding, or a solution accidentally shipped as the
     // starter.
-    const onStarter = await runChecksOnFiles(files as FileSet, checks, { entry: lesson.execution.entry });
+    const onStarter = await runChecksOnFiles(files as FileSet, checks, runOptions);
     const starterFails = onStarter.some((r) => !r.passed && r.errorKind !== "infra");
 
     const broken = results
