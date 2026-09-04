@@ -55,6 +55,8 @@ interface Step {
   click?: string;
   /** Go to a hash route, the way a link click does in a real browser. */
   navigate?: string;
+  /** Run an expression in the page to set up a scenario (e.g. make the API fail). */
+  run?: string;
   type?: { selector: string; text: string };
   waitFor?: string;
   expectText?: { selector: string; equals?: string; contains?: string };
@@ -64,7 +66,7 @@ interface Step {
   expectEval?: { expr: string; equals: unknown };
 }
 
-async function waitFor(ctx: CheckerContext, selector: string, capMs = 3000): Promise<Element | null> {
+async function waitFor(ctx: CheckerContext, selector: string, capMs = 1500): Promise<Element | null> {
   const start = Date.now();
   while (Date.now() - start < capMs) {
     const el = doc(ctx).querySelector(selector);
@@ -120,7 +122,9 @@ registerChecker("js.interaction", async (args, outerCtx) => {
       : await outerCtx.renderAt({ width: 1280, height: 800 });
   const w = win(ctx);
   for (const [i, step] of steps.entries()) {
-    if (step.navigate !== undefined) {
+    if (step.run !== undefined) {
+      evalInPage(ctx, undefined, step.run);
+    } else if (step.navigate !== undefined) {
       // happy-dom does not activate <a href="#…"> clicks, so drive the route the
       // way the browser would and let the page's own hashchange listener run.
       w.location.hash = step.navigate.startsWith("#") ? step.navigate : `#${step.navigate}`;

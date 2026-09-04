@@ -57,6 +57,17 @@
       "moduleIds": [
         "m8-router"
       ]
+    },
+    {
+      "id": "s5",
+      "order": 5,
+      "title": {
+        "mn": "API ба өгөгдөл"
+      },
+      "badgeId": "api-caller",
+      "moduleIds": [
+        "m9-api"
+      ]
     }
   ]
 }

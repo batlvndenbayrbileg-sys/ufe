@@ -14,7 +14,9 @@ export function registeredTypes(): string[] {
   return [...REGISTRY.keys()].sort();
 }
 
-const PER_CHECK_TIMEOUT_MS = 3000;
+// Data-driven lessons render, fetch and settle inside a single check; 3s left
+// no headroom over waitFor's own cap. Still well under the preview host's 6s.
+const PER_CHECK_TIMEOUT_MS = 5000;
 
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
