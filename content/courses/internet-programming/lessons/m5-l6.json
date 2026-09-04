@@ -1,0 +1,276 @@
+{
+  "id": "m5-l6",
+  "moduleId": "m5-storage",
+  "slug": "cart-total",
+  "order": 6,
+  "title": {
+    "mn": "Checkpoint: нийт төлбөр"
+  },
+  "why": {
+    "mn": "Хэрэглэгч Shop.mn дээр хамгийн түрүүнд хардаг тоо бол нийт төлбөр. Энэ хичээлээр `reduce`-ийг эзэмшиж, Stage 2-ын бүх ур чадвараа нэг ажиллаж буй сагсанд нэгтгэнэ."
+  },
+  "buildsInProject": "Нийт төлбөр харуулдаг сагс",
+  "difficulty": "advanced",
+  "estimatedMinutes": 22,
+  "skills": [
+    "javascript"
+  ],
+  "concepts": [
+    "array.reduce",
+    "accumulator",
+    "price × quantity",
+    "formatting"
+  ],
+  "prerequisites": [
+    "m5-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <header>\n      <img src=\"images/logo.png\" alt=\"Shop.mn лого\">\n      <nav>\n        <ul>\n          <li><a href=\"index.html\">Нүүр</a></li>\n          <li><a href=\"cart.html\">Сагс</a></li>\n        </ul>\n      </nav>\n      <span class=\"cart-count\" data-testid=\"cart-count\">0</span>\n    </header>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <div class=\"toolbar\">\n        <input\n          type=\"search\"\n          class=\"search\"\n          data-testid=\"search\"\n          placeholder=\"Бараа хайх…\"\n          aria-label=\"Бараа хайх\"\n        />\n        <select class=\"sort\" data-testid=\"sort\" aria-label=\"Эрэмбэлэх\">\n          <option value=\"default\">Эрэмбэ: анхны</option>\n          <option value=\"price-asc\">Үнэ: багаас их</option>\n          <option value=\"price-desc\">Үнэ: ихээс бага</option>\n        </select>\n      </div>\n      <section class=\"product-grid\" data-testid=\"grid\">\n      </section>\n      <section class=\"cart\">\n        <h2>Сагс</h2>\n        <ul data-testid=\"cart-items\"></ul>\n        <p class=\"cart-total\" data-testid=\"cart-total\">₮ 0</p>\n      </section>\n    </main>\n    <footer>\n      <address>Утас: 7000-0000</address>\n      <p>© 2026 Shop.mn</p>\n    </footer>\n    <script src=\"js/main.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "/* Shop.mn-ийн загвар */\n\nbody {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n}\n\nh1 { font-size: 36px; }\n\nheader {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 8px;\n  padding: 12px 16px;\n}\n\n.cart-count {\n  background-color: #2563eb;\n  color: #ffffff;\n  border-radius: 999px;\n  padding: 2px 10px;\n}\n\n.toolbar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 8px;\n  margin-bottom: 16px;\n}\n\n.search,\n.sort {\n  padding: 10px 12px;\n  border: 1px solid #d4d4d8;\n  border-radius: 8px;\n  font-size: 16px;\n  background-color: #ffffff;\n  color: #18181b;\n}\n\n.search { flex: 1 1 220px; }\n\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n\n.product-card img { max-width: 100%; height: auto; }\n\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n}\n\n.product-grid {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 16px;\n}\n\n.cart ul {\n  list-style: none;\n  padding: 0;\n}\n\n.cart li {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  padding: 8px 0;\n  border-bottom: 1px solid #e4e4e7;\n}\n\n.btn-remove {\n  background-color: #ffffff;\n  color: #b91c1c;\n  border: 1px solid #fecaca;\n  border-radius: 6px;\n  padding: 4px 10px;\n  cursor: pointer;\n}\n\n.cart-total {\n  font-size: 20px;\n  font-weight: 700;\n  text-align: right;\n}\n\n@media (min-width: 768px) {\n  .product-grid { grid-template-columns: 1fr 1fr; }\n  header { flex-direction: row; justify-content: space-between; }\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "js/main.js",
+        "content": "// Shop.mn — JavaScript\n\nconst STORAGE_KEY = \"shopmn-cart\";\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000, image: \"images/deel.jpg\" },\n  { id: 2, name: \"Малгай\", price: 45000, image: \"images/malgai.jpg\" },\n  { id: 3, name: \"Гутал\", price: 89000, image: \"images/gutal.jpg\" },\n];\n\nconst grid = document.querySelector('[data-testid=\"grid\"]');\nconst searchInput = document.querySelector('[data-testid=\"search\"]');\nconst sortSelect = document.querySelector('[data-testid=\"sort\"]');\nconst cartList = document.querySelector('[data-testid=\"cart-items\"]');\nconst cartCount = document.querySelector('[data-testid=\"cart-count\"]');\nconst cartTotal = document.querySelector('[data-testid=\"cart-total\"]');\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction renderProducts(list) {\n  grid.textContent = \"\";\n\n  list.forEach(function (product) {\n    const cardEl = document.createElement(\"article\");\n    cardEl.className = \"product-card\";\n\n    const image = document.createElement(\"img\");\n    image.src = product.image;\n    image.alt = product.name;\n\n    const name = document.createElement(\"h3\");\n    name.textContent = product.name;\n\n    const price = document.createElement(\"p\");\n    price.className = \"price\";\n    price.textContent = formatPrice(product.price);\n\n    const button = document.createElement(\"button\");\n    button.className = \"btn-add\";\n    button.dataset.testid = \"add-to-cart\";\n    button.textContent = \"Сагсанд хийх\";\n    button.addEventListener(\"click\", function () {\n      addToCart(product);\n    });\n\n    cardEl.append(image, name, price, button);\n    grid.append(cardEl);\n  });\n}\n\nfunction sortProducts(list, mode) {\n  const copy = [...list];\n\n  if (mode === \"price-asc\") {\n    return copy.sort(function (a, b) {\n      return a.price - b.price;\n    });\n  }\n\n  if (mode === \"price-desc\") {\n    return copy.sort(function (a, b) {\n      return b.price - a.price;\n    });\n  }\n\n  return copy;\n}\n\nfunction applyFilters() {\n  const query = searchInput.value.trim().toLowerCase();\n\n  const found = products.filter(function (product) {\n    return product.name.toLowerCase().includes(query);\n  });\n\n  renderProducts(sortProducts(found, sortSelect.value));\n}\n\nfunction loadCart() {\n  const raw = localStorage.getItem(STORAGE_KEY);\n  if (!raw) return [];\n\n  try {\n    const saved = JSON.parse(raw);\n    return Array.isArray(saved) ? saved : [];\n  } catch (error) {\n    return [];\n  }\n}\n\nfunction saveCart() {\n  localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));\n}\n\nlet cart = loadCart();\n\nfunction addToCart(product) {\n  const existing = cart.find(function (item) {\n    return item.id === product.id;\n  });\n\n  if (existing) {\n    existing.quantity += 1;\n  } else {\n    cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });\n  }\n\n  saveCart();\n  renderCart();\n}\n\nfunction removeFromCart(id) {\n  cart = cart.filter(function (item) {\n    return item.id !== id;\n  });\n\n  saveCart();\n  renderCart();\n}\n\nfunction renderCart() {\n  cartList.textContent = \"\";\n\n  let count = 0;\n  cart.forEach(function (item) {\n    count += item.quantity;\n\n    const row = document.createElement(\"li\");\n\n    const label = document.createElement(\"span\");\n    label.textContent = item.name + \" × \" + item.quantity;\n\n    const removeButton = document.createElement(\"button\");\n    removeButton.className = \"btn-remove\";\n    removeButton.dataset.testid = \"remove\";\n    removeButton.dataset.id = String(item.id);\n    removeButton.textContent = \"Хасах\";\n\n    row.append(label, removeButton);\n    cartList.append(row);\n  });\n\n  cartCount.textContent = String(count);\n\n  // энд бичнэ үү\n}\n\nsearchInput.addEventListener(\"input\", applyFilters);\nsortSelect.addEventListener(\"change\", applyFilters);\n\ncartList.addEventListener(\"click\", function (event) {\n  const button = event.target.closest('[data-testid=\"remove\"]');\n  if (!button) return;\n\n  removeFromCart(Number(button.dataset.id));\n});\n\napplyFilters();\nrenderCart();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "js/main.js"
+    ],
+    "openFiles": [
+      "js/main.js"
+    ],
+    "activeFile": "js/main.js"
+  },
+  "tasks": [
+    {
+      "id": "m5-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Checkpoint: нийт төлбөр"
+      },
+      "statement": {
+        "mn": "`renderCart` дотор, тэмдэглэгээ байгаа газарт нийт төлбөрийг тооц: `cart.reduce(...)`-ээр `item.price * item.quantity`-ийг нийлбэрлэ (эхлэх утга `0`). Гарсан дүнгээ `formatPrice(...)`-оор бэлдээд `cartTotal.textContent`-д оноо."
+      },
+      "requirements": [
+        {
+          "mn": "`reduce` ашиглана"
+        },
+        {
+          "mn": "Үнэ × тоо ширхэг"
+        },
+        {
+          "mn": "`formatPrice`-оор форматлана"
+        },
+        {
+          "mn": "Хоосон сагсанд ₮ 0"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Монгол дээл»-ийг 2 удаа нэмэхэд нийт төлбөр ₮ 258,000 гэж харагдана."
+        }
+      },
+      "targetFile": "js/main.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "js/main.js",
+            "name": "reduce"
+          },
+          "onFail": {
+            "mn": "`reduce` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "js/main.js",
+            "name": "formatPrice"
+          },
+          "onFail": {
+            "mn": "`formatPrice`-оор форматлаагүй байна — бэлэн функцээ ашигла."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.text",
+          "args": {
+            "selector": "[data-testid=\"cart-total\"]",
+            "equals": "₮ 0"
+          },
+          "onFail": {
+            "mn": "Хоосон сагсанд нийт төлбөр ₮ 0 байх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"cart-total\"]",
+                  "equals": "₮ 129,000"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Монгол дээл» нэмэхэд нийт төлбөр ₮ 129,000 болох ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"cart-total\"]",
+                  "equals": "₮ 258,000"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Ижил барааг 2 удаа нэмэхэд үнийг тоо ширхэгээр нь үржүүлэх ёстой."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "click": ".product-card:nth-of-type(2) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"cart-total\"]",
+                  "equals": "₮ 174,000"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Өөр бараа нэмэхэд нийт дүн нэмэгдэх ёстой (129,000 + 45,000)."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "click": "[data-testid=\"remove\"][data-id=\"1\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"cart-total\"]",
+                  "equals": "₮ 0"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Бүх барааг хасахад нийт төлбөр ₮ 0 болох ёстой."
+          }
+        },
+        {
+          "id": "c8",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`reduce` нь массивыг ГАНЦ утга болгож хураадаг. Хоёр аргумент авна: хураах функц ба эхлэх утга. Эхлэх утгыг `0` гэж өгөхөө мартвал хоосон сагс дээр алдаа гарна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Хураах функц нь `(sum, item)` авч ШИНЭ нийлбэр буцаана. Мөрийн үнэ нь `item.price * item.quantity`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Хураах функцээ гүйцээ:"
+          },
+          "code": "const totalPrice = cart.reduce(function (sum, item) {\n  /* энэ мөрийн дүнг sum дээр нэмж буцаа */\n}, 0);\n\ncartTotal.textContent = /* formatPrice ашигла */;"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "js/main.js",
+            "content": "// Shop.mn — JavaScript\n\nconst STORAGE_KEY = \"shopmn-cart\";\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000, image: \"images/deel.jpg\" },\n  { id: 2, name: \"Малгай\", price: 45000, image: \"images/malgai.jpg\" },\n  { id: 3, name: \"Гутал\", price: 89000, image: \"images/gutal.jpg\" },\n];\n\nconst grid = document.querySelector('[data-testid=\"grid\"]');\nconst searchInput = document.querySelector('[data-testid=\"search\"]');\nconst sortSelect = document.querySelector('[data-testid=\"sort\"]');\nconst cartList = document.querySelector('[data-testid=\"cart-items\"]');\nconst cartCount = document.querySelector('[data-testid=\"cart-count\"]');\nconst cartTotal = document.querySelector('[data-testid=\"cart-total\"]');\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction renderProducts(list) {\n  grid.textContent = \"\";\n\n  list.forEach(function (product) {\n    const cardEl = document.createElement(\"article\");\n    cardEl.className = \"product-card\";\n\n    const image = document.createElement(\"img\");\n    image.src = product.image;\n    image.alt = product.name;\n\n    const name = document.createElement(\"h3\");\n    name.textContent = product.name;\n\n    const price = document.createElement(\"p\");\n    price.className = \"price\";\n    price.textContent = formatPrice(product.price);\n\n    const button = document.createElement(\"button\");\n    button.className = \"btn-add\";\n    button.dataset.testid = \"add-to-cart\";\n    button.textContent = \"Сагсанд хийх\";\n    button.addEventListener(\"click\", function () {\n      addToCart(product);\n    });\n\n    cardEl.append(image, name, price, button);\n    grid.append(cardEl);\n  });\n}\n\nfunction sortProducts(list, mode) {\n  const copy = [...list];\n\n  if (mode === \"price-asc\") {\n    return copy.sort(function (a, b) {\n      return a.price - b.price;\n    });\n  }\n\n  if (mode === \"price-desc\") {\n    return copy.sort(function (a, b) {\n      return b.price - a.price;\n    });\n  }\n\n  return copy;\n}\n\nfunction applyFilters() {\n  const query = searchInput.value.trim().toLowerCase();\n\n  const found = products.filter(function (product) {\n    return product.name.toLowerCase().includes(query);\n  });\n\n  renderProducts(sortProducts(found, sortSelect.value));\n}\n\nfunction loadCart() {\n  const raw = localStorage.getItem(STORAGE_KEY);\n  if (!raw) return [];\n\n  try {\n    const saved = JSON.parse(raw);\n    return Array.isArray(saved) ? saved : [];\n  } catch (error) {\n    return [];\n  }\n}\n\nfunction saveCart() {\n  localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));\n}\n\nlet cart = loadCart();\n\nfunction addToCart(product) {\n  const existing = cart.find(function (item) {\n    return item.id === product.id;\n  });\n\n  if (existing) {\n    existing.quantity += 1;\n  } else {\n    cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });\n  }\n\n  saveCart();\n  renderCart();\n}\n\nfunction removeFromCart(id) {\n  cart = cart.filter(function (item) {\n    return item.id !== id;\n  });\n\n  saveCart();\n  renderCart();\n}\n\nfunction renderCart() {\n  cartList.textContent = \"\";\n\n  let count = 0;\n  cart.forEach(function (item) {\n    count += item.quantity;\n\n    const row = document.createElement(\"li\");\n\n    const label = document.createElement(\"span\");\n    label.textContent = item.name + \" × \" + item.quantity;\n\n    const removeButton = document.createElement(\"button\");\n    removeButton.className = \"btn-remove\";\n    removeButton.dataset.testid = \"remove\";\n    removeButton.dataset.id = String(item.id);\n    removeButton.textContent = \"Хасах\";\n\n    row.append(label, removeButton);\n    cartList.append(row);\n  });\n\n  cartCount.textContent = String(count);\n\n  const totalPrice = cart.reduce(function (sum, item) {\n    return sum + item.price * item.quantity;\n  }, 0);\n\n  cartTotal.textContent = formatPrice(totalPrice);\n}\n\nsearchInput.addEventListener(\"input\", applyFilters);\nsortSelect.addEventListener(\"change\", applyFilters);\n\ncartList.addEventListener(\"click\", function (event) {\n  const button = event.target.closest('[data-testid=\"remove\"]');\n  if (!button) return;\n\n  removeFromCart(Number(button.dataset.id));\n});\n\napplyFilters();\nrenderCart();\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`reduce` бол `map`, `filter`-ийн ах: аль нь ч гэсэн `reduce`-ээр бичигдэж чадна. Нийлбэр, дундаж, бүлэглэл — олон элементийг нэг үр дүн болгох бүх зүйлд тохирно. Энэ хичээлээр чи хайлт, эрэмбэ, хадгалалт, хасалт, нийт төлбөртэй бүрэн сагстай боллоо."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 20,
+      "skills": [
+        "javascript"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 20
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

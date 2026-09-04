@@ -56,6 +56,8 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
   const readyRef = useRef(false);
   const pending = useRef(new Map<string, (r: HarnessCheckResult[]) => void>());
   const scrollPos = useRef({ x: 0, y: 0 });
+  // Survives iframe reloads so storage lessons behave like a real browser.
+  const storage = useRef<Record<string, string>>({});
   const [looping, setLooping] = useState(false);
 
   const post = useCallback((msg: HostMessage) => {
@@ -69,7 +71,13 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
     setLooping(false);
     lastHeartbeat.current = Date.now();
     const snapshot = filesRef.current;
-    iframe.srcdoc = assembleSrcdoc(snapshot, { harnessJs: HARNESS_JS, entry, connectSrc, cdnBase });
+    iframe.srcdoc = assembleSrcdoc(snapshot, {
+      harnessJs: HARNESS_JS,
+      entry,
+      connectSrc,
+      cdnBase,
+      storage: storage.current,
+    });
     prevFiles.current = snapshot;
   }, [entry, connectSrc, cdnBase]);
 
@@ -121,6 +129,9 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
         }
         case "khiye:heartbeat":
           lastHeartbeat.current = Date.now();
+          break;
+        case "khiye:storage":
+          storage.current = msg.data;
           break;
         case "khiye:scroll":
           scrollPos.current = { x: msg.x, y: msg.y };

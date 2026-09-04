@@ -1,0 +1,276 @@
+{
+  "id": "m5-l1",
+  "moduleId": "m5-storage",
+  "slug": "search-filter",
+  "order": 1,
+  "title": {
+    "mn": "Хайлт: барааг шүүх"
+  },
+  "why": {
+    "mn": "Shop.mn-д 3 бараа байхад асуудалгүй. 300 бол? Хэрэглэгч бичихийн хэрээр шүүгддэг хайлт бол онлайн дэлгүүрийн хамгийн их ашиглагддаг хэсэг. Энд `filter` болон `input` event-ийг сурна."
+  },
+  "buildsInProject": "Ажиллаж буй хайлтын талбар",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 22,
+  "skills": [
+    "javascript",
+    "dom"
+  ],
+  "concepts": [
+    "array.filter",
+    "input event",
+    "toLowerCase",
+    "re-render"
+  ],
+  "prerequisites": [
+    "m4-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <header>\n      <img src=\"images/logo.png\" alt=\"Shop.mn лого\">\n      <nav>\n        <ul>\n          <li><a href=\"index.html\">Нүүр</a></li>\n          <li><a href=\"cart.html\">Сагс</a></li>\n        </ul>\n      </nav>\n      <span class=\"cart-count\" data-testid=\"cart-count\">0</span>\n    </header>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <div class=\"toolbar\">\n        <input\n          type=\"search\"\n          class=\"search\"\n          data-testid=\"search\"\n          placeholder=\"Бараа хайх…\"\n          aria-label=\"Бараа хайх\"\n        />\n      </div>\n      <section class=\"product-grid\" data-testid=\"grid\">\n      </section>\n      <section class=\"cart\">\n        <h2>Сагс</h2>\n        <ul data-testid=\"cart-items\"></ul>\n      </section>\n    </main>\n    <footer>\n      <address>Утас: 7000-0000</address>\n      <p>© 2026 Shop.mn</p>\n    </footer>\n    <script src=\"js/main.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "/* Shop.mn-ийн загвар */\n\nbody {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n}\n\nh1 { font-size: 36px; }\n\nheader {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 8px;\n  padding: 12px 16px;\n}\n\n.cart-count {\n  background-color: #2563eb;\n  color: #ffffff;\n  border-radius: 999px;\n  padding: 2px 10px;\n}\n\n.toolbar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 8px;\n  margin-bottom: 16px;\n}\n\n.search,\n.sort {\n  padding: 10px 12px;\n  border: 1px solid #d4d4d8;\n  border-radius: 8px;\n  font-size: 16px;\n  background-color: #ffffff;\n  color: #18181b;\n}\n\n.search { flex: 1 1 220px; }\n\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n\n.product-card img { max-width: 100%; height: auto; }\n\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n}\n\n.product-grid {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 16px;\n}\n\n.cart ul {\n  list-style: none;\n  padding: 0;\n}\n\n.cart li {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  padding: 8px 0;\n  border-bottom: 1px solid #e4e4e7;\n}\n\n@media (min-width: 768px) {\n  .product-grid { grid-template-columns: 1fr 1fr; }\n  header { flex-direction: row; justify-content: space-between; }\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "js/main.js",
+        "content": "// Shop.mn — JavaScript\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000, image: \"images/deel.jpg\" },\n  { id: 2, name: \"Малгай\", price: 45000, image: \"images/malgai.jpg\" },\n  { id: 3, name: \"Гутал\", price: 89000, image: \"images/gutal.jpg\" },\n];\n\nconst grid = document.querySelector('[data-testid=\"grid\"]');\nconst searchInput = document.querySelector('[data-testid=\"search\"]');\nconst cartList = document.querySelector('[data-testid=\"cart-items\"]');\nconst cartCount = document.querySelector('[data-testid=\"cart-count\"]');\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction renderProducts(list) {\n  grid.textContent = \"\";\n\n  list.forEach(function (product) {\n    const cardEl = document.createElement(\"article\");\n    cardEl.className = \"product-card\";\n\n    const image = document.createElement(\"img\");\n    image.src = product.image;\n    image.alt = product.name;\n\n    const name = document.createElement(\"h3\");\n    name.textContent = product.name;\n\n    const price = document.createElement(\"p\");\n    price.className = \"price\";\n    price.textContent = formatPrice(product.price);\n\n    const button = document.createElement(\"button\");\n    button.className = \"btn-add\";\n    button.dataset.testid = \"add-to-cart\";\n    button.textContent = \"Сагсанд хийх\";\n    button.addEventListener(\"click\", function () {\n      addToCart(product);\n    });\n\n    cardEl.append(image, name, price, button);\n    grid.append(cardEl);\n  });\n}\n\nconst cart = [];\n\nfunction addToCart(product) {\n  const existing = cart.find(function (item) {\n    return item.id === product.id;\n  });\n\n  if (existing) {\n    existing.quantity += 1;\n  } else {\n    cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });\n  }\n\n  renderCart();\n}\n\nfunction renderCart() {\n  cartList.textContent = \"\";\n\n  let count = 0;\n  cart.forEach(function (item) {\n    count += item.quantity;\n\n    const row = document.createElement(\"li\");\n    row.textContent = item.name + \" × \" + item.quantity;\n    cartList.append(row);\n  });\n\n  cartCount.textContent = String(count);\n}\n\n// энд бичнэ үү\n\nrenderProducts(products);\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "js/main.js"
+    ],
+    "openFiles": [
+      "js/main.js"
+    ],
+    "activeFile": "js/main.js"
+  },
+  "tasks": [
+    {
+      "id": "m5-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хайлт: барааг шүүх"
+      },
+      "statement": {
+        "mn": "`searchInput`-д `input` event сонсогч нэм. Дотор нь: 1) `searchInput.value`-г `trim().toLowerCase()`-оор цэвэрлэ, 2) `products`-ыг `filter`-ээр шүүж, нэр нь бичсэн үгийг агуулж байгаа барааг ол (`includes`), 3) олдсон жагсаалтаа `renderProducts(...)`-д дамжуул."
+      },
+      "requirements": [
+        {
+          "mn": "`input` event сонсогч"
+        },
+        {
+          "mn": "`filter`-ээр шүүнэ"
+        },
+        {
+          "mn": "Том/жижиг үсэг ялгаагүй ажиллана"
+        },
+        {
+          "mn": "Талбарыг цэвэрлэхэд бүх бараа буцаж ирнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Хайлтын талбарт «мал» гэж бичихэд зөвхөн «Малгай» үлдэнэ. Устгавал 3 бараа буцаж ирнэ."
+        }
+      },
+      "targetFile": "js/main.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "js/main.js",
+            "name": "filter"
+          },
+          "onFail": {
+            "mn": "`filter` ашиглаагүй байна. Шүүхдээ `products.filter(...)` гэж бич."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "js/main.js",
+            "name": "addEventListener"
+          },
+          "onFail": {
+            "mn": "`searchInput`-д `addEventListener(\"input\", ...)` нэмээгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.count",
+          "args": {
+            "selector": ".product-card",
+            "equals": 3
+          },
+          "onFail": {
+            "mn": "Эхэндээ 3 бараа харагдах ёстой — `renderProducts(products)` дуудагдсан хэвээр байх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "[data-testid=\"search\"]",
+                  "text": "мал"
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": ".product-card",
+                  "equals": 1
+                }
+              },
+              {
+                "expectText": {
+                  "selector": ".product-card h3",
+                  "contains": "Малгай"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«мал» гэж бичихэд зөвхөн «Малгай» үлдэх ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "[data-testid=\"search\"]",
+                  "text": "ГУТ"
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": ".product-card",
+                  "equals": 1
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Том үсгээр бичихэд ажиллахгүй байна. Хайлтын үг болон барааны нэр хоёуланг нь `toLowerCase()` болгоорой."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "[data-testid=\"search\"]",
+                  "text": "мал"
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": ".product-card",
+                  "equals": 1
+                }
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"search\"]",
+                  "text": ""
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": ".product-card",
+                  "equals": 3
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хайлтыг цэвэрлэхэд бүх бараа буцаж ирэх ёстой."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`input` event нь товч дарах бүрд ажиллана — `change` шиг талбараас гарахыг хүлээхгүй. Шүүх бүрдээ бүх барааг дахин зурна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`filter` нь ШИНЭ массив буцаадаг: `products.filter(function (p) { return ... })`. Дотор нь `true` буцаасан элементүүд л үлдэнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц нь ийм байна — шүүх нөхцөлөө өөрөө бич:"
+          },
+          "code": "searchInput.addEventListener(\"input\", function () {\n  const query = searchInput.value.trim().toLowerCase();\n\n  const found = products.filter(function (product) {\n    /* нэр нь query-г агуулж байна уу? */\n  });\n\n  renderProducts(found);\n});"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "js/main.js",
+            "content": "// Shop.mn — JavaScript\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000, image: \"images/deel.jpg\" },\n  { id: 2, name: \"Малгай\", price: 45000, image: \"images/malgai.jpg\" },\n  { id: 3, name: \"Гутал\", price: 89000, image: \"images/gutal.jpg\" },\n];\n\nconst grid = document.querySelector('[data-testid=\"grid\"]');\nconst searchInput = document.querySelector('[data-testid=\"search\"]');\nconst cartList = document.querySelector('[data-testid=\"cart-items\"]');\nconst cartCount = document.querySelector('[data-testid=\"cart-count\"]');\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction renderProducts(list) {\n  grid.textContent = \"\";\n\n  list.forEach(function (product) {\n    const cardEl = document.createElement(\"article\");\n    cardEl.className = \"product-card\";\n\n    const image = document.createElement(\"img\");\n    image.src = product.image;\n    image.alt = product.name;\n\n    const name = document.createElement(\"h3\");\n    name.textContent = product.name;\n\n    const price = document.createElement(\"p\");\n    price.className = \"price\";\n    price.textContent = formatPrice(product.price);\n\n    const button = document.createElement(\"button\");\n    button.className = \"btn-add\";\n    button.dataset.testid = \"add-to-cart\";\n    button.textContent = \"Сагсанд хийх\";\n    button.addEventListener(\"click\", function () {\n      addToCart(product);\n    });\n\n    cardEl.append(image, name, price, button);\n    grid.append(cardEl);\n  });\n}\n\nconst cart = [];\n\nfunction addToCart(product) {\n  const existing = cart.find(function (item) {\n    return item.id === product.id;\n  });\n\n  if (existing) {\n    existing.quantity += 1;\n  } else {\n    cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });\n  }\n\n  renderCart();\n}\n\nfunction renderCart() {\n  cartList.textContent = \"\";\n\n  let count = 0;\n  cart.forEach(function (item) {\n    count += item.quantity;\n\n    const row = document.createElement(\"li\");\n    row.textContent = item.name + \" × \" + item.quantity;\n    cartList.append(row);\n  });\n\n  cartCount.textContent = String(count);\n}\n\nsearchInput.addEventListener(\"input\", function () {\n  const query = searchInput.value.trim().toLowerCase();\n\n  const found = products.filter(function (product) {\n    return product.name.toLowerCase().includes(query);\n  });\n\n  renderProducts(found);\n});\n\nrenderProducts(products);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`filter` эх массивыг өөрчлөхгүй — шинийг буцаана. Тиймээс `products` бүтэн хэвээр үлдэж, хайлтыг цэвэрлэхэд бүх бараа эргэж ирдэг. Хэрэв `products`-оо шууд өөрчилсөн бол өгөгдөл эргэлт буцалтгүй алдагдана."
+        },
+        "xpPenalty": 18
+      },
+      "xp": 30,
+      "estimatedMinutes": 20,
+      "skills": [
+        "javascript",
+        "dom"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 20
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

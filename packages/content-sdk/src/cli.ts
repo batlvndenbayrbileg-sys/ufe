@@ -94,8 +94,14 @@ async function main(): Promise<number> {
           process.stdout.write(`  ✖ ${r.lessonId}/${r.taskId} [${f.checkId}]: ${f.onFail ?? ""} (got ${f.actual ?? "—"})\n`);
         }
       }
+      for (const taskId of report.noOpTasks) {
+        process.stdout.write(
+          `  ✖ ${taskId}: the starter already passes every check — nothing for the student to do\n`,
+        );
+      }
       process.stdout.write(
-        `content test: ${report.passedTasks}/${report.totalTasks} reference solutions pass their checks\n`,
+        `content test: ${report.passedTasks}/${report.totalTasks} reference solutions pass their checks, ` +
+          `${report.totalTasks - report.noOpTasks.length}/${report.totalTasks} starters fail as they should\n`,
       );
       return report.ok ? 0 : 1;
     }

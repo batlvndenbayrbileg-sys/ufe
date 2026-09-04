@@ -83,6 +83,64 @@ window.alert = (msg?: unknown) => {
 window.confirm = () => true;
 window.prompt = () => null;
 
+// ── localStorage shim ────────────────────────────────────────────────────────
+// The preview runs at an OPAQUE origin (sandbox without allow-same-origin, on
+// purpose — student code must never reach the platform's own storage). Touching
+// window.localStorage there throws SecurityError, which would kill a storage
+// lesson on its first line. So we hand the page a real-enough Storage backed by
+// a plain object, seeded from the host and echoed back on every write, which is
+// what makes "reload and your cart is still there" true in the preview too.
+function installStorageShim(): void {
+  try {
+    const real = window.localStorage;
+    real.getItem("__khiye_probe__"); // throws at an opaque origin
+    return; // a usable localStorage already exists (tests, same-origin hosts)
+  } catch {
+    /* fall through and shim it */
+  }
+
+  const makeStorage = (seed: Record<string, string>, onChange?: (d: Record<string, string>) => void): Storage => {
+    const data: Record<string, string> = { ...seed };
+    const changed = () => onChange?.({ ...data });
+    return {
+      get length() {
+        return Object.keys(data).length;
+      },
+      key: (i: number) => Object.keys(data)[i] ?? null,
+      getItem: (k: string) =>
+        Object.prototype.hasOwnProperty.call(data, String(k)) ? data[String(k)]! : null,
+      setItem: (k: string, v: string) => {
+        data[String(k)] = String(v);
+        changed();
+      },
+      removeItem: (k: string) => {
+        delete data[String(k)];
+        changed();
+      },
+      clear: () => {
+        for (const k of Object.keys(data)) delete data[k];
+        changed();
+      },
+    };
+  };
+
+  const seed = (window as { __khiyeStorage?: Record<string, string> }).__khiyeStorage ?? {};
+  const stores: Array<[name: "localStorage" | "sessionStorage", value: Storage]> = [
+    // Only localStorage survives a reload — sessionStorage is per-page by spec.
+    ["localStorage", makeStorage(seed, (data) => send({ type: "khiye:storage", data }))],
+    ["sessionStorage", makeStorage({})],
+  ];
+
+  for (const [name, value] of stores) {
+    try {
+      Object.defineProperty(window, name, { value, configurable: true });
+    } catch {
+      /* locked down; the lesson will surface the real error */
+    }
+  }
+}
+installStorageShim();
+
 // ── heartbeat (host uses gaps to detect an infinite loop) ─────────────────────
 window.setInterval(() => send({ type: "khiye:heartbeat", t: Date.now() }), 500);
 

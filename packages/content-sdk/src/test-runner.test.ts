@@ -21,6 +21,21 @@ describe("content test-runner (E3 × E6)", () => {
     expect(report.totalTasks).toBe(3);
   });
 
+  it("every starter fails at least one check (no busywork tasks)", async () => {
+    const report = await testCourse(loadCourse(dir));
+    expect(report.noOpTasks).toEqual([]);
+  });
+
+  it("a task whose starter already passes is caught", async () => {
+    const course = loadCourse(dir);
+    const lesson = course.stages[0]!.moduleObjects[0]!.lessonObjects.find((l) => l.id === "m1-l1")!;
+    // Ship the answer in the starter: nothing is left for the student to do.
+    lesson.workspace.patch = [...lesson.workspace.patch, ...lesson.tasks[0]!.solution.patch];
+    const report = await testCourse(course);
+    expect(report.ok).toBe(false);
+    expect(report.noOpTasks).toContain("m1-l1-t1");
+  });
+
   it("a broken reference solution is caught", async () => {
     const course = loadCourse(dir);
     // Sabotage m1-l1's solution so its dom.text check for "Shop.mn" fails.

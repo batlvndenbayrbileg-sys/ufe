@@ -120,6 +120,27 @@ describe("React (JSX) projects", () => {
   });
 });
 
+describe("localStorage seed", () => {
+  it("is inlined before the harness so page code can read it synchronously", () => {
+    const out = assembleSrcdoc(project, { harnessJs: "/*H*/", storage: { "shopmn-cart": "[]" } });
+    expect(out).toContain('window.__khiyeStorage = {"shopmn-cart":"[]"}');
+    expect(out.indexOf("__khiyeStorage")).toBeLessThan(out.indexOf("/*H*/"));
+  });
+
+  it("is omitted when there is nothing stored yet", () => {
+    expect(assembleSrcdoc(project, { harnessJs: "/*H*/" })).not.toContain("__khiyeStorage");
+  });
+
+  it("cannot break out of its own script tag", () => {
+    const out = assembleSrcdoc(project, {
+      harnessJs: "/*H*/",
+      storage: { evil: "</script><script>alert(1)</script>" },
+    });
+    expect(out).not.toContain("</script><script>alert(1)");
+    expect(out).toContain("\\u003c/script>");
+  });
+});
+
 describe("diffFiles", () => {
   it("detects a CSS-only change", () => {
     const a: FileSet = { "index.html": { content: "x" }, "styles/main.css": { content: "1" } };

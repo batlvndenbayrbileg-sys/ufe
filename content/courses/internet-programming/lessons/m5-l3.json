@@ -1,0 +1,253 @@
+{
+  "id": "m5-l3",
+  "moduleId": "m5-storage",
+  "slug": "save-cart",
+  "order": 3,
+  "title": {
+    "mn": "Сагсаа хөтчид хадгалах"
+  },
+  "why": {
+    "mn": "Одоогоор Shop.mn-ийн сагс хуудсыг сэргээхэд алга болдог. Жинхэнэ дэлгүүр ингэдэггүй. `localStorage` бол хөтөч дээрх жижиг агуулах — хэрэглэгчийн сагсыг тэндээ хадгална."
+  },
+  "buildsInProject": "Сагс хадгалагддаг болно",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "javascript"
+  ],
+  "concepts": [
+    "localStorage",
+    "JSON.stringify",
+    "persistence"
+  ],
+  "prerequisites": [
+    "m5-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <header>\n      <img src=\"images/logo.png\" alt=\"Shop.mn лого\">\n      <nav>\n        <ul>\n          <li><a href=\"index.html\">Нүүр</a></li>\n          <li><a href=\"cart.html\">Сагс</a></li>\n        </ul>\n      </nav>\n      <span class=\"cart-count\" data-testid=\"cart-count\">0</span>\n    </header>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <div class=\"toolbar\">\n        <input\n          type=\"search\"\n          class=\"search\"\n          data-testid=\"search\"\n          placeholder=\"Бараа хайх…\"\n          aria-label=\"Бараа хайх\"\n        />\n        <select class=\"sort\" data-testid=\"sort\" aria-label=\"Эрэмбэлэх\">\n          <option value=\"default\">Эрэмбэ: анхны</option>\n          <option value=\"price-asc\">Үнэ: багаас их</option>\n          <option value=\"price-desc\">Үнэ: ихээс бага</option>\n        </select>\n      </div>\n      <section class=\"product-grid\" data-testid=\"grid\">\n      </section>\n      <section class=\"cart\">\n        <h2>Сагс</h2>\n        <ul data-testid=\"cart-items\"></ul>\n      </section>\n    </main>\n    <footer>\n      <address>Утас: 7000-0000</address>\n      <p>© 2026 Shop.mn</p>\n    </footer>\n    <script src=\"js/main.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "/* Shop.mn-ийн загвар */\n\nbody {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n}\n\nh1 { font-size: 36px; }\n\nheader {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 8px;\n  padding: 12px 16px;\n}\n\n.cart-count {\n  background-color: #2563eb;\n  color: #ffffff;\n  border-radius: 999px;\n  padding: 2px 10px;\n}\n\n.toolbar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 8px;\n  margin-bottom: 16px;\n}\n\n.search,\n.sort {\n  padding: 10px 12px;\n  border: 1px solid #d4d4d8;\n  border-radius: 8px;\n  font-size: 16px;\n  background-color: #ffffff;\n  color: #18181b;\n}\n\n.search { flex: 1 1 220px; }\n\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n\n.product-card img { max-width: 100%; height: auto; }\n\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n}\n\n.product-grid {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 16px;\n}\n\n.cart ul {\n  list-style: none;\n  padding: 0;\n}\n\n.cart li {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  padding: 8px 0;\n  border-bottom: 1px solid #e4e4e7;\n}\n\n@media (min-width: 768px) {\n  .product-grid { grid-template-columns: 1fr 1fr; }\n  header { flex-direction: row; justify-content: space-between; }\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "js/main.js",
+        "content": "// Shop.mn — JavaScript\n\nconst STORAGE_KEY = \"shopmn-cart\";\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000, image: \"images/deel.jpg\" },\n  { id: 2, name: \"Малгай\", price: 45000, image: \"images/malgai.jpg\" },\n  { id: 3, name: \"Гутал\", price: 89000, image: \"images/gutal.jpg\" },\n];\n\nconst grid = document.querySelector('[data-testid=\"grid\"]');\nconst searchInput = document.querySelector('[data-testid=\"search\"]');\nconst sortSelect = document.querySelector('[data-testid=\"sort\"]');\nconst cartList = document.querySelector('[data-testid=\"cart-items\"]');\nconst cartCount = document.querySelector('[data-testid=\"cart-count\"]');\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction renderProducts(list) {\n  grid.textContent = \"\";\n\n  list.forEach(function (product) {\n    const cardEl = document.createElement(\"article\");\n    cardEl.className = \"product-card\";\n\n    const image = document.createElement(\"img\");\n    image.src = product.image;\n    image.alt = product.name;\n\n    const name = document.createElement(\"h3\");\n    name.textContent = product.name;\n\n    const price = document.createElement(\"p\");\n    price.className = \"price\";\n    price.textContent = formatPrice(product.price);\n\n    const button = document.createElement(\"button\");\n    button.className = \"btn-add\";\n    button.dataset.testid = \"add-to-cart\";\n    button.textContent = \"Сагсанд хийх\";\n    button.addEventListener(\"click\", function () {\n      addToCart(product);\n    });\n\n    cardEl.append(image, name, price, button);\n    grid.append(cardEl);\n  });\n}\n\nfunction sortProducts(list, mode) {\n  const copy = [...list];\n\n  if (mode === \"price-asc\") {\n    return copy.sort(function (a, b) {\n      return a.price - b.price;\n    });\n  }\n\n  if (mode === \"price-desc\") {\n    return copy.sort(function (a, b) {\n      return b.price - a.price;\n    });\n  }\n\n  return copy;\n}\n\nfunction applyFilters() {\n  const query = searchInput.value.trim().toLowerCase();\n\n  const found = products.filter(function (product) {\n    return product.name.toLowerCase().includes(query);\n  });\n\n  renderProducts(sortProducts(found, sortSelect.value));\n}\n\nconst cart = [];\n\nfunction addToCart(product) {\n  const existing = cart.find(function (item) {\n    return item.id === product.id;\n  });\n\n  if (existing) {\n    existing.quantity += 1;\n  } else {\n    cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });\n  }\n\n  renderCart();\n}\n\nfunction renderCart() {\n  cartList.textContent = \"\";\n\n  let count = 0;\n  cart.forEach(function (item) {\n    count += item.quantity;\n\n    const row = document.createElement(\"li\");\n    row.textContent = item.name + \" × \" + item.quantity;\n    cartList.append(row);\n  });\n\n  cartCount.textContent = String(count);\n}\n\nsearchInput.addEventListener(\"input\", applyFilters);\nsortSelect.addEventListener(\"change\", applyFilters);\n\n// энд бичнэ үү\n\napplyFilters();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "js/main.js"
+    ],
+    "openFiles": [
+      "js/main.js"
+    ],
+    "activeFile": "js/main.js"
+  },
+  "tasks": [
+    {
+      "id": "m5-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Сагсаа хөтчид хадгалах"
+      },
+      "statement": {
+        "mn": "`saveCart()` функц бич: `localStorage.setItem(STORAGE_KEY, JSON.stringify(cart))`. Дараа нь `addToCart` функцын төгсгөлд, `renderCart()` дуудахаас өмнө `saveCart()`-ыг дуудаж, сагс өөрчлөгдөх бүрд хадгалагдана."
+      },
+      "requirements": [
+        {
+          "mn": "`saveCart` функц"
+        },
+        {
+          "mn": "`JSON.stringify` ашиглана"
+        },
+        {
+          "mn": "`addToCart` дотроос дуудагдана"
+        },
+        {
+          "mn": "Түлхүүр нь `STORAGE_KEY`"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Бараа нэмэхэд `localStorage`-д `shopmn-cart` түлхүүрээр сагс JSON хэлбэрээр хадгалагдана."
+        }
+      },
+      "targetFile": "js/main.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "js/main.js",
+            "kind": "function",
+            "name": "saveCart"
+          },
+          "onFail": {
+            "mn": "`saveCart` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "js/main.js",
+            "name": "setItem"
+          },
+          "onFail": {
+            "mn": "`localStorage.setItem(...)` дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "js/main.js",
+            "name": "stringify"
+          },
+          "onFail": {
+            "mn": "`JSON.stringify` ашиглаагүй байна — `localStorage` зөвхөн ТЕКСТ хадгалдаг."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.parse(localStorage.getItem(\"shopmn-cart\")).length",
+                  "equals": 1
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Бараа нэмэхэд `localStorage`-д 1 мөр хадгалагдах ёстой. `addToCart` дотроос `saveCart()` дуудсан уу?"
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.parse(localStorage.getItem(\"shopmn-cart\"))[0].quantity",
+                  "equals": 2
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Ижил барааг 2 удаа нэмэхэд хадгалагдсан тоо ширхэг 2 болох ёстой."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "click": ".product-card:nth-of-type(2) [data-testid=\"add-to-cart\"]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.parse(localStorage.getItem(\"shopmn-cart\")).length",
+                  "equals": 2
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Өөр бараа нэмэхэд хадгалагдсан жагсаалт 2 мөр болох ёстой."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`localStorage` зөвхөн текст хадгална. Массив, объектыг шууд хийвэл `\"[object Object]\"` болж хувирна — тиймээс эхлээд JSON текст болгоно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`JSON.stringify(cart)` нь массивыг текст болгоно. Түлхүүрээ гараар бичихгүй — файлын дээд талд бэлэн байгаа `STORAGE_KEY`-г ашигла."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Функцээ бичээд, `addToCart` дотроос дуудахаа мартуузай:"
+          },
+          "code": "function saveCart() {\n  /* STORAGE_KEY түлхүүрээр cart-ыг JSON болгож хадгал */\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "js/main.js",
+            "content": "// Shop.mn — JavaScript\n\nconst STORAGE_KEY = \"shopmn-cart\";\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000, image: \"images/deel.jpg\" },\n  { id: 2, name: \"Малгай\", price: 45000, image: \"images/malgai.jpg\" },\n  { id: 3, name: \"Гутал\", price: 89000, image: \"images/gutal.jpg\" },\n];\n\nconst grid = document.querySelector('[data-testid=\"grid\"]');\nconst searchInput = document.querySelector('[data-testid=\"search\"]');\nconst sortSelect = document.querySelector('[data-testid=\"sort\"]');\nconst cartList = document.querySelector('[data-testid=\"cart-items\"]');\nconst cartCount = document.querySelector('[data-testid=\"cart-count\"]');\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction renderProducts(list) {\n  grid.textContent = \"\";\n\n  list.forEach(function (product) {\n    const cardEl = document.createElement(\"article\");\n    cardEl.className = \"product-card\";\n\n    const image = document.createElement(\"img\");\n    image.src = product.image;\n    image.alt = product.name;\n\n    const name = document.createElement(\"h3\");\n    name.textContent = product.name;\n\n    const price = document.createElement(\"p\");\n    price.className = \"price\";\n    price.textContent = formatPrice(product.price);\n\n    const button = document.createElement(\"button\");\n    button.className = \"btn-add\";\n    button.dataset.testid = \"add-to-cart\";\n    button.textContent = \"Сагсанд хийх\";\n    button.addEventListener(\"click\", function () {\n      addToCart(product);\n    });\n\n    cardEl.append(image, name, price, button);\n    grid.append(cardEl);\n  });\n}\n\nfunction sortProducts(list, mode) {\n  const copy = [...list];\n\n  if (mode === \"price-asc\") {\n    return copy.sort(function (a, b) {\n      return a.price - b.price;\n    });\n  }\n\n  if (mode === \"price-desc\") {\n    return copy.sort(function (a, b) {\n      return b.price - a.price;\n    });\n  }\n\n  return copy;\n}\n\nfunction applyFilters() {\n  const query = searchInput.value.trim().toLowerCase();\n\n  const found = products.filter(function (product) {\n    return product.name.toLowerCase().includes(query);\n  });\n\n  renderProducts(sortProducts(found, sortSelect.value));\n}\n\nfunction saveCart() {\n  localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));\n}\n\nconst cart = [];\n\nfunction addToCart(product) {\n  const existing = cart.find(function (item) {\n    return item.id === product.id;\n  });\n\n  if (existing) {\n    existing.quantity += 1;\n  } else {\n    cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });\n  }\n\n  saveCart();\n  renderCart();\n}\n\nfunction renderCart() {\n  cartList.textContent = \"\";\n\n  let count = 0;\n  cart.forEach(function (item) {\n    count += item.quantity;\n\n    const row = document.createElement(\"li\");\n    row.textContent = item.name + \" × \" + item.quantity;\n    cartList.append(row);\n  });\n\n  cartCount.textContent = String(count);\n}\n\nsearchInput.addEventListener(\"input\", applyFilters);\nsortSelect.addEventListener(\"change\", applyFilters);\n\napplyFilters();\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`localStorage` бол домэйн тус бүрд ~5MB текст багтаах жижиг агуулах. Хөтөч хаагдсан ч үлддэг. Учир нь зөвхөн текст хадгалдаг тул `JSON.stringify` (хадгалахад) ба `JSON.parse` (уншихад) хос үргэлж хамт явдаг."
+        },
+        "xpPenalty": 15
+      },
+      "xp": 25,
+      "estimatedMinutes": 18,
+      "skills": [
+        "javascript"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 20
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

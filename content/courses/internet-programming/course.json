@@ -31,7 +31,8 @@
       },
       "badgeId": "js-starter",
       "moduleIds": [
-        "m4-javascript"
+        "m4-javascript",
+        "m5-storage"
       ]
     },
     {

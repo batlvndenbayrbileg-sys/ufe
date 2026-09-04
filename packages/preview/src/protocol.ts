@@ -54,7 +54,9 @@ export type HarnessMessage =
       source?: { file?: string; line?: number; col?: number };
       mn?: TranslatedError | null;
     }
-  | { type: "khiye:checksResult"; nonce: string; results: HarnessCheckResult[] };
+  | { type: "khiye:checksResult"; nonce: string; results: HarnessCheckResult[] }
+  /** The shimmed localStorage changed; the host keeps it so a reload restores it. */
+  | { type: "khiye:storage"; data: Record<string, string> };
 
 export function isHarnessMessage(data: unknown): data is HarnessMessage {
   return (

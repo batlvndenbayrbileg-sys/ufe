@@ -15,6 +15,8 @@ export interface TaskTestResult {
   taskId: string;
   passed: boolean;
   failures: Array<{ checkId: string; onFail?: string; actual?: string; expected?: string }>;
+  /** False when the starter already satisfies every check — the task is a no-op. */
+  starterFails: boolean;
 }
 
 export interface TestReport {
@@ -22,6 +24,8 @@ export interface TestReport {
   results: TaskTestResult[];
   passedTasks: number;
   totalTasks: number;
+  /** Tasks whose starter already passed everything (authoring bug). */
+  noOpTasks: string[];
 }
 
 async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
@@ -31,12 +35,16 @@ async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
   for (const task of [...lesson.tasks].sort((a, b) => a.order - b.order)) {
     if (task.starter) files = applyPatch(files, task.starter);
     const solved = applyPatch(files, task.solution.patch);
+    const checks = task.checks.map((c) => ({ id: c.id, type: c.type, args: c.args, onFail: c.onFail }));
 
-    const results = await runChecksOnFiles(
-      solved as FileSet,
-      task.checks.map((c) => ({ id: c.id, type: c.type, args: c.args, onFail: c.onFail })),
-      { entry: lesson.execution.entry },
-    );
+    const results = await runChecksOnFiles(solved as FileSet, checks, { entry: lesson.execution.entry });
+
+    // A task the student cannot fail teaches nothing: the starter must break at
+    // least one check. This catches a marker left in the wrong file, a check
+    // that only asserts scaffolding, or a solution accidentally shipped as the
+    // starter.
+    const onStarter = await runChecksOnFiles(files as FileSet, checks, { entry: lesson.execution.entry });
+    const starterFails = onStarter.some((r) => !r.passed && r.errorKind !== "infra");
 
     const failures = results
       .filter((r) => !r.passed && r.errorKind !== "infra")
@@ -45,7 +53,13 @@ async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
         return { checkId: r.id, onFail: check?.onFail.mn, actual: r.actual, expected: r.expected };
       });
 
-    out.push({ lessonId: lesson.id, taskId: task.id, passed: failures.length === 0, failures });
+    out.push({
+      lessonId: lesson.id,
+      taskId: task.id,
+      passed: failures.length === 0,
+      failures,
+      starterFails,
+    });
     files = solved; // accumulate within the lesson
   }
   return out;
@@ -55,7 +69,14 @@ export async function testLessons(lessons: Lesson[]): Promise<TestReport> {
   const results: TaskTestResult[] = [];
   for (const lesson of lessons) results.push(...(await testLesson(lesson)));
   const passedTasks = results.filter((r) => r.passed).length;
-  return { ok: results.every((r) => r.passed), results, passedTasks, totalTasks: results.length };
+  const noOpTasks = results.filter((r) => !r.starterFails).map((r) => r.taskId);
+  return {
+    ok: results.every((r) => r.passed) && noOpTasks.length === 0,
+    results,
+    passedTasks,
+    totalTasks: results.length,
+    noOpTasks,
+  };
 }
 
 export function testCourse(course: ResolvedCourse): Promise<TestReport> {

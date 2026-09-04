@@ -11,6 +11,12 @@ export interface AssembleOptions {
   cdnBase?: string;
   /** connect-src for the CSP meta. "'none'" until fetch lessons; then the lesson's allowlist. */
   connectSrc?: string;
+  /**
+   * Seed for the harness's localStorage shim. Inlined (not postMessaged) because
+   * student code reads storage on its very first line, long before any async
+   * message could arrive.
+   */
+  storage?: Record<string, string>;
 }
 
 function escAttr(s: string): string {
@@ -79,8 +85,14 @@ export function assembleSrcdoc(files: FileSet, opts: AssembleOptions): string {
     `style-src 'unsafe-inline'; script-src 'unsafe-inline'; font-src data: https:; ` +
     `connect-src ${opts.connectSrc ?? "'none'"};">`;
 
+  // JSON.stringify is safe to inline as long as "</script>" can't close the tag.
+  const storageSeed = opts.storage
+    ? `<script>window.__khiyeStorage = ${JSON.stringify(opts.storage).replace(/</g, "\\u003c")};</script>\n`
+    : "";
+
   const head =
     `${cspMeta}\n<base href="${escAttr(opts.cdnBase ?? "about:blank")}">\n` +
+    storageSeed +
     `<script>\n${opts.harnessJs}\n</script>` +
     (needsReact ? `\n<script>\n${REACT_RUNTIME_JS}\n</script>` : "");
 
