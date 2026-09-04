@@ -73,6 +73,27 @@ async function waitFor(ctx: CheckerContext, selector: string, capMs = 3000): Pro
 }
 
 /**
+ * Set a form control's value the way a keystroke would.
+ *
+ * React installs a value tracker on the node and replaces the instance's `value`
+ * property; assigning `el.value` goes through that setter, which updates the
+ * tracker, so React concludes nothing changed and drops the event — a controlled
+ * input would silently ignore the check. Writing through the pristine PROTOTYPE
+ * setter leaves the tracker stale, which is exactly what a real keystroke does.
+ */
+function setValue(w: Window & typeof globalThis, el: Element, value: string): void {
+  const proto =
+    el.tagName === "TEXTAREA"
+      ? w.HTMLTextAreaElement?.prototype
+      : el.tagName === "SELECT"
+        ? w.HTMLSelectElement?.prototype
+        : w.HTMLInputElement?.prototype;
+  const setter = proto && Object.getOwnPropertyDescriptor(proto, "value")?.set;
+  if (setter) setter.call(el, value);
+  else (el as HTMLInputElement).value = value;
+}
+
+/**
  * Poll an assertion until it holds or the cap elapses. Frameworks (React et al.)
  * flush state updates asynchronously, so reading the DOM immediately after a
  * click is a race. Polling keeps interaction checks framework-agnostic.
@@ -104,7 +125,7 @@ registerChecker("js.interaction", async (args, outerCtx) => {
     } else if (step.type !== undefined) {
       const el = doc(ctx).querySelector<HTMLInputElement>(step.type.selector);
       if (!el) return fail(`step ${i + 1}: no input ${step.type.selector}`, "an input");
-      el.value = step.type.text;
+      setValue(w, el, step.type.text);
       el.dispatchEvent(new w.Event("input", { bubbles: true }));
       el.dispatchEvent(new w.Event("change", { bubbles: true }));
     } else if (step.waitFor !== undefined) {
@@ -134,10 +155,18 @@ registerChecker("js.interaction", async (args, outerCtx) => {
         return fail(`${want.selector}: ${count()}`, `${want.selector}: ${want.equals}`);
       }
     } else if (step.expectEval !== undefined) {
-      const result = evalInPage(ctx, undefined, step.expectEval.expr);
-      if (stringify(result) !== stringify(step.expectEval.equals)) {
-        return fail(stringify(result), stringify(step.expectEval.equals));
-      }
+      // Poll like the DOM assertions do: an effect (useEffect, a queued save)
+      // lands a tick after the click that triggered it.
+      const want = stringify(step.expectEval.equals);
+      const read = () => {
+        try {
+          return stringify(evalInPage(ctx, undefined, step.expectEval!.expr));
+        } catch (e) {
+          // Keep polling: the value the expression reads may not exist yet.
+          return e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+        }
+      };
+      if (!(await until(() => read() === want))) return fail(read(), want);
     }
   }
   return pass();

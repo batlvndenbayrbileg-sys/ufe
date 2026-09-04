@@ -36,6 +36,24 @@ describe("content test-runner (E3 × E6)", () => {
     expect(report.noOpTasks).toContain("m1-l1-t1");
   });
 
+  it("a check that throws is reported, not silently skipped", async () => {
+    const course = loadCourse(dir);
+    const lesson = course.stages[0]!.moduleObjects[0]!.lessonObjects.find((l) => l.id === "m1-l1")!;
+    // An unknown type is an infra error: never the student's fault at grading
+    // time, but at authoring time it means the check does not judge anything.
+    lesson.tasks[0]!.checks.push({
+      id: "broken",
+      type: "does.not.exist",
+      args: {},
+      onFail: { mn: "…" },
+      weight: 1,
+      hidden: false,
+    });
+    const report = await testCourse(course);
+    expect(report.ok).toBe(false);
+    expect(report.brokenChecks).toContain("m1-l1-t1/broken");
+  });
+
   it("a broken reference solution is caught", async () => {
     const course = loadCourse(dir);
     // Sabotage m1-l1's solution so its dom.text check for "Shop.mn" fails.

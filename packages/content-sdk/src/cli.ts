@@ -94,6 +94,13 @@ async function main(): Promise<number> {
           process.stdout.write(`  ✖ ${r.lessonId}/${r.taskId} [${f.checkId}]: ${f.onFail ?? ""} (got ${f.actual ?? "—"})\n`);
         }
       }
+      for (const r of report.results) {
+        for (const b of r.broken) {
+          process.stdout.write(
+            `  ✖ ${r.taskId} [${b.checkId}]: the check itself threw — ${b.raw ?? "no detail"}\n`,
+          );
+        }
+      }
       for (const taskId of report.noOpTasks) {
         process.stdout.write(
           `  ✖ ${taskId}: the starter already passes every check — nothing for the student to do\n`,

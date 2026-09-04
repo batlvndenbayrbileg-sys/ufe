@@ -129,6 +129,43 @@ describe("js.* via happy-dom runner", () => {
     expect(r.passed).toBe(true);
   });
 
+  it("js.interaction types into a REACT controlled input", async () => {
+    // React tracks the DOM node's last value and drops an event when its own
+    // setter was used, so a naive `el.value = x` leaves a controlled input
+    // frozen. This is the regression guard for that.
+    const app: FileSet = {
+      "index.html": {
+        content: `<!doctype html><html><head></head><body><div id="root"></div><script src="App.jsx"></script></body></html>`,
+      },
+      "App.jsx": {
+        content: [
+          `import React, { useState } from "react";`,
+          `import { createRoot } from "react-dom/client";`,
+          `function App() {`,
+          `  const [q, setQ] = useState("");`,
+          `  return (`,
+          `    <div>`,
+          `      <input data-testid="q" value={q} onChange={(e) => setQ(e.target.value)} />`,
+          `      <p data-testid="echo">{q}</p>`,
+          `    </div>`,
+          `  );`,
+          `}`,
+          `createRoot(document.getElementById("root")).render(<App />);`,
+        ].join("\n"),
+      },
+    };
+    const r = await one(app, {
+      type: "js.interaction",
+      args: {
+        steps: [
+          { type: { selector: '[data-testid="q"]', text: "малгай" } },
+          { expectText: { selector: '[data-testid="echo"]', equals: "малгай" } },
+        ],
+      },
+    });
+    expect(r.passed).toBe(true);
+  });
+
   it("js.consoleClean passes when there are no errors", async () => {
     expect((await one(cartApp, { type: "js.consoleClean", args: {} })).passed).toBe(true);
   });

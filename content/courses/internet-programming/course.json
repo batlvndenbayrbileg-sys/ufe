@@ -43,7 +43,8 @@
       },
       "badgeId": "react-dev",
       "moduleIds": [
-        "m6-react"
+        "m6-react",
+        "m7-react-forms"
       ]
     }
   ]

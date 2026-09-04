@@ -1,0 +1,278 @@
+{
+  "id": "m7-l1",
+  "moduleId": "m7-react-forms",
+  "slug": "controlled-input",
+  "order": 1,
+  "title": {
+    "mn": "Controlled input: React дээрх хайлт"
+  },
+  "why": {
+    "mn": "Shop.mn-ий хайлтыг vanilla JS дээр хийж үзсэн. React-д DOM-ыг гараар хөндөхгүй — талбарын утга нь state дотор амьдарч, дэлгэц дээрх бүхэн түүнээс урган гардаг. Үүнийг controlled input гэдэг."
+  },
+  "buildsInProject": "React дээрх хайлт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 22,
+  "skills": [
+    "react"
+  ],
+  "concepts": [
+    "controlled input",
+    "value/onChange",
+    "derived state",
+    "filter"
+  ],
+  "prerequisites": [
+    "m6-l6"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 32px; }\nh2 { font-size: 20px; }\n\n.topbar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n\n.cart-count {\n  background-color: #2563eb;\n  color: #ffffff;\n  border-radius: 999px;\n  padding: 2px 10px;\n}\n\n.search {\n  width: 100%;\n  padding: 10px 12px;\n  margin: 12px 0;\n  border: 1px solid #d4d4d8;\n  border-radius: 8px;\n  font-size: 16px;\n  background-color: #ffffff;\n  color: #18181b;\n}\n\n.product-grid {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 16px;\n}\n\n@media (min-width: 768px) {\n  .product-grid { grid-template-columns: 1fr 1fr 1fr; }\n}\n\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n  font-size: 15px;\n}\n\n.btn-add:disabled {\n  background-color: #a1a1aa;\n  cursor: not-allowed;\n}\n\n.cart ul {\n  list-style: none;\n  padding: 0;\n}\n\n.cart li {\n  padding: 6px 0;\n  border-bottom: 1px solid #e4e4e7;\n}\n\n.cart-total {\n  font-size: 20px;\n  font-weight: 700;\n  text-align: right;\n}\n\n.order-form {\n  display: grid;\n  gap: 12px;\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-top: 24px;\n}\n\n.order-form label {\n  display: grid;\n  gap: 4px;\n  font-size: 14px;\n}\n\n.order-form input {\n  padding: 10px 12px;\n  border: 1px solid #d4d4d8;\n  border-radius: 8px;\n  font-size: 16px;\n  background-color: #ffffff;\n  color: #18181b;\n}\n\n.field-error {\n  color: #b91c1c;\n  font-size: 13px;\n  margin: 0;\n}\n\n.order-echo,\n.confirmation {\n  background-color: #ecfdf5;\n  border: 1px solid #a7f3d0;\n  border-radius: 10px;\n  padding: 16px;\n  margin-top: 16px;\n}\n\n.muted { color: #52525b; font-size: 14px; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import React, { useState } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000 },\n  { id: 2, name: \"Малгай\", price: 45000 },\n  { id: 3, name: \"Гутал\", price: 89000 },\n];\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction ProductCard({ name, price, onAdd }) {\n  return (\n    <article className=\"product-card\">\n      <h3>{name}</h3>\n      <p className=\"price\">{formatPrice(price)}</p>\n      <button className=\"btn-add\" data-testid=\"add-to-cart\" onClick={onAdd}>\n        Сагсанд хийх\n      </button>\n    </article>\n  );\n}\n\nfunction CartList({ items }) {\n  if (items.length === 0) {\n    return <p data-testid=\"cart-empty\">Сагс хоосон байна.</p>;\n  }\n\n  return (\n    <ul data-testid=\"cart-items\">\n      {items.map((item) => (\n        <li key={item.id}>\n          {item.name} × {item.quantity}\n        </li>\n      ))}\n    </ul>\n  );\n}\n\nfunction App() {\n  const [cart, setCart] = useState([]);\n  // энд бичнэ үү\n\n  function addToCart(product) {\n    setCart((prev) => {\n      const existing = prev.find((item) => item.id === product.id);\n      if (existing) {\n        return prev.map((item) =>\n          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item\n        );\n      }\n      return [...prev, { ...product, quantity: 1 }];\n    });\n  }\n\n  const count = cart.reduce((sum, item) => sum + item.quantity, 0);\n  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);\n\n  const visible = products;\n\n  return (\n    <main>\n      <header className=\"topbar\">\n        <h1>Shop.mn</h1>\n        <span className=\"cart-count\" data-testid=\"cart-count\">{count}</span>\n      </header>\n\n      {/* энд бичнэ үү */}\n\n      <section className=\"product-grid\">\n        {visible.map((product) => (\n          <ProductCard\n            key={product.id}\n            name={product.name}\n            price={product.price}\n            onAdd={() => addToCart(product)}\n          />\n        ))}\n      </section>\n\n      <section className=\"cart\">\n        <h2>Сагс</h2>\n        <CartList items={cart} />\n        <p className=\"cart-total\" data-testid=\"cart-total\">{formatPrice(totalPrice)}</p>\n      </section>\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "m7-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Controlled input: React дээрх хайлт"
+      },
+      "statement": {
+        "mn": "1) `const [query, setQuery] = useState(\"\")` нэм. 2) Тэмдэглэсэн газарт `<input type=\"search\" data-testid=\"search\" value={query} onChange={...} />` бич — `onChange` дотор `setQuery(event.target.value)`. 3) `const visible = products;`-ыг `filter`-ээр солиод, нэр нь `query`-г агуулсан бараануудыг үлдээ (том/жижиг үсэг ялгахгүй)."
+      },
+      "requirements": [
+        {
+          "mn": "`query` state"
+        },
+        {
+          "mn": "`value` ба `onChange` хосолсон input"
+        },
+        {
+          "mn": "`visible` нь шүүгдсэн жагсаалт"
+        },
+        {
+          "mn": "Том/жижиг үсэг ялгаагүй"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«мал» гэж бичихэд зөвхөн «Малгай» үлдэнэ. Талбарыг цэвэрлэхэд 3 бараа буцаж ирнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useState"
+          },
+          "onFail": {
+            "mn": "`useState` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "filter"
+          },
+          "onFail": {
+            "mn": "`filter` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.exists",
+          "args": {
+            "selector": "[data-testid=\"search\"]"
+          },
+          "onFail": {
+            "mn": "Хайлтын талбар алга байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "dom.count",
+          "args": {
+            "selector": ".product-card",
+            "equals": 3
+          },
+          "onFail": {
+            "mn": "Эхэндээ 3 бараа харагдах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "[data-testid=\"search\"]",
+                  "text": "мал"
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": ".product-card",
+                  "equals": 1
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«мал» гэж бичихэд зөвхөн нэг бараа үлдэх ёстой. Талбар нь `value={query}`-той холбогдсон уу?"
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "[data-testid=\"search\"]",
+                  "text": "ГУТ"
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": ".product-card",
+                  "equals": 1
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Том үсгээр бичихэд ажиллахгүй байна — хоёр талыг нь `toLowerCase()` болго."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "[data-testid=\"search\"]",
+                  "text": "мал"
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": ".product-card",
+                  "equals": 1
+                }
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"search\"]",
+                  "text": ""
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": ".product-card",
+                  "equals": 3
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хайлтыг цэвэрлэхэд бүх бараа буцаж ирэх ёстой."
+          }
+        },
+        {
+          "id": "c8",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "React-д `document.querySelector` хэрэггүй. Талбарын утга бол state — `value={query}` гэж холбоно. Хэрэглэгч бичихэд `onChange` ажиллаж state-ээ шинэчилнэ, React дэлгэцээ дахин зурна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`visible`-ийг state болгох ХЭРЭГГҮЙ. Түүнийг `query`-ээс тооцоод гаргачих боломжтой (derived state) — ингэвэл хоёр state зөрөх эрсдэл байхгүй."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Хоёр хэсгээ нөх:"
+          },
+          "code": "const [query, setQuery] = useState(\"\");\n\nconst visible = products.filter((product) =>\n  /* нэр нь query-г агуулж байна уу? */\n);\n\n// JSX дотор:\n// <input value={query} onChange={(event) => /* … */} />"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import React, { useState } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nconst products = [\n  { id: 1, name: \"Монгол дээл\", price: 129000 },\n  { id: 2, name: \"Малгай\", price: 45000 },\n  { id: 3, name: \"Гутал\", price: 89000 },\n];\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction ProductCard({ name, price, onAdd }) {\n  return (\n    <article className=\"product-card\">\n      <h3>{name}</h3>\n      <p className=\"price\">{formatPrice(price)}</p>\n      <button className=\"btn-add\" data-testid=\"add-to-cart\" onClick={onAdd}>\n        Сагсанд хийх\n      </button>\n    </article>\n  );\n}\n\nfunction CartList({ items }) {\n  if (items.length === 0) {\n    return <p data-testid=\"cart-empty\">Сагс хоосон байна.</p>;\n  }\n\n  return (\n    <ul data-testid=\"cart-items\">\n      {items.map((item) => (\n        <li key={item.id}>\n          {item.name} × {item.quantity}\n        </li>\n      ))}\n    </ul>\n  );\n}\n\nfunction App() {\n  const [cart, setCart] = useState([]);\n  const [query, setQuery] = useState(\"\");\n\n  function addToCart(product) {\n    setCart((prev) => {\n      const existing = prev.find((item) => item.id === product.id);\n      if (existing) {\n        return prev.map((item) =>\n          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item\n        );\n      }\n      return [...prev, { ...product, quantity: 1 }];\n    });\n  }\n\n  const count = cart.reduce((sum, item) => sum + item.quantity, 0);\n  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);\n\n  const visible = products.filter((product) =>\n    product.name.toLowerCase().includes(query.trim().toLowerCase())\n  );\n\n  return (\n    <main>\n      <header className=\"topbar\">\n        <h1>Shop.mn</h1>\n        <span className=\"cart-count\" data-testid=\"cart-count\">{count}</span>\n      </header>\n\n      <input\n        type=\"search\"\n        className=\"search\"\n        data-testid=\"search\"\n        placeholder=\"Бараа хайх…\"\n        aria-label=\"Бараа хайх\"\n        value={query}\n        onChange={(event) => setQuery(event.target.value)}\n      />\n\n      <section className=\"product-grid\">\n        {visible.map((product) => (\n          <ProductCard\n            key={product.id}\n            name={product.name}\n            price={product.price}\n            onAdd={() => addToCart(product)}\n          />\n        ))}\n      </section>\n\n      <section className=\"cart\">\n        <h2>Сагс</h2>\n        <CartList items={cart} />\n        <p className=\"cart-total\" data-testid=\"cart-total\">{formatPrice(totalPrice)}</p>\n      </section>\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Controlled input-д дэлгэц дээрх утга ЗӨВХӨН state-ээс хамаарна. Хэрэглэгчийн товчлуур шууд DOM-ыг өөрчлөхгүй — эхлээд state шинэчлэгдэж, дараа нь React зурна. Ингэснээр «дэлгэц дээр юу байна» гэдэг асуултын ганцхан үнэн эх сурвалж үлддэг."
+        },
+        "xpPenalty": 18
+      },
+      "xp": 30,
+      "estimatedMinutes": 20,
+      "skills": [
+        "react"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 20
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

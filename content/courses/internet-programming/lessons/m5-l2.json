@@ -171,8 +171,14 @@
                 }
               },
               {
-                "expectEval": {
-                  "expr": "products[0].name",
+                "type": {
+                  "selector": "[data-testid=\"sort\"]",
+                  "text": "default"
+                }
+              },
+              {
+                "expectText": {
+                  "selector": ".product-card:nth-of-type(1) h3",
                   "equals": "Монгол дээл"
                 }
               }

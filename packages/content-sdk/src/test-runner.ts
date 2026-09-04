@@ -17,6 +17,9 @@ export interface TaskTestResult {
   failures: Array<{ checkId: string; onFail?: string; actual?: string; expected?: string }>;
   /** False when the starter already satisfies every check — the task is a no-op. */
   starterFails: boolean;
+  /** Checks that threw. Never blamed on a student at grading time, but at
+   *  authoring time they mean the check itself is broken. */
+  broken: Array<{ checkId: string; raw?: string }>;
 }
 
 export interface TestReport {
@@ -26,6 +29,8 @@ export interface TestReport {
   totalTasks: number;
   /** Tasks whose starter already passed everything (authoring bug). */
   noOpTasks: string[];
+  /** "taskId/checkId" for every check that threw instead of judging. */
+  brokenChecks: string[];
 }
 
 async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
@@ -46,6 +51,10 @@ async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
     const onStarter = await runChecksOnFiles(files as FileSet, checks, { entry: lesson.execution.entry });
     const starterFails = onStarter.some((r) => !r.passed && r.errorKind !== "infra");
 
+    const broken = results
+      .filter((r) => r.errorKind === "infra")
+      .map((r) => ({ checkId: r.id, raw: r.raw }));
+
     const failures = results
       .filter((r) => !r.passed && r.errorKind !== "infra")
       .map((r) => {
@@ -59,6 +68,7 @@ async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
       passed: failures.length === 0,
       failures,
       starterFails,
+      broken,
     });
     files = solved; // accumulate within the lesson
   }
@@ -70,12 +80,14 @@ export async function testLessons(lessons: Lesson[]): Promise<TestReport> {
   for (const lesson of lessons) results.push(...(await testLesson(lesson)));
   const passedTasks = results.filter((r) => r.passed).length;
   const noOpTasks = results.filter((r) => !r.starterFails).map((r) => r.taskId);
+  const brokenChecks = results.flatMap((r) => r.broken.map((b) => `${r.taskId}/${b.checkId}`));
   return {
-    ok: results.every((r) => r.passed) && noOpTasks.length === 0,
+    ok: results.every((r) => r.passed) && noOpTasks.length === 0 && brokenChecks.length === 0,
     results,
     passedTasks,
     totalTasks: results.length,
     noOpTasks,
+    brokenChecks,
   };
 }
 
