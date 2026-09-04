@@ -141,6 +141,35 @@ function installStorageShim(): void {
 }
 installStorageShim();
 
+// ── image placeholder ────────────────────────────────────────────────────────
+// Tier 1 has no file server, so `images/deel.jpg` can never load and every
+// lesson would be dotted with broken-image icons. Swap in a neutral placeholder
+// that keeps the alt text visible, so the student sees the layout they built
+// rather than a wall of breakage. Capture phase: `error` on <img> doesn't bubble.
+const PLACEHOLDER =
+  "data:image/svg+xml;charset=utf-8," +
+  encodeURIComponent(
+    // Intrinsic 96×72: small enough that an unstyled <img> (a logo, say) stays
+    // logo-sized, while CSS that sizes images (width/aspect-ratio) still wins.
+    '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="72" viewBox="0 0 4 3">' +
+      '<rect width="4" height="3" fill="#e7e7ec"/>' +
+      '<path d="M0.5 2.2l0.9-0.9 0.7 0.7 0.8-1 0.6 1.2v0.3h-3z" fill="#c3c3cc"/>' +
+      '<circle cx="1.05" cy="0.95" r="0.28" fill="#c3c3cc"/>' +
+      "</svg>",
+  );
+
+window.addEventListener(
+  "error",
+  (e: Event) => {
+    const el = e.target as HTMLImageElement | null;
+    if (!el || el.tagName !== "IMG") return;
+    if (el.dataset.khiyePlaceholder === "1") return; // never loop on our own src
+    el.dataset.khiyePlaceholder = "1";
+    el.src = PLACEHOLDER;
+  },
+  true,
+);
+
 // ── heartbeat (host uses gaps to detect an infinite loop) ─────────────────────
 window.setInterval(() => send({ type: "khiye:heartbeat", t: Date.now() }), 500);
 
