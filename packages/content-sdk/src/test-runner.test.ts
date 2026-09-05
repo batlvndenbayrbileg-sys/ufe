@@ -54,6 +54,20 @@ describe("content test-runner (E3 × E6)", () => {
     expect(report.brokenChecks).toContain("m1-l1-t1/broken");
   });
 
+  it("a starter that crashes on load is caught", async () => {
+    const course = loadCourse(dir);
+    const lesson = course.stages[0]!.moduleObjects[0]!.lessonObjects.find((l) => l.id === "m1-l1")!;
+    // A starter may fail its checks — it must not blow up the page.
+    lesson.workspace.patch = [
+      ...lesson.workspace.patch,
+      { op: "create", path: "boom.js", content: "throw new Error('starter exploded');" },
+      { op: "append", path: "index.html", content: '<script src="boom.js"></script>' },
+    ];
+    const report = await testCourse(course);
+    expect(report.ok).toBe(false);
+    expect(report.crashingStarters).toContain("m1-l1-t1");
+  });
+
   it("a broken reference solution is caught", async () => {
     const course = loadCourse(dir);
     // Sabotage m1-l1's solution so its dom.text check for "Shop.mn" fails.

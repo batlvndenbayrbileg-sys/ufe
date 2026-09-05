@@ -101,6 +101,11 @@ async function main(): Promise<number> {
           );
         }
       }
+      for (const r of report.results) {
+        if (r.starterError) {
+          process.stdout.write(`  ✖ ${r.taskId}: the starter crashes on load — ${r.starterError}\n`);
+        }
+      }
       for (const taskId of report.noOpTasks) {
         process.stdout.write(
           `  ✖ ${taskId}: the starter already passes every check — nothing for the student to do\n`,
@@ -108,7 +113,8 @@ async function main(): Promise<number> {
       }
       process.stdout.write(
         `content test: ${report.passedTasks}/${report.totalTasks} reference solutions pass their checks, ` +
-          `${report.totalTasks - report.noOpTasks.length}/${report.totalTasks} starters fail as they should\n`,
+          `${report.totalTasks - report.noOpTasks.length}/${report.totalTasks} starters fail as they should, ` +
+          `${report.totalTasks - report.crashingStarters.length}/${report.totalTasks} starters render cleanly\n`,
       );
       return report.ok ? 0 : 1;
     }
