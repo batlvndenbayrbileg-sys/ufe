@@ -1,0 +1,197 @@
+/* Course map. At 80+ lessons across 12 stages a flat list is a wall to scroll,
+   so stages collapse and only the one you are in opens by default. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* ── course-level progress ───────────────────────────────────────────────── */
+.summary {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.summaryCount {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.summaryLabel {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+.summaryRight {
+  margin-left: auto;
+  color: var(--text-subtle);
+  font-size: var(--text-sm);
+}
+
+/* ── stage ───────────────────────────────────────────────────────────────── */
+.stage {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+.stageCurrent {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.stageHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4);
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.stageHeader:hover {
+  background: var(--bg-muted);
+}
+.stageHeader:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.chevron {
+  color: var(--text-subtle);
+  transition: transform var(--dur) var(--ease-out);
+  flex: none;
+}
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.stageOrder {
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  color: var(--text-subtle);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+.stageTitle {
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+.stageDone {
+  color: var(--success);
+  flex: none;
+}
+.stageCount {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+
+.stageBody {
+  padding: 0 var(--space-4) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+/* A class that sets `display` outranks the [hidden] attribute, so a collapsed
+   stage would keep its whole height. Say it again, louder. */
+.stageBody[hidden] {
+  display: none;
+}
+
+/* ── module + lessons ────────────────────────────────────────────────────── */
+.moduleTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0 0 var(--space-2);
+}
+.lessons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lesson {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px var(--space-3);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+a.lesson:hover {
+  background: var(--bg-muted);
+  border-color: var(--border-strong);
+}
+a.lesson:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.lessonCurrent {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.lessonLocked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.mark {
+  flex: none;
+  width: 18px;
+  text-align: center;
+}
+.lessonTitle {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lessonCount {
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+
+@media (max-width: 640px) {
+  .stageBody {
+    padding: 0 var(--space-3) var(--space-3);
+  }
+  .lessonCount {
+    display: none;
+  }
+}
+
+/* Announced to a screen reader, invisible to everyone else: the lock and tick
+   are decorative, so the state has to reach the accessible name some other way. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
