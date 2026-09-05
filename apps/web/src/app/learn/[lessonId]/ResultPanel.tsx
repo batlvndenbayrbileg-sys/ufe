@@ -77,17 +77,21 @@ export function ResultPanel({
         })}
       </ul>
 
-      <div className={s.resultActions}>
-        {result.passed ? (
-          <button type="button" className={s.primaryBtn} onClick={onNext}>
-            {isLastTask ? "Хичээл дуусгах →" : "Дараагийн даалгавар →"}
-          </button>
-        ) : (
-          <button type="button" className={s.ghostBtn} onClick={onDismiss}>
-            Дахин оролдох
-          </button>
-        )}
-      </div>
+      {/* On the last task the completion card is already on screen with the
+          real next step; a second forward button here would only compete. */}
+      {result.passed && isLastTask ? null : (
+        <div className={s.resultActions}>
+          {result.passed ? (
+            <button type="button" className={s.primaryBtn} onClick={onNext}>
+              Дараагийн даалгавар →
+            </button>
+          ) : (
+            <button type="button" className={s.ghostBtn} onClick={onDismiss}>
+              Дахин оролдох
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -14,9 +14,12 @@ import {
   type HostMessage,
 } from "../protocol";
 
+/** Which srcdoc the host handed us; echoed back so it can ignore stale pages. */
+const GEN: number = (window as unknown as { __khiyeGen?: number }).__khiyeGen ?? 0;
+
 const send = (msg: HarnessMessage) => {
   try {
-    window.parent.postMessage(msg, "*");
+    window.parent.postMessage({ ...msg, gen: GEN }, "*");
   } catch {
     /* parent gone */
   }

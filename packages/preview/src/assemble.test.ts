@@ -181,6 +181,37 @@ describe("localStorage seed", () => {
   });
 });
 
+describe("generation stamp", () => {
+  it("is readable by the harness before it sends anything", () => {
+    const out = assembleSrcdoc(project, { harnessJs: "/*H*/", gen: 7 });
+    expect(out).toContain("window.__khiyeGen = 7");
+    expect(out.indexOf("__khiyeGen")).toBeLessThan(out.indexOf("/*H*/"));
+  });
+
+  it("makes the harness label its own messages", async () => {
+    const window = new Window({ width: 800, height: 600 });
+    const seen: unknown[] = [];
+    try {
+      // The harness posts to window.parent; in happy-dom a top-level window is
+      // its own parent, so its messages come straight back to us.
+      window.addEventListener("message", (e) => seen.push((e as { data?: unknown }).data));
+      window.document.write(assembleSrcdoc(project, { harnessJs: HARNESS_JS, gen: 42 }));
+      const readyMsg = async () => {
+        for (let i = 0; i < 100; i++) {
+          const hit = seen.find((m) => (m as { type?: string })?.type === "khiye:ready");
+          if (hit) return hit as { gen?: number };
+          await new Promise((r) => setTimeout(r, 10));
+        }
+        return undefined;
+      };
+      expect((await readyMsg())?.gen).toBe(42);
+    } finally {
+      await window.happyDOM.abort();
+      window.close();
+    }
+  });
+});
+
 describe("diffFiles", () => {
   it("detects a CSS-only change", () => {
     const a: FileSet = { "index.html": { content: "x" }, "styles/main.css": { content: "1" } };

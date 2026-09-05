@@ -42,7 +42,16 @@ export interface HarnessCheckResult {
   durationMs: number;
 }
 
-export type HarnessMessage =
+/**
+ * Every harness message carries the generation of the document that sent it.
+ * Swapping `srcdoc` is asynchronous, so a message from the outgoing page can
+ * land after the host has already installed its replacement; without a stamp
+ * the host would believe a torn-down document is alive and then "detect" an
+ * infinite loop when its heartbeat stops. See PreviewHost's watchdog.
+ */
+export type HarnessMessage = HarnessMessageBody & { gen?: number };
+
+type HarnessMessageBody =
   | { type: "khiye:ready"; version: number }
   | { type: "khiye:heartbeat"; t: number }
   | { type: "khiye:scroll"; x: number; y: number }

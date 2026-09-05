@@ -19,6 +19,8 @@ import {
 } from "./protocol";
 
 const HEARTBEAT_TIMEOUT_MS = 3000;
+/** Long enough to swallow a burst of typing, short enough to feel immediate. */
+const RELOAD_DEBOUNCE_MS = 250;
 const CHECK_TIMEOUT_MS = 6000;
 
 export interface PreviewHostHandle {
@@ -76,6 +78,8 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
   filesRef.current = files;
   const lastHeartbeat = useRef<number>(Date.now());
   const readyRef = useRef(false);
+  /** Bumped on every srcdoc swap; messages stamped with an older one are dead. */
+  const gen = useRef(0);
   const pending = useRef(new Map<string, (r: HarnessCheckResult[]) => void>());
   const scrollPos = useRef({ x: 0, y: 0 });
   // Survives iframe reloads so storage lessons behave like a real browser.
@@ -94,12 +98,14 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
     readyRef.current = false;
     setLooping(false);
     lastHeartbeat.current = Date.now();
+    gen.current += 1;
     const snapshot = filesRef.current;
     iframe.srcdoc = assembleSrcdoc(snapshot, {
       harnessJs: HARNESS_JS,
       entry,
       connectSrc,
       cdnBase,
+      gen: gen.current,
       storage: storage.current,
       sqliteRuntime: sqlite.current,
       reactRuntime: reactRuntime.current,
@@ -155,6 +161,12 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
   }, [reload]);
 
   // React to file changes: CSS-only → hot-swap; otherwise reload.
+  //
+  // A reload throws the whole document away, so doing one per keystroke makes
+  // the preview flicker through half-typed markup and rebuilds the harness
+  // dozens of times a second. Coalesce them into one rebuild once typing
+  // pauses. CSS is not debounced: swapping a <style> block is cheap and keeps
+  // the "drag a colour and watch it change" feel of the design lessons.
   useEffect(() => {
     if (!readyRef.current) return;
     const { changed, cssOnly } = diffFiles(prevFiles.current, files);
@@ -164,9 +176,10 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
       for (const path of changed) styles[path.replace(/^\.?\//, "")] = files[path]?.content ?? "";
       post({ type: "khiye:updateStyles", styles });
       prevFiles.current = files;
-    } else {
-      reload();
+      return;
     }
+    const id = window.setTimeout(reload, RELOAD_DEBOUNCE_MS);
+    return () => window.clearTimeout(id);
   }, [files, post, reload]);
 
   // Message channel from the iframe.
@@ -175,6 +188,10 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
       if (e.source !== iframeRef.current?.contentWindow) return; // opaque origin → check source
       if (!isHarnessMessage(e.data)) return;
       const msg = e.data;
+      // A page we have already replaced may still be flushing messages. Its
+      // liveness signals are lies — believing them makes the watchdog fire on
+      // a document that is simply gone.
+      if (msg.gen !== undefined && msg.gen !== gen.current) return;
       switch (msg.type) {
         case "khiye:ready": {
           readyRef.current = true;

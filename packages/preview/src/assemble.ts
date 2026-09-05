@@ -28,6 +28,11 @@ export interface AssembleOptions {
    * message could arrive.
    */
   storage?: Record<string, string>;
+  /**
+   * Identifies this srcdoc. The harness echoes it on every message so the host
+   * can tell a live page from one it has already replaced.
+   */
+  gen?: number;
 }
 
 function escAttr(s: string): string {
@@ -113,8 +118,11 @@ ${transpileJsx(js.content, src)}
     ? `<script>window.__khiyeStorage = ${JSON.stringify(opts.storage).replace(/</g, "\\u003c")};</script>\n`
     : "";
 
+  const genSeed = opts.gen === undefined ? "" : `<script>window.__khiyeGen = ${opts.gen};</script>\n`;
+
   const head =
     `${cspMeta}\n<base href="${escAttr(opts.cdnBase ?? "about:blank")}">\n` +
+    genSeed +
     storageSeed +
     `<script>\n${opts.harnessJs}\n</script>` +
     (needsReact && opts.reactRuntime ? `\n<script>\n${opts.reactRuntime}\n</script>` : "");

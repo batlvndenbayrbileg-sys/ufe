@@ -158,6 +158,8 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
             <h1 className={s.taskTitle}>{task.title.mn}</h1>
           </div>
 
+          {/* Verdict first, then — if that was the last task — the way out of
+              the lesson, right where the student is already looking. */}
           {result ? (
             <div ref={resultRef}>
               <ResultPanel
@@ -166,6 +168,23 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
                 onNext={nextTask}
                 isLastTask={taskIndex === tasks.length - 1}
               />
+            </div>
+          ) : null}
+
+          {lessonDone ? (
+            <div className={s.completion}>
+              <span className={s.completionTitle}>🎉 Хичээл дууслаа!</span>
+              {lesson.completion.badge ? <Badge tone="success" size="md">{lesson.completion.badge}</Badge> : null}
+              {next ? (
+                <a href={`/learn/${next.id}`} className={s.completionNext}>
+                  Дараагийн хичээл: {next.title.mn} →
+                </a>
+              ) : (
+                <span className={s.completionDone}>Энэ курсын сүүлчийн хичээл байлаа. Баяр хүргэе! 🏆</span>
+              )}
+              <a href="/app/course/internet-programming" className={s.back}>
+                Бүх хичээл
+              </a>
             </div>
           ) : null}
 
@@ -215,22 +234,6 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
             </>
           )}
 
-          {lessonDone ? (
-            <div className={s.completion}>
-              <span className={s.completionTitle}>🎉 Хичээл дууслаа!</span>
-              {lesson.completion.badge ? <Badge tone="success" size="md">{lesson.completion.badge}</Badge> : null}
-              {next ? (
-                <a href={`/learn/${next.id}`} className={s.completionNext}>
-                  Дараагийн хичээл: {next.title.mn} →
-                </a>
-              ) : (
-                <span className={s.completionDone}>Энэ курсын сүүлчийн хичээл байлаа. Баяр хүргэе! 🏆</span>
-              )}
-              <a href="/app/course/internet-programming" className={s.back}>
-                Бүх хичээл
-              </a>
-            </div>
-          ) : null}
         </div>
       }
       editor={<EditorPane ref={editorRef} dark={dark} showTree showKeyStrip />}

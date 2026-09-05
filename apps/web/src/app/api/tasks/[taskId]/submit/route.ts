@@ -75,8 +75,11 @@ export function POST(req: NextRequest, { params }: { params: Promise<{ taskId: s
     const xpAwarded = passed ? task.xp : 0;
     const attemptNo = body.attemptNo ?? 1;
 
+    // The verdict speaks for the task only. Finishing the lesson is the
+    // completion card's news to break — saying it twice on the same screen
+    // makes the second one worth nothing.
     const feedback = passed
-      ? { headline: nextTask ? "🎉 Маш сайн!" : "🎉 Хичээл дууслаа!", body: undefined as string | undefined }
+      ? { headline: "🎉 Маш сайн!", body: undefined as string | undefined }
       : infra
         ? { headline: "Систем дээр алдаа гарлаа. Таны буруу биш — дахин оролдоно уу." }
         : { headline: "Одоохондоо болоогүй байна." };
