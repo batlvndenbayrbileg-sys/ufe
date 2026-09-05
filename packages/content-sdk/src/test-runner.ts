@@ -1,4 +1,4 @@
-import { loadSqliteRuntime, runChecksOnFiles } from "@khiye/checkers/server";
+import { runChecksOnFiles, runOptionsFor } from "@khiye/checkers/server";
 import { applyPatch, type FileSet } from "./patch";
 import { flattenLessons } from "./loader";
 import type { Lesson, ResolvedCourse } from "./schema";
@@ -47,11 +47,8 @@ async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
   const out: TaskTestResult[] = [];
   let files: FileSet = applyPatch({}, lesson.workspace.patch);
 
-  // SQL lessons ask the platform for SQLite; every other runtime needs nothing.
-  const runOptions = {
-    entry: lesson.execution.entry,
-    ...(lesson.execution.runtime === "sqlite" ? { sqliteRuntime: loadSqliteRuntime() } : {}),
-  };
+  // Same options the submit route grades with — see runOptionsFor.
+  const runOptions = runOptionsFor(lesson.execution);
 
   for (const task of [...lesson.tasks].sort((a, b) => a.order - b.order)) {
     if (task.starter) files = applyPatch(files, task.starter);

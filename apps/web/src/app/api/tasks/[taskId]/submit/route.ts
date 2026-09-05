@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { AppError, errors } from "@khiye/shared";
-import { runChecksOnFiles, type FileSet } from "@khiye/checkers/server";
+import { runChecksOnFiles, runOptionsFor, type FileSet } from "@khiye/checkers/server";
 import { getNextLessonId, getTaskFull } from "@/lib/content";
 import { ok, route } from "@/lib/api";
 
@@ -43,7 +43,7 @@ export function POST(req: NextRequest, { params }: { params: Promise<{ taskId: s
     const results = await runChecksOnFiles(
       files,
       task.checks.map((c) => ({ id: c.id, type: c.type, args: c.args })),
-      { entry: lesson.execution.entry },
+      runOptionsFor(lesson.execution),
     );
 
     const relevant = results.filter((r) => r.errorKind !== "infra");

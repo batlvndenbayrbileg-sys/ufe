@@ -121,3 +121,17 @@ export function loadSqliteRuntime(): string {
   }
   return sqliteRuntime;
 }
+
+/**
+ * The RunOptions a lesson's execution block calls for. Every caller that grades
+ * a lesson — the HTTP submit route, the content pipeline — goes through here,
+ * so a runtime can never be wired up in one place and forgotten in the other.
+ * (A SQL lesson graded without its runtime fails every check with
+ * "body[data-ready] never appeared", which looks like broken content.)
+ */
+export function runOptionsFor(execution: { entry?: string; runtime?: string }): RunOptions {
+  return {
+    entry: execution.entry,
+    ...(execution.runtime === "sqlite" ? { sqliteRuntime: loadSqliteRuntime() } : {}),
+  };
+}
