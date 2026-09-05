@@ -89,14 +89,32 @@ registerChecker("css.layout", (args, ctx) => {
 });
 
 // ── css.contrast ─────────────────────────────────────────────────────────────
+/**
+ * The background a colour is actually read against. Most elements set no
+ * background of their own, so the honest answer is the nearest ancestor that
+ * paints one — and the canvas is white when nothing does.
+ */
+function effectiveBackground(ctx: CheckerContext, el: Element): [number, number, number] {
+  for (let node: Element | null = el; node; node = node.parentElement) {
+    const raw = gcs(ctx, node).getPropertyValue("background-color").trim();
+    if (!raw || raw === "transparent") continue;
+    // rgba(...) with alpha 0 is transparent too.
+    const alpha = raw.match(/rgba\(\s*[\d.]+[,\s]+[\d.]+[,\s]+[\d.]+[,\s/]+([\d.]+)/i);
+    if (alpha && Number(alpha[1]) === 0) continue;
+    const parsed = parseColor(raw);
+    if (parsed) return parsed;
+  }
+  return [255, 255, 255];
+}
+
 registerChecker("css.contrast", (args, ctx) => {
   const el = firstEl(ctx, String(args.selector));
   if (!el) return fail("element not found", String(args.selector));
   const style = gcs(ctx, el);
   const fg = parseColor(style.getPropertyValue("color"));
-  const bg = parseColor(style.getPropertyValue("background-color"));
+  const bg = effectiveBackground(ctx, el);
   const min = typeof args.min === "number" ? args.min : 4.5;
-  if (!fg || !bg) return { passed: false, errorKind: "infra", raw: "could not parse colours" };
+  if (!fg) return { passed: false, errorKind: "infra", raw: "could not parse the text colour" };
   const ratio = contrast(fg, bg);
   return ratio >= min ? pass({ actual: `${ratio.toFixed(2)}:1` }) : fail(`${ratio.toFixed(2)}:1`, `≥ ${min}:1`);
 });

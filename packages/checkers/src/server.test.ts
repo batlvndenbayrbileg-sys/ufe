@@ -171,6 +171,40 @@ describe("js.* via happy-dom runner", () => {
   });
 });
 
+describe("css.contrast", () => {
+  const page = (css: string): FileSet => ({
+    "index.html": {
+      content: `<!doctype html><html><head><link rel="stylesheet" href="s.css"></head><body><main><p class="price">₮ 129,000</p></main></body></html>`,
+    },
+    "s.css": { content: css },
+  });
+
+  it("reads the background from an ancestor when the text sets none", async () => {
+    // The realistic case: only body paints a background.
+    const dark = await one(page("body{background-color:#ffffff}.price{color:#3f3f46}"), {
+      type: "css.contrast",
+      args: { selector: ".price", min: 4.5 },
+    });
+    expect(dark.passed).toBe(true);
+    expect(dark.errorKind).toBeUndefined();
+
+    const light = await one(page("body{background-color:#ffffff}.price{color:#a9a9a9}"), {
+      type: "css.contrast",
+      args: { selector: ".price", min: 4.5 },
+    });
+    expect(light.passed).toBe(false);
+    expect(light.errorKind).toBe("assertion");
+  });
+
+  it("falls back to a white canvas when nothing paints one", async () => {
+    const r = await one(page(".price{color:#3f3f46}"), {
+      type: "css.contrast",
+      args: { selector: ".price", min: 4.5 },
+    });
+    expect(r.passed).toBe(true);
+  });
+});
+
 describe("css.responsive (media queries)", () => {
   const responsive: FileSet = {
     "index.html": { content: `<!doctype html><html><head><link rel="stylesheet" href="s.css"></head><body><section class="grid"></section></body></html>` },

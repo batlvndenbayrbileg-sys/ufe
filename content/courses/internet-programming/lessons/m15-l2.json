@@ -1,0 +1,231 @@
+{
+  "id": "m15-l2",
+  "moduleId": "m15-a11y",
+  "slug": "labels",
+  "order": 2,
+  "title": {
+    "mn": "Форм ба шошго"
+  },
+  "why": {
+    "mn": "`placeholder` бол шошго БИШ: бичиж эхэлмэгц алга болно, дэлгэц уншигч заримдаа огт уншихгүй, ялгарал нь бага. Shop.mn-ий захиалгын форм бөглөж чадахгүй хэрэглэгч бол алдагдсан худалдан авалт."
+  },
+  "buildsInProject": "Шошготой форм",
+  "difficulty": "beginner",
+  "estimatedMinutes": 20,
+  "skills": [
+    "a11y",
+    "html"
+  ],
+  "concepts": [
+    "label/for",
+    "aria-describedby",
+    "aria-invalid",
+    "required"
+  ],
+  "prerequisites": [
+    "m15-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <header class=\"topbar\">\n      <a class=\"logo\" href=\"index.html\">Shop.mn</a>\n      <button class=\"icon-btn\" data-testid=\"search-btn\" aria-label=\"Бараа хайх\">🔍</button>\n      <button class=\"icon-btn\" data-testid=\"cart-btn\" aria-label=\"Сагс харах\">\n        🛒<span class=\"cart-count\" data-testid=\"cart-count\">0</span>\n      </button>\n    </header>\n\n    <main id=\"main\">\n      <h1>Монгол дээл</h1>\n      <img class=\"divider\" src=\"images/divider.svg\" alt=\"\">\n      <!-- энд бичнэ үү -->\n\n      <article class=\"product-card\">\n        <img src=\"images/deel.jpg\" alt=\"Хар хөх өнгийн монгол дээл\">\n        <h3>Монгол дээл</h3>\n        <p class=\"price\" data-testid=\"price\">₮ 129,000</p>\n        <p class=\"stock out\" data-testid=\"stock\">●</p>\n        <div class=\"btn-add\" data-testid=\"add\" onclick=\"addToCart()\">Сагсанд хийх</div>\n      </article>\n\n      <form class=\"order-form\">\n        <h2>Захиалга</h2>\n        <input name=\"name\" type=\"text\" placeholder=\"Нэр\" data-testid=\"f-name\">\n        <p class=\"field-error\" data-testid=\"err-name\">Нэрээ бичнэ үү.</p>\n        <input name=\"phone\" type=\"tel\" placeholder=\"Утас\" data-testid=\"f-phone\">\n        <button type=\"submit\" class=\"btn-add\">Захиалах</button>\n      </form>\n\n      <p class=\"form-error\" data-testid=\"form-error\">Захиалга илгээгдсэнгүй.</p>\n    </main>\n\n    <script src=\"js/main.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #ffffff;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\n.skip {\n  position: absolute;\n  left: -9999px;\n}\n\n.skip:focus {\n  left: 8px;\n  top: 8px;\n  background-color: #18181b;\n  color: #ffffff;\n  padding: 8px 12px;\n  border-radius: 6px;\n}\n\n.topbar {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding-bottom: 12px;\n  border-bottom: 1px solid #e4e4e7;\n}\n\n.logo {\n  font-weight: 700;\n  font-size: 20px;\n  color: #18181b;\n  text-decoration: none;\n  margin-right: auto;\n}\n\n.icon-btn {\n  background: none;\n  border: 1px solid #d4d4d8;\n  border-radius: 8px;\n  padding: 6px 10px;\n  font-size: 16px;\n  cursor: pointer;\n}\n\n.cart-count {\n  margin-left: 4px;\n  font-weight: 700;\n}\n\n.divider {\n  width: 100%;\n  height: 8px;\n}\n\nh1 { font-size: 28px; }\n\n.product-card img {\n  width: 100%;\n  max-width: 320px;\n  aspect-ratio: 4 / 3;\n  object-fit: cover;\n  border-radius: 10px;\n}\n\n.price {\n  color: #a9a9a9;\n  font-size: 18px;\n}\n\n.stock {\n  color: #f87171;\n  font-weight: 600;\n}\n\n.muted { color: #b4b4bb; }\n\n.btn-add {\n  display: inline-block;\n  background-color: #1d4ed8;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n  font-size: 15px;\n  font-family: inherit;\n}\n\n.order-form {\n  display: grid;\n  gap: 8px;\n  max-width: 320px;\n  margin-top: 24px;\n}\n\n.order-form input {\n  padding: 10px 12px;\n  border: 1px solid #d4d4d8;\n  border-radius: 8px;\n  font-size: 16px;\n}\n\n.field-error,\n.form-error {\n  color: #b91c1c;\n  font-size: 14px;\n  margin: 0;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "js/main.js",
+        "content": "// Сагсны тоолуурыг шинэчилнэ. Энэ файлыг өөрчлөх шаардлагагүй.\n\nlet count = 0;\n\nfunction addToCart() {\n  count += 1;\n  document.querySelector('[data-testid=\"cart-count\"]').textContent = String(count);\n}\n\ndocument.querySelector('[data-testid=\"add\"]').addEventListener(\"click\", addToCart);\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "js/main.js"
+    ],
+    "openFiles": [
+      "index.html"
+    ],
+    "activeFile": "index.html"
+  },
+  "tasks": [
+    {
+      "id": "m15-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Форм ба шошго"
+      },
+      "statement": {
+        "mn": "1) Хоёр талбарт `id` өгөөд `<label for=\"…\">` нэм («Нэр», «Утас»), `placeholder`-ыг ав. 2) Хоёуланд нь `required` нэм. 3) Нэрийн алдааны мессежид `id=\"err-name\"` өгч, талбарыг `aria-describedby=\"err-name\"` ба `aria-invalid=\"true\"`-ээр түүнтэй холбо."
+      },
+      "requirements": [
+        {
+          "mn": "`label for` ↔ `input id`"
+        },
+        {
+          "mn": "`required`"
+        },
+        {
+          "mn": "`aria-describedby`"
+        },
+        {
+          "mn": "`placeholder` шошгыг орлохгүй"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Талбар бүр шошготой, алдааны мессеж нь талбартайгаа холбогдоно."
+        }
+      },
+      "targetFile": "index.html",
+      "marker": "<!-- энд бичнэ үү -->",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.a11y",
+          "args": {
+            "rules": [
+              "label"
+            ]
+          },
+          "onFail": {
+            "mn": "Шошгогүй талбар үлдсэн байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.formField",
+          "args": {
+            "name": "name",
+            "type": "text",
+            "required": true,
+            "labelled": true
+          },
+          "onFail": {
+            "mn": "Нэрийн талбар шошготой, `required`-тэй байх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.formField",
+          "args": {
+            "name": "phone",
+            "type": "tel",
+            "required": true,
+            "labelled": true
+          },
+          "onFail": {
+            "mn": "Утасны талбар шошготой, `required`-тэй байх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "dom.attr",
+          "args": {
+            "selector": "[data-testid=\"f-name\"]",
+            "name": "aria-describedby",
+            "equals": "err-name"
+          },
+          "onFail": {
+            "mn": "Нэрийн талбарыг алдааны мессежтэй `aria-describedby`-ээр холбоогүй байна."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "dom.attr",
+          "args": {
+            "selector": "[data-testid=\"err-name\"]",
+            "name": "id",
+            "equals": "err-name"
+          },
+          "onFail": {
+            "mn": "Алдааны мессежид `id=\"err-name\"` өгөх ёстой — `aria-describedby` түүн рүү заана."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "dom.attr",
+          "args": {
+            "selector": "[data-testid=\"f-name\"]",
+            "name": "aria-invalid",
+            "equals": "true"
+          },
+          "onFail": {
+            "mn": "Алдаатай талбарыг `aria-invalid=\"true\"`-ээр тэмдэглээрэй."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "dom.notExists",
+          "args": {
+            "selector": "input[placeholder]"
+          },
+          "onFail": {
+            "mn": "`placeholder` нь шошгыг ОРЛОХГҮЙ — бичиж эхэлмэгц алга болдог."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`<label for=\"x\">` ба `<input id=\"x\">` хоёр ижил утгаар холбогдоно. Шошгон дээр дарахад талбар идэвхжвэл зөв холбогдсоны шинж."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`aria-describedby` нь талбарын НЭМЭЛТ тайлбарыг заана — дэлгэц уншигч талбарын нэрийг уншсаны дараа тэр мессежийг уншина."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Нэг талбарын бүтэн хэлбэр:"
+          },
+          "code": "<label for=\"f-name\">Нэр</label>\n<input id=\"f-name\" name=\"name\" type=\"text\" data-testid=\"f-name\" required\n       aria-describedby=\"…\" aria-invalid=\"true\">\n<p class=\"field-error\" id=\"…\" data-testid=\"err-name\">Нэрээ бичнэ үү.</p>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "index.html",
+            "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <header class=\"topbar\">\n      <a class=\"logo\" href=\"index.html\">Shop.mn</a>\n      <button class=\"icon-btn\" data-testid=\"search-btn\" aria-label=\"Бараа хайх\">🔍</button>\n      <button class=\"icon-btn\" data-testid=\"cart-btn\" aria-label=\"Сагс харах\">\n        🛒<span class=\"cart-count\" data-testid=\"cart-count\">0</span>\n      </button>\n    </header>\n\n    <main id=\"main\">\n      <h1>Монгол дээл</h1>\n      <img class=\"divider\" src=\"images/divider.svg\" alt=\"\">\n\n      <article class=\"product-card\">\n        <img src=\"images/deel.jpg\" alt=\"Хар хөх өнгийн монгол дээл\">\n        <h3>Монгол дээл</h3>\n        <p class=\"price\" data-testid=\"price\">₮ 129,000</p>\n        <p class=\"stock out\" data-testid=\"stock\">●</p>\n        <div class=\"btn-add\" data-testid=\"add\" onclick=\"addToCart()\">Сагсанд хийх</div>\n      </article>\n\n      <form class=\"order-form\">\n        <h2>Захиалга</h2>\n        <label for=\"f-name\">Нэр</label>\n        <input id=\"f-name\" name=\"name\" type=\"text\" data-testid=\"f-name\" required aria-describedby=\"err-name\" aria-invalid=\"true\">\n        <p class=\"field-error\" id=\"err-name\" data-testid=\"err-name\">Нэрээ бичнэ үү.</p>\n        <label for=\"f-phone\">Утас</label>\n        <input id=\"f-phone\" name=\"phone\" type=\"tel\" data-testid=\"f-phone\" required>\n        <button type=\"submit\" class=\"btn-add\">Захиалах</button>\n      </form>\n\n      <p class=\"form-error\" data-testid=\"form-error\">Захиалга илгээгдсэнгүй.</p>\n    </main>\n\n    <script src=\"js/main.js\"></script>\n  </body>\n</html>\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Шошго нь дэлгэц уншигчид зориулагдсан ч бүгдэд тустай: дарах талбай томроод хуруугаар оноход хялбар болно, бичиж эхэлсний дараа ч талбар юуных болох нь харагдсаар байна. Хүртээмжийн засвар бараг үргэлж бүх хэрэглэгчийн UX-ийг сайжруулдаг."
+        },
+        "xpPenalty": 21
+      },
+      "xp": 35,
+      "estimatedMinutes": 18,
+      "skills": [
+        "a11y"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -123,6 +123,17 @@
       "moduleIds": [
         "m14-testing"
       ]
+    },
+    {
+      "id": "s11",
+      "order": 11,
+      "title": {
+        "mn": "Хүртээмж"
+      },
+      "badgeId": "a11y-advocate",
+      "moduleIds": [
+        "m15-a11y"
+      ]
     }
   ]
 }

@@ -1,0 +1,239 @@
+{
+  "id": "m15-l5",
+  "moduleId": "m15-a11y",
+  "slug": "live-regions",
+  "order": 5,
+  "title": {
+    "mn": "Checkpoint: өөрчлөлтийг зарлах"
+  },
+  "why": {
+    "mn": "Shop.mn-ий сагсанд бараа нэмэхэд тоолуур 0-оос 1 болно — харж байгаа хүн шууд анзаарна. Дэлгэц уншигч ашигладаг хүн юу ч сонсохгүй: фокус хөдлөөгүй тул уншигч дуугүй хэвээр. Динамик өөрчлөлтийг ЗАРЛАХ ёстой."
+  },
+  "buildsInProject": "Зарлагддаг сагс",
+  "difficulty": "advanced",
+  "estimatedMinutes": 20,
+  "skills": [
+    "a11y",
+    "html"
+  ],
+  "concepts": [
+    "aria-live",
+    "role=status",
+    "role=alert",
+    "dynamic updates"
+  ],
+  "prerequisites": [
+    "m15-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <a class=\"skip\" href=\"#main\">Үндсэн хэсэг рүү шилжих</a>\n    <header class=\"topbar\">\n      <a class=\"logo\" href=\"index.html\">Shop.mn</a>\n      <button class=\"icon-btn\" data-testid=\"search-btn\" aria-label=\"Бараа хайх\">🔍</button>\n      <button class=\"icon-btn\" data-testid=\"cart-btn\" aria-label=\"Сагс харах\">\n        🛒<span class=\"cart-count\" data-testid=\"cart-count\">0</span>\n      </button>\n    </header>\n\n    <main id=\"main\">\n      <h1>Монгол дээл</h1>\n      <img class=\"divider\" src=\"images/divider.svg\" alt=\"\">\n      <!-- энд бичнэ үү -->\n\n      <article class=\"product-card\">\n        <img src=\"images/deel.jpg\" alt=\"Хар хөх өнгийн монгол дээл\">\n        <h2>Монгол дээл</h2>\n        <p class=\"price\" data-testid=\"price\">₮ 129,000</p>\n        <p class=\"stock out\" data-testid=\"stock\"><span aria-hidden=\"true\">●</span> Дууссан</p>\n        <button class=\"btn-add\" data-testid=\"add\">Сагсанд хийх</button>\n      </article>\n\n      <form class=\"order-form\">\n        <h2>Захиалга</h2>\n        <label for=\"f-name\">Нэр</label>\n        <input id=\"f-name\" name=\"name\" type=\"text\" data-testid=\"f-name\" required aria-describedby=\"err-name\" aria-invalid=\"true\">\n        <p class=\"field-error\" id=\"err-name\" data-testid=\"err-name\">Нэрээ бичнэ үү.</p>\n        <label for=\"f-phone\">Утас</label>\n        <input id=\"f-phone\" name=\"phone\" type=\"tel\" data-testid=\"f-phone\" required>\n        <button type=\"submit\" class=\"btn-add\">Захиалах</button>\n      </form>\n\n      <p class=\"form-error\" data-testid=\"form-error\">Захиалга илгээгдсэнгүй.</p>\n    </main>\n\n    <script src=\"js/main.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #ffffff;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\n.skip {\n  position: absolute;\n  left: -9999px;\n}\n\n.skip:focus {\n  left: 8px;\n  top: 8px;\n  background-color: #18181b;\n  color: #ffffff;\n  padding: 8px 12px;\n  border-radius: 6px;\n}\n\n.topbar {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding-bottom: 12px;\n  border-bottom: 1px solid #e4e4e7;\n}\n\n.logo {\n  font-weight: 700;\n  font-size: 20px;\n  color: #18181b;\n  text-decoration: none;\n  margin-right: auto;\n}\n\n.icon-btn {\n  background: none;\n  border: 1px solid #d4d4d8;\n  border-radius: 8px;\n  padding: 6px 10px;\n  font-size: 16px;\n  cursor: pointer;\n}\n\n.cart-count {\n  margin-left: 4px;\n  font-weight: 700;\n}\n\n.divider {\n  width: 100%;\n  height: 8px;\n}\n\nh1 { font-size: 28px; }\n\n.product-card img {\n  width: 100%;\n  max-width: 320px;\n  aspect-ratio: 4 / 3;\n  object-fit: cover;\n  border-radius: 10px;\n}\n\n.price {\n  color: #3f3f46;\n  font-size: 18px;\n}\n\n.stock {\n  color: #b91c1c;\n  font-weight: 600;\n}\n\n.muted { color: #52525b; }\n\n.btn-add {\n  display: inline-block;\n  background-color: #1d4ed8;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n  font-size: 15px;\n  font-family: inherit;\n}\n\n.order-form {\n  display: grid;\n  gap: 8px;\n  max-width: 320px;\n  margin-top: 24px;\n}\n\n.order-form input {\n  padding: 10px 12px;\n  border: 1px solid #d4d4d8;\n  border-radius: 8px;\n  font-size: 16px;\n}\n\n.field-error,\n.form-error {\n  color: #b91c1c;\n  font-size: 14px;\n  margin: 0;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "js/main.js",
+        "content": "// Сагсны тоолуурыг шинэчилнэ. Энэ файлыг өөрчлөх шаардлагагүй.\n\nlet count = 0;\n\nfunction addToCart() {\n  count += 1;\n  document.querySelector('[data-testid=\"cart-count\"]').textContent = String(count);\n}\n\ndocument.querySelector('[data-testid=\"add\"]').addEventListener(\"click\", addToCart);\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "js/main.js"
+    ],
+    "openFiles": [
+      "index.html"
+    ],
+    "activeFile": "index.html"
+  },
+  "tasks": [
+    {
+      "id": "m15-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Checkpoint: өөрчлөлтийг зарлах"
+      },
+      "statement": {
+        "mn": "1) Сагсны тоолуурт (`data-testid=\"cart-count\"`) `role=\"status\"` ба `aria-live=\"polite\"` нэм — өөрчлөгдөхөд дэлгэц уншигч хэрэглэгчийг тасалдуулалгүй зарлана. 2) Формын алдааны мессежид (`data-testid=\"form-error\"`) `role=\"alert\"` нэм — энэ нь ЯАРАЛТАЙ тул тэр дороо уншигдана."
+      },
+      "requirements": [
+        {
+          "mn": "`aria-live=\"polite\"`"
+        },
+        {
+          "mn": "`role=\"status\"`"
+        },
+        {
+          "mn": "Алдаанд `role=\"alert\"`"
+        },
+        {
+          "mn": "Тоолуур хэвээр ажиллана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Сагсны тоо өөрчлөгдөхөд эелдэгээр, алдаа гарахад тэр дор нь зарлагдана."
+        }
+      },
+      "targetFile": "index.html",
+      "marker": "<!-- энд бичнэ үү -->",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.attr",
+          "args": {
+            "selector": "[data-testid=\"cart-count\"]",
+            "name": "aria-live",
+            "equals": "polite"
+          },
+          "onFail": {
+            "mn": "Сагсны тоолуурт `aria-live=\"polite\"` алга байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.attr",
+          "args": {
+            "selector": "[data-testid=\"cart-count\"]",
+            "name": "role",
+            "equals": "status"
+          },
+          "onFail": {
+            "mn": "Сагсны тоолуурт `role=\"status\"` алга байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.attr",
+          "args": {
+            "selector": "[data-testid=\"form-error\"]",
+            "name": "role",
+            "equals": "alert"
+          },
+          "onFail": {
+            "mn": "Алдааны мессежид `role=\"alert\"` алга байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "[data-testid=\"add\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"cart-count\"]",
+                  "equals": "1"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Тоолуур хуучин шигээ ажиллах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "dom.a11y",
+          "args": {
+            "rules": [
+              "image-alt",
+              "button-name",
+              "label",
+              "heading-order"
+            ]
+          },
+          "onFail": {
+            "mn": "Өмнөх хичээлүүдийн засвар эвдэрсэн байна."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "css.contrast",
+          "args": {
+            "selector": ".price",
+            "min": 4.5
+          },
+          "onFail": {
+            "mn": "Өнгөний ялгарал эвдэрсэн байна."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "dom.notExists",
+          "args": {
+            "selector": "[onclick]"
+          },
+          "onFail": {
+            "mn": "`onclick` шинж буцаж орсон байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`aria-live=\"polite\"` нь «одоо уншиж байгаагаа дуусгаад дараа нь хэл», `assertive` нь «тэр дороо тасалдуул» гэсэн үг. Сагсны тоо эелдэг, алдаа яаралтай."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`role=\"alert\"` нь дотроо `aria-live=\"assertive\"`-ийг агуулдаг тул хоёуланг нь бичих шаардлагагүй."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Хоёр элементэд шинж нэм:"
+          },
+          "code": "<span class=\"cart-count\" data-testid=\"cart-count\" role=\"…\" aria-live=\"…\">0</span>\n\n<p class=\"form-error\" data-testid=\"form-error\" role=\"…\">Захиалга илгээгдсэнгүй.</p>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "index.html",
+            "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <a class=\"skip\" href=\"#main\">Үндсэн хэсэг рүү шилжих</a>\n    <header class=\"topbar\">\n      <a class=\"logo\" href=\"index.html\">Shop.mn</a>\n      <button class=\"icon-btn\" data-testid=\"search-btn\" aria-label=\"Бараа хайх\">🔍</button>\n      <button class=\"icon-btn\" data-testid=\"cart-btn\" aria-label=\"Сагс харах\">\n        🛒<span class=\"cart-count\" data-testid=\"cart-count\" role=\"status\" aria-live=\"polite\">0</span>\n      </button>\n    </header>\n\n    <main id=\"main\">\n      <h1>Монгол дээл</h1>\n      <img class=\"divider\" src=\"images/divider.svg\" alt=\"\">\n\n      <article class=\"product-card\">\n        <img src=\"images/deel.jpg\" alt=\"Хар хөх өнгийн монгол дээл\">\n        <h2>Монгол дээл</h2>\n        <p class=\"price\" data-testid=\"price\">₮ 129,000</p>\n        <p class=\"stock out\" data-testid=\"stock\"><span aria-hidden=\"true\">●</span> Дууссан</p>\n        <button class=\"btn-add\" data-testid=\"add\">Сагсанд хийх</button>\n      </article>\n\n      <form class=\"order-form\">\n        <h2>Захиалга</h2>\n        <label for=\"f-name\">Нэр</label>\n        <input id=\"f-name\" name=\"name\" type=\"text\" data-testid=\"f-name\" required aria-describedby=\"err-name\" aria-invalid=\"true\">\n        <p class=\"field-error\" id=\"err-name\" data-testid=\"err-name\">Нэрээ бичнэ үү.</p>\n        <label for=\"f-phone\">Утас</label>\n        <input id=\"f-phone\" name=\"phone\" type=\"tel\" data-testid=\"f-phone\" required>\n        <button type=\"submit\" class=\"btn-add\">Захиалах</button>\n      </form>\n\n      <p class=\"form-error\" data-testid=\"form-error\" role=\"alert\">Захиалга илгээгдсэнгүй.</p>\n    </main>\n\n    <script src=\"js/main.js\"></script>\n  </body>\n</html>\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Live region нь «энэ хэсгийн агуулга өөрчлөгдвөл хэрэглэгчид хэл» гэсэн заавар. Түүнгүйгээр дэлгэц уншигч зөвхөн фокус хөдөлсөн үед л ярьдаг тул динамик өөрчлөлт бүгд чимээгүй өнгөрнө. Энэ модулиар Shop.mn нь зураг, форм, бүтэц, өнгө, динамик өөрчлөлт таван талаараа хүртээмжтэй боллоо."
+        },
+        "xpPenalty": 27
+      },
+      "xp": 45,
+      "estimatedMinutes": 18,
+      "skills": [
+        "a11y"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}
