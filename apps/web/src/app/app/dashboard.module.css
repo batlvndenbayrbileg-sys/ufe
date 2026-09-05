@@ -1,0 +1,282 @@
+/* Хянах самбар. The greeting, the one card that matters (continue), a strip of
+   gamification stats, then course progress split from skills + badges. Tints are
+   color-mixed from the existing tokens so the palette stays honest in both themes. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ── header cluster (streak · xp · level) ────────────────────────────────── */
+.headerStats {
+  margin-left: auto;
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.headerChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.chipStreak {
+  color: var(--streak);
+  background: color-mix(in srgb, var(--streak) 10%, var(--surface));
+  border-color: color-mix(in srgb, var(--streak) 24%, var(--border));
+}
+.chipXp {
+  color: var(--xp);
+  background: color-mix(in srgb, var(--xp) 10%, var(--surface));
+  border-color: color-mix(in srgb, var(--xp) 24%, var(--border));
+}
+
+/* ── greeting ────────────────────────────────────────────────────────────── */
+.greeting {
+  margin: 0;
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.subGreeting {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-md);
+}
+
+/* ── continue hero ───────────────────────────────────────────────────────── */
+.hero {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  background:
+    radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--accent) 16%, var(--surface)) 0%, var(--surface) 60%);
+  box-shadow: var(--shadow-md);
+}
+.heroRing {
+  flex: none;
+}
+.heroBody {
+  flex: 1;
+  min-width: 0;
+}
+.eyebrow {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-text);
+  font-weight: 700;
+}
+.heroTitle {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 4px 0 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.heroMeta {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.heroCta {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 22px;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--on-accent);
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.heroCta:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+.heroCta:active {
+  transform: none;
+}
+
+/* ── gamification stat strip ─────────────────────────────────────────────── */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+.stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.statIcon {
+  font-size: 22px;
+  line-height: 1;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius);
+  flex: none;
+}
+.iconStreak {
+  background: color-mix(in srgb, var(--streak) 14%, var(--surface));
+}
+.iconXp {
+  background: color-mix(in srgb, var(--xp) 14%, var(--surface));
+}
+.iconLevel {
+  background: var(--accent-subtle);
+}
+.statValue {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.statLabel {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── generic panel ───────────────────────────────────────────────────────── */
+.panelHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.panelTitle {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-subtle);
+  font-weight: 700;
+}
+.panelRight {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.courseLink {
+  display: inline-block;
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+/* ── two-column body (skills wide, badges narrow) ────────────────────────── */
+.body {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.skillGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3) var(--space-5);
+}
+.skill {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px var(--space-3);
+  align-items: center;
+  font-size: var(--text-sm);
+}
+.skillName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.skillPct {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-xs);
+}
+.skillBar {
+  grid-column: 1 / -1;
+}
+
+/* ── badges ──────────────────────────────────────────────────────────────── */
+.badgeWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.badgeEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  color: var(--text-muted);
+}
+.badgePlaceholders {
+  display: flex;
+  gap: var(--space-2);
+}
+.badgeDot {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1.5px dashed var(--border-strong);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  opacity: 0.5;
+}
+.badgeEmptyText {
+  font-size: var(--text-sm);
+  max-width: 24ch;
+}
+
+@media (max-width: 860px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+  .body {
+    grid-template-columns: 1fr;
+  }
+  .hero {
+    flex-wrap: wrap;
+  }
+  .heroCta {
+    width: 100%;
+    justify-content: center;
+  }
+}
+@media (max-width: 560px) {
+  .skillGrid {
+    grid-template-columns: 1fr;
+  }
+}

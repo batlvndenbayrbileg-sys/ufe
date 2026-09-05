@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Alert, AppShell, Badge, Button, ProgressBar, ThemeToggle } from "@khiye/ui";
+import { Alert, AppShell, Badge, Button, Card, ProgressBar, ThemeToggle } from "@khiye/ui";
 import { loadProgress, lessonProgress, type Progress } from "@/lib/progress";
 import { flattenLessons } from "../../course-types";
 import { useCourseMap } from "../../useCourseMap";
@@ -115,7 +115,7 @@ export function CourseMap() {
       }
     >
       <div className={styles.page}>
-        <div>
+        <Card padded={false} className={styles.summaryCard}>
           <div className={styles.summary}>
             <span className={styles.summaryCount}>
               {counts.done}/{counts.total}
@@ -129,17 +129,20 @@ export function CourseMap() {
             value={counts.total === 0 ? 0 : Math.round((counts.done / counts.total) * 100)}
             label="Курсын явц"
           />
-        </div>
+        </Card>
 
         {map.stages.map((stage) => {
           const count = counts.byStage.get(stage.id) ?? { done: 0, total: 0 };
           const complete = count.total > 0 && count.done === count.total;
           const open = isOpen(stage.id);
 
+          const isCurrent = stage.id === currentStageId;
+          const stagePct = count.total > 0 ? Math.round((count.done / count.total) * 100) : 0;
+
           return (
             <section
               key={stage.id}
-              className={`${styles.stage} ${stage.id === currentStageId ? styles.stageCurrent : ""}`}
+              className={`${styles.stage} ${isCurrent ? styles.stageCurrent : ""} ${complete ? styles.stageComplete : ""}`}
             >
               <button
                 type="button"
@@ -148,19 +151,27 @@ export function CourseMap() {
                 aria-controls={`stage-${stage.id}`}
                 onClick={() => toggle(stage.id)}
               >
-                <span aria-hidden className={`${styles.chevron} ${open ? styles.chevronOpen : ""}`}>
-                  ▸
+                <span
+                  aria-hidden
+                  className={`${styles.medallion} ${
+                    complete ? styles.medallionComplete : isCurrent ? styles.medallionCurrent : ""
+                  }`}
+                >
+                  {complete ? "✓" : stage.order}
                 </span>
-                <span className={styles.stageOrder}>ШАТ {stage.order}</span>
-                <span className={styles.stageTitle}>{stage.title.mn}</span>
-                {complete ? (
-                  <span aria-label="дууссан" className={styles.stageDone}>
-                    ✓
+                <span className={styles.stageText}>
+                  <span className={styles.stageOrder}>Шат {stage.order}</span>
+                  <span className={styles.stageTitle}>{stage.title.mn}</span>
+                </span>
+                <span className={styles.stageRight}>
+                  {isCurrent ? <Badge tone="accent">Одоо</Badge> : null}
+                  <ProgressBar className={styles.stageProgress} value={stagePct} tone={complete ? "success" : "accent"} />
+                  <span className={styles.stageCount}>
+                    {count.done}/{count.total}
                   </span>
-                ) : null}
-                {stage.id === currentStageId ? <Badge tone="accent">Одоо</Badge> : null}
-                <span className={styles.stageCount}>
-                  {count.done}/{count.total}
+                  <span aria-hidden className={`${styles.chevron} ${open ? styles.chevronOpen : ""}`}>
+                    ▸
+                  </span>
                 </span>
               </button>
 
@@ -173,7 +184,11 @@ export function CourseMap() {
                         const state = states.get(l.id) ?? "locked";
                         const prog = lessonProgress(l.taskIds, progress);
                         const className = `${styles.lesson} ${
-                          state === "current" ? styles.lessonCurrent : state === "locked" ? styles.lessonLocked : ""
+                          state === "current"
+                            ? styles.lessonCurrent
+                            : state === "locked"
+                              ? styles.lessonLocked
+                              : styles.lessonDone
                         }`;
 
                         const inner = (

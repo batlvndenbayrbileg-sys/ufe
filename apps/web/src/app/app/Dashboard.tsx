@@ -5,6 +5,7 @@ import { Alert, AppShell, Badge, Button, Card, ProgressBar, ProgressRing, ThemeT
 import { level, loadProgress, lessonProgress, type Progress } from "@/lib/progress";
 import { flattenLessons, type MapLesson } from "./course-types";
 import { useCourseMap } from "./useCourseMap";
+import s from "./dashboard.module.css";
 
 const BADGE_LABEL: Record<string, string> = {
   "first-website": "🏆 Анхны вэб",
@@ -48,12 +49,13 @@ export function Dashboard() {
   const percent = lessons.length ? Math.round((doneLessons.length / lessons.length) * 100) : 0;
   const nextLesson: MapLesson | undefined = lessons.find((l) => !lessonProgress(l.taskIds, progress).done) ?? lessons[0];
   const nextProg = nextLesson ? lessonProgress(nextLesson.taskIds, progress) : { passed: 0, total: 0 };
+  const done = percent === 100;
 
   // Skill mastery at the lesson level: done lessons tagged with the skill / total.
   const skills = map.skills.map((sk) => {
     const withSkill = lessons.filter((l) => l.skills.includes(sk.id));
-    const done = withSkill.filter((l) => lessonProgress(l.taskIds, progress).done).length;
-    return { ...sk, percent: withSkill.length ? Math.round((done / withSkill.length) * 100) : 0 };
+    const doneN = withSkill.filter((l) => lessonProgress(l.taskIds, progress).done).length;
+    return { ...sk, percent: withSkill.length ? Math.round((doneN / withSkill.length) * 100) : 0 };
   });
 
   const lvl = level(progress.xp);
@@ -63,86 +65,132 @@ export function Dashboard() {
       header={
         <>
           <strong style={{ fontSize: 18, letterSpacing: "-0.01em" }}>Хийе</strong>
-          <div style={{ marginLeft: "auto", display: "flex", gap: 14, alignItems: "center", fontSize: 13 }}>
-            <span title="Дараалал">🔥 {progress.streakDays}</span>
-            <span style={{ color: "var(--xp)", fontWeight: 600 }}>{progress.xp.toLocaleString()} XP</span>
+          <div className={s.headerStats}>
+            <span className={`${s.headerChip} ${s.chipStreak}`} title="Дараалал">
+              🔥 {progress.streakDays}
+            </span>
+            <span className={`${s.headerChip} ${s.chipXp}`} title="Оноо">
+              ⚡ {progress.xp.toLocaleString()}
+            </span>
             <Badge tone="neutral">Level {lvl}</Badge>
             <ThemeToggle />
           </div>
         </>
       }
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-        <p style={{ margin: 0, fontSize: 20, fontWeight: 600 }}>Сайн уу 👋</p>
+      <div className={s.page}>
+        <div>
+          <h1 className={s.greeting}>Сайн уу 👋</h1>
+          <p className={s.subGreeting}>
+            {done ? "Курсээ бүрэн дуусгалаа — гоё!" : "Өнөөдөр хаанаас үргэлжлүүлэх вэ?"}
+          </p>
+        </div>
 
-        {/* Continue card — the biggest thing on the page */}
+        {/* The one card that matters. */}
         {nextLesson ? (
-          <Card style={{ display: "flex", alignItems: "center", gap: 20, borderColor: "var(--accent)" }}>
-            <ProgressRing value={nextProg.total ? Math.round((nextProg.passed / nextProg.total) * 100) : 0} />
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-subtle)" }}>
-                {percent === 100 ? "Дуусгав" : "Үргэлжлүүлэх"}
-              </div>
-              <div style={{ fontSize: 20, fontWeight: 700, margin: "4px 0" }}>{nextLesson.title.mn}</div>
-              <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
+          <div className={s.hero}>
+            <ProgressRing
+              className={s.heroRing}
+              size={72}
+              value={nextProg.total ? Math.round((nextProg.passed / nextProg.total) * 100) : 0}
+            />
+            <div className={s.heroBody}>
+              <div className={s.eyebrow}>{done ? "Дуусгав" : "Үргэлжлүүлэх"}</div>
+              <div className={s.heroTitle}>{nextLesson.title.mn}</div>
+              <div className={s.heroMeta}>
                 {nextProg.passed}/{nextProg.total} даалгавар · ~{nextLesson.estimatedMinutes} мин
               </div>
             </div>
-            <a
-              href={`/learn/${nextLesson.id}`}
-              style={{ padding: "12px 22px", borderRadius: 8, background: "var(--accent)", color: "var(--on-accent)", textDecoration: "none", fontWeight: 600, whiteSpace: "nowrap" }}
-            >
-              {percent === 100 ? "Дахин үзэх →" : "Үргэлжлүүлэх →"}
+            <a href={`/learn/${nextLesson.id}`} className={s.heroCta}>
+              {done ? "Дахин үзэх →" : "Үргэлжлүүлэх →"}
             </a>
-          </Card>
+          </div>
         ) : null}
 
-        {/* Course progress */}
+        {/* Gamification at a glance. */}
+        <div className={s.stats}>
+          <div className={s.stat}>
+            <span className={`${s.statIcon} ${s.iconStreak}`}>🔥</span>
+            <div>
+              <div className={s.statValue}>
+                {progress.streakDays} <span style={{ fontSize: "var(--text-md)", fontWeight: 600 }}>өдөр</span>
+              </div>
+              <div className={s.statLabel}>Дараалал</div>
+            </div>
+          </div>
+          <div className={s.stat}>
+            <span className={`${s.statIcon} ${s.iconXp}`}>⚡</span>
+            <div>
+              <div className={s.statValue}>{progress.xp.toLocaleString()}</div>
+              <div className={s.statLabel}>Нийт оноо (XP)</div>
+            </div>
+          </div>
+          <div className={s.stat}>
+            <span className={`${s.statIcon} ${s.iconLevel}`}>🎖️</span>
+            <div>
+              <div className={s.statValue}>Level {lvl}</div>
+              <div className={s.statLabel}>Түвшин</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Course progress. */}
         <Card>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-            <strong style={{ fontSize: 15 }}>{map.title.mn}</strong>
-            <span style={{ marginLeft: "auto", fontSize: 13, color: "var(--text-muted)" }}>
+          <div className={s.panelHead}>
+            <strong style={{ fontSize: "var(--text-md)" }}>{map.title.mn}</strong>
+            <span className={s.panelRight}>
               {doneLessons.length}/{lessons.length} хичээл · {percent}%
             </span>
           </div>
-          <div style={{ marginTop: 10 }}>
-            <ProgressBar value={percent} />
-          </div>
-          <div style={{ marginTop: 8 }}>
-            <a href={`/app/course/${map.id}`} style={{ fontSize: 13 }}>Бүх хичээл харах →</a>
-          </div>
+          <ProgressBar value={percent} />
+          <a href={`/app/course/${map.id}`} className={s.courseLink}>
+            Бүх хичээл харах →
+          </a>
         </Card>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-          {/* Skills */}
+        <div className={s.body}>
+          {/* Skills — two columns so 17 rows read as a grid, not a ledger. */}
           <Card>
-            <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-subtle)", marginBottom: 12 }}>Ур чадвар</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {skills.map((s) => (
-                <div key={s.id} style={{ display: "grid", gridTemplateColumns: "90px 1fr 36px", gap: 8, alignItems: "center", fontSize: 13 }}>
-                  <span>{s.title.mn}</span>
-                  <ProgressBar value={s.percent} tone={s.percent === 100 ? "success" : "accent"} />
-                  <span style={{ textAlign: "right", color: "var(--text-muted)", fontVariantNumeric: "tabular-nums" }}>{s.percent}%</span>
+            <div className={s.panelHead}>
+              <span className={s.panelTitle}>Ур чадвар</span>
+            </div>
+            <div className={s.skillGrid}>
+              {skills.map((sk) => (
+                <div key={sk.id} className={s.skill}>
+                  <span className={s.skillName}>{sk.title.mn}</span>
+                  <span className={s.skillPct}>{sk.percent}%</span>
+                  <ProgressBar
+                    className={s.skillBar}
+                    value={sk.percent}
+                    tone={sk.percent === 100 ? "success" : "accent"}
+                  />
                 </div>
               ))}
             </div>
           </Card>
 
-          {/* Badges */}
+          {/* Badges. */}
           <Card>
-            <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-subtle)", marginBottom: 12 }}>
-              Тэмдэг ({progress.badges.length})
+            <div className={s.panelHead}>
+              <span className={s.panelTitle}>Тэмдэг ({progress.badges.length})</span>
             </div>
             {progress.badges.length ? (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <div className={s.badgeWrap}>
                 {progress.badges.map((b) => (
-                  <Badge key={b} tone="accent" size="md">{BADGE_LABEL[b] ?? b}</Badge>
+                  <Badge key={b} tone="accent" size="md">
+                    {BADGE_LABEL[b] ?? b}
+                  </Badge>
                 ))}
               </div>
             ) : (
-              <p style={{ margin: 0, color: "var(--text-muted)", fontSize: 13 }}>
-                Эхний хичээлээ дуусгаад тэмдэг цуглуулж эхэл.
-              </p>
+              <div className={s.badgeEmpty}>
+                <div className={s.badgePlaceholders} aria-hidden>
+                  <span className={s.badgeDot}>🏆</span>
+                  <span className={s.badgeDot}>⚡</span>
+                  <span className={s.badgeDot}>🎨</span>
+                </div>
+                <p className={s.badgeEmptyText}>Эхний хичээлээ дуусгаад анхны тэмдгээ ав.</p>
+              </div>
             )}
           </Card>
         </div>
