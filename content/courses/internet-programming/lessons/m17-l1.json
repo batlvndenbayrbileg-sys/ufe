@@ -1,0 +1,305 @@
+{
+  "id": "m17-l1",
+  "moduleId": "m17-capstone",
+  "slug": "admin-list",
+  "order": 1,
+  "title": {
+    "mn": "Админ: барааны жагсаалт"
+  },
+  "why": {
+    "mn": "Shop.mn-ий эзэн бараагаа кодоор биш, самбараар удирдах ёстой. Энэ модульд шинэ ойлголт байхгүй — өмнө сурсан бүхнээ (токен, гурван төлөв, семантик хүснэгт) нэг ажлын хэрэгсэл болгож угсарна."
+  },
+  "buildsInProject": "Админы барааны хүснэгт",
+  "difficulty": "advanced",
+  "estimatedMinutes": 26,
+  "skills": [
+    "react",
+    "backend",
+    "a11y"
+  ],
+  "concepts": [
+    "integration",
+    "authorization header",
+    "CRUD",
+    "confirmation"
+  ],
+  "prerequisites": [
+    "m15-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — админ</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <div id=\"root\"></div>\n\n    <script src=\"src/api.js\"></script>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\n.topbar {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n\nh1 { font-size: 26px; }\nh2 { font-size: 17px; margin: 0 0 8px; }\n\ntable {\n  border-collapse: collapse;\n  width: 100%;\n  background-color: #ffffff;\n  border-radius: 10px;\n  overflow: hidden;\n}\n\ncaption {\n  text-align: left;\n  padding: 12px 14px 8px;\n  font-weight: 600;\n}\n\nth, td {\n  border-bottom: 1px solid #e4e4e7;\n  padding: 10px 14px;\n  text-align: left;\n}\n\nth {\n  background-color: #f4f4f5;\n  font-size: 14px;\n}\n\n.new-product {\n  display: grid;\n  gap: 6px;\n  max-width: 320px;\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-top: 24px;\n}\n\n.new-product label { font-size: 14px; color: #3f3f46; }\n\n.new-product input {\n  padding: 9px 12px;\n  border: 1px solid #d4d4d8;\n  border-radius: 8px;\n  font-size: 16px;\n}\n\n.btn-add {\n  background-color: #1d4ed8;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n  font-size: 15px;\n  margin-top: 6px;\n}\n\n.btn-add:disabled { background-color: #a1a1aa; cursor: not-allowed; }\n\n.btn-plain {\n  background: none;\n  border: 1px solid #d4d4d8;\n  border-radius: 6px;\n  padding: 4px 10px;\n  cursor: pointer;\n  font-size: 14px;\n  margin-right: 6px;\n}\n\n.btn-danger {\n  background-color: #b91c1c;\n  color: #ffffff;\n  border: none;\n  border-radius: 6px;\n  padding: 4px 10px;\n  cursor: pointer;\n  font-size: 14px;\n  margin-right: 6px;\n}\n\n.error {\n  background-color: #fef2f2;\n  border: 1px solid #fecaca;\n  border-radius: 10px;\n  color: #991b1b;\n  padding: 12px 14px;\n  margin: 12px 0;\n}\n\n.error p { margin: 0 0 8px; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/api.js",
+        "content": "// Shop.mn-ий админ API — дуураймал сервер. Энэ файлыг өөрчлөх шаардлагагүй.\n//\n// Бүх хүсэлт \"Authorization: Bearer <token>\" толгой шаардана. Токенгүй бол 401.\n\n(function () {\n  const TOKEN = \"admin-token-2026\";\n\n  let products = [\n    { id: 1, name: \"Монгол дээл\", price: 129000, stock: 4 },\n    { id: 2, name: \"Малгай\", price: 45000, stock: 12 },\n    { id: 3, name: \"Гутал\", price: 89000, stock: 0 },\n  ];\n\n  let nextId = 4;\n  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\n  function json(body, status) {\n    return new Response(body === null ? \"\" : JSON.stringify(body), {\n      status: status || 200,\n      headers: { \"Content-Type\": \"application/json\" },\n    });\n  }\n\n  function authorised(options) {\n    const headers = (options && options.headers) || {};\n    const header = headers.Authorization || headers.authorization || \"\";\n    return header === \"Bearer \" + TOKEN;\n  }\n\n  window.ADMIN_TOKEN = TOKEN;\n\n  window.fetch = async function (url, options) {\n    const method = ((options && options.method) || \"GET\").toUpperCase();\n    const path = String(url);\n    await wait(60);\n\n    if (window.API_SHOULD_FAIL) return json({ error: \"Серверт алдаа гарлаа\" }, 500);\n\n    if (!authorised(options)) {\n      return json({ error: \"Нэвтрэх шаардлагатай\" }, 401);\n    }\n\n    if (path.endsWith(\"/api/admin/products\") && method === \"GET\") {\n      return json(window.API_EMPTY ? [] : products);\n    }\n\n    if (path.endsWith(\"/api/admin/products\") && method === \"POST\") {\n      const input = JSON.parse(options.body);\n\n      if (!input.name || String(input.name).trim().length < 2) {\n        return json({ error: \"Барааны нэр 2-оос урт байх ёстой\" }, 400);\n      }\n      if (!Number.isFinite(input.price) || input.price <= 0) {\n        return json({ error: \"Үнэ эерэг тоо байх ёстой\" }, 400);\n      }\n\n      const created = { id: nextId++, name: input.name, price: input.price, stock: 0 };\n      products.push(created);\n      return json(created, 201);\n    }\n\n    const remove = path.match(/\\/api\\/admin\\/products\\/(\\d+)$/);\n    if (remove && method === \"DELETE\") {\n      const id = Number(remove[1]);\n      if (!products.some((p) => p.id === id)) {\n        return json({ error: \"Бараа олдсонгүй\" }, 404);\n      }\n      products = products.filter((p) => p.id !== id);\n      return json(null, 204);\n    }\n\n    return json({ error: \"Хаяг олдсонгүй: \" + path }, 404);\n  };\n})();\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import React, { useEffect, useState } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nconst API = \"/api/admin/products\";\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\n// Хүсэлт бүрд токен явуулах ганц газар.\nfunction authHeaders(extra) {\n  return { Authorization: \"Bearer \" + window.ADMIN_TOKEN, ...extra };\n}\n\nfunction App() {\n  const [products, setProducts] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  const ready = !loading && !error;\n\n  async function loadProducts() {\n    // энд бичнэ үү\n\n    setLoading(false);\n  }\n\n  useEffect(() => {\n    loadProducts();\n  }, []);\n\n  return (\n    <main>\n      <header className=\"topbar\">\n        <h1>Shop.mn — админ</h1>\n        <button className=\"btn-plain\" data-testid=\"refresh\" onClick={loadProducts} disabled={loading}>\n          Шинэчлэх\n        </button>\n      </header>\n\n      {loading ? <p data-testid=\"loading\">Ачаалж байна…</p> : null}\n\n      {error ? (\n        <div className=\"error\" data-testid=\"error\" role=\"alert\">\n          <p>{error}</p>\n          <button className=\"btn-plain\" data-testid=\"retry\" onClick={loadProducts}>Дахин оролдох</button>\n        </div>\n      ) : null}\n\n      {ready && products.length === 0 ? (\n        <p data-testid=\"empty\">Одоогоор бараа алга байна.</p>\n      ) : null}\n\n      {!loading && products.length > 0 ? (\n        <table data-testid=\"table\">\n          <caption>Shop.mn-ий бараанууд</caption>\n          <thead>\n            <tr>\n              <th scope=\"col\">Нэр</th>\n              <th scope=\"col\">Үнэ</th>\n              <th scope=\"col\">Үлдэгдэл</th>\n            </tr>\n          </thead>\n          <tbody>\n            {products.map((product) => (\n              <tr key={product.id} data-testid=\"row\">\n                <td>{product.name}</td>\n                <td>{formatPrice(product.price)}</td>\n                <td>{product.stock}</td>\n              </tr>\n            ))}\n          </tbody>\n        </table>\n      ) : null}\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/api.js",
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "m17-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Админ: барааны жагсаалт"
+      },
+      "statement": {
+        "mn": "`loadProducts` функцийг бич. Шаардлага: `fetch(API, { headers: authHeaders() })` — токенгүй бол сервер **401** буцаана. `response.ok` худал бол статустай нь алдаа шид. Амжилттай бол `setProducts`. Эхлэхэд `setError(null)` ба `setLoading(true)`, төгсгөлд `finally`-д `setLoading(false)`."
+      },
+      "requirements": [
+        {
+          "mn": "Токен толгойтой хүсэлт"
+        },
+        {
+          "mn": "`response.ok`-ыг шалгана"
+        },
+        {
+          "mn": "`finally`-д ачаалалт зогсоно"
+        },
+        {
+          "mn": "Гурван бараа хүснэгтэд гарна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Гурван бараа семантик хүснэгтэд гарч, сервер унавал алдаа + «Дахин оролдох» товч гарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"table\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 3
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Гурван бараа хүснэгтэд гарах ёстой — токен толгойгоо явуулсан уу?"
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"table\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"table\"]",
+                  "contains": "Монгол дээл"
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"table\"]",
+                  "contains": "₮ 129,000"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Барааны нэр ба форматласан үнэ харагдах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"table\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"loading\"]",
+                  "equals": 0
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"error\"]",
+                  "equals": 0
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Ачаалж дууссаны дараа зөвхөн хүснэгт харагдана."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"table\"]"
+              },
+              {
+                "run": "window.API_SHOULD_FAIL = true"
+              },
+              {
+                "click": "[data-testid=\"refresh\"]"
+              },
+              {
+                "waitFor": "[data-testid=\"error\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 3
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Шинэчлэлт амжилтгүй болоход алдаа гарах ч, аль хэдийн уншсан мөрүүд хэвээр үлдэх ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"table\"]"
+              },
+              {
+                "run": "window.API_EMPTY = true"
+              },
+              {
+                "click": "[data-testid=\"refresh\"]"
+              },
+              {
+                "waitFor": "[data-testid=\"empty\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"table\"]",
+                  "equals": 0
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Сервер хоосон жагсаалт буцаахад «бараа алга» мессеж гарч, хүснэгт харагдахгүй байх ёстой."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "dom.a11y",
+          "args": {
+            "rules": [
+              "heading-order",
+              "button-name"
+            ]
+          },
+          "onFail": {
+            "mn": "Гарчгийн дараалал эсвэл товчны нэрэнд асуудал байна."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Энэ бол M9-д хийсэн ажил дээр нэг л зүйл нэмэгдсэн хувилбар: `headers: authHeaders()`. Токен байхгүй бол сервер 401 буцаана — тэр нь `response.ok` худал гэсэн үг."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Гурван төлөв гурвуулаа хэрэгтэй: `loading`, `error`, `ready`. Хүснэгтийг зөвхөн `ready` үед зурна, эс бол хоосон массив дээр эхлээд анивчина."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Алдааны мессежид статус кодыг оруулбал дараа нь өөрөө засварлахад тань хамгийн их тусална: 401 бол токен, 500 бол сервер."
+          }
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import React, { useEffect, useState } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nconst API = \"/api/admin/products\";\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\n// Хүсэлт бүрд токен явуулах ганц газар.\nfunction authHeaders(extra) {\n  return { Authorization: \"Bearer \" + window.ADMIN_TOKEN, ...extra };\n}\n\nfunction App() {\n  const [products, setProducts] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  const ready = !loading && !error;\n\n  async function loadProducts() {\n    setError(null);\n    setLoading(true);\n\n    try {\n      const response = await fetch(API, { headers: authHeaders() });\n      if (!response.ok) {\n        throw new Error(\"Бараануудыг ачаалж чадсангүй (\" + response.status + \")\");\n      }\n      setProducts(await response.json());\n    } catch (problem) {\n      setError(problem.message);\n    } finally {\n      setLoading(false);\n    }\n  }\n\n  useEffect(() => {\n    loadProducts();\n  }, []);\n\n  return (\n    <main>\n      <header className=\"topbar\">\n        <h1>Shop.mn — админ</h1>\n        <button className=\"btn-plain\" data-testid=\"refresh\" onClick={loadProducts} disabled={loading}>\n          Шинэчлэх\n        </button>\n      </header>\n\n      {loading ? <p data-testid=\"loading\">Ачаалж байна…</p> : null}\n\n      {error ? (\n        <div className=\"error\" data-testid=\"error\" role=\"alert\">\n          <p>{error}</p>\n          <button className=\"btn-plain\" data-testid=\"retry\" onClick={loadProducts}>Дахин оролдох</button>\n        </div>\n      ) : null}\n\n      {ready && products.length === 0 ? (\n        <p data-testid=\"empty\">Одоогоор бараа алга байна.</p>\n      ) : null}\n\n      {!loading && products.length > 0 ? (\n        <table data-testid=\"table\">\n          <caption>Shop.mn-ий бараанууд</caption>\n          <thead>\n            <tr>\n              <th scope=\"col\">Нэр</th>\n              <th scope=\"col\">Үнэ</th>\n              <th scope=\"col\">Үлдэгдэл</th>\n            </tr>\n          </thead>\n          <tbody>\n            {products.map((product) => (\n              <tr key={product.id} data-testid=\"row\">\n                <td>{product.name}</td>\n                <td>{formatPrice(product.price)}</td>\n                <td>{product.stock}</td>\n              </tr>\n            ))}\n          </tbody>\n        </table>\n      ) : null}\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Админ самбар нь ердийн хэрэглэгчийн хуудаснаас ганцхан зүйлээр ялгаатай: хүсэлт бүр өөрийгөө танилцуулна. Токеныг `authHeaders()` гэсэн ганц газарт төвлөрүүлсэн нь дараа нь токен хадгалах арга өөрчлөгдөхөд нэг л функц засахад хангалттай болгоно."
+        },
+        "xpPenalty": 27
+      },
+      "xp": 45,
+      "estimatedMinutes": 24,
+      "skills": [
+        "react",
+        "backend"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 40
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

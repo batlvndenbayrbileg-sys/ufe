@@ -1,0 +1,363 @@
+{
+  "id": "m17-l2",
+  "moduleId": "m17-capstone",
+  "slug": "admin-create",
+  "order": 2,
+  "title": {
+    "mn": "Админ: бараа нэмэх"
+  },
+  "why": {
+    "mn": "Shop.mn-д шинэ бараа нэмэх нь админы хамгийн олон давтагддаг үйлдэл. Клиент талын шалгалт нь хэрэглэгчид түргэн хариу өгнө, серверийн шалгалт нь өгөгдлийг хамгаална — хоёулаа хэрэгтэй."
+  },
+  "buildsInProject": "Бараа нэмэх форм",
+  "difficulty": "advanced",
+  "estimatedMinutes": 28,
+  "skills": [
+    "react",
+    "backend",
+    "a11y"
+  ],
+  "concepts": [
+    "integration",
+    "authorization header",
+    "CRUD",
+    "confirmation"
+  ],
+  "prerequisites": [
+    "m17-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — админ</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <div id=\"root\"></div>\n\n    <script src=\"src/api.js\"></script>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\n.topbar {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n\nh1 { font-size: 26px; }\nh2 { font-size: 17px; margin: 0 0 8px; }\n\ntable {\n  border-collapse: collapse;\n  width: 100%;\n  background-color: #ffffff;\n  border-radius: 10px;\n  overflow: hidden;\n}\n\ncaption {\n  text-align: left;\n  padding: 12px 14px 8px;\n  font-weight: 600;\n}\n\nth, td {\n  border-bottom: 1px solid #e4e4e7;\n  padding: 10px 14px;\n  text-align: left;\n}\n\nth {\n  background-color: #f4f4f5;\n  font-size: 14px;\n}\n\n.new-product {\n  display: grid;\n  gap: 6px;\n  max-width: 320px;\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-top: 24px;\n}\n\n.new-product label { font-size: 14px; color: #3f3f46; }\n\n.new-product input {\n  padding: 9px 12px;\n  border: 1px solid #d4d4d8;\n  border-radius: 8px;\n  font-size: 16px;\n}\n\n.btn-add {\n  background-color: #1d4ed8;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n  font-size: 15px;\n  margin-top: 6px;\n}\n\n.btn-add:disabled { background-color: #a1a1aa; cursor: not-allowed; }\n\n.btn-plain {\n  background: none;\n  border: 1px solid #d4d4d8;\n  border-radius: 6px;\n  padding: 4px 10px;\n  cursor: pointer;\n  font-size: 14px;\n  margin-right: 6px;\n}\n\n.btn-danger {\n  background-color: #b91c1c;\n  color: #ffffff;\n  border: none;\n  border-radius: 6px;\n  padding: 4px 10px;\n  cursor: pointer;\n  font-size: 14px;\n  margin-right: 6px;\n}\n\n.error {\n  background-color: #fef2f2;\n  border: 1px solid #fecaca;\n  border-radius: 10px;\n  color: #991b1b;\n  padding: 12px 14px;\n  margin: 12px 0;\n}\n\n.error p { margin: 0 0 8px; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/api.js",
+        "content": "// Shop.mn-ий админ API — дуураймал сервер. Энэ файлыг өөрчлөх шаардлагагүй.\n//\n// Бүх хүсэлт \"Authorization: Bearer <token>\" толгой шаардана. Токенгүй бол 401.\n\n(function () {\n  const TOKEN = \"admin-token-2026\";\n\n  let products = [\n    { id: 1, name: \"Монгол дээл\", price: 129000, stock: 4 },\n    { id: 2, name: \"Малгай\", price: 45000, stock: 12 },\n    { id: 3, name: \"Гутал\", price: 89000, stock: 0 },\n  ];\n\n  let nextId = 4;\n  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\n  function json(body, status) {\n    return new Response(body === null ? \"\" : JSON.stringify(body), {\n      status: status || 200,\n      headers: { \"Content-Type\": \"application/json\" },\n    });\n  }\n\n  function authorised(options) {\n    const headers = (options && options.headers) || {};\n    const header = headers.Authorization || headers.authorization || \"\";\n    return header === \"Bearer \" + TOKEN;\n  }\n\n  window.ADMIN_TOKEN = TOKEN;\n\n  window.fetch = async function (url, options) {\n    const method = ((options && options.method) || \"GET\").toUpperCase();\n    const path = String(url);\n    await wait(60);\n\n    if (window.API_SHOULD_FAIL) return json({ error: \"Серверт алдаа гарлаа\" }, 500);\n\n    if (!authorised(options)) {\n      return json({ error: \"Нэвтрэх шаардлагатай\" }, 401);\n    }\n\n    if (path.endsWith(\"/api/admin/products\") && method === \"GET\") {\n      return json(window.API_EMPTY ? [] : products);\n    }\n\n    if (path.endsWith(\"/api/admin/products\") && method === \"POST\") {\n      const input = JSON.parse(options.body);\n\n      if (!input.name || String(input.name).trim().length < 2) {\n        return json({ error: \"Барааны нэр 2-оос урт байх ёстой\" }, 400);\n      }\n      if (!Number.isFinite(input.price) || input.price <= 0) {\n        return json({ error: \"Үнэ эерэг тоо байх ёстой\" }, 400);\n      }\n\n      const created = { id: nextId++, name: input.name, price: input.price, stock: 0 };\n      products.push(created);\n      return json(created, 201);\n    }\n\n    const remove = path.match(/\\/api\\/admin\\/products\\/(\\d+)$/);\n    if (remove && method === \"DELETE\") {\n      const id = Number(remove[1]);\n      if (!products.some((p) => p.id === id)) {\n        return json({ error: \"Бараа олдсонгүй\" }, 404);\n      }\n      products = products.filter((p) => p.id !== id);\n      return json(null, 204);\n    }\n\n    return json({ error: \"Хаяг олдсонгүй: \" + path }, 404);\n  };\n})();\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import React, { useEffect, useState } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nconst API = \"/api/admin/products\";\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\n// Хүсэлт бүрд токен явуулах ганц газар.\nfunction authHeaders(extra) {\n  return { Authorization: \"Bearer \" + window.ADMIN_TOKEN, ...extra };\n}\n\nfunction App() {\n  const [products, setProducts] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n  const [name, setName] = useState(\"\");\n  const [priceInput, setPriceInput] = useState(\"\");\n  const [formError, setFormError] = useState(null);\n  const [saving, setSaving] = useState(false);\n\n  const ready = !loading && !error;\n\n  async function loadProducts() {\n    setError(null);\n    setLoading(true);\n\n    try {\n      const response = await fetch(API, { headers: authHeaders() });\n      if (!response.ok) {\n        throw new Error(\"Бараануудыг ачаалж чадсангүй (\" + response.status + \")\");\n      }\n      setProducts(await response.json());\n    } catch (problem) {\n      setError(problem.message);\n    } finally {\n      setLoading(false);\n    }\n  }\n\n  // энд бичнэ үү\n\n  useEffect(() => {\n    loadProducts();\n  }, []);\n\n  return (\n    <main>\n      <header className=\"topbar\">\n        <h1>Shop.mn — админ</h1>\n        <button className=\"btn-plain\" data-testid=\"refresh\" onClick={loadProducts} disabled={loading}>\n          Шинэчлэх\n        </button>\n      </header>\n\n      {loading ? <p data-testid=\"loading\">Ачаалж байна…</p> : null}\n\n      {error ? (\n        <div className=\"error\" data-testid=\"error\" role=\"alert\">\n          <p>{error}</p>\n          <button className=\"btn-plain\" data-testid=\"retry\" onClick={loadProducts}>Дахин оролдох</button>\n        </div>\n      ) : null}\n\n      {ready && products.length === 0 ? (\n        <p data-testid=\"empty\">Одоогоор бараа алга байна.</p>\n      ) : null}\n\n      {!loading && products.length > 0 ? (\n        <table data-testid=\"table\">\n          <caption>Shop.mn-ий бараанууд</caption>\n          <thead>\n            <tr>\n              <th scope=\"col\">Нэр</th>\n              <th scope=\"col\">Үнэ</th>\n              <th scope=\"col\">Үлдэгдэл</th>\n            </tr>\n          </thead>\n          <tbody>\n            {products.map((product) => (\n              <tr key={product.id} data-testid=\"row\">\n                <td>{product.name}</td>\n                <td>{formatPrice(product.price)}</td>\n                <td>{product.stock}</td>\n              </tr>\n            ))}\n          </tbody>\n        </table>\n      ) : null}\n\n\n      {/* энд бичнэ үү */}\n\n\n      <form className=\"new-product\" data-testid=\"form\">\n        <h2>Шинэ бараа</h2>\n\n        <label htmlFor=\"p-name\">Нэр</label>\n        <input\n          id=\"p-name\"\n          name=\"name\"\n          data-testid=\"f-name\"\n        />\n\n        <label htmlFor=\"p-price\">Үнэ (₮)</label>\n        <input\n          id=\"p-price\"\n          name=\"price\"\n          type=\"number\"\n          data-testid=\"f-price\"\n        />\n\n        {formError ? (\n          <p className=\"error\" data-testid=\"form-error\" role=\"alert\">{formError}</p>\n        ) : null}\n\n        <button type=\"submit\" className=\"btn-add\" data-testid=\"save\">\n          {saving ? \"Хадгалж байна…\" : \"Нэмэх\"}\n        </button>\n      </form>\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/api.js",
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "m17-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Админ: бараа нэмэх"
+      },
+      "statement": {
+        "mn": "1) `createProduct(event)` бич: `preventDefault`, нэр 2-оос богино эсвэл үнэ эерэг тоо биш бол `setFormError` тавиад буц. Эс бол `POST` — токен ба `Content-Type` толгойтой, бие нь `{ name, price }` (үнэ нь ТОО). `ok` биш бол серверийн `error`-ыг харуул. Амжилттай бол талбараа цэвэрлээд `loadProducts()` дууд. 2) Тэмдэглэсэн газарт формоо `onSubmit`, `value`/`onChange`-ээр холбо."
+      },
+      "requirements": [
+        {
+          "mn": "Клиент талын шалгалт"
+        },
+        {
+          "mn": "`POST` токен ба JSON биетэй"
+        },
+        {
+          "mn": "Серверийн алдааг харуулна"
+        },
+        {
+          "mn": "Амжилтын дараа дахин уншина"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Зөв бараа нэмэхэд хүснэгт 4 мөр болно; буруу оролт формын алдаа болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "{/* энд бичнэ үү */}",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"table\"]"
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"f-name\"]",
+                  "text": "Ноосон оймс"
+                }
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"f-price\"]",
+                  "text": "12000"
+                }
+              },
+              {
+                "click": "[data-testid=\"save\"]"
+              },
+              {
+                "waitFor": "[data-testid=\"row\"]:nth-of-type(4)"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 4
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Шинэ бараа нэмэгдээд хүснэгт 4 мөр болох ёстой — амжилтын дараа `loadProducts()` дуудсан уу?"
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"table\"]"
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"f-name\"]",
+                  "text": "Ноосон оймс"
+                }
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"f-price\"]",
+                  "text": "12000"
+                }
+              },
+              {
+                "click": "[data-testid=\"save\"]"
+              },
+              {
+                "waitFor": "[data-testid=\"row\"]:nth-of-type(4)"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"table\"]",
+                  "contains": "Ноосон оймс"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Шинэ барааны нэр хүснэгтэд харагдах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"table\"]"
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"f-name\"]",
+                  "text": "Х"
+                }
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"f-price\"]",
+                  "text": "12000"
+                }
+              },
+              {
+                "click": "[data-testid=\"save\"]"
+              },
+              {
+                "waitFor": "[data-testid=\"form-error\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 3
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хэт богино нэрийг клиент талд барьж, сервер рүү илгээхгүй байх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"table\"]"
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"f-name\"]",
+                  "text": "Ноосон оймс"
+                }
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"f-price\"]",
+                  "text": "-5"
+                }
+              },
+              {
+                "click": "[data-testid=\"save\"]"
+              },
+              {
+                "waitFor": "[data-testid=\"form-error\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 3
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Сөрөг үнийг татгалзах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"table\"]"
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"f-name\"]",
+                  "text": "Ноосон оймс"
+                }
+              },
+              {
+                "type": {
+                  "selector": "[data-testid=\"f-price\"]",
+                  "text": "12000"
+                }
+              },
+              {
+                "click": "[data-testid=\"save\"]"
+              },
+              {
+                "waitFor": "[data-testid=\"row\"]:nth-of-type(4)"
+              },
+              {
+                "expectEval": {
+                  "expr": "document.querySelector('[data-testid=\"f-name\"]').value",
+                  "equals": ""
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Амжилттай хадгалсны дараа талбарууд цэвэрлэгдэх ёстой."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "dom.formField",
+          "args": {
+            "name": "name",
+            "labelled": true
+          },
+          "onFail": {
+            "mn": "Нэрийн талбар шошготой байх ёстой."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Талбараас ирсэн утга үргэлж ТЕКСТ. `Number(priceInput)` хийхгүй бол сервер `\"12000\"` гэж хүлээж авах ба `Number.isFinite` шалгалт ч утгагүй болно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Амжилтын дараа жагсаалтад өөрөө мөр нэмэхийн оронд серверээс ДАХИН УНШ. Сервер л үнэн — тэр дугаар, үлдэгдэл зэргийг өөрөө тогтоодог."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Хоёр өөр алдаа бий: клиент талын (илгээхээс өмнө) ба серверийн (400 хариу). Хоёуланг нь ижил `formError` дээр харуулбал хэрэглэгчид ялгаагүй, чамд код цөөн."
+          }
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import React, { useEffect, useState } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nconst API = \"/api/admin/products\";\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\n// Хүсэлт бүрд токен явуулах ганц газар.\nfunction authHeaders(extra) {\n  return { Authorization: \"Bearer \" + window.ADMIN_TOKEN, ...extra };\n}\n\nfunction App() {\n  const [products, setProducts] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n  const [name, setName] = useState(\"\");\n  const [priceInput, setPriceInput] = useState(\"\");\n  const [formError, setFormError] = useState(null);\n  const [saving, setSaving] = useState(false);\n\n  const ready = !loading && !error;\n\n  async function loadProducts() {\n    setError(null);\n    setLoading(true);\n\n    try {\n      const response = await fetch(API, { headers: authHeaders() });\n      if (!response.ok) {\n        throw new Error(\"Бараануудыг ачаалж чадсангүй (\" + response.status + \")\");\n      }\n      setProducts(await response.json());\n    } catch (problem) {\n      setError(problem.message);\n    } finally {\n      setLoading(false);\n    }\n  }\n\n  async function createProduct(event) {\n    event.preventDefault();\n\n    const price = Number(priceInput);\n    if (name.trim().length < 2 || !Number.isFinite(price) || price <= 0) {\n      setFormError(\"Нэр 2-оос урт, үнэ эерэг тоо байх ёстой.\");\n      return;\n    }\n\n    setFormError(null);\n    setSaving(true);\n\n    try {\n      const response = await fetch(API, {\n        method: \"POST\",\n        headers: authHeaders({ \"Content-Type\": \"application/json\" }),\n        body: JSON.stringify({ name: name.trim(), price: price }),\n      });\n\n      if (!response.ok) {\n        const body = await response.json();\n        throw new Error(body.error || \"Хадгалж чадсангүй\");\n      }\n\n      setName(\"\");\n      setPriceInput(\"\");\n      await loadProducts();\n    } catch (problem) {\n      setFormError(problem.message);\n    } finally {\n      setSaving(false);\n    }\n  }\n\n  useEffect(() => {\n    loadProducts();\n  }, []);\n\n  return (\n    <main>\n      <header className=\"topbar\">\n        <h1>Shop.mn — админ</h1>\n        <button className=\"btn-plain\" data-testid=\"refresh\" onClick={loadProducts} disabled={loading}>\n          Шинэчлэх\n        </button>\n      </header>\n\n      {loading ? <p data-testid=\"loading\">Ачаалж байна…</p> : null}\n\n      {error ? (\n        <div className=\"error\" data-testid=\"error\" role=\"alert\">\n          <p>{error}</p>\n          <button className=\"btn-plain\" data-testid=\"retry\" onClick={loadProducts}>Дахин оролдох</button>\n        </div>\n      ) : null}\n\n      {ready && products.length === 0 ? (\n        <p data-testid=\"empty\">Одоогоор бараа алга байна.</p>\n      ) : null}\n\n      {!loading && products.length > 0 ? (\n        <table data-testid=\"table\">\n          <caption>Shop.mn-ий бараанууд</caption>\n          <thead>\n            <tr>\n              <th scope=\"col\">Нэр</th>\n              <th scope=\"col\">Үнэ</th>\n              <th scope=\"col\">Үлдэгдэл</th>\n            </tr>\n          </thead>\n          <tbody>\n            {products.map((product) => (\n              <tr key={product.id} data-testid=\"row\">\n                <td>{product.name}</td>\n                <td>{formatPrice(product.price)}</td>\n                <td>{product.stock}</td>\n              </tr>\n            ))}\n          </tbody>\n        </table>\n      ) : null}\n\n\n      <form className=\"new-product\" data-testid=\"form\" onSubmit={createProduct}>\n        <h2>Шинэ бараа</h2>\n\n        <label htmlFor=\"p-name\">Нэр</label>\n        <input\n          id=\"p-name\"\n          name=\"name\"\n          data-testid=\"f-name\"\n          value={name}\n          onChange={(event) => setName(event.target.value)}\n        />\n\n        <label htmlFor=\"p-price\">Үнэ (₮)</label>\n        <input\n          id=\"p-price\"\n          name=\"price\"\n          type=\"number\"\n          data-testid=\"f-price\"\n          value={priceInput}\n          onChange={(event) => setPriceInput(event.target.value)}\n        />\n\n        {formError ? (\n          <p className=\"error\" data-testid=\"form-error\" role=\"alert\">{formError}</p>\n        ) : null}\n\n        <button type=\"submit\" className=\"btn-add\" data-testid=\"save\" disabled={saving}>\n          {saving ? \"Хадгалж байна…\" : \"Нэмэх\"}\n        </button>\n      </form>\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Клиент талын шалгалт нь ТАВ ТУХЫН төлөө: хэрэглэгч сүлжээ хүлээхгүйгээр хариу авна. Серверийнх нь АЮУЛГҮЙ БАЙДЛЫН төлөө: клиентийг тойрч болно. Тиймээс хоёулаа байх ёстой бөгөөд хоёулаа ижил дүрэм хэрэгжүүлэх ёстой."
+        },
+        "xpPenalty": 30
+      },
+      "xp": 50,
+      "estimatedMinutes": 26,
+      "skills": [
+        "react",
+        "backend"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 40
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}
