@@ -1,0 +1,268 @@
+{
+  "id": "m13-l3",
+  "moduleId": "m13-deploy",
+  "slug": "security-headers",
+  "order": 3,
+  "title": {
+    "mn": "Аюулгүй байдлын толгойнууд"
+  },
+  "why": {
+    "mn": "Shop.mn-ий хариу бүр хөтөчид «энэ өгөгдлийг хэрхэн харьцах вэ» гэж хэлж өгөх боломжтой. Гурван мөр толгой нэмснээр төрөл таамаглах халдлага, хаяг задруулах, гадны скрипт ажиллуулах гурвыг нэг дор хаана."
+  },
+  "buildsInProject": "Хамгаалагдсан хариунууд",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "backend",
+    "devops"
+  ],
+  "concepts": [
+    "X-Content-Type-Options",
+    "Referrer-Policy",
+    "CSP",
+    "defense in depth"
+  ],
+  "prerequisites": [
+    "m13-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — deploy бэлтгэл</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — deploy бэлтгэл</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/config.js\"></script>\n    <script src=\"src/server.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/config.js",
+        "content": "// Орчны хувьсагчаас тохиргоо унших.\n// Дутуу зүйлийг ХҮСЭЛТИЙН үед биш, ЭХЛЭХЭД нь илрүүлэх нь чухал —\n// эс бол алдаа хэрэглэгчийн өмнө, шөнө дунд гарна.\n\nconst REQUIRED = [\"SITE_NAME\",\"APP_VERSION\",\"SESSION_TTL_HOURS\"];\n\nfunction loadConfig(env) {\n  const missing = REQUIRED.filter((key) => !env[key]);\n\n  if (missing.length > 0) {\n    throw new Error(\"Орчны хувьсагч дутуу байна: \" + missing.join(\", \"));\n  }\n\n  return Object.freeze({\n    siteName: env.SITE_NAME,\n    version: env.APP_VERSION,\n    sessionTtlHours: Number(env.SESSION_TTL_HOURS),\n  });\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/server.js",
+        "content": "// Shop.mn-ий сервер — production-д бэлтгэх.\n\n// Хариу бүрд аюулгүй байдлын толгойнуудыг хамт явуулна.\nfunction json(body, status) {\n  return new Response(JSON.stringify(body), {\n    status: status || 200,\n    headers: {\n      \"Content-Type\": \"application/json\",\n      // энд бичнэ үү\n    },\n  });\n}\n\nasync function handleRequest(request) {\n  const path = new URL(request.url).pathname;\n\n  if (path === \"/api/products\" && request.method === \"GET\") {\n    return json(db.products);\n  }\n\n  // Ачаалал хуваарилагч энэ хаягийг хэдэн секунд тутамд дуудаж,\n  // сервер амьд эсэхийг шалгана. Нэвтрэлт шаардахгүй.\n  if (path === \"/health\" && request.method === \"GET\") {\n    return json({ status: \"ok\", version: config.version });\n  }\n\n  return json({ error: \"Хаяг олдсонгүй: \" + path }, 404);\n}\n\nwindow.handleRequest = handleRequest;\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Deploy турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\n// Жинхэнэ сервер дээр эдгээр утга нь process.env-ээс ирнэ.\n\nconst db = {\n  products: [\n    { id: 1, name: \"Монгол дээл\", price: 129000 },\n    { id: 2, name: \"Малгай\", price: 45000 },\n  ],\n};\n\n// Серверийн код үүнийг глобалаар уншина.\nwindow.db = db;\n\nconst FULL_ENV = {\n  SITE_NAME: \"Shop.mn\",\n  APP_VERSION: \"1.4.0\",\n  SESSION_TTL_HOURS: \"24\",\n};\n\n// Санаатайгаар дутуу орчин: deploy хийхэд хамгийн их таардаг алдаа.\nconst BROKEN_ENV = { SITE_NAME: \"Shop.mn\" };\n\nconst SCENARIOS = [\n  {\n    \"key\": \"health\",\n    \"method\": \"GET\",\n    \"path\": \"/health\"\n  },\n  {\n    \"key\": \"products\",\n    \"method\": \"GET\",\n    \"path\": \"/api/products\"\n  },\n  {\n    \"key\": \"missing\",\n    \"method\": \"GET\",\n    \"path\": \"/api/nope\"\n  }\n];\n\nconst output = document.getElementById(\"output\");\n\nfunction panel(className, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = className;\n  box.dataset.testid = testid;\n\n  const heading = document.createElement(\"h2\");\n  heading.textContent = title;\n  box.append(heading);\n\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n\n  output.append(box);\n  return box;\n}\n\nwindow.CONFIG_OK = null;\nwindow.CONFIG_ERROR = null;\nwindow.CONFIG_BOOT_ERROR = null;\n\ntry {\n  window.CONFIG_OK = loadConfig(FULL_ENV);\n  panel(\"call ok\", \"config-ok\", \"Тохиргоо ачаалагдлаа\", [JSON.stringify(window.CONFIG_OK, null, 2)]);\n} catch (problem) {\n  window.CONFIG_BOOT_ERROR = problem.message;\n  panel(\"call bad\", \"config-boot-error\", \"Тохиргоо ачаалагдсангүй\", [problem.message]);\n}\n\ntry {\n  loadConfig(BROKEN_ENV);\n  panel(\"call bad\", \"config-missed\", \"Дутуу орчин илрээгүй\", [\n    \"loadConfig нь дутуу хувьсагчийг анзаарсангүй.\",\n  ]);\n} catch (problem) {\n  window.CONFIG_ERROR = problem.message;\n  panel(\"call ok\", \"config-error\", \"Дутуу орчин зөв илэрлээ\", [problem.message]);\n}\n\n// Серверийн код энэ тохиргоог глобалаар ашиглана.\nconst config = window.CONFIG_OK;\nwindow.config = config;\n\n(async function () {\n  window.RESULTS = {};\n\n  if (!config || typeof handleRequest !== \"function\") {\n    document.body.dataset.ready = \"1\";\n    return;\n  }\n\n  for (const scenario of SCENARIOS) {\n    const init = { method: scenario.method, headers: {} };\n    if (scenario.body !== undefined) {\n      init.headers[\"Content-Type\"] = \"application/json\";\n      init.body = JSON.stringify(scenario.body);\n    }\n\n    let status = 0;\n    let body = null;\n    let headers = {};\n    let error = null;\n\n    try {\n      const response = await handleRequest(new Request(\"https://shop.mn\" + scenario.path, init));\n\n      if (!(response instanceof Response)) {\n        throw new Error(\"handleRequest нь Response биш зүйл буцаалаа\");\n      }\n\n      status = response.status;\n      headers = {};\n      response.headers.forEach((value, key) => {\n        headers[key.toLowerCase()] = value;\n      });\n\n      const text = await response.text();\n      try {\n        body = text ? JSON.parse(text) : null;\n      } catch (problem) {\n        body = text;\n      }\n    } catch (problem) {\n      error = problem.message;\n    }\n\n    window.RESULTS[scenario.key] = { status, body, headers, error };\n\n    const box = panel(\n      \"call\",\n      \"call-\" + scenario.key,\n      scenario.method + \" \" + scenario.path,\n      [\n        error ? \"АЛДАА: \" + error : JSON.stringify(body, null, 2),\n        Object.keys(headers).length ? \"headers: \" + JSON.stringify(headers, null, 2) : \"headers: —\",\n      ],\n    );\n\n    const badge = document.createElement(\"span\");\n    badge.className = \"status \" + (error ? \"s-err\" : \"s-\" + String(status)[0] + \"xx\");\n    badge.dataset.testid = \"status-\" + scenario.key;\n    badge.textContent = error ? \"алдаа\" : String(status);\n    box.querySelector(\"h2\").prepend(badge, document.createTextNode(\" \"));\n  }\n\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/config.js",
+      "src/server.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/server.js"
+    ],
+    "activeFile": "src/server.js"
+  },
+  "tasks": [
+    {
+      "id": "m13-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Аюулгүй байдлын толгойнууд"
+      },
+      "statement": {
+        "mn": "`json()` доторх `headers` дотор гурван толгой нэм: `\"X-Content-Type-Options\": \"nosniff\"`, `\"Referrer-Policy\": \"no-referrer\"`, `\"Content-Security-Policy\": \"default-src 'self'\"`. Ганц газар нэмснээр хариу БҮР хамгаалагдана."
+      },
+      "requirements": [
+        {
+          "mn": "`nosniff`"
+        },
+        {
+          "mn": "`no-referrer`"
+        },
+        {
+          "mn": "CSP `default-src 'self'`"
+        },
+        {
+          "mn": "Бүх хариунд хамаарна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Амжилттай ч, 404 ч бай — хариу бүр гурван хамгаалалтын толгойтой ирнэ."
+        }
+      },
+      "targetFile": "src/server.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.health.headers[\"x-content-type-options\"]",
+                  "equals": "nosniff"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`X-Content-Type-Options: nosniff` толгой алга байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.health.headers[\"referrer-policy\"]",
+                  "equals": "no-referrer"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`Referrer-Policy: no-referrer` толгой алга байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.health.headers[\"content-security-policy\"]",
+                  "equals": "default-src 'self'"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`Content-Security-Policy: default-src 'self'` толгой алга байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.missing.headers[\"x-content-type-options\"]",
+                  "equals": "nosniff"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "404 хариунд ч толгойнууд байх ёстой — тэдгээрийг `json()` дотор нэг л удаа нэмсэн үү?"
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.products.headers[\"content-type\"]",
+                  "equals": "application/json"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`Content-Type: application/json` толгой алдагдсан байна."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`nosniff` нь хөгтчийг «би JSON гэж хэлсэн бол JSON, өөрөөр таамаглах хэрэггүй» гэж хязгаарлана. Үүнгүй бол хөтөч агуулгыг HTML гэж таамаглаад скрипт ажиллуулж мэднэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Толгойнуудыг зам болгонд биш, ГАНЦ газарт — `json()` туслах дотор нэм. Ингэснээр шинэ зам нэмэхэд хамгаалалт автоматаар хамрагдана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Толгойнуудаа нэм:"
+          },
+          "code": "headers: {\n  \"Content-Type\": \"application/json\",\n  /* nosniff */\n  /* no-referrer */\n  /* default-src 'self' */\n},"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/server.js",
+            "content": "// Shop.mn-ий сервер — production-д бэлтгэх.\n\n// Хариу бүрд аюулгүй байдлын толгойнуудыг хамт явуулна.\nfunction json(body, status) {\n  return new Response(JSON.stringify(body), {\n    status: status || 200,\n    headers: {\n      \"Content-Type\": \"application/json\",\n      \"X-Content-Type-Options\": \"nosniff\",\n      \"Referrer-Policy\": \"no-referrer\",\n      \"Content-Security-Policy\": \"default-src 'self'\",\n    },\n  });\n}\n\nasync function handleRequest(request) {\n  const path = new URL(request.url).pathname;\n\n  if (path === \"/api/products\" && request.method === \"GET\") {\n    return json(db.products);\n  }\n\n  // Ачаалал хуваарилагч энэ хаягийг хэдэн секунд тутамд дуудаж,\n  // сервер амьд эсэхийг шалгана. Нэвтрэлт шаардахгүй.\n  if (path === \"/health\" && request.method === \"GET\") {\n    return json({ status: \"ok\", version: config.version });\n  }\n\n  return json({ error: \"Хаяг олдсонгүй: \" + path }, 404);\n}\n\nwindow.handleRequest = handleRequest;\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Энэ бол «гүн хамгаалалт» (defense in depth): аль нэг давхарга нь алдсан ч дараагийнх нь барина. Толгойнуудыг нэг туслах функцэд төвлөрүүлсэн нь бас чухал — хамгаалалт нь сонголт биш, анхдагч болно. Аюулгүй байдал нь хүн санахаас хамаарвал эрт орой хэзээ нэгэн цагт мартагдана."
+        },
+        "xpPenalty": 21
+      },
+      "xp": 35,
+      "estimatedMinutes": 18,
+      "skills": [
+        "backend",
+        "devops"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 30
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

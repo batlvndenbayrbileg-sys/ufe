@@ -6,6 +6,7 @@ import "./families/html";
 import "./families/css";
 import "./families/ast";
 import "./families/js";
+import "./families/file";
 
 export * from "./types";
 export {

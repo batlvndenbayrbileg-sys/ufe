@@ -61,5 +61,12 @@
       "mn": "Аюулгүй байдал"
     },
     "order": 9
+  },
+  {
+    "id": "devops",
+    "title": {
+      "mn": "Deploy"
+    },
+    "order": 10
   }
 ]

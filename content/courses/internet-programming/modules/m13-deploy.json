@@ -1,0 +1,19 @@
+{
+  "id": "m13-deploy",
+  "stageId": "s9",
+  "order": 1,
+  "title": {
+    "mn": "Deploy: production-д гаргах"
+  },
+  "description": {
+    "mn": "Орчны тохиргоо, health check, аюулгүй байдлын толгойнууд, алдааны хамгаалалт, deploy-ийн файлууд."
+  },
+  "estimatedHours": 2,
+  "lessons": [
+    "m13-l1",
+    "m13-l2",
+    "m13-l3",
+    "m13-l4",
+    "m13-l5"
+  ]
+}

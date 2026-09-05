@@ -1,0 +1,312 @@
+{
+  "id": "m13-l1",
+  "moduleId": "m13-deploy",
+  "slug": "env-config",
+  "order": 1,
+  "title": {
+    "mn": "Орчны тохиргоо"
+  },
+  "why": {
+    "mn": "Shop.mn-ий сайтын нэр, хувилбар, session-ий хугацаа кодон дотор бичээстэй байвал өөрчлөх бүрд шинээр deploy хийх хэрэгтэй болно. Хамгийн муу нь: нууц утгууд ч тэндээ орж, git-д мөнхөрнө. Тохиргоо орчноос ирэх ёстой."
+  },
+  "buildsInProject": "Тохиргоо ачаалагч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 22,
+  "skills": [
+    "backend",
+    "devops"
+  ],
+  "concepts": [
+    "environment variables",
+    "fail fast",
+    "Object.freeze",
+    "12-factor"
+  ],
+  "prerequisites": [
+    "m12-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — deploy бэлтгэл</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — deploy бэлтгэл</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/config.js\"></script>\n    <script src=\"src/server.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/config.js",
+        "content": "// Орчны хувьсагчаас тохиргоо унших.\n// Дутуу зүйлийг ХҮСЭЛТИЙН үед биш, ЭХЛЭХЭД нь илрүүлэх нь чухал —\n// эс бол алдаа хэрэглэгчийн өмнө, шөнө дунд гарна.\n\nconst REQUIRED = [\"SITE_NAME\",\"APP_VERSION\",\"SESSION_TTL_HOURS\"];\n\nfunction loadConfig(env) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/server.js",
+        "content": "// Shop.mn-ий сервер — production-д бэлтгэх.\n\nfunction json(body, status) {\n  return new Response(JSON.stringify(body), {\n    status: status || 200,\n    headers: { \"Content-Type\": \"application/json\" },\n  });\n}\n\nasync function handleRequest(request) {\n  const path = new URL(request.url).pathname;\n\n  if (path === \"/api/products\" && request.method === \"GET\") {\n    return json(db.products);\n  }\n\n  return json({ error: \"Хаяг олдсонгүй: \" + path }, 404);\n}\n\nwindow.handleRequest = handleRequest;\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Deploy турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\n// Жинхэнэ сервер дээр эдгээр утга нь process.env-ээс ирнэ.\n\nconst db = {\n  products: [\n    { id: 1, name: \"Монгол дээл\", price: 129000 },\n    { id: 2, name: \"Малгай\", price: 45000 },\n  ],\n};\n\n// Серверийн код үүнийг глобалаар уншина.\nwindow.db = db;\n\nconst FULL_ENV = {\n  SITE_NAME: \"Shop.mn\",\n  APP_VERSION: \"1.4.0\",\n  SESSION_TTL_HOURS: \"24\",\n};\n\n// Санаатайгаар дутуу орчин: deploy хийхэд хамгийн их таардаг алдаа.\nconst BROKEN_ENV = { SITE_NAME: \"Shop.mn\" };\n\nconst SCENARIOS = [\n  {\n    \"key\": \"products\",\n    \"method\": \"GET\",\n    \"path\": \"/api/products\"\n  }\n];\n\nconst output = document.getElementById(\"output\");\n\nfunction panel(className, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = className;\n  box.dataset.testid = testid;\n\n  const heading = document.createElement(\"h2\");\n  heading.textContent = title;\n  box.append(heading);\n\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n\n  output.append(box);\n  return box;\n}\n\nwindow.CONFIG_OK = null;\nwindow.CONFIG_ERROR = null;\nwindow.CONFIG_BOOT_ERROR = null;\n\ntry {\n  window.CONFIG_OK = loadConfig(FULL_ENV);\n  panel(\"call ok\", \"config-ok\", \"Тохиргоо ачаалагдлаа\", [JSON.stringify(window.CONFIG_OK, null, 2)]);\n} catch (problem) {\n  window.CONFIG_BOOT_ERROR = problem.message;\n  panel(\"call bad\", \"config-boot-error\", \"Тохиргоо ачаалагдсангүй\", [problem.message]);\n}\n\ntry {\n  loadConfig(BROKEN_ENV);\n  panel(\"call bad\", \"config-missed\", \"Дутуу орчин илрээгүй\", [\n    \"loadConfig нь дутуу хувьсагчийг анзаарсангүй.\",\n  ]);\n} catch (problem) {\n  window.CONFIG_ERROR = problem.message;\n  panel(\"call ok\", \"config-error\", \"Дутуу орчин зөв илэрлээ\", [problem.message]);\n}\n\n// Серверийн код энэ тохиргоог глобалаар ашиглана.\nconst config = window.CONFIG_OK;\nwindow.config = config;\n\n(async function () {\n  window.RESULTS = {};\n\n  if (!config || typeof handleRequest !== \"function\") {\n    document.body.dataset.ready = \"1\";\n    return;\n  }\n\n  for (const scenario of SCENARIOS) {\n    const init = { method: scenario.method, headers: {} };\n    if (scenario.body !== undefined) {\n      init.headers[\"Content-Type\"] = \"application/json\";\n      init.body = JSON.stringify(scenario.body);\n    }\n\n    let status = 0;\n    let body = null;\n    let headers = {};\n    let error = null;\n\n    try {\n      const response = await handleRequest(new Request(\"https://shop.mn\" + scenario.path, init));\n\n      if (!(response instanceof Response)) {\n        throw new Error(\"handleRequest нь Response биш зүйл буцаалаа\");\n      }\n\n      status = response.status;\n      headers = {};\n      response.headers.forEach((value, key) => {\n        headers[key.toLowerCase()] = value;\n      });\n\n      const text = await response.text();\n      try {\n        body = text ? JSON.parse(text) : null;\n      } catch (problem) {\n        body = text;\n      }\n    } catch (problem) {\n      error = problem.message;\n    }\n\n    window.RESULTS[scenario.key] = { status, body, headers, error };\n\n    const box = panel(\n      \"call\",\n      \"call-\" + scenario.key,\n      scenario.method + \" \" + scenario.path,\n      [\n        error ? \"АЛДАА: \" + error : JSON.stringify(body, null, 2),\n        Object.keys(headers).length ? \"headers: \" + JSON.stringify(headers, null, 2) : \"headers: —\",\n      ],\n    );\n\n    const badge = document.createElement(\"span\");\n    badge.className = \"status \" + (error ? \"s-err\" : \"s-\" + String(status)[0] + \"xx\");\n    badge.dataset.testid = \"status-\" + scenario.key;\n    badge.textContent = error ? \"алдаа\" : String(status);\n    box.querySelector(\"h2\").prepend(badge, document.createTextNode(\" \"));\n  }\n\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/config.js",
+      "src/server.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/config.js"
+    ],
+    "activeFile": "src/config.js"
+  },
+  "tasks": [
+    {
+      "id": "m13-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Орчны тохиргоо"
+      },
+      "statement": {
+        "mn": "`loadConfig(env)` функцийг бич: 1) `REQUIRED` жагсаалтаас `env` дотор БАЙХГҮЙ бүх түлхүүрийг цуглуул. 2) Дутуу зүйл байвал `\"Орчны хувьсагч дутуу байна: \" + missing.join(\", \")` гэсэн алдаа ШИД — эхний дутууг олоод зогсохгүй, БҮГДИЙГ нь жагсаа. 3) Үгүй бол `Object.freeze({ siteName, version, sessionTtlHours })` буцаа; `sessionTtlHours`-ыг `Number(...)`-ээр тоо болго."
+      },
+      "requirements": [
+        {
+          "mn": "Дутуу БҮХ түлхүүрийг жагсаана"
+        },
+        {
+          "mn": "Дутуу бол алдаа шиднэ"
+        },
+        {
+          "mn": "Тоог `Number`-ээр хөрвүүлнэ"
+        },
+        {
+          "mn": "`Object.freeze` ашиглана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Бүрэн орчинтой үед тохиргоо ачаалагдаж, дутуу орчинд хоёр дутуу нэрийг агуулсан алдаа гарна."
+        }
+      },
+      "targetFile": "src/config.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/config.js",
+            "kind": "function",
+            "name": "loadConfig"
+          },
+          "onFail": {
+            "mn": "`loadConfig` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.CONFIG_BOOT_ERROR",
+                  "equals": null
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Бүрэн орчин дээр `loadConfig` алдаа шидэх ёсгүй."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.CONFIG_OK.siteName",
+                  "equals": "Shop.mn"
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "window.CONFIG_OK.version",
+                  "equals": "1.4.0"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Тохиргоо `siteName` ба `version`-ыг орчноос авах ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "typeof window.CONFIG_OK.sessionTtlHours",
+                  "equals": "number"
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "window.CONFIG_OK.sessionTtlHours",
+                  "equals": 24
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`sessionTtlHours` нь ТЕКСТ биш ТОО байх ёстой — `Number(...)`-ээр хөрвүүлээрэй."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "typeof window.CONFIG_ERROR",
+                  "equals": "string"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дутуу орчинд `loadConfig` алдаа шидэх ёстой."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.CONFIG_ERROR.includes(\"APP_VERSION\") && window.CONFIG_ERROR.includes(\"SESSION_TTL_HOURS\")",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Алдааны мессежид дутуу БҮХ хувьсагчийн нэр байх ёстой — эхнийхэд нь зогсохгүй."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "Object.isFrozen(window.CONFIG_OK)",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Буцаах тохиргоог `Object.freeze`-ээр хамгаалаарай — ажиллаж байхад санамсаргүй өөрчлөгдөх ёсгүй."
+          }
+        },
+        {
+          "id": "c8",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Тохиргооны алдааг хүсэлт ирэх үед биш, СЕРВЕР ЭХЛЭХ үед илрүүлэх нь чухал. Дутуу тохиргоотой сервер огт эхлээгүй нь, хагас ажиллаж байгаагаас хамаагүй дээр."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`filter` нь дутуу БҮХ түлхүүрийг нэг дор өгнө. Эхний дутууг олоод зогсвол хэрэглэгч нэг нэгээр нь засаад олон удаа дахин эхлүүлнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гурван алхмаа гүйцээ:"
+          },
+          "code": "const missing = REQUIRED.filter(/* env дотор байхгүй нь */);\n\nif (missing.length > 0) {\n  /* бүх нэрийг жагсаасан алдаа шид */\n}\n\nreturn Object.freeze({\n  siteName: env.SITE_NAME,\n  /* version ба sessionTtlHours */\n});"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/config.js",
+            "content": "// Орчны хувьсагчаас тохиргоо унших.\n// Дутуу зүйлийг ХҮСЭЛТИЙН үед биш, ЭХЛЭХЭД нь илрүүлэх нь чухал —\n// эс бол алдаа хэрэглэгчийн өмнө, шөнө дунд гарна.\n\nconst REQUIRED = [\"SITE_NAME\",\"APP_VERSION\",\"SESSION_TTL_HOURS\"];\n\nfunction loadConfig(env) {\n  const missing = REQUIRED.filter((key) => !env[key]);\n\n  if (missing.length > 0) {\n    throw new Error(\"Орчны хувьсагч дутуу байна: \" + missing.join(\", \"));\n  }\n\n  return Object.freeze({\n    siteName: env.SITE_NAME,\n    version: env.APP_VERSION,\n    sessionTtlHours: Number(env.SESSION_TTL_HOURS),\n  });\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Энэ бол «12-factor app»-ын гуравдугаар зарчим: тохиргоо кодоос ТУСДАА, орчинд байна. Ингэснээр ижил код нь хөгжүүлэлт, тест, production гурван орчинд өөр өөр утгатай ажиллана — дахин build хийхгүйгээр. `Object.freeze` нь ажиллаж байх үед хэн нэгэн санамсаргүй тохиргоог өөрчлөхөөс сэргийлнэ."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 20,
+      "skills": [
+        "backend",
+        "devops"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 30
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

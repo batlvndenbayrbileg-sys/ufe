@@ -101,6 +101,17 @@
       "moduleIds": [
         "m12-auth"
       ]
+    },
+    {
+      "id": "s9",
+      "order": 9,
+      "title": {
+        "mn": "Deploy ба production"
+      },
+      "badgeId": "shipper",
+      "moduleIds": [
+        "m13-deploy"
+      ]
     }
   ]
 }
