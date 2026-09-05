@@ -22,7 +22,7 @@ inputs, outputs, contracts, and acceptance criteria.
 |---|------|------|-------------|
 | 01 | [`01-vision-personas-journey.md`](01-vision-personas-journey.md) | Vision, principles, personas, end-to-end user journey | Everyone |
 | 02 | [`02-information-architecture.md`](02-information-architecture.md) | Route map, screen inventory, navigation model | Frontend |
-| 03 | [`03-curriculum.md`](03-curriculum.md) | Full Internet Programming curriculum: 9 stages → 15 modules → 142 lessons → ~520 tasks | Content, Frontend |
+| 03 | [`03-curriculum.md`](03-curriculum.md) | Full Internet Programming curriculum: 9 stages → 15 modules → 142 lessons → ~520 tasks. **This is the plan** — for what shipped and how it diverges, see [`../built-course.md`](../built-course.md). | Content, Frontend |
 | 04 | [`04-content-schema.md`](04-content-schema.md) | Lesson/Task JSON schema, authoring pipeline, content repo layout | Content, Backend, Teacher panel |
 | 05 | [`05-validation-engine.md`](05-validation-engine.md) | Checker types, DSL, runners, anti-cheat, feedback generation | Backend, Runner |
 | 06 | [`06-ai-tutor.md`](06-ai-tutor.md) | Socratic tutor architecture, prompts, context assembly, guardrails, cost model | AI/Backend |
