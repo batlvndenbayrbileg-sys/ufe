@@ -229,6 +229,7 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
               files={files}
               entry={lesson.execution.entry}
               sqliteUrl={lesson.execution.runtime === "sqlite" ? "/lib/sqlite.js" : undefined}
+              reactRuntimeUrl="/lib/react-runtime.js"
               onConsole={(e) => setLogs((l) => [...l.slice(-40), e])}
             />
           </div>

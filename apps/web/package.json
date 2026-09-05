@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/vendor-sqlite.mjs && next dev",
-    "build": "node scripts/vendor-sqlite.mjs && next build",
-    "start": "node scripts/vendor-sqlite.mjs && next start",
+    "dev": "node scripts/vendor-runtimes.mjs && next dev",
+    "build": "node scripts/vendor-runtimes.mjs && next build",
+    "start": "node scripts/vendor-runtimes.mjs && next start",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",

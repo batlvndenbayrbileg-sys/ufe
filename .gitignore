@@ -37,5 +37,6 @@ pnpm-debug.log*
 # misc
 *.local
 
-# Vendored at build time from node_modules (see scripts/vendor-sqlite.mjs)
-apps/web/public/lib/sqlite.js
+# Vendored at build time (see apps/web/scripts/vendor-runtimes.mjs)
+apps/web/public/lib/
+packages/checkers/runtime/

@@ -1,4 +1,4 @@
-import { transpileJsx, REACT_RUNTIME_JS } from "@khiye/checkers/assemble";
+import { transpileJsx } from "@khiye/checkers/transpile";
 import type { FileSet } from "./protocol";
 
 const isJsx = (p: string) => /\.(jsx|tsx)$/.test(p);
@@ -17,6 +17,11 @@ export interface AssembleOptions {
   connectSrc?: string;
   /** SQLite (sql.js, asm build) source, inlined where the page asks for it. */
   sqliteRuntime?: string;
+  /**
+   * React + ReactDOM, inlined for JSX lessons. Fetched by the host rather than
+   * bundled: it is 180 KB that lessons without JSX must not pay for.
+   */
+  reactRuntime?: string;
   /**
    * Seed for the harness's localStorage shim. Inlined (not postMessaged) because
    * student code reads storage on its very first line, long before any async
@@ -112,7 +117,7 @@ ${transpileJsx(js.content, src)}
     `${cspMeta}\n<base href="${escAttr(opts.cdnBase ?? "about:blank")}">\n` +
     storageSeed +
     `<script>\n${opts.harnessJs}\n</script>` +
-    (needsReact ? `\n<script>\n${REACT_RUNTIME_JS}\n</script>` : "");
+    (needsReact && opts.reactRuntime ? `\n<script>\n${opts.reactRuntime}\n</script>` : "");
 
   // Inject head content right after <head>, or synthesize a <head>.
   if (/<head[\s>]/i.test(html)) {

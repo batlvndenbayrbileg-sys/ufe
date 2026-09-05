@@ -69,12 +69,59 @@ jobs:
       - name: Build
         run: pnpm build
 
-  # Placeholder for the lesson-shell bundlesize gate (T0.2 AC).
-  # Wired for real once the /learn shell exists in E7; must fail when the
-  # Tier-1 lesson shell exceeds 400 KB gzipped (see 11-system-architecture.md §11.7).
+  content:
+    name: content (lint · solutions · starters)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # Fails unless, for every task: the reference solution passes its checks,
+      # the starter fails at least one, the starter renders without crashing,
+      # and the solution runs without console errors. Plus the workspace lint
+      # (missing target file, marker not in that file, unknown skill, …).
+      - name: Content
+        run: pnpm --filter @khiye/content-sdk content test ../../content/courses/internet-programming
+
+  # The lesson shell is what a student on a Mongolian mobile connection waits
+  # for before they can type. 400 KB gz, from 11-system-architecture.md §11.7.
   bundlesize:
     name: bundlesize (lesson shell ≤ 400 KB gz)
     runs-on: ubuntu-latest
-    if: ${{ false }}
+
     steps:
-      - run: echo "enabled in E7"
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web
+        run: pnpm --filter @khiye/web build
+
+      - name: Measure
+        run: pnpm --filter @khiye/web exec node scripts/bundlesize.mjs

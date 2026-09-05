@@ -29,17 +29,21 @@ export interface PreviewHostHandle {
 }
 
 /**
- * SQLite is ~1.4 MB, so it is fetched on demand by the handful of lessons that
- * need it and never enters the app bundle. One in-flight request per document,
- * shared across mounts.
+ * The big runtimes — SQLite (~1.4 MB) and React (~180 KB) — are fetched on
+ * demand by the lessons that need them and never enter the app bundle. One
+ * in-flight request per URL per document, shared across mounts.
  */
-let sqlitePromise: Promise<string> | null = null;
-function fetchSqlite(url: string): Promise<string> {
-  sqlitePromise ??= fetch(url).then((r) => {
-    if (!r.ok) throw new Error(`sqlite runtime ${r.status}`);
-    return r.text();
-  });
-  return sqlitePromise;
+const runtimeCache = new Map<string, Promise<string>>();
+function fetchRuntime(url: string): Promise<string> {
+  let pending = runtimeCache.get(url);
+  if (!pending) {
+    pending = fetch(url).then((r) => {
+      if (!r.ok) throw new Error(`runtime ${url}: ${r.status}`);
+      return r.text();
+    });
+    runtimeCache.set(url, pending);
+  }
+  return pending;
 }
 
 export interface PreviewHostProps {
@@ -47,6 +51,8 @@ export interface PreviewHostProps {
   entry?: string;
   /** Same-origin URL of the SQLite runtime; set only for SQL lessons. */
   sqliteUrl?: string;
+  /** Same-origin URL of React + ReactDOM, fetched only when the workspace has JSX. */
+  reactRuntimeUrl?: string;
   connectSrc?: string;
   cdnBase?: string;
   /** Device viewport; the frame around it is drawn by PreviewFrame. */
@@ -59,7 +65,7 @@ export interface PreviewHostProps {
 }
 
 export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(function PreviewHost(
-  { files, entry, sqliteUrl, connectSrc, cdnBase, width = "100%", height = "100%", onConsole, onError, onReady, className },
+  { files, entry, sqliteUrl, reactRuntimeUrl, connectSrc, cdnBase, width = "100%", height = "100%", onConsole, onError, onReady, className },
   ref,
 ) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -75,6 +81,7 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
   // Survives iframe reloads so storage lessons behave like a real browser.
   const storage = useRef<Record<string, string>>({});
   const sqlite = useRef<string | undefined>(undefined);
+  const reactRuntime = useRef<string | undefined>(undefined);
   const [looping, setLooping] = useState(false);
 
   const post = useCallback((msg: HostMessage) => {
@@ -95,6 +102,7 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
       cdnBase,
       storage: storage.current,
       sqliteRuntime: sqlite.current,
+      reactRuntime: reactRuntime.current,
     });
     prevFiles.current = snapshot;
   }, [entry, connectSrc, cdnBase]);
@@ -104,7 +112,7 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
   useEffect(() => {
     if (!sqliteUrl || sqlite.current) return;
     let alive = true;
-    fetchSqlite(sqliteUrl)
+    fetchRuntime(sqliteUrl)
       .then((src) => {
         if (!alive) return;
         sqlite.current = src;
@@ -117,6 +125,26 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
       alive = false;
     };
   }, [sqliteUrl, reload]);
+
+  // Same for React, but only when the workspace actually contains JSX — which
+  // is what keeps 180 KB off every HTML, CSS and SQL lesson.
+  const hasJsx = Object.keys(files).some((p) => /\.(jsx|tsx)$/.test(p));
+  useEffect(() => {
+    if (!reactRuntimeUrl || !hasJsx || reactRuntime.current) return;
+    let alive = true;
+    fetchRuntime(reactRuntimeUrl)
+      .then((src) => {
+        if (!alive) return;
+        reactRuntime.current = src;
+        reload();
+      })
+      .catch(() => {
+        /* the page will surface the missing runtime itself */
+      });
+    return () => {
+      alive = false;
+    };
+  }, [reactRuntimeUrl, hasJsx, reload]);
 
   // Initial render (mount only).
   const didMount = useRef(false);

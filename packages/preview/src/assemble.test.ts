@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Window } from "happy-dom";
+import { REACT_RUNTIME_JS } from "@khiye/checkers/assemble";
 import { assembleSrcdoc, diffFiles } from "./assemble";
 import { HARNESS_JS } from "./harness-bundle";
 import type { FileSet } from "./protocol";
@@ -54,7 +55,8 @@ describe("React (JSX) projects", () => {
       ].join("\n"),
     },
   };
-  const html = assembleSrcdoc(reactProject, { harnessJs: "/*H*/" });
+  const RUNTIME = "window.React = {}; window.ReactDOM = {};";
+  const html = assembleSrcdoc(reactProject, { harnessJs: "/*H*/", reactRuntime: RUNTIME });
 
   it("transpiles JSX to createElement calls", () => {
     expect(html).toContain("React.createElement");
@@ -64,7 +66,9 @@ describe("React (JSX) projects", () => {
   it("inlines the React runtime so Tier 1 needs no CDN", () => {
     expect(html).toContain("window.React");
     // …and only for JSX projects.
-    expect(assembleSrcdoc(project, { harnessJs: "/*H*/" })).not.toContain("window.React");
+    expect(assembleSrcdoc(project, { harnessJs: "/*H*/", reactRuntime: RUNTIME })).not.toContain(
+      "window.React",
+    );
   });
 
   it("rewrites react imports onto the globals without self-aliasing", () => {
@@ -99,7 +103,9 @@ describe("React (JSX) projects", () => {
     };
     const window = new Window({ width: 800, height: 600 });
     try {
-      window.document.write(assembleSrcdoc(counter, { harnessJs: HARNESS_JS }));
+      window.document.write(
+        assembleSrcdoc(counter, { harnessJs: HARNESS_JS, reactRuntime: REACT_RUNTIME_JS }),
+      );
       const read = () => window.document.querySelector('[data-testid="n"]')?.textContent;
       // React flushes asynchronously; poll rather than race it.
       const until = async (want: string) => {

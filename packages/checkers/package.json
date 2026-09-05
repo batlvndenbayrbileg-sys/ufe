@@ -7,7 +7,8 @@
     ".": "./src/index.ts",
     "./browser": "./src/browser.ts",
     "./server": "./src/server.ts",
-    "./assemble": "./src/assemble.ts"
+    "./assemble": "./src/assemble.ts",
+    "./transpile": "./src/transpile.ts"
   },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
