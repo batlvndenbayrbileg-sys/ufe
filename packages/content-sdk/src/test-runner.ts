@@ -23,6 +23,9 @@ export interface TaskTestResult {
   /** An uncaught error in the STARTER: the student's first sight of the lesson
    *  is a blank preview and a red box. Failing checks are fine; crashing is not. */
   starterError?: string;
+  /** An uncaught error in the reference SOLUTION — the state the lesson holds up
+   *  as correct. Asserted for every task, not only those that thought to ask. */
+  solutionError?: string;
 }
 
 export interface TestReport {
@@ -36,6 +39,8 @@ export interface TestReport {
   brokenChecks: string[];
   /** Tasks whose starter crashes on load. */
   crashingStarters: string[];
+  /** Tasks whose reference solution logs an uncaught error. */
+  noisySolutions: string[];
 }
 
 async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
@@ -53,7 +58,13 @@ async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
     const solved = applyPatch(files, task.solution.patch);
     const checks = task.checks.map((c) => ({ id: c.id, type: c.type, args: c.args, onFail: c.onFail }));
 
-    const results = await runChecksOnFiles(solved as FileSet, checks, runOptions);
+    const results = await runChecksOnFiles(
+      solved as FileSet,
+      [...checks, { id: "__solutionConsole", type: "js.consoleClean", args: {}, onFail: { mn: "" } }],
+      runOptions,
+    );
+    const solutionConsole = results.find((r) => r.id === "__solutionConsole");
+    const solutionError = solutionConsole && !solutionConsole.passed ? solutionConsole.actual : undefined;
 
     // A task the student cannot fail teaches nothing: the starter must break at
     // least one check. This catches a marker left in the wrong file, a check
@@ -71,11 +82,11 @@ async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
     const starterError = consoleResult && !consoleResult.passed ? consoleResult.actual : undefined;
 
     const broken = results
-      .filter((r) => r.errorKind === "infra")
+      .filter((r) => r.id !== "__solutionConsole" && r.errorKind === "infra")
       .map((r) => ({ checkId: r.id, raw: r.raw }));
 
     const failures = results
-      .filter((r) => !r.passed && r.errorKind !== "infra")
+      .filter((r) => r.id !== "__solutionConsole" && !r.passed && r.errorKind !== "infra")
       .map((r) => {
         const check = task.checks.find((c) => c.id === r.id);
         return { checkId: r.id, onFail: check?.onFail.mn, actual: r.actual, expected: r.expected };
@@ -89,6 +100,7 @@ async function testLesson(lesson: Lesson): Promise<TaskTestResult[]> {
       starterFails,
       broken,
       ...(starterError ? { starterError } : {}),
+      ...(solutionError ? { solutionError } : {}),
     });
     files = solved; // accumulate within the lesson
   }
@@ -102,18 +114,21 @@ export async function testLessons(lessons: Lesson[]): Promise<TestReport> {
   const noOpTasks = results.filter((r) => !r.starterFails).map((r) => r.taskId);
   const brokenChecks = results.flatMap((r) => r.broken.map((b) => `${r.taskId}/${b.checkId}`));
   const crashingStarters = results.filter((r) => r.starterError).map((r) => r.taskId);
+  const noisySolutions = results.filter((r) => r.solutionError).map((r) => r.taskId);
   return {
     ok:
       results.every((r) => r.passed) &&
       noOpTasks.length === 0 &&
       brokenChecks.length === 0 &&
-      crashingStarters.length === 0,
+      crashingStarters.length === 0 &&
+      noisySolutions.length === 0,
     results,
     passedTasks,
     totalTasks: results.length,
     noOpTasks,
     brokenChecks,
     crashingStarters,
+    noisySolutions,
   };
 }
 
