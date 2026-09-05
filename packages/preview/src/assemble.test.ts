@@ -120,6 +120,40 @@ describe("React (JSX) projects", () => {
   });
 });
 
+describe("plain TypeScript", () => {
+  const tsProject: FileSet = {
+    "index.html": {
+      content: `<!doctype html><html><head></head><body><p id="out">-</p><script src="src/cart.ts"></script></body></html>`,
+    },
+    "src/cart.ts": {
+      content: [
+        "interface Item { price: number; quantity: number }",
+        "const total = (items: Item[]): number =>",
+        "  items.reduce((sum: number, i: Item) => sum + i.price * i.quantity, 0);",
+        'document.getElementById("out")!.textContent = String(total([{ price: 10, quantity: 3 }]));',
+      ].join("\n"),
+    },
+  };
+
+  it("strips the types and runs, without pulling in React", () => {
+    const out = assembleSrcdoc(tsProject, { harnessJs: "/*H*/" });
+    expect(out).not.toContain("interface Item");
+    expect(out).not.toContain(": number");
+    expect(out).not.toContain("window.React");
+  });
+
+  it("executes in happy-dom", async () => {
+    const window = new Window({ width: 800, height: 600 });
+    try {
+      window.document.write(assembleSrcdoc(tsProject, { harnessJs: HARNESS_JS }));
+      expect(window.document.getElementById("out")!.textContent).toBe("30");
+    } finally {
+      await window.happyDOM.abort();
+      window.close();
+    }
+  });
+});
+
 describe("localStorage seed", () => {
   it("is inlined before the harness so page code can read it synchronously", () => {
     const out = assembleSrcdoc(project, { harnessJs: "/*H*/", storage: { "shopmn-cart": "[]" } });

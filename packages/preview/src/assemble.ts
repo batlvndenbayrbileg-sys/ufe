@@ -2,6 +2,8 @@ import { transpileJsx, REACT_RUNTIME_JS } from "@khiye/checkers/assemble";
 import type { FileSet } from "./protocol";
 
 const isJsx = (p: string) => /\.(jsx|tsx)$/.test(p);
+/** Plain TypeScript: same strip, but it needs no React runtime. */
+const isTs = (p: string) => /\.ts$/.test(p);
 /** A `<script src>` the platform provides rather than the workspace. */
 const isSqliteRuntime = (p: string) => /(^|\/)sqlite\.js$/.test(p);
 
@@ -67,6 +69,11 @@ export function assembleSrcdoc(files: FileSet, opts: AssembleOptions): string {
           return `<script>\n${opts.sqliteRuntime}\n</script>`;
         }
         return tag;
+      }
+      if (isTs(src)) {
+        return `<script>
+${transpileJsx(js.content, src)}
+</script>`;
       }
       if (isJsx(src)) {
         needsReact = true;

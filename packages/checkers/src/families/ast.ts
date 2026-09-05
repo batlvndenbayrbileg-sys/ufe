@@ -14,6 +14,7 @@ interface AstIndex {
   memberProps: Set<string>;
   identifiers: Set<string>;
   functionNames: Set<string>;
+  typeNames: Set<string>; // interface X / type X
   constNames: Set<string>;
   hasVar: boolean;
   imports: Map<string, Set<string>>; // source → named specifiers
@@ -40,6 +41,7 @@ function indexFile(source: string): AstIndex {
     memberProps: new Set(),
     identifiers: new Set(),
     functionNames: new Set(),
+    typeNames: new Set(),
     constNames: new Set(),
     hasVar: false,
     imports: new Map(),
@@ -72,6 +74,12 @@ function indexFile(source: string): AstIndex {
           const prop = callee.property as AstNode;
           if (prop?.type === "Identifier") idx.callNames.add(prop.name as string);
         }
+        break;
+      }
+      case "TSInterfaceDeclaration":
+      case "TSTypeAliasDeclaration": {
+        const id = n.id as AstNode | null;
+        if (id?.type === "Identifier") idx.typeNames.add(id.name as string);
         break;
       }
       case "FunctionDeclaration": {
@@ -126,8 +134,10 @@ registerChecker("ast.declares", (args, ctx) =>
     const name = String(args.name);
     const kind = args.kind as string | undefined;
     const found =
-      (kind !== "const" && idx.functionNames.has(name)) ||
-      (kind !== "function" && idx.constNames.has(name));
+      kind === "interface" || kind === "type"
+        ? idx.typeNames.has(name)
+        : (kind !== "const" && idx.functionNames.has(name)) ||
+          (kind !== "function" && idx.constNames.has(name));
     return found ? pass({ actual: name }) : fail("not declared", `${kind ?? ""} ${name}`.trim());
   }),
 );

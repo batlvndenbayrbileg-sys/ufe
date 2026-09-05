@@ -1,0 +1,18 @@
+{
+  "id": "m16-typescript",
+  "stageId": "s12",
+  "order": 1,
+  "title": {
+    "mn": "TypeScript"
+  },
+  "description": {
+    "mn": "Төрлийн тэмдэглэгээ, interface, union, narrowing, generic — жинхэнэ хөрвүүлэгчээр шалгуулна."
+  },
+  "estimatedHours": 2,
+  "lessons": [
+    "m16-l1",
+    "m16-l2",
+    "m16-l3",
+    "m16-l4"
+  ]
+}

@@ -43,6 +43,8 @@ export function transpileJsx(code: string, path: string): string {
 }
 
 const isJsx = (p: string) => /\.(jsx|tsx)$/.test(p);
+/** Plain TypeScript: same strip, but it needs no React runtime. */
+const isTs = (p: string) => /\.ts$/.test(p);
 
 /**
  * Assemble a single HTML string from a Tier-1 workspace, inlining referenced
@@ -97,6 +99,11 @@ export function assembleHtml(
         return tag;
       }
       const isModule = /type=["']module["']/i.test(tag);
+      if (isTs(src)) {
+        return `<script>
+${transpileJsx(js.content, src)}
+</script>`;
+      }
       if (isJsx(src)) {
         needsReact = true;
         return `<script>\n${transpileJsx(js.content, src)}\n</script>`;

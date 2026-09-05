@@ -5,6 +5,7 @@ import { runChecks } from "./registry";
 import { assembleHtml } from "./assemble";
 import type { CheckDef, CheckerContext, CheckResult, FileSet } from "./types";
 import "./index"; // register all families
+import "./families/ts"; // Node-only: the real TypeScript compiler
 
 export interface RunOptions {
   entry?: string;

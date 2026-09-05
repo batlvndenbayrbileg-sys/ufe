@@ -82,5 +82,12 @@
       "mn": "Хүртээмж"
     },
     "order": 12
+  },
+  {
+    "id": "typescript",
+    "title": {
+      "mn": "TypeScript"
+    },
+    "order": 13
   }
 ]

@@ -1,0 +1,223 @@
+{
+  "id": "m16-l3",
+  "moduleId": "m16-typescript",
+  "slug": "narrowing",
+  "order": 3,
+  "title": {
+    "mn": "Нарийсгах (narrowing)"
+  },
+  "why": {
+    "mn": "Shop.mn-ий өгөгдөл ачаалах гурван төлөвтэй. Шинэ төлөв нэмэхэд түүнийг боловсруулахаа мартвал хэрэглэгч хоосон дэлгэц харна. TypeScript бүх салааг хамарсан эсэхийг ШАЛГАЖ чадна."
+  },
+  "buildsInProject": "Төлөвийн тайлбар",
+  "difficulty": "advanced",
+  "estimatedMinutes": 22,
+  "skills": [
+    "typescript",
+    "javascript"
+  ],
+  "concepts": [
+    "narrowing",
+    "switch",
+    "exhaustiveness",
+    "return type"
+  ],
+  "prerequisites": [
+    "m16-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — TypeScript</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — TypeScript</h1>\n    <ul id=\"output\"></ul>\n\n    <script src=\"src/cart.ts\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\n#output {\n  list-style: none;\n  padding: 0;\n  max-width: 520px;\n}\n\n#output li {\n  display: flex;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 16px;\n  background-color: #ffffff;\n  border-radius: 8px;\n  padding: 10px 14px;\n  margin-bottom: 8px;\n}\n\n#output span { color: #3f3f46; font-size: 14px; }\n\n#output code {\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  font-weight: 700;\n  color: #1d4ed8;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/cart.ts",
+        "content": "// Shop.mn — TypeScript.\n// Preview нь төрлийг хуулаад ажиллуулна; «Шалгах» дарахад ЖИНХЭНЭ TypeScript\n// хөрвүүлэгч төрлүүдийг чинь шалгана.\n\ninterface CartItem {\n  id: number;\n  name: string;\n  price: number;\n  quantity: number;\n}\n\nfunction cartTotal(items: CartItem[]): number {\n  return items.reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0);\n}\n\ntype DiscountCode = \"ШИНЭ10\" | \"ЗУН20\" | \"БАЙХГҮЙ\";\n\nfunction applyDiscount(total: number, code: DiscountCode): number {\n  if (code === \"ШИНЭ10\") return Math.round(total * 0.9);\n  if (code === \"ЗУН20\") return Math.round(total * 0.8);\n  return total;\n}\n\n// энд бичнэ үү\nfunction describeStatus(status) {\n  return status;\n}\n\n// Tier 1-д модуль байхгүй тул функцүүдээ ил гаргана.\n(globalThis as unknown as Record<string, unknown>).SHOP = { cartTotal, applyDiscount, describeStatus };\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// Үр дүнг харуулах жижиг самбар. Энэ файлыг өөрчлөх шаардлагагүй.\n\nconst output = document.getElementById(\"output\");\n\nfunction row(label, value) {\n  const line = document.createElement(\"li\");\n  const name = document.createElement(\"span\");\n  name.textContent = label;\n  const result = document.createElement(\"code\");\n  result.textContent = value;\n  line.append(name, result);\n  output.append(line);\n}\n\n(function () {\n  const shop = window.SHOP || {};\n  window.OUT = {};\n\n  const items = [\n    { id: 1, name: \"Монгол дээл\", price: 129000, quantity: 2 },\n    { id: 2, name: \"Малгай\", price: 45000, quantity: 1 },\n  ];\n\n  try {\n    if (typeof shop.cartTotal === \"function\") {\n      window.OUT.total = shop.cartTotal(items);\n      row(\"cartTotal(2 бараа)\", String(window.OUT.total));\n    }\n\n    if (typeof shop.applyDiscount === \"function\") {\n      window.OUT.discounted = shop.applyDiscount(100000, \"ШИНЭ10\");\n      window.OUT.untouched = shop.applyDiscount(100000, \"БАЙХГҮЙ\");\n      row('applyDiscount(100000, \"ШИНЭ10\")', String(window.OUT.discounted));\n      row('applyDiscount(100000, \"БАЙХГҮЙ\")', String(window.OUT.untouched));\n    }\n\n    if (typeof shop.describeStatus === \"function\") {\n      window.OUT.statuses = [\"loading\", \"error\", \"ready\"].map(shop.describeStatus);\n      for (const [i, s] of [\"loading\", \"error\", \"ready\"].entries()) {\n        row('describeStatus(\"' + s + '\")', window.OUT.statuses[i]);\n      }\n    }\n\n    if (typeof shop.first === \"function\") {\n      window.OUT.firstItem = shop.first(items);\n      window.OUT.firstEmpty = shop.first([]);\n      row(\"first(items).name\", String(window.OUT.firstItem && window.OUT.firstItem.name));\n      row(\"first([])\", String(window.OUT.firstEmpty));\n    }\n  } catch (problem) {\n    row(\"алдаа\", problem.message);\n  }\n\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/cart.ts",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/cart.ts"
+    ],
+    "activeFile": "src/cart.ts"
+  },
+  "tasks": [
+    {
+      "id": "m16-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Нарийсгах (narrowing)"
+      },
+      "statement": {
+        "mn": "1) `LoadStatus` төрөл зарла: `\"loading\" | \"error\" | \"ready\"`. 2) `describeStatus(status: LoadStatus): string` бич — `switch`-ээр гурван салаа бүрд монгол мессеж буцаа («Ачаалж байна…», «Алдаа гарлаа», «Бэлэн»). Салаа дутвал буцаах төрөл `string | undefined` болж, хөрвүүлэгч татгалзана."
+      },
+      "requirements": [
+        {
+          "mn": "`LoadStatus` төрөл"
+        },
+        {
+          "mn": "`switch` гурван салаатай"
+        },
+        {
+          "mn": "Буцаах нь `string`"
+        },
+        {
+          "mn": "Хөрвүүлэлт алдаагүй"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Гурван төлөв тус бүр монгол мессеж болж хувирна."
+        }
+      },
+      "targetFile": "src/cart.ts",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ts.typecheck",
+          "args": {},
+          "onFail": {
+            "mn": "TypeScript хөрвүүлэгч алдаа олсон байна — мессежийг уншаад засаарай."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/cart.ts",
+            "kind": "type",
+            "name": "LoadStatus"
+          },
+          "onFail": {
+            "mn": "`LoadStatus` төрөл зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "ts.rejects",
+          "args": {
+            "file": "src/cart.ts",
+            "code": "const bad = describeStatus(\"pending\");"
+          },
+          "onFail": {
+            "mn": "Танихгүй төлөвийг хөрвүүлэгч татгалзах ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "ts.rejects",
+          "args": {
+            "file": "src/cart.ts",
+            "code": "const bad: number = describeStatus(\"ready\");"
+          },
+          "onFail": {
+            "mn": "`describeStatus` нь `string` буцаах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(window.OUT.statuses)",
+                  "equals": "[\"Ачаалж байна…\",\"Алдаа гарлаа\",\"Бэлэн\"]"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Гурван төлөв тус бүрдээ зөв мессеж буцаах ёстой."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`switch` доторх салаа бүрд TypeScript нь `status`-ийг тухайн ГАНЦ утга гэж мэднэ. Үүнийг narrowing гэдэг — төрлийг нөхцөлөөр нарийсгах."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Хэрэв нэг салааг мартвал функц заримдаа юу ч буцаахгүй тул төрөл нь `string | undefined` болно. `: string` гэж зарласан байвал хөрвүүлэгч тэр дороо хэлнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гурван салаагаа гүйцээ:"
+          },
+          "code": "function describeStatus(status: LoadStatus): string {\n  switch (status) {\n    case \"loading\":\n      return \"Ачаалж байна…\";\n    /* error ба ready */\n  }\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/cart.ts",
+            "content": "// Shop.mn — TypeScript.\n// Preview нь төрлийг хуулаад ажиллуулна; «Шалгах» дарахад ЖИНХЭНЭ TypeScript\n// хөрвүүлэгч төрлүүдийг чинь шалгана.\n\ninterface CartItem {\n  id: number;\n  name: string;\n  price: number;\n  quantity: number;\n}\n\nfunction cartTotal(items: CartItem[]): number {\n  return items.reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0);\n}\n\ntype DiscountCode = \"ШИНЭ10\" | \"ЗУН20\" | \"БАЙХГҮЙ\";\n\nfunction applyDiscount(total: number, code: DiscountCode): number {\n  if (code === \"ШИНЭ10\") return Math.round(total * 0.9);\n  if (code === \"ЗУН20\") return Math.round(total * 0.8);\n  return total;\n}\n\ntype LoadStatus = \"loading\" | \"error\" | \"ready\";\n\nfunction describeStatus(status: LoadStatus): string {\n  switch (status) {\n    case \"loading\":\n      return \"Ачаалж байна…\";\n    case \"error\":\n      return \"Алдаа гарлаа\";\n    case \"ready\":\n      return \"Бэлэн\";\n  }\n}\n\n// Tier 1-д модуль байхгүй тул функцүүдээ ил гаргана.\n(globalThis as unknown as Record<string, unknown>).SHOP = { cartTotal, applyDiscount, describeStatus };\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Буцаах төрлийг илэрхий зарлах нь энд бүх салааг хамрах шалгуур болж өгдөг: дараа нь `LoadStatus`-д дөрөв дэх төлөв нэмэхэд `describeStatus` тэр дороо улаан болно. Төрлийн систем нь ингэж «мартах»-ыг боломжгүй болгодог."
+        },
+        "xpPenalty": 27
+      },
+      "xp": 45,
+      "estimatedMinutes": 20,
+      "skills": [
+        "typescript"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 30
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

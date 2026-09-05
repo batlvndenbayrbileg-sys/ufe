@@ -134,6 +134,17 @@
       "moduleIds": [
         "m15-a11y"
       ]
+    },
+    {
+      "id": "s12",
+      "order": 12,
+      "title": {
+        "mn": "TypeScript"
+      },
+      "badgeId": "type-safe",
+      "moduleIds": [
+        "m16-typescript"
+      ]
     }
   ]
 }

@@ -1,0 +1,229 @@
+{
+  "id": "m16-l2",
+  "moduleId": "m16-typescript",
+  "slug": "union-types",
+  "order": 2,
+  "title": {
+    "mn": "Нэгдмэл төрөл (union)"
+  },
+  "why": {
+    "mn": "Shop.mn-ий хөнгөлөлтийн кодыг `string` гэж зарлавал `\"ШИНЭ100\"` гэсэн үсгийн алдаа хөрвүүлэгчээс мултарч, production дээр л илэрнэ. Зөвхөн ЗӨВШӨӨРӨГДСӨН утгуудыг жагсаавал алдаа бичиж байх үед улаанаар гарна."
+  },
+  "buildsInProject": "Хөнгөлөлтийн кодын төрөл",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "typescript",
+    "javascript"
+  ],
+  "concepts": [
+    "union type",
+    "literal types",
+    "type alias",
+    "autocomplete"
+  ],
+  "prerequisites": [
+    "m16-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — TypeScript</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — TypeScript</h1>\n    <ul id=\"output\"></ul>\n\n    <script src=\"src/cart.ts\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\n#output {\n  list-style: none;\n  padding: 0;\n  max-width: 520px;\n}\n\n#output li {\n  display: flex;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 16px;\n  background-color: #ffffff;\n  border-radius: 8px;\n  padding: 10px 14px;\n  margin-bottom: 8px;\n}\n\n#output span { color: #3f3f46; font-size: 14px; }\n\n#output code {\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  font-weight: 700;\n  color: #1d4ed8;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/cart.ts",
+        "content": "// Shop.mn — TypeScript.\n// Preview нь төрлийг хуулаад ажиллуулна; «Шалгах» дарахад ЖИНХЭНЭ TypeScript\n// хөрвүүлэгч төрлүүдийг чинь шалгана.\n\ninterface CartItem {\n  id: number;\n  name: string;\n  price: number;\n  quantity: number;\n}\n\nfunction cartTotal(items: CartItem[]): number {\n  return items.reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0);\n}\n\n// энд бичнэ үү\nfunction applyDiscount(total, code) {\n  if (code === \"ШИНЭ10\") return Math.round(total * 0.9);\n  if (code === \"ЗУН20\") return Math.round(total * 0.8);\n  return total;\n}\n\n// Tier 1-д модуль байхгүй тул функцүүдээ ил гаргана.\n(globalThis as unknown as Record<string, unknown>).SHOP = { cartTotal, applyDiscount };\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// Үр дүнг харуулах жижиг самбар. Энэ файлыг өөрчлөх шаардлагагүй.\n\nconst output = document.getElementById(\"output\");\n\nfunction row(label, value) {\n  const line = document.createElement(\"li\");\n  const name = document.createElement(\"span\");\n  name.textContent = label;\n  const result = document.createElement(\"code\");\n  result.textContent = value;\n  line.append(name, result);\n  output.append(line);\n}\n\n(function () {\n  const shop = window.SHOP || {};\n  window.OUT = {};\n\n  const items = [\n    { id: 1, name: \"Монгол дээл\", price: 129000, quantity: 2 },\n    { id: 2, name: \"Малгай\", price: 45000, quantity: 1 },\n  ];\n\n  try {\n    if (typeof shop.cartTotal === \"function\") {\n      window.OUT.total = shop.cartTotal(items);\n      row(\"cartTotal(2 бараа)\", String(window.OUT.total));\n    }\n\n    if (typeof shop.applyDiscount === \"function\") {\n      window.OUT.discounted = shop.applyDiscount(100000, \"ШИНЭ10\");\n      window.OUT.untouched = shop.applyDiscount(100000, \"БАЙХГҮЙ\");\n      row('applyDiscount(100000, \"ШИНЭ10\")', String(window.OUT.discounted));\n      row('applyDiscount(100000, \"БАЙХГҮЙ\")', String(window.OUT.untouched));\n    }\n\n    if (typeof shop.describeStatus === \"function\") {\n      window.OUT.statuses = [\"loading\", \"error\", \"ready\"].map(shop.describeStatus);\n      for (const [i, s] of [\"loading\", \"error\", \"ready\"].entries()) {\n        row('describeStatus(\"' + s + '\")', window.OUT.statuses[i]);\n      }\n    }\n\n    if (typeof shop.first === \"function\") {\n      window.OUT.firstItem = shop.first(items);\n      window.OUT.firstEmpty = shop.first([]);\n      row(\"first(items).name\", String(window.OUT.firstItem && window.OUT.firstItem.name));\n      row(\"first([])\", String(window.OUT.firstEmpty));\n    }\n  } catch (problem) {\n    row(\"алдаа\", problem.message);\n  }\n\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/cart.ts",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/cart.ts"
+    ],
+    "activeFile": "src/cart.ts"
+  },
+  "tasks": [
+    {
+      "id": "m16-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Нэгдмэл төрөл (union)"
+      },
+      "statement": {
+        "mn": "`DiscountCode` нэртэй төрөл зарла: зөвхөн `\"ШИНЭ10\"`, `\"ЗУН20\"`, `\"БАЙХГҮЙ\"` гурвыг зөвшөөрнө (`type DiscountCode = \"…\" | \"…\" | \"…\";`). Дараа нь `applyDiscount`-д төрөл өг: `total: number`, `code: DiscountCode`, буцаах нь `number`."
+      },
+      "requirements": [
+        {
+          "mn": "`DiscountCode` төрөл"
+        },
+        {
+          "mn": "Гурван утга л зөвшөөрнө"
+        },
+        {
+          "mn": "`applyDiscount` төрөлжсөн"
+        },
+        {
+          "mn": "Хөрвүүлэлт алдаагүй"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Танихгүй код бичихэд хөрвүүлэгч тэр дороо татгалзана."
+        }
+      },
+      "targetFile": "src/cart.ts",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ts.typecheck",
+          "args": {},
+          "onFail": {
+            "mn": "TypeScript хөрвүүлэгч алдаа олсон байна — мессежийг уншаад засаарай."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/cart.ts",
+            "kind": "type",
+            "name": "DiscountCode"
+          },
+          "onFail": {
+            "mn": "`DiscountCode` төрөл зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "ts.rejects",
+          "args": {
+            "file": "src/cart.ts",
+            "code": "const bad = applyDiscount(100000, \"ШИНЭ100\");"
+          },
+          "onFail": {
+            "mn": "Танихгүй кодыг хөрвүүлэгч татгалзах ёстой — `string` биш, тодорхой утгуудыг жагсаагаарай."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "ts.rejects",
+          "args": {
+            "file": "src/cart.ts",
+            "code": "const bad = applyDiscount(\"100000\", \"ШИНЭ10\");"
+          },
+          "onFail": {
+            "mn": "`total` нь `number` байх ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.OUT.discounted",
+                  "equals": 90000
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "window.OUT.untouched",
+                  "equals": 100000
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хөнгөлөлт хэвээр ажиллах ёстой: ШИНЭ10 → 90000, танихгүй код → өөрчлөгдөхгүй."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Union төрөл нь «эдгээрийн аль нэг» гэсэн утгатай. Текстийн ТОДОРХОЙ утгуудыг жагсаавал зөвхөн тэдгээр л зөвшөөрөгдөнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Ийм төрлийн далд ашиг: редактор автоматаар гурван кодыг санал болгоно. Төрөл нь баримт бичиг болж хувирдаг."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Төрлөө зарлаад функцдээ хэрэглэ:"
+          },
+          "code": "type DiscountCode = /* гурван утгыг | -ээр холбо */;\n\nfunction applyDiscount(total: /* ? */, code: /* ? */): /* ? */ {"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/cart.ts",
+            "content": "// Shop.mn — TypeScript.\n// Preview нь төрлийг хуулаад ажиллуулна; «Шалгах» дарахад ЖИНХЭНЭ TypeScript\n// хөрвүүлэгч төрлүүдийг чинь шалгана.\n\ninterface CartItem {\n  id: number;\n  name: string;\n  price: number;\n  quantity: number;\n}\n\nfunction cartTotal(items: CartItem[]): number {\n  return items.reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0);\n}\n\ntype DiscountCode = \"ШИНЭ10\" | \"ЗУН20\" | \"БАЙХГҮЙ\";\n\nfunction applyDiscount(total: number, code: DiscountCode): number {\n  if (code === \"ШИНЭ10\") return Math.round(total * 0.9);\n  if (code === \"ЗУН20\") return Math.round(total * 0.8);\n  return total;\n}\n\n// Tier 1-д модуль байхгүй тул функцүүдээ ил гаргана.\n(globalThis as unknown as Record<string, unknown>).SHOP = { cartTotal, applyDiscount };\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Литерал union бол TypeScript-ийн хамгийн их үнэ цэнэ өгдөг хэрэгслүүдийн нэг: `string` гэдэг нь тэрбум утга, `\"ШИНЭ10\" | \"ЗУН20\"` гэдэг нь хоёр. Боломжит утгын тоог багасгах тусам алдаж болох зай багасна."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "typescript"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 30
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

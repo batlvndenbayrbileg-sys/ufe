@@ -23,7 +23,8 @@
     "@babel/parser": "7.26.5",
     "happy-dom": "15.11.7",
     "sucrase": "^3.35.0",
-    "sql.js": "1.14.2"
+    "sql.js": "1.14.2",
+    "typescript": "5.7.3"
   },
   "devDependencies": {
     "@types/node": "22.10.7",
@@ -31,7 +32,6 @@
     "eslint": "9.18.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "typescript": "5.7.3",
     "vitest": "2.1.8"
   }
 }

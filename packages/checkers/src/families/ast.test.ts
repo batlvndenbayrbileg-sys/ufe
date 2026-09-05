@@ -18,6 +18,15 @@ describe("ast.*", () => {
     expect((await run("ast.declares", { name: "missing" }, "const cart=[];")).passed).toBe(false);
   });
 
+  it("ast.declares finds TypeScript interfaces and type aliases", async () => {
+    const ts = 'interface CartItem { id: number }\ntype DiscountCode = "ШИНЭ10" | "ЗУН20";\nfunction cartTotal(){}';
+    expect((await run("ast.declares", { name: "CartItem", kind: "interface" }, ts)).passed).toBe(true);
+    expect((await run("ast.declares", { name: "DiscountCode", kind: "type" }, ts)).passed).toBe(true);
+    // A function is not a type, and a missing one is still missing.
+    expect((await run("ast.declares", { name: "cartTotal", kind: "interface" }, ts)).passed).toBe(false);
+    expect((await run("ast.declares", { name: "Nothing", kind: "type" }, ts)).passed).toBe(false);
+  });
+
   it("ast.callsFunction detects fn() and obj.method()", async () => {
     expect((await run("ast.callsFunction", { name: "fetch" }, "fetch('/api')")).passed).toBe(true);
     expect((await run("ast.callsFunction", { name: "map" }, "products.map(p=>p)")).passed).toBe(true);
