@@ -1,0 +1,247 @@
+{
+  "id": "m14-l2",
+  "moduleId": "m14-testing",
+  "slug": "edge-cases",
+  "order": 2,
+  "title": {
+    "mn": "Хилийн тохиолдол"
+  },
+  "why": {
+    "mn": "Алдаа голдуу «дунд» биш, ЗАХ дээр гардаг: хоосон сагс, ганц бараа, тэг тоо. Shop.mn-ий сагс хоосон үед 1 төгрөг харуулбал хэрэглэгч тэр дороо итгэлээ алдана."
+  },
+  "buildsInProject": "Хилийн тохиолдлын тестүүд",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 18,
+  "skills": [
+    "testing",
+    "javascript"
+  ],
+  "concepts": [
+    "edge cases",
+    "empty input",
+    "boundary",
+    "mutation testing"
+  ],
+  "prerequisites": [
+    "m14-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — тестүүд</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — тестүүд</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/shop.js\"></script>\n    <script src=\"src/tests.js\"></script>\n    <script src=\"src/runner.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\nh2 { font-size: 16px; margin: 0 0 8px; }\n\n.suite {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.suite.ok { border-left-color: #0a7a35; }\n.suite.bad { border-left-color: #b91c1c; }\n\n.suite ul {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n}\n\n.suite li {\n  padding: 4px 0;\n  font-size: 14px;\n  border-bottom: 1px solid #f4f4f5;\n}\n\n.suite li:last-child { border-bottom: none; }\n\n.suite li.ok { color: #14532d; }\n.suite li.bad { color: #991b1b; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/shop.js",
+        "content": "// Shop.mn-ий тооцооллын функцүүд. Энэ файлыг өөрчлөх шаардлагагүй —\n// таны ажил бол эдгээрийг ШАЛГАХ тест бичих.\n\nfunction cartTotal(items) {\n  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);\n}\n\nfunction applyDiscount(total, code) {\n  if (code === \"ШИНЭ10\") return Math.round(total * 0.9);\n  if (code === \"ЗУН20\") return Math.round(total * 0.8);\n  return total;\n}\n\nfunction validateOrder(order) {\n  if (!order.items || order.items.length === 0) {\n    throw new Error(\"Сагс хоосон байна\");\n  }\n\n  if (!/^\\d{8}$/.test(order.phone || \"\")) {\n    throw new Error(\"Утасны дугаар буруу\");\n  }\n\n  return true;\n}\n\nwindow.SHOP = { cartTotal, applyDiscount, validateOrder };\n"
+      },
+      {
+        "op": "create",
+        "path": "src/tests.js",
+        "content": "// Shop.mn-ий тестүүд.\n// it(\"тайлбар\", () => { expect(...).toBe(...); });\n\nfunction tests() {\n  it(\"хоёр барааны нийлбэрийг тоо ширхэгээр нь бодно\", () => {\n    const items = [\n      { name: \"Дээл\", price: 100000, quantity: 2 },\n      { name: \"Малгай\", price: 45000, quantity: 1 },\n    ];\n    expect(cartTotal(items)).toBe(245000);\n  });\n\n  it(\"нэг ширхэг бараа өөрийнхөө үнэтэй тэнцэнэ\", () => {\n    expect(cartTotal([{ name: \"Малгай\", price: 45000, quantity: 1 }])).toBe(45000);\n  });\n\n  // энд бичнэ үү\n}\n\nwindow.tests = tests;\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runner.js",
+        "content": "// Жижиг тест ажиллуулагч. Энэ файлыг өөрчлөх шаардлагагүй.\n//\n// Таны тестийг ХОЁР удаа ажиллуулна:\n//   1) зөв хувилбар дээр — бүгд ДАВАХ ёстой,\n//   2) санаатай эвдэрсэн хувилбар бүр дээр — дор хаяж нэг нь УНАХ ёстой.\n// Унахгүй бол тэр тест алдааг барьж чадахгүй гэсэн үг.\n\nconst MUTANTS = {\n  noQuantity: {\n    label: \"Тоо ширхэгээр үржүүлэхээ мартсан\",\n    fn: \"cartTotal\",\n    impl: (items) => items.reduce((sum, item) => sum + item.price, 0),\n  },\n  emptyOne: {\n    label: \"Хоосон сагсанд 0-ийн оронд 1 буцаадаг\",\n    fn: \"cartTotal\",\n    impl: (items) => (items.length === 0 ? 1 : SHOP.cartTotal(items)),\n  },\n};\n\nconst output = document.getElementById(\"output\");\n\nlet current = null;\n\nfunction it(name, body) {\n  const result = { name: name, passed: true, message: null };\n\n  try {\n    body();\n  } catch (problem) {\n    result.passed = false;\n    result.message = problem.message;\n  }\n\n  current.cases.push(result);\n  if (!result.passed) current.failed += 1;\n  current.total += 1;\n}\n\nfunction expect(actual) {\n  return {\n    toBe(expected) {\n      if (!Object.is(actual, expected)) {\n        throw new Error(\"хүлээсэн \" + JSON.stringify(expected) + \", гарсан \" + JSON.stringify(actual));\n      }\n    },\n    toEqual(expected) {\n      if (JSON.stringify(actual) !== JSON.stringify(expected)) {\n        throw new Error(\"хүлээсэн \" + JSON.stringify(expected) + \", гарсан \" + JSON.stringify(actual));\n      }\n    },\n    toThrow(message) {\n      if (typeof actual !== \"function\") {\n        throw new Error(\"toThrow нь функц хүлээдэг: expect(() => ...).toThrow()\");\n      }\n      let thrown = null;\n      try {\n        actual();\n      } catch (problem) {\n        thrown = problem;\n      }\n      if (!thrown) throw new Error(\"алдаа шидэх ёстой байсан ч шидсэнгүй\");\n      if (message !== undefined && !String(thrown.message).includes(message)) {\n        throw new Error(\"алдааны мессежид «\" + message + \"» байх ёстой, гарсан: \" + thrown.message);\n      }\n    },\n  };\n}\n\nwindow.it = it;\nwindow.expect = expect;\n\nfunction runSuite(label) {\n  current = { label: label, cases: [], failed: 0, total: 0 };\n  try {\n    tests();\n  } catch (problem) {\n    current.cases.push({ name: \"(тест ажиллуулахад алдаа)\", passed: false, message: problem.message });\n    current.failed += 1;\n    current.total += 1;\n  }\n  return current;\n}\n\nfunction useImplementation(overrides) {\n  window.cartTotal = overrides.cartTotal || SHOP.cartTotal;\n  window.applyDiscount = overrides.applyDiscount || SHOP.applyDiscount;\n  window.validateOrder = overrides.validateOrder || SHOP.validateOrder;\n}\n\nfunction panel(title, className, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"suite \" + className;\n\n  const heading = document.createElement(\"h2\");\n  heading.textContent = title;\n  box.append(heading);\n\n  const list = document.createElement(\"ul\");\n  for (const line of lines) {\n    const li = document.createElement(\"li\");\n    li.className = line.ok ? \"ok\" : \"bad\";\n    li.textContent = (line.ok ? \"✓ \" : \"✗ \") + line.text;\n    list.append(li);\n  }\n  box.append(list);\n  output.append(box);\n}\n\n(function () {\n  window.TEST_REPORT = {};\n\n  // 1. Зөв хувилбар дээр.\n  useImplementation({});\n  const correct = runSuite(\"correct\");\n  window.TEST_REPORT.correct = { failed: correct.failed, total: correct.total };\n\n  panel(\n    \"Зөв хувилбар — \" + (correct.total - correct.failed) + \"/\" + correct.total,\n    correct.failed === 0 ? \"ok\" : \"bad\",\n    correct.cases.map((c) => ({ ok: c.passed, text: c.name + (c.passed ? \"\" : \" — \" + c.message) })),\n  );\n\n  // 2. Эвдэрсэн хувилбар бүр дээр: тестүүд алдааг барих ёстой.\n  const caught = [];\n  for (const key of Object.keys(MUTANTS)) {\n    const mutant = MUTANTS[key];\n    useImplementation({ [mutant.fn]: mutant.impl });\n    const run = runSuite(key);\n    window.TEST_REPORT[key] = { failed: run.failed, total: run.total };\n    caught.push({ ok: run.failed > 0, text: mutant.label });\n  }\n\n  panel(\"Эвдэрсэн хувилбаруудыг барьсан эсэх\", caught.every((c) => c.ok) ? \"ok\" : \"bad\", caught);\n\n  useImplementation({});\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/shop.js",
+      "src/tests.js",
+      "src/runner.js"
+    ],
+    "openFiles": [
+      "src/tests.js"
+    ],
+    "activeFile": "src/tests.js"
+  },
+  "tasks": [
+    {
+      "id": "m14-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хилийн тохиолдол"
+      },
+      "statement": {
+        "mn": "Хоосон сагсны тест нэм: `cartTotal([])` нь `0` байх ёстой. Одоо байгаа хоёр тест хэвээр үлдэнэ — гурвуулаа зөв хувилбар дээр давж, хоёр эвдэрсэн хувилбарыг барих ёстой."
+      },
+      "requirements": [
+        {
+          "mn": "Гурваас доошгүй тест"
+        },
+        {
+          "mn": "Хоосон сагсны тохиолдол"
+        },
+        {
+          "mn": "Хоёр эвдрэлийг барина"
+        },
+        {
+          "mn": "Бүгд зөв хувилбар дээр давна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Хоосон сагсны тест «хоосонд 1 буцаадаг» эвдэрсэн хувилбарыг барина."
+        }
+      },
+      "targetFile": "src/tests.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.correct.failed",
+                  "equals": 0
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Зөв хувилбар дээр бүх тест давах ёстой — эхлээд өөрийн хүлээлт зөв эсэхээ шалгаарай."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.correct.total >= 3",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дор хаяж 3 тест бичих ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.noQuantity.failed > 0",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Тоо ширхэгээр үржүүлэхээ мартсан» алдааг тест бариагүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.emptyOne.failed > 0",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Хоосон сагсанд 1 буцаадаг» алдааг тест бариагүй байна — `cartTotal([])`-ийг шалгаарай."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Шинэ функц харах бүрдээ өөрөөсөө асуу: хоосон бол? Ганц бол? Хамгийн их бол? Сөрөг бол? Алдаанууд бараг үргэлж эндээс олддог."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Хоосон сагс бол алдаа биш — хүчинтэй төлөв. Тиймээс алдаа шидэхийг биш, `0`-ийг хүлээнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гурав дахь тестээ нэм:"
+          },
+          "code": "it(\"хоосон сагс 0 төгрөг\", () => {\n  expect(cartTotal(/* хоосон массив */)).toBe(/* хэд байх ёстой вэ? */);\n});"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/tests.js",
+            "content": "// Shop.mn-ий тестүүд.\n// it(\"тайлбар\", () => { expect(...).toBe(...); });\n\nfunction tests() {\n  it(\"хоёр барааны нийлбэрийг тоо ширхэгээр нь бодно\", () => {\n    const items = [\n      { name: \"Дээл\", price: 100000, quantity: 2 },\n      { name: \"Малгай\", price: 45000, quantity: 1 },\n    ];\n    expect(cartTotal(items)).toBe(245000);\n  });\n\n  it(\"нэг ширхэг бараа өөрийнхөө үнэтэй тэнцэнэ\", () => {\n    expect(cartTotal([{ name: \"Малгай\", price: 45000, quantity: 1 }])).toBe(45000);\n  });\n\n  it(\"хоосон сагс 0 төгрөг\", () => {\n    expect(cartTotal([])).toBe(0);\n  });\n}\n\nwindow.tests = tests;\n"
+          }
+        ],
+        "explanation": {
+          "mn": "«Хилийн тохиолдол» гэдэг нь оролтын зах — хоосон, нэг, хамгийн их, тэг, сөрөг. Бодит алдааны дийлэнх нь эндээс гардаг тул туршлагатай хөгжүүлэгч тест бичихдээ эхлээд захыг нь бичдэг. Дундаж тохиолдол нь ихэвчлэн өөрөө ажилладаг."
+        },
+        "xpPenalty": 21
+      },
+      "xp": 35,
+      "estimatedMinutes": 16,
+      "skills": [
+        "testing"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

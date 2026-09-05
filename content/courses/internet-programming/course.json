@@ -112,6 +112,17 @@
       "moduleIds": [
         "m13-deploy"
       ]
+    },
+    {
+      "id": "s10",
+      "order": 10,
+      "title": {
+        "mn": "Тест ба чанар"
+      },
+      "badgeId": "test-writer",
+      "moduleIds": [
+        "m14-testing"
+      ]
     }
   ]
 }

@@ -68,5 +68,12 @@
       "mn": "Deploy"
     },
     "order": 10
+  },
+  {
+    "id": "testing",
+    "title": {
+      "mn": "Тест"
+    },
+    "order": 11
   }
 ]
