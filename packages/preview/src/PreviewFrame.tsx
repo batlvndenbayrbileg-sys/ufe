@@ -1,7 +1,8 @@
 "use client";
 
-import { forwardRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
+import { forwardRef, useState, type ReactNode, type RefObject } from "react";
 import { PreviewHost, type PreviewHostHandle, type PreviewHostProps } from "./PreviewHost";
+import s from "./PreviewFrame.module.css";
 
 export interface DevicePreset {
   id: string;
@@ -23,16 +24,6 @@ export interface PreviewFrameProps extends Omit<PreviewHostProps, "width" | "hei
   toolbarExtra?: ReactNode;
 }
 
-const btn: CSSProperties = {
-  padding: "4px 8px",
-  borderRadius: 6,
-  border: "1px solid var(--border, #e4e4e7)",
-  background: "var(--surface, #fff)",
-  color: "var(--text, #18181b)",
-  cursor: "pointer",
-  fontSize: 12,
-};
-
 export const PreviewFrame = forwardRef<PreviewHostHandle, PreviewFrameProps>(function PreviewFrame(
   { expectedImage, toolbarExtra, ...hostProps },
   ref,
@@ -45,103 +36,98 @@ export const PreviewFrame = forwardRef<PreviewHostHandle, PreviewFrameProps>(fun
   const fit = device === "fit";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
-      {/* toolbar */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "6px 8px",
-          borderBottom: "1px solid var(--border, #e4e4e7)",
-          background: "var(--bg-subtle, #fafafa)",
-          flexWrap: "wrap",
-        }}
-      >
-        <select
-          aria-label="Төхөөрөмж"
-          value={device}
-          onChange={(e) => setDevice(e.target.value)}
-          style={{ ...btn, padding: "4px 6px" }}
-        >
-          <option value="fit">Тааруулах</option>
-          {DEVICE_PRESETS.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.label} · {d.width}×{d.height}
-            </option>
-          ))}
-        </select>
+    <div className={s.frame}>
+      <div className={s.toolbar}>
+        <span className={s.selectWrap}>
+          <select
+            aria-label="Төхөөрөмж"
+            value={device}
+            onChange={(e) => setDevice(e.target.value)}
+            className={s.select}
+          >
+            <option value="fit">Тааруулах</option>
+            {DEVICE_PRESETS.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.label} · {d.width}×{d.height}
+              </option>
+            ))}
+          </select>
+          <span aria-hidden className={s.selectChevron}>
+            ▾
+          </span>
+        </span>
 
-        <label style={{ fontSize: 12, color: "var(--text-muted, #71717a)", display: "flex", gap: 4, alignItems: "center" }}>
-          🔍
-          <input
-            type="range"
-            min={50}
-            max={150}
-            step={10}
-            value={zoom}
-            onChange={(e) => setZoom(Number(e.target.value))}
-            aria-label="Томруулах"
-          />
-          {zoom}%
-        </label>
+        {/* Zoom only scales a fixed-size device; in fit mode it does nothing,
+            so it isn't shown. */}
+        {fit ? null : (
+          <>
+            <span className={s.divider} aria-hidden />
+            <label className={s.control}>
+              <span className={s.controlIcon} aria-hidden>
+                🔍
+              </span>
+              <input
+                type="range"
+                className={s.range}
+                min={50}
+                max={150}
+                step={10}
+                value={zoom}
+                onChange={(e) => setZoom(Number(e.target.value))}
+                aria-label="Томруулах"
+              />
+              <span className={s.value}>{zoom}%</span>
+            </label>
+          </>
+        )}
 
         {expectedImage ? (
-          <label style={{ fontSize: 12, color: "var(--text-muted, #71717a)", display: "flex", gap: 4, alignItems: "center" }}>
-            ⚖
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={compare * 100}
-              onChange={(e) => setCompare(Number(e.target.value) / 100)}
-              aria-label="Харьцуулах"
-            />
-          </label>
+          <>
+            <span className={s.divider} aria-hidden />
+            <label className={s.control}>
+              <span className={s.controlIcon} aria-hidden>
+                ⚖
+              </span>
+              <input
+                type="range"
+                className={s.range}
+                min={0}
+                max={100}
+                value={compare * 100}
+                onChange={(e) => setCompare(Number(e.target.value) / 100)}
+                aria-label="Харьцуулах"
+              />
+            </label>
+          </>
         ) : null}
 
-        <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
+        <span className={s.spacer} />
+        <div className={s.right}>
           {toolbarExtra}
-          <button type="button" style={btn} onClick={() => (ref as RefObject<PreviewHostHandle>)?.current?.reload()}>
+          <button
+            type="button"
+            className={s.iconBtn}
+            aria-label="Дахин ачаалах"
+            title="Дахин ачаалах"
+            onClick={() => (ref as RefObject<PreviewHostHandle>)?.current?.reload()}
+          >
             ⟳
           </button>
         </div>
       </div>
 
-      {/* stage */}
-      <div
-        style={{
-          flex: 1,
-          minHeight: 0,
-          overflow: "auto",
-          display: "flex",
-          alignItems: fit ? "stretch" : "flex-start",
-          justifyContent: "center",
-          padding: fit ? 0 : 16,
-          background: "var(--bg-muted, #f4f4f5)",
-        }}
-      >
+      <div className={`${s.stage} ${fit ? s.stageFit : s.stageDevice}`}>
         <div
-          style={{
-            position: "relative",
-            width: fit ? "100%" : preset!.width,
-            height: fit ? "100%" : preset!.height,
-            transform: fit ? undefined : `scale(${zoom / 100})`,
-            transformOrigin: "top center",
-            border: fit ? "none" : "1px solid var(--border-strong, #d4d4d8)",
-            borderRadius: fit ? 0 : 12,
-            overflow: "hidden",
-            boxShadow: fit ? "none" : "var(--shadow-md, 0 4px 12px rgb(0 0 0 / .08))",
-            flexShrink: 0,
-          }}
+          className={`${s.viewport} ${fit ? s.viewportFit : s.viewportDevice}`}
+          style={
+            fit
+              ? undefined
+              : { width: preset!.width, height: preset!.height, transform: `scale(${zoom / 100})` }
+          }
         >
           <PreviewHost ref={ref} {...hostProps} width="100%" height="100%" />
           {expectedImage && compare > 0 ? (
-            <img
-              src={expectedImage}
-              alt="Хүлээгдэж буй үр дүн"
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", opacity: compare, pointerEvents: "none" }}
-            />
+            <img src={expectedImage} alt="Хүлээгдэж буй үр дүн" className={s.overlay} style={{ opacity: compare }} />
           ) : null}
         </div>
       </div>

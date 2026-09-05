@@ -1,0 +1,173 @@
+/* Preview toolbar + stage. The toolbar is the pane's header, so it matches the
+   editor's tab strip in height and weight. All colour from tokens → theme-safe. */
+
+.frame {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  min-height: 44px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-wrap: wrap;
+}
+
+/* device selector — a real control, with its own chevron */
+.selectWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.select {
+  appearance: none;
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--text);
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 5px 26px 5px 10px;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+.select:hover {
+  border-color: var(--border-strong);
+}
+.select:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.selectChevron {
+  position: absolute;
+  right: 9px;
+  color: var(--text-subtle);
+  font-size: 10px;
+  pointer-events: none;
+}
+
+/* divider between control clusters */
+.divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 var(--space-1);
+}
+
+/* zoom / compare cluster */
+.control {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+.controlIcon {
+  font-size: 13px;
+  line-height: 1;
+}
+.range {
+  width: 92px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.value {
+  font-variant-numeric: tabular-nums;
+  min-width: 3.2em;
+  color: var(--text-muted);
+}
+
+.spacer {
+  margin-left: auto;
+}
+.right {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* icon button (reload, extras) */
+.iconBtn {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-muted);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.iconBtn:hover {
+  background: var(--accent-subtle);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  color: var(--accent-text);
+}
+.iconBtn:active {
+  transform: rotate(-30deg);
+}
+.iconBtn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* stage — the canvas the page renders on */
+.stage {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  background: var(--bg-muted);
+}
+.stageFit {
+  align-items: stretch;
+  padding: 0;
+}
+.stageDevice {
+  align-items: flex-start;
+  padding: var(--space-5);
+  /* a faint dotted ground so a floating device reads as "on a canvas" */
+  background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.viewport {
+  position: relative;
+  transform-origin: top center;
+  flex-shrink: 0;
+  background: #fff;
+}
+.viewportFit {
+  width: 100%;
+  height: 100%;
+}
+.viewportDevice {
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
