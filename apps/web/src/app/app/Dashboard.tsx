@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AppShell, Badge, Card, ProgressBar, ProgressRing, ThemeToggle } from "@khiye/ui";
+import { Alert, AppShell, Badge, Button, Card, ProgressBar, ProgressRing, ThemeToggle } from "@khiye/ui";
 import { level, loadProgress, lessonProgress, type Progress } from "@/lib/progress";
-import { flattenLessons, type CourseMapData, type MapLesson } from "./course-types";
+import { flattenLessons, type MapLesson } from "./course-types";
+import { useCourseMap } from "./useCourseMap";
 
 const BADGE_LABEL: Record<string, string> = {
   "first-website": "🏆 Анхны вэб",
@@ -15,18 +16,25 @@ const BADGE_LABEL: Record<string, string> = {
 };
 
 export function Dashboard() {
-  const [map, setMap] = useState<CourseMapData | null>(null);
+  const { map, error, reload } = useCourseMap();
   const [progress, setProgress] = useState<Progress | null>(null);
 
   useEffect(() => {
     setProgress(loadProgress());
-    fetch("/api/courses/internet-programming")
-      .then((r) => r.json())
-      .then((res) => setMap(res.data as CourseMapData))
-      .catch(() => {});
   }, []);
 
   const lessons = useMemo(() => (map ? flattenLessons(map) : []), [map]);
+
+  if (error) {
+    return (
+      <AppShell header={<strong style={{ fontSize: 18 }}>Хийе</strong>}>
+        <Alert tone="danger" title="Хичээлүүд ачаалагдсангүй">
+          <p style={{ margin: "0 0 12px" }}>{error}</p>
+          <Button onClick={reload}>Дахин оролдох</Button>
+        </Alert>
+      </AppShell>
+    );
+  }
 
   if (!map || !progress) {
     return (

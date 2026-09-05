@@ -1,24 +1,21 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AppShell, Badge, ProgressBar, ThemeToggle } from "@khiye/ui";
+import { Alert, AppShell, Badge, Button, ProgressBar, ThemeToggle } from "@khiye/ui";
 import { loadProgress, lessonProgress, type Progress } from "@/lib/progress";
-import { flattenLessons, type CourseMapData } from "../../course-types";
+import { flattenLessons } from "../../course-types";
+import { useCourseMap } from "../../useCourseMap";
 import styles from "./courseMap.module.css";
 
 type State = "done" | "current" | "locked";
 
 export function CourseMap() {
-  const [map, setMap] = useState<CourseMapData | null>(null);
+  const { map, error, reload } = useCourseMap();
   const [progress, setProgress] = useState<Progress | null>(null);
   const [openStages, setOpenStages] = useState<Set<string> | null>(null);
 
   useEffect(() => {
     setProgress(loadProgress());
-    fetch("/api/courses/internet-programming")
-      .then((r) => r.json())
-      .then((res) => setMap(res.data as CourseMapData))
-      .catch(() => {});
   }, []);
 
   // Lesson states: done from progress; the first not-done lesson is "current"; rest locked.
@@ -73,6 +70,17 @@ export function CourseMap() {
   useEffect(() => {
     if (openStages === null && currentStageId) setOpenStages(new Set([currentStageId]));
   }, [currentStageId, openStages]);
+
+  if (error) {
+    return (
+      <AppShell header={<strong>Хичээлүүд</strong>}>
+        <Alert tone="danger" title="Хичээлүүд ачаалагдсангүй">
+          <p style={{ margin: "0 0 12px" }}>{error}</p>
+          <Button onClick={reload}>Дахин оролдох</Button>
+        </Alert>
+      </AppShell>
+    );
+  }
 
   if (!map || !progress) {
     return (
