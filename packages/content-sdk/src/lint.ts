@@ -1,3 +1,4 @@
+import { applyPatch, type FileSet } from "./patch";
 import type { Lesson, ResolvedCourse, Task } from "./schema";
 
 /**
@@ -133,7 +134,100 @@ export function lintLesson(lesson: Lesson): Diagnostic[] {
   }
 
   for (const task of lesson.tasks) lintTask(task, at(task.id));
+  lintWorkspace(lesson, at);
   return out;
+}
+
+/**
+ * Rules that need the workspace as the student will actually see it. Each of
+ * these fails SILENTLY in the UI otherwise: a task pointing at a file that
+ * isn't there, a marker the editor can never highlight, a solution that
+ * patches a file the workspace never created.
+ */
+function lintWorkspace(
+  lesson: Lesson,
+  at: (taskId?: string) => (d: Omit<Diagnostic, "lessonId" | "taskId">) => void,
+): void {
+  let files: FileSet;
+  try {
+    files = applyPatch({}, lesson.workspace.patch);
+  } catch (e) {
+    at()({
+      severity: "error",
+      code: "workspace-patch-failed",
+      message: `workspace patch does not apply: ${e instanceof Error ? e.message : String(e)}`,
+    });
+    return;
+  }
+
+  // Tasks accumulate within a lesson, exactly as the runner replays them.
+  for (const task of [...lesson.tasks].sort((a, b) => a.order - b.order)) {
+    const push = at(task.id);
+    if (task.starter) {
+      try {
+        files = applyPatch(files, task.starter);
+      } catch (e) {
+        push({
+          severity: "error",
+          code: "starter-patch-failed",
+          message: `starter patch does not apply: ${e instanceof Error ? e.message : String(e)}`,
+        });
+      }
+    }
+
+    if (task.targetFile && !(task.targetFile in files)) {
+      push({
+        severity: "error",
+        code: "target-file-missing",
+        message: `targetFile "${task.targetFile}" is not in the workspace`,
+      });
+    }
+
+    if (task.marker) {
+      const target = task.targetFile ? files[task.targetFile]?.content : undefined;
+      if (target !== undefined && !target.includes(task.marker)) {
+        push({
+          severity: "error",
+          code: "marker-missing",
+          message: `marker "${task.marker}" does not appear in ${task.targetFile}`,
+        });
+      }
+    }
+
+    for (const op of task.solution.patch) {
+      if (op.op !== "create" && !(op.path in files)) {
+        push({
+          severity: "error",
+          code: "solution-path-unknown",
+          message: `solution ${op.op}s "${op.path}", which the workspace never creates`,
+        });
+      }
+    }
+
+    if (task.solution.xpPenalty >= task.xp) {
+      push({
+        severity: "warning",
+        code: "solution-penalty-too-high",
+        message: `xpPenalty ${task.solution.xpPenalty} ≥ xp ${task.xp}: revealing the solution would cost more than the task is worth`,
+      });
+    }
+
+    try {
+      files = applyPatch(files, task.solution.patch);
+    } catch {
+      /* already reported above */
+    }
+  }
+
+  for (const path of lesson.workspace.visibleFiles) {
+    if (!(path in files)) {
+      at()({
+        severity: "warning",
+        code: "visible-file-missing",
+        message: `visibleFiles lists "${path}", which the workspace never creates`,
+      });
+    }
+  }
 }
 
 /** Lint a whole course, including cross-lesson prerequisite DAG validation. */
@@ -150,6 +244,48 @@ export function lintCourse(course: ResolvedCourse): Diagnostic[] {
           severity: "error",
           code: "prereq-unknown",
           message: `prerequisite "${pre}" is not a known lesson`,
+          lessonId: lesson.id,
+        });
+      }
+    }
+  }
+
+  // Skills must be declared: an undeclared id silently drops out of the
+  // mastery view, so the lesson would train a skill nobody can see.
+  const known = new Set(course.skills.map((s) => s.id));
+  if (known.size > 0) {
+    for (const lesson of lessons) {
+      const used = new Set([...lesson.skills, ...lesson.tasks.flatMap((t) => t.skills)]);
+      for (const skill of used) {
+        if (!known.has(skill)) {
+          out.push({
+            severity: "error",
+            code: "skill-unknown",
+            message: `skill "${skill}" is not declared in skills.json`,
+            lessonId: lesson.id,
+          });
+        }
+      }
+    }
+  }
+
+  // A prerequisite from a LATER stage is unreachable: the student would have to
+  // finish something the course has not unlocked yet.
+  const stageOf = new Map<string, number>();
+  for (const stage of course.stages) {
+    for (const mod of stage.moduleObjects) {
+      for (const lesson of mod.lessonObjects) stageOf.set(lesson.id, stage.order);
+    }
+  }
+  for (const lesson of lessons) {
+    const here = stageOf.get(lesson.id);
+    for (const pre of lesson.prerequisites) {
+      const there = stageOf.get(pre);
+      if (here !== undefined && there !== undefined && there > here) {
+        out.push({
+          severity: "error",
+          code: "prereq-forward",
+          message: `prerequisite "${pre}" is in a later stage (${there} > ${here}) and can never be met first`,
           lessonId: lesson.id,
         });
       }

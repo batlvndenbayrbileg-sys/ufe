@@ -87,7 +87,7 @@
         }
       },
       "targetFile": "src/App.jsx",
-      "marker": "// энд бичнэ үү",
+      "marker": "{/* энд бичнэ үү */}",
       "checks": [
         {
           "id": "c1",
