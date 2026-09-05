@@ -1,0 +1,19 @@
+{
+  "id": "m11-server",
+  "stageId": "s7",
+  "order": 1,
+  "title": {
+    "mn": "Сервер: Request → Response"
+  },
+  "description": {
+    "mn": "Вэбийн стандарт handler бичих — зам таних, бие унших, шалгах, зөв статус код буцаах."
+  },
+  "estimatedHours": 2,
+  "lessons": [
+    "m11-l1",
+    "m11-l2",
+    "m11-l3",
+    "m11-l4",
+    "m11-l5"
+  ]
+}

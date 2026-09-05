@@ -1,0 +1,261 @@
+{
+  "id": "m11-l3",
+  "moduleId": "m11-server",
+  "slug": "post-body",
+  "order": 3,
+  "title": {
+    "mn": "POST: хүсэлтийн биеийг унших"
+  },
+  "why": {
+    "mn": "Хэрэглэгч захиалга өгөхөд Shop.mn-ий сервер тэр өгөгдлийг хүлээж авах ёстой. `await request.json()` бол вэбийн бүх бичих үйлдлийн эхний алхам."
+  },
+  "buildsInProject": "Захиалга үүсгэх endpoint",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 22,
+  "skills": [
+    "backend",
+    "javascript"
+  ],
+  "concepts": [
+    "POST",
+    "request.json()",
+    "201 Created",
+    "state mutation"
+  ],
+  "prerequisites": [
+    "m11-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn API</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn API</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/server.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 28px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 4px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n}\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\n.muted { color: #52525b; font-size: 13px; margin: 0 0 8px; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/server.js",
+        "content": "// Shop.mn-ий сервер. Энэ функц жинхэнэ сервер дээр ч яг ийм л харагдана:\n// хүсэлт (Request) авч, хариу (Response) буцаана.\n\n// Хариу бүрийг JSON болгож буцаах жижиг туслах.\nfunction json(body, status) {\n  return new Response(JSON.stringify(body), {\n    status: status || 200,\n    headers: { \"Content-Type\": \"application/json\" },\n  });\n}\n\nasync function handleRequest(request) {\n  const path = new URL(request.url).pathname;\n\n  if (path === \"/api/products\" && request.method === \"GET\") {\n    return json(db.products);\n  }\n\n  if (path === \"/api/orders\" && request.method === \"GET\") {\n    return json(db.orders);\n  }\n\n  // энд бичнэ үү\n\n  return json({ error: \"Хаяг олдсонгүй: \" + path }, 404);\n}\n\n// Tier 1-д модуль байхгүй тул handleRequest-ээ ил гаргаж өгнө.\n// Жинхэнэ сервер дээр энэ мөрийн оронд \"export default\" бичигдэнэ.\nwindow.handleRequest = handleRequest;\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// Жижиг «API турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\n// Доорх хүсэлт бүрийг таны handleRequest функц рүү илгээж, хариуг харуулна.\n\nconst db = {\n  products: [\n    { id: 1, name: \"Монгол дээл\", price: 129000, stock: 4 },\n    { id: 2, name: \"Малгай\", price: 45000, stock: 12 },\n    { id: 3, name: \"Гутал\", price: 89000, stock: 0 },\n  ],\n  orders: [],\n};\n\nwindow.db = db;\n\nconst SCENARIOS = [\n  {\n    \"key\": \"oCreate\",\n    \"label\": \"Шинэ захиалга үүсгэх\",\n    \"method\": \"POST\",\n    \"path\": \"/api/orders\",\n    \"body\": {\n      \"items\": [\n        {\n          \"id\": 1,\n          \"quantity\": 2\n        }\n      ]\n    }\n  },\n  {\n    \"key\": \"oAfter\",\n    \"label\": \"Үүсгэсний дараах жагсаалт\",\n    \"method\": \"GET\",\n    \"path\": \"/api/orders\"\n  }\n];\n\nconst output = document.getElementById(\"output\");\n\nfunction render(scenario, status, body, error) {\n  const box = document.createElement(\"section\");\n  box.className = \"call\";\n  box.dataset.testid = \"call-\" + scenario.key;\n\n  const head = document.createElement(\"h2\");\n  const badge = document.createElement(\"span\");\n  badge.className = \"status \" + (error ? \"s-err\" : \"s-\" + String(status)[0] + \"xx\");\n  badge.dataset.testid = \"status-\" + scenario.key;\n  badge.textContent = error ? \"алдаа\" : String(status);\n  head.append(badge, document.createTextNode(\" \" + scenario.method + \" \" + scenario.path));\n  box.append(head);\n\n  const label = document.createElement(\"p\");\n  label.className = \"muted\";\n  label.textContent = scenario.label;\n  box.append(label);\n\n  const pre = document.createElement(\"pre\");\n  pre.dataset.testid = \"body-\" + scenario.key;\n  pre.textContent = error ? error : JSON.stringify(body, null, 2);\n  box.append(pre);\n\n  output.append(box);\n}\n\n(async function () {\n  window.RESULTS = {};\n\n  for (const scenario of SCENARIOS) {\n    const init = { method: scenario.method };\n    if (scenario.body !== undefined) {\n      init.headers = { \"Content-Type\": \"application/json\" };\n      init.body = JSON.stringify(scenario.body);\n    }\n\n    let status = 0;\n    let body = null;\n    let error = null;\n\n    try {\n      const response = await handleRequest(new Request(\"https://shop.mn\" + scenario.path, init));\n\n      if (!(response instanceof Response)) {\n        throw new Error(\"handleRequest нь Response биш зүйл буцаалаа\");\n      }\n\n      status = response.status;\n      const text = await response.text();\n      try {\n        body = text ? JSON.parse(text) : null;\n      } catch (problem) {\n        body = text;\n      }\n    } catch (problem) {\n      error = problem.message;\n    }\n\n    window.RESULTS[scenario.key] = { status, body, error };\n    render(scenario, status, body, error);\n  }\n\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/server.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/server.js"
+    ],
+    "activeFile": "src/server.js"
+  },
+  "tasks": [
+    {
+      "id": "m11-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "POST: хүсэлтийн биеийг унших"
+      },
+      "statement": {
+        "mn": "`POST /api/orders` замыг нэм: `await request.json()`-ээр биеийг уншиж, `{ id: db.orders.length + 1, items: order.items }` гэсэн шинэ захиалга үүсгэж, `db.orders`-д нэмээд, **201** статустай буцаа."
+      },
+      "requirements": [
+        {
+          "mn": "`await request.json()`"
+        },
+        {
+          "mn": "Дугаарыг сервер өгнө"
+        },
+        {
+          "mn": "`db.orders`-д нэмнэ"
+        },
+        {
+          "mn": "201 статус"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Захиалга илгээхэд 201 статустай, дугаартай захиалга буцаж, жагсаалтад нэмэгдэнэ."
+        }
+      },
+      "targetFile": "src/server.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(Object.values(window.RESULTS).map((r) => r.error))",
+                  "equals": "[null,null]"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`handleRequest` алдаа шидсэн эсвэл `Response` биш зүйл буцаалаа — хуудсан дээрх улаан мессежийг уншаарай."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.oCreate.status",
+                  "equals": 201
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`POST /api/orders` нь 201 статус буцаах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(window.RESULTS.oCreate.body)",
+                  "equals": "{\"id\":1,\"items\":[{\"id\":1,\"quantity\":2}]}"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`POST /api/orders`-ийн хариу таарахгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.oAfter.status",
+                  "equals": 200
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`GET /api/orders` нь 200 статус буцаах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(window.RESULTS.oAfter.body)",
+                  "equals": "[{\"id\":1,\"items\":[{\"id\":1,\"quantity\":2}]}]"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`GET /api/orders`-ийн хариу таарахгүй байна."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`request.json()` нь амлалт буцаадаг тул `await` заавал хэрэгтэй. `handleRequest` аль хэдийн `async` тул шууд бичиж болно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Дугаарыг клиент биш, СЕРВЕР өгнө. Клиент өөрөө дугаар зохиовол хоёр хэрэглэгч ижил дугаар илгээж мөргөлдөнө."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Замаа гүйцээ:"
+          },
+          "code": "if (path === \"/api/orders\" && request.method === \"POST\") {\n  const order = /* биеийг нь унш */;\n  const saved = { id: /* дараагийн дугаар */, items: order.items };\n  /* хадгалаад 201-тэй буцаа */\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/server.js",
+            "content": "// Shop.mn-ий сервер. Энэ функц жинхэнэ сервер дээр ч яг ийм л харагдана:\n// хүсэлт (Request) авч, хариу (Response) буцаана.\n\n// Хариу бүрийг JSON болгож буцаах жижиг туслах.\nfunction json(body, status) {\n  return new Response(JSON.stringify(body), {\n    status: status || 200,\n    headers: { \"Content-Type\": \"application/json\" },\n  });\n}\n\nasync function handleRequest(request) {\n  const path = new URL(request.url).pathname;\n\n  if (path === \"/api/products\" && request.method === \"GET\") {\n    return json(db.products);\n  }\n\n  if (path === \"/api/orders\" && request.method === \"GET\") {\n    return json(db.orders);\n  }\n\n  if (path === \"/api/orders\" && request.method === \"POST\") {\n    const order = await request.json();\n    const saved = { id: db.orders.length + 1, items: order.items };\n    db.orders.push(saved);\n    return json(saved, 201);\n  }\n\n  return json({ error: \"Хаяг олдсонгүй: \" + path }, 404);\n}\n\n// Tier 1-д модуль байхгүй тул handleRequest-ээ ил гаргаж өгнө.\n// Жинхэнэ сервер дээр энэ мөрийн оронд \"export default\" бичигдэнэ.\nwindow.handleRequest = handleRequest;\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`201 Created` бол «шинэ зүйл үүслээ» гэсэн тодорхой хариу — 200-аас ялгаатай нь клиент шинээр юу үүссэнийг мэднэ. Үүссэн бичлэгээ бүтнээр нь буцаах нь бас чухал: клиент серверийн өгсөн дугаарыг тэр дороо авна."
+        },
+        "xpPenalty": 21
+      },
+      "xp": 35,
+      "estimatedMinutes": 20,
+      "skills": [
+        "backend"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -47,5 +47,12 @@
       "mn": "SQL"
     },
     "order": 7
+  },
+  {
+    "id": "backend",
+    "title": {
+      "mn": "Сервер"
+    },
+    "order": 8
   }
 ]

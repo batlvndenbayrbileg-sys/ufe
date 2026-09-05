@@ -79,6 +79,17 @@
       "moduleIds": [
         "m10-sql"
       ]
+    },
+    {
+      "id": "s7",
+      "order": 7,
+      "title": {
+        "mn": "Сервер тал"
+      },
+      "badgeId": "backend-builder",
+      "moduleIds": [
+        "m11-server"
+      ]
     }
   ]
 }
