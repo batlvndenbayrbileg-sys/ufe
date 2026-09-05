@@ -13,6 +13,8 @@
   padding: 0 var(--space-5);
   border-bottom: 1px solid var(--border);
   background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  z-index: 3;
 }
 
 .panes {
@@ -48,20 +50,26 @@
   position: absolute;
   top: var(--space-3);
   right: var(--space-2);
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   background: var(--surface);
   color: var(--text-muted);
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
   z-index: 2;
 }
 .collapseBtn:hover {
-  background: var(--bg-muted);
-  color: var(--text);
+  background: var(--accent-subtle);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  color: var(--accent-text);
 }
 
 .editor {
@@ -99,6 +107,8 @@
   padding: 0 var(--space-5);
   border-top: 1px solid var(--border);
   background: var(--surface);
+  box-shadow: 0 -1px 2px rgb(0 0 0 / 0.04);
+  z-index: 3;
 }
 
 /* Below the 3-pane threshold, stack. Full mobile tab UX arrives in E7. */

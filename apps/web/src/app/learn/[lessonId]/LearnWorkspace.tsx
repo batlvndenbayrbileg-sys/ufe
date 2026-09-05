@@ -136,7 +136,7 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
           ))}
         </div>
         <div className={s.headerRight}>
-          <span>{percent}%</span>
+          <span className={s.percentPill}>{percent}%</span>
           <ThemeToggle />
         </div>
       </>
@@ -151,7 +151,10 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
       collapsedRail={<span style={{ writingMode: "vertical-rl", fontSize: 12, color: "var(--text-muted)" }}>Заавар</span>}
       instructions={
         <div className={s.pane}>
-          <div>
+          <div className={s.taskHead}>
+            <span className={s.taskBadge} aria-hidden>
+              {taskIndex + 1}
+            </span>
             <div className={s.eyebrow}>
               Даалгавар {taskIndex + 1}/{tasks.length}
             </div>

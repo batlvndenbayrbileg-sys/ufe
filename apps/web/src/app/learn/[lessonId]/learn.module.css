@@ -3,19 +3,28 @@
 
 /* ── header ─────────────────────────────────────────────────────────────── */
 .back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   color: var(--text-muted);
   text-decoration: none;
   font-size: var(--text-sm);
-  padding: 4px 8px;
+  font-weight: 500;
+  padding: 5px 10px;
   border-radius: var(--radius);
-  transition: background var(--dur-fast) var(--ease-out);
+  border: 1px solid transparent;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
 }
 .back:hover {
-  background: var(--bg-muted);
+  background: var(--surface);
+  border-color: var(--border);
   color: var(--text);
 }
 .lessonTitle {
-  font-size: var(--text-base);
+  font-size: var(--text-md);
   font-weight: 600;
   letter-spacing: -0.01em;
   white-space: nowrap;
@@ -23,14 +32,18 @@
   text-overflow: ellipsis;
   max-width: 34ch;
 }
+/* A slim segmented bar: one segment per task, filling as they pass. */
 .pips {
   display: flex;
-  gap: 5px;
+  gap: 4px;
   align-items: center;
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  background: var(--bg-muted);
 }
 .pip {
-  width: 8px;
-  height: 8px;
+  width: 14px;
+  height: 5px;
   border-radius: var(--radius-full);
   background: var(--border-strong);
   transition: all var(--dur) var(--ease-out);
@@ -40,15 +53,22 @@
 }
 .pipCurrent {
   background: var(--accent);
-  width: 20px;
+  width: 22px;
 }
 .headerRight {
   margin-left: auto;
   display: flex;
   align-items: center;
   gap: var(--space-3);
+}
+.percentPill {
   font-size: var(--text-sm);
-  color: var(--text-muted);
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent-subtle);
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
   font-variant-numeric: tabular-nums;
 }
 
@@ -59,19 +79,40 @@
   gap: var(--space-5);
   max-width: 62ch;
 }
+.taskHead {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-1) var(--space-3);
+  align-items: center;
+}
+.taskBadge {
+  grid-row: 1 / 3;
+  align-self: start;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius);
+  background: var(--accent-subtle);
+  color: var(--accent-text);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  font-weight: 700;
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+}
 .eyebrow {
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--text-subtle);
-  font-weight: 500;
+  font-weight: 600;
 }
 .taskTitle {
   font-size: var(--text-xl);
   font-weight: 700;
   letter-spacing: -0.015em;
-  margin: 6px 0 0;
-  line-height: 1.25;
+  margin: 0;
+  line-height: 1.2;
   text-wrap: balance;
 }
 .statement {
@@ -324,11 +365,12 @@ details[open] > .whySummary::before {
   font-size: var(--text-sm);
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
+  font-weight: 500;
 }
 .barRight {
   margin-left: auto;
   display: flex;
-  gap: var(--space-3);
+  gap: var(--space-4);
   align-items: center;
 }
 .kbd {
@@ -338,10 +380,13 @@ details[open] > .whySummary::before {
   border: 1px solid var(--border);
   border-bottom-width: 2px;
   border-radius: var(--radius-sm);
-  padding: 1px 6px;
+  padding: 2px 6px;
 }
 .primaryBtn {
-  padding: 10px 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 26px;
   border-radius: var(--radius);
   border: 0;
   background: var(--accent);
@@ -350,14 +395,24 @@ details[open] > .whySummary::before {
   font-weight: 600;
   font-size: var(--text-md);
   font-family: inherit;
-  transition: background var(--dur-fast) var(--ease-out);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent) inset;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
 .primaryBtn:hover:not(:disabled) {
   background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md), 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent) inset;
+}
+.primaryBtn:active:not(:disabled) {
+  transform: none;
 }
 .primaryBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* ── completion ─────────────────────────────────────────────────────────── */
