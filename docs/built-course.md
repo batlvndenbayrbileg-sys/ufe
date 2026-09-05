@@ -5,7 +5,7 @@
 microVM). This file records what actually **shipped**, and where and why it diverges — so nobody
 reads the plan and assumes it describes the repository.
 
-**Shipped:** 12 stages → 16 modules → **81 lessons**, every one of them Tier 1.
+**Shipped:** 13 stages → 17 modules → **84 lessons**, every one of them Tier 1.
 
 Run `pnpm --filter @khiye/content-sdk content test content/courses/internet-programming` to check
 all of it; that command is the source of truth for the numbers below.
@@ -32,6 +32,7 @@ all of it; that command is the source of truth for the numbers below.
 | 10 · Тест | Тест бичих | 4 | static |
 | 11 · Хүртээмж | Хүртээмж (accessibility) | 5 | static |
 | 12 · TypeScript | TypeScript | 4 | static |
+| 13 · Төгсгөлийн төсөл | Төгсгөлийн төсөл: админ самбар | 3 | static |
 
 ---
 
@@ -70,6 +71,9 @@ Added because the arc had holes a professional course cannot leave:
 - **TypeScript (12).** Types are mutation-tested too: `ts.rejects` appends a deliberately wrong
   usage and requires the compiler to refuse it, because `type X = any` passes every type check
   while proving nothing.
+- **Төгсгөлийн төсөл (13).** Sixteen modules of guided lessons had no ending. The capstone
+  introduces no new concept on purpose: the statements read as specs, the hints are conceptual,
+  and the work is assembling what the course already taught into an admin panel.
 
 ## 4. What the content pipeline guarantees
 
