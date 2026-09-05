@@ -14,7 +14,12 @@ import s from "./learn.module.css";
 
 type Status = "current" | "passed" | "locked";
 
-export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
+export interface NextLesson {
+  id: string;
+  title: { mn: string };
+}
+
+export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: NextLesson | null }) {
   const { resolvedTheme } = useTheme();
   const dark = resolvedTheme === "dark";
   const editorRef = useRef<CodeMirrorHandle>(null);
@@ -214,8 +219,15 @@ export function LearnWorkspace({ lesson }: { lesson: LessonPublic }) {
             <div className={s.completion}>
               <span className={s.completionTitle}>🎉 Хичээл дууслаа!</span>
               {lesson.completion.badge ? <Badge tone="success" size="md">{lesson.completion.badge}</Badge> : null}
-              <a href="/app" className={s.back} style={{ marginTop: 4 }}>
-                Хянах самбар руу →
+              {next ? (
+                <a href={`/learn/${next.id}`} className={s.completionNext}>
+                  Дараагийн хичээл: {next.title.mn} →
+                </a>
+              ) : (
+                <span className={s.completionDone}>Энэ курсын сүүлчийн хичээл байлаа. Баяр хүргэе! 🏆</span>
+              )}
+              <a href="/app/course/internet-programming" className={s.back}>
+                Бүх хичээл
               </a>
             </div>
           ) : null}

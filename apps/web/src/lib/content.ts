@@ -163,6 +163,14 @@ export function getLessonPublic(lessonId: string): LessonPublic | null {
 }
 
 /** The next lesson id in course order (for unlock), or null. */
+/** The next lesson in course order, with enough to label a link. */
+export function getNextLesson(lessonId: string): { id: string; title: { mn: string } } | null {
+  const id = getNextLessonId(lessonId);
+  if (!id) return null;
+  const lesson = getLessonFull(id);
+  return lesson ? { id, title: lesson.title } : null;
+}
+
 export function getNextLessonId(lessonId: string): string | null {
   const { course } = ensureLoaded();
   const flat = flattenLessons(course).map((l) => l.id);
