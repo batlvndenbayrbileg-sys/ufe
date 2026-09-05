@@ -1,0 +1,328 @@
+{
+  "id": "m12-l2",
+  "moduleId": "m12-auth",
+  "slug": "login-token",
+  "order": 2,
+  "title": {
+    "mn": "Нэвтрэх ба token"
+  },
+  "why": {
+    "mn": "HTTP бол санах ойгүй: хүсэлт бүр өмнөхөө мэдэхгүй. Тиймээс нэвтэрсний дараа Shop.mn хэрэглэгчид token өгч, тэр түүнийгээ хүсэлт бүрдээ авчирна. Бүх сайтын нэвтрэлт үндсэндээ ийм л ажилладаг."
+  },
+  "buildsInProject": "Нэвтрэх endpoint",
+  "difficulty": "advanced",
+  "estimatedMinutes": 24,
+  "skills": [
+    "backend",
+    "security"
+  ],
+  "concepts": [
+    "401 Unauthorized",
+    "session token",
+    "constant answers",
+    "verifyPassword"
+  ],
+  "prerequisites": [
+    "m12-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn API — нэвтрэлт</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn API — нэвтрэлт</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/auth.js\"></script>\n    <script src=\"src/server.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 4px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n}\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\n.lock {\n  font-size: 12px;\n  color: #3f3f46;\n  background-color: #f4f4f5;\n  border-radius: 999px;\n  padding: 1px 8px;\n}\n\n.muted { color: #52525b; font-size: 13px; margin: 0 0 8px; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/auth.js",
+        "content": "// Нууц үгтэй ажиллах туслахууд. Энэ файлыг өөрчлөх шаардлагагүй.\n//\n// Жинхэнэ Web Crypto (PBKDF2-SHA256) ашиглаж байна. Нууц үгийг ЯМАР Ч\n// тохиолдолд задгайгаар хадгалж болохгүй — зөвхөн давс (salt) ба хэш.\n// Бодит систем дээр энэ хоёр функцийг өөрөө бичихгүй, argon2 эсвэл bcrypt\n// сан ашигладаг (Хийе платформ өөрөө argon2id хэрэглэдэг).\n\nconst PBKDF2_ITERATIONS = 100000;\n\nfunction toHex(buffer) {\n  return Array.from(new Uint8Array(buffer))\n    .map((byte) => byte.toString(16).padStart(2, \"0\"))\n    .join(\"\");\n}\n\nfunction randomSalt() {\n  return toHex(crypto.getRandomValues(new Uint8Array(16)));\n}\n\nasync function hashPassword(password, salt) {\n  const key = await crypto.subtle.importKey(\n    \"raw\",\n    new TextEncoder().encode(password),\n    { name: \"PBKDF2\" },\n    false,\n    [\"deriveBits\"],\n  );\n\n  const bits = await crypto.subtle.deriveBits(\n    {\n      name: \"PBKDF2\",\n      salt: new TextEncoder().encode(salt),\n      iterations: PBKDF2_ITERATIONS,\n      hash: \"SHA-256\",\n    },\n    key,\n    256,\n  );\n\n  return toHex(bits);\n}\n\nasync function verifyPassword(password, user) {\n  const attempt = await hashPassword(password, user.salt);\n  return attempt === user.hash;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/server.js",
+        "content": "// Shop.mn-ий сервер — нэвтрэлт ба эрх.\n\n// Хариу бүрийг JSON болгож буцаах жижиг туслах.\nfunction json(body, status) {\n  return new Response(JSON.stringify(body), {\n    status: status || 200,\n    headers: { \"Content-Type\": \"application/json\" },\n  });\n}\n\nasync function handleRequest(request) {\n  const path = new URL(request.url).pathname;\n\n  if (path === \"/api/register\" && request.method === \"POST\") {\n    const input = await request.json();\n\n    if (!input.email || !input.password || input.password.length < 8) {\n      return json({ error: \"Имэйл болон 8-аас урт нууц үг шаардлагатай\" }, 400);\n    }\n\n    if (db.users.some((user) => user.email === input.email)) {\n      return json({ error: \"Энэ имэйл бүртгэлтэй байна\" }, 409);\n    }\n\n    const salt = randomSalt();\n    const user = {\n      id: db.users.length + 1,\n      name: input.name,\n      email: input.email,\n      salt: salt,\n      hash: await hashPassword(input.password, salt),\n    };\n    db.users.push(user);\n\n    return json({ id: user.id, name: user.name, email: user.email }, 201);\n  }\n\n  // энд бичнэ үү\n\n  return json({ error: \"Хаяг олдсонгүй: \" + path }, 404);\n}\n\nwindow.handleRequest = handleRequest;\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «API турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\n// Нэвтэрсний дараа ирсэн token-ыг санаж, дараагийн хүсэлтүүдэд хавсаргана.\n\nconst db = {\n  products: [\n    { id: 1, name: \"Монгол дээл\", price: 129000 },\n    { id: 2, name: \"Малгай\", price: 45000 },\n  ],\n  // Захиалга бүр ХЭНИЙХ болохыг заана — эрхийн шалгалтын түлхүүр нь энэ.\n  orders: [\n    { id: 1, userId: 1, items: [{ id: 1, quantity: 1 }] },\n    { id: 2, userId: 2, items: [{ id: 2, quantity: 3 }] },\n  ],\n  users: [],\n  sessions: {},\n};\n\nwindow.db = db;\n\nconst SCENARIOS = [\n  {\n    \"key\": \"regOk\",\n    \"label\": \"Шинэ хэрэглэгч бүртгэх\",\n    \"method\": \"POST\",\n    \"path\": \"/api/register\",\n    \"body\": {\n      \"name\": \"Батаа\",\n      \"email\": \"bataa@shop.mn\",\n      \"password\": \"нууц-үг-12345\"\n    }\n  },\n  {\n    \"key\": \"loginBad\",\n    \"label\": \"Буруу нууц үг\",\n    \"method\": \"POST\",\n    \"path\": \"/api/login\",\n    \"body\": {\n      \"email\": \"bataa@shop.mn\",\n      \"password\": \"буруу-нууц-үг\"\n    }\n  },\n  {\n    \"key\": \"loginGhost\",\n    \"label\": \"Бүртгэлгүй имэйл\",\n    \"method\": \"POST\",\n    \"path\": \"/api/login\",\n    \"body\": {\n      \"email\": \"hen-ch-bish@shop.mn\",\n      \"password\": \"нууц-үг-12345\"\n    }\n  },\n  {\n    \"key\": \"loginOk\",\n    \"label\": \"Зөв нууц үгээр нэвтрэх\",\n    \"method\": \"POST\",\n    \"path\": \"/api/login\",\n    \"body\": {\n      \"email\": \"bataa@shop.mn\",\n      \"password\": \"нууц-үг-12345\"\n    }\n  }\n];\n\nconst output = document.getElementById(\"output\");\n\nfunction render(scenario, status, body, error, sentToken) {\n  const box = document.createElement(\"section\");\n  box.className = \"call\";\n  box.dataset.testid = \"call-\" + scenario.key;\n\n  const head = document.createElement(\"h2\");\n  const badge = document.createElement(\"span\");\n  badge.className = \"status \" + (error ? \"s-err\" : \"s-\" + String(status)[0] + \"xx\");\n  badge.dataset.testid = \"status-\" + scenario.key;\n  badge.textContent = error ? \"алдаа\" : String(status);\n  head.append(badge, document.createTextNode(\" \" + scenario.method + \" \" + scenario.path));\n  if (sentToken) {\n    const lock = document.createElement(\"span\");\n    lock.className = \"lock\";\n    lock.textContent = \"🔑 token-той\";\n    head.append(lock);\n  }\n  box.append(head);\n\n  const label = document.createElement(\"p\");\n  label.className = \"muted\";\n  label.textContent = scenario.label;\n  box.append(label);\n\n  const pre = document.createElement(\"pre\");\n  pre.dataset.testid = \"body-\" + scenario.key;\n  pre.textContent = error ? error : JSON.stringify(body, null, 2);\n  box.append(pre);\n\n  output.append(box);\n}\n\n(async function () {\n  window.RESULTS = {};\n  let token = null;\n\n  for (const scenario of SCENARIOS) {\n    const headers = {};\n    const init = { method: scenario.method };\n\n    if (scenario.body !== undefined) {\n      headers[\"Content-Type\"] = \"application/json\";\n      init.body = JSON.stringify(scenario.body);\n    }\n\n    const sendToken = scenario.auth === true && token !== null;\n    if (sendToken) headers.Authorization = \"Bearer \" + token;\n    if (scenario.auth === \"bad\") headers.Authorization = \"Bearer not-a-real-token\";\n\n    init.headers = headers;\n\n    let status = 0;\n    let body = null;\n    let error = null;\n\n    try {\n      const response = await handleRequest(new Request(\"https://shop.mn\" + scenario.path, init));\n\n      if (!(response instanceof Response)) {\n        throw new Error(\"handleRequest нь Response биш зүйл буцаалаа\");\n      }\n\n      status = response.status;\n      const text = await response.text();\n      try {\n        body = text ? JSON.parse(text) : null;\n      } catch (problem) {\n        body = text;\n      }\n\n      if (body && typeof body.token === \"string\") token = body.token;\n    } catch (problem) {\n      error = problem.message;\n    }\n\n    window.RESULTS[scenario.key] = { status, body, error };\n    render(scenario, status, body, error, sendToken);\n  }\n\n  window.TOKEN = token;\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/auth.js",
+      "src/server.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/server.js"
+    ],
+    "activeFile": "src/server.js"
+  },
+  "tasks": [
+    {
+      "id": "m12-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Нэвтрэх ба token"
+      },
+      "statement": {
+        "mn": "`POST /api/login` замыг бич: имэйлээр хэрэглэгчийг ол, `await verifyPassword(...)`-ээр шалга. Хэрэглэгч ОЛДООГҮЙ ч, нууц үг БУРУУ ч ЯГ ИЖИЛ `{ error: \"Имэйл эсвэл нууц үг буруу\" }`-г **401**-ээр буцаа. Зөв бол `crypto.randomUUID()`-ээр token үүсгэж `db.sessions[token] = user.id` гэж хадгалаад `{ token, name }` буцаа."
+      },
+      "requirements": [
+        {
+          "mn": "Буруу → 401"
+        },
+        {
+          "mn": "Хоёр тохиолдолд ижил мессеж"
+        },
+        {
+          "mn": "Token үүсгэж хадгална"
+        },
+        {
+          "mn": "Зөв → 200 + token"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Буруу нууц үг ба бүртгэлгүй имэйл хоёр ижилхэн 401 буцаана; зөв нэвтрэлт token өгнө."
+        }
+      },
+      "targetFile": "src/server.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(Object.values(window.RESULTS).map((r) => r.error))",
+                  "equals": "[null,null,null,null]"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`handleRequest` алдаа шидсэн эсвэл `Response` биш зүйл буцаалаа — хуудсан дээрх улаан мессежийг уншаарай."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.loginBad.status",
+                  "equals": 401
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`POST /api/login` (Буруу нууц үг) нь 401 статус буцаах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(window.RESULTS.loginBad.body)",
+                  "equals": "{\"error\":\"Имэйл эсвэл нууц үг буруу\"}"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`POST /api/login`-ийн хариу таарахгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.loginGhost.status",
+                  "equals": 401
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`POST /api/login` (Бүртгэлгүй имэйл) нь 401 статус буцаах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(window.RESULTS.loginGhost.body)",
+                  "equals": "{\"error\":\"Имэйл эсвэл нууц үг буруу\"}"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`POST /api/login`-ийн хариу таарахгүй байна."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(window.RESULTS.loginGhost.body) === JSON.stringify(window.RESULTS.loginBad.body)",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Бүртгэлгүй имэйл ба буруу нууц үг хоёрт ИЖИЛ хариу буцаах ёстой — эс бол аль имэйл бүртгэлтэйг таах боломжтой болно."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.loginOk.status",
+                  "equals": 200
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`POST /api/login` (Зөв нууц үгээр нэвтрэх) нь 200 статус буцаах ёстой."
+          }
+        },
+        {
+          "id": "c8",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "typeof window.RESULTS.loginOk.body.token",
+                  "equals": "string"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`POST /api/login` нь хариудаа `token` буцаах ёстой."
+          }
+        },
+        {
+          "id": "c9",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "«Ийм имэйл байхгүй» гэж хэлэх нь халдагчид ямар имэйлүүд бүртгэлтэйг нэг нэгээр нь шалгах боломж өгнө. Тиймээс хоёр тохиолдолд ижил хариу өгнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Token бол ердөө санамсаргүй мөр. Сервер тэрийг хэн болохтой нь холбож санана (`db.sessions`), клиент зүгээр л буцааж авчирна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Хүрээг нь гүйцээ:"
+          },
+          "code": "const input = await request.json();\nconst user = db.users.find(/* имэйлээр ол */);\n\nif (!user || !(await verifyPassword(input.password, user))) {\n  /* ижил мессежтэй 401 */\n}\n\n/* token үүсгэ, db.sessions-д хадгал, буцаа */"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/server.js",
+            "content": "// Shop.mn-ий сервер — нэвтрэлт ба эрх.\n\n// Хариу бүрийг JSON болгож буцаах жижиг туслах.\nfunction json(body, status) {\n  return new Response(JSON.stringify(body), {\n    status: status || 200,\n    headers: { \"Content-Type\": \"application/json\" },\n  });\n}\n\nasync function handleRequest(request) {\n  const path = new URL(request.url).pathname;\n\n  if (path === \"/api/register\" && request.method === \"POST\") {\n    const input = await request.json();\n\n    if (!input.email || !input.password || input.password.length < 8) {\n      return json({ error: \"Имэйл болон 8-аас урт нууц үг шаардлагатай\" }, 400);\n    }\n\n    if (db.users.some((user) => user.email === input.email)) {\n      return json({ error: \"Энэ имэйл бүртгэлтэй байна\" }, 409);\n    }\n\n    const salt = randomSalt();\n    const user = {\n      id: db.users.length + 1,\n      name: input.name,\n      email: input.email,\n      salt: salt,\n      hash: await hashPassword(input.password, salt),\n    };\n    db.users.push(user);\n\n    return json({ id: user.id, name: user.name, email: user.email }, 201);\n  }\n\n  if (path === \"/api/login\" && request.method === \"POST\") {\n    const input = await request.json();\n    const user = db.users.find((candidate) => candidate.email === input.email);\n\n    // Имэйл буруу ч, нууц үг буруу ч ИЖИЛ хариу — аль нь буруу болохыг\n    // хэлэх нь халдагчид бүртгэлтэй имэйлүүдийг олох боломж өгнө.\n    if (!user || !(await verifyPassword(input.password, user))) {\n      return json({ error: \"Имэйл эсвэл нууц үг буруу\" }, 401);\n    }\n\n    const token = crypto.randomUUID();\n    db.sessions[token] = user.id;\n\n    return json({ token: token, name: user.name });\n  }\n\n  return json({ error: \"Хаяг олдсонгүй: \" + path }, 404);\n}\n\nwindow.handleRequest = handleRequest;\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Энэ бол session token: сервер санаж байгаа санамсаргүй мөр. Нөгөө түгээмэл хувилбар нь JWT — тэнд сервер юу ч санахгүй, token өөрөө гарын үсэгтэй мэдээлэл агуулна. Session нь гараад авахад амархан (`delete`), JWT нь масштаблахад хялбар. Аль аль нь адилхан зарчимтай: нэвтэрсний ДАРАА хүсэлт бүрд өөрийгөө танилцуулна."
+        },
+        "xpPenalty": 27
+      },
+      "xp": 45,
+      "estimatedMinutes": 22,
+      "skills": [
+        "backend",
+        "security"
+      ]
+    }
+  ],
+  "completion": {
+    "xp": 30
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

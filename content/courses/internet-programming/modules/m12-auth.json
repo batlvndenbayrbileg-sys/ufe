@@ -1,0 +1,19 @@
+{
+  "id": "m12-auth",
+  "stageId": "s8",
+  "order": 1,
+  "title": {
+    "mn": "Нэвтрэлт ба эрх"
+  },
+  "description": {
+    "mn": "Нууц үгийн хэш, session token, хамгаалагдсан зам, эзэмшлийн шалгалт, гарах."
+  },
+  "estimatedHours": 2,
+  "lessons": [
+    "m12-l1",
+    "m12-l2",
+    "m12-l3",
+    "m12-l4",
+    "m12-l5"
+  ]
+}

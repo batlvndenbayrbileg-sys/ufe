@@ -90,6 +90,17 @@
       "moduleIds": [
         "m11-server"
       ]
+    },
+    {
+      "id": "s8",
+      "order": 8,
+      "title": {
+        "mn": "Нэвтрэлт ба аюулгүй байдал"
+      },
+      "badgeId": "auth-builder",
+      "moduleIds": [
+        "m12-auth"
+      ]
     }
   ]
 }
