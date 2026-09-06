@@ -1,7 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Check, PartyPopper, Trophy, Circle, CircleCheckBig, Eye, ChevronRight } from "lucide-react";
+import {
+  Check,
+  PartyPopper,
+  Trophy,
+  Circle,
+  CircleCheckBig,
+  Eye,
+  ChevronRight,
+  Hammer,
+  BookOpen,
+  Lightbulb,
+} from "lucide-react";
 import { WorkspaceShell, Badge, ProgressRing, ThemeToggle, useTheme } from "@khiye/ui";
 import { EditorPane, workspaceStore, useWorkspace, type CodeMirrorHandle } from "@khiye/editor";
 import { PreviewFrame, type ConsoleEntry, type FileSet } from "@khiye/preview";
@@ -46,6 +57,13 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
     pasteHintTimer.current = setTimeout(() => setPasteHint(false), 2600);
   }, []);
   useEffect(() => () => { if (pasteHintTimer.current) clearTimeout(pasteHintTimer.current); }, []);
+
+  // Interactive concept cards: which ones are expanded.
+  const [openConcepts, setOpenConcepts] = useState<Record<string, boolean>>({});
+  const toggleConcept = useCallback(
+    (slug: string) => setOpenConcepts((o) => ({ ...o, [slug]: !o[slug] })),
+    [],
+  );
 
   const task = tasks[taskIndex]!;
   const files = useWorkspace((st) => st.files) as FileSet;
@@ -163,6 +181,18 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
       collapsedRail={<span style={{ writingMode: "vertical-rl", fontSize: 12, color: "var(--text-muted)" }}>Заавар</span>}
       instructions={
         <div className={s.pane}>
+          {/* Lesson framing: what you're building here, and why it matters. */}
+          <div className={s.lessonIntro}>
+            <span className={s.lessonIntroIcon} aria-hidden>
+              <Hammer size={18} strokeWidth={2.2} />
+            </span>
+            <div className={s.lessonIntroText}>
+              <span className={s.lessonIntroLabel}>Юу барих вэ</span>
+              <span className={s.lessonIntroBuild}>{lesson.buildsInProject}</span>
+              <p className={s.lessonIntroWhy}>{lesson.why.mn}</p>
+            </div>
+          </div>
+
           <div className={s.taskHead}>
             <span className={s.taskBadge} aria-hidden>
               {taskIndex + 1}
@@ -235,13 +265,48 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
             </div>
           ) : null}
 
-          <details className={s.why}>
-            <summary className={s.whySummary}>
-              <ChevronRight size={15} className={s.whyChevron} />
-              Яагаад үүнийг сурах вэ?
-            </summary>
-            <p className={s.whyBody}>{lesson.why.mn}</p>
-          </details>
+          {lesson.conceptNotes.length ? (
+            <section className={s.concepts}>
+              <div className={s.conceptsHead}>
+                <BookOpen size={16} strokeWidth={2.2} />
+                <span>Шинэ ойлголтууд</span>
+                <span className={s.conceptsCount}>{lesson.conceptNotes.length}</span>
+                <span className={s.conceptsHint}>дэлгэрэнгүйг товшино уу</span>
+              </div>
+              <div className={s.conceptList}>
+                {lesson.conceptNotes.map((c) => {
+                  const open = !!openConcepts[c.slug];
+                  return (
+                    <div key={c.slug} className={`${s.concept} ${open ? s.conceptOpen : ""}`}>
+                      <button
+                        type="button"
+                        className={s.conceptToggle}
+                        aria-expanded={open}
+                        onClick={() => toggleConcept(c.slug)}
+                      >
+                        <code className={s.conceptTerm}>{c.term}</code>
+                        <span className={s.conceptWhat}>{c.what}</span>
+                        <ChevronRight size={16} className={s.conceptChevron} aria-hidden />
+                      </button>
+                      <div className={s.conceptBody}>
+                        <div className={s.conceptBodyInner}>
+                          <p className={s.conceptWhy}>
+                            <Lightbulb size={15} strokeWidth={2.2} className={s.conceptWhyIcon} />
+                            <span>{c.why}</span>
+                          </p>
+                          {c.example ? (
+                            <pre className={s.conceptExample}>
+                              <code>{c.example}</code>
+                            </pre>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ) : null}
 
           {result ? null : (
             <>

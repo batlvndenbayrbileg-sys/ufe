@@ -8,6 +8,7 @@ import {
   type ResolvedCourse,
   type Task,
 } from "@khiye/content-sdk";
+import { resolveConcepts, type ResolvedConcept } from "./concepts";
 
 /**
  * Server-side content service. Loads the course from the git content repo,
@@ -142,6 +143,8 @@ export interface LessonPublic {
   estimatedMinutes: number;
   skills: string[];
   concepts: string[];
+  /** Interactive glossary cards for this lesson's concepts (empty if none defined). */
+  conceptNotes: ResolvedConcept[];
   execution: Lesson["execution"];
   workspace: Lesson["workspace"];
   completion: Lesson["completion"];
@@ -163,6 +166,7 @@ export function getLessonPublic(lessonId: string): LessonPublic | null {
     estimatedMinutes: lesson.estimatedMinutes,
     skills: lesson.skills,
     concepts: lesson.concepts,
+    conceptNotes: resolveConcepts(lesson.concepts),
     execution: lesson.execution,
     workspace: lesson.workspace,
     completion: lesson.completion,
