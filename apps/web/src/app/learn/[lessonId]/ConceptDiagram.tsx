@@ -33,7 +33,8 @@ export type DiagramKind =
   | "join"
   | "table"
   | "aaa"
-  | "heading-order";
+  | "heading-order"
+  | "map-filter";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -299,6 +300,42 @@ function render(kind: DiagramKind): React.ReactNode {
           <text x={140} y={116} fill="var(--accent-text)" textAnchor="middle" style={t}>items[1] = 🍌</text>
         </>
       );
+    case "map-filter": {
+      const cell = (x: number, y: number, v: number | string, fill: string, fg: string) => (
+        <>
+          <Box x={x} y={y} width={17} height={20} fill={fill} stroke={ACC} rx={2} />
+          <text x={x + 8.5} y={y + 14} fill={fg} textAnchor="middle" style={{ ...t, fontSize: 10 }}>{v}</text>
+        </>
+      );
+      const arr = (x: number, y: number, vals: Array<number | string>, fill: string, fg: string) =>
+        vals.map((v, i) => <g key={i}>{cell(x + i * 19, y, v, fill, fg)}</g>);
+      return (
+        <>
+          {/* map: transforms every item → same length */}
+          <text x={121} y={16} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>.map(x ⇒ x*2)</text>
+          {arr(8, 20, [1, 2, 3, 4], SURF, TXT)}
+          <line x1={90} y1={30} x2={150} y2={30} stroke={ACC} strokeWidth={1.5} markerEnd="url(#armf)" />
+          {arr(156, 20, [2, 4, 6, 8], SUB, "var(--accent-text)")}
+          <text x={121} y={54} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>4 → 4 · адил урт</text>
+
+          {/* filter: keeps matches → shorter */}
+          <text x={121} y={74} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>.filter(x ⇒ x&gt;2)</text>
+          {arr(8, 78, [1, 2, 3, 4], SURF, TXT)}
+          <line x1={90} y1={88} x2={150} y2={88} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#armfs)" />
+          {arr(156, 78, [3, 4], "color-mix(in srgb, var(--success) 16%, var(--surface))", "var(--success)")}
+          <text x={121} y={112} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>4 → 2 · цөөрнө</text>
+
+          <defs>
+            <marker id="armf" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+            <marker id="armfs" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+          </defs>
+        </>
+      );
+    }
     case "object":
       return (
         <>

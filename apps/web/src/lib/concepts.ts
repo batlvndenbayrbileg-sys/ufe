@@ -1743,9 +1743,9 @@ const DIAGRAMS: Record<string, string> = {
   "500": "http-status",
   // data
   array: "array",
-  "array.map": "array",
-  "array.filter": "array",
-  filter: "array",
+  "array.map": "map-filter",
+  "array.filter": "map-filter",
+  filter: "map-filter",
   "array.find": "array",
   find: "array",
   "array.reduce": "array",
