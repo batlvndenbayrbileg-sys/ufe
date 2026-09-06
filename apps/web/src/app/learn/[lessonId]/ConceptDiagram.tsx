@@ -121,22 +121,31 @@ function render(kind: DiagramKind): React.ReactNode {
           )}
         </>
       );
-    case "dom-tree":
+    case "dom-tree": {
+      const node = (x: number, y: number, w: number, label: string, level: 0 | 1 | 2) => {
+        const fill = level === 0 ? ACC : level === 1 ? SUB : SURF;
+        const fg = level === 0 ? "var(--on-accent)" : level === 1 ? "var(--accent-text)" : TXT;
+        return (
+          <>
+            <Box x={x} y={y} width={w} height={20} fill={fill} stroke={level === 2 ? BOR : ACC} rx={4} />
+            <text x={x + w / 2} y={y + 14} fill={fg} textAnchor="middle" style={t}>{label}</text>
+          </>
+        );
+      };
       return (
         <>
-          <line x1={140} y1={26} x2={80} y2={58} stroke={BOR} />
-          <line x1={140} y1={26} x2={200} y2={58} stroke={BOR} />
-          <line x1={200} y1={72} x2={200} y2={94} stroke={BOR} />
-          <Box x={112} y={10} width={56} height={20} fill={ACC} rx={3} />
-          <text x={140} y={24} fill="var(--on-accent)" textAnchor="middle" style={t}>html</text>
-          <Box x={52} y={58} width={56} height={20} fill={SUB} stroke={ACC} />
-          <text x={80} y={72} fill="var(--accent-text)" textAnchor="middle" style={t}>head</text>
-          <Box x={172} y={58} width={56} height={20} fill={SUB} stroke={ACC} />
-          <text x={200} y={72} fill="var(--accent-text)" textAnchor="middle" style={t}>body</text>
-          <Box x={172} y={94} width={56} height={20} fill={SURF} stroke={BOR} />
-          <text x={200} y={108} fill={TXT} textAnchor="middle" style={t}>main</text>
+          {/* connectors: html → head/body, body → header/main/footer */}
+          <path d="M128,30 V34 M64,34 H192 M64,34 V46 M192,34 V46" fill="none" stroke={BOR} />
+          <path d="M192,66 V74 M158,74 H254 M158,74 V88 M206,74 V88 M254,74 V88" fill="none" stroke={BOR} />
+          {node(104, 10, 48, "html", 0)}
+          {node(40, 46, 48, "head", 1)}
+          {node(168, 46, 48, "body", 1)}
+          {node(134, 88, 48, "header", 2)}
+          {node(186, 88, 40, "main", 2)}
+          {node(230, 88, 48, "footer", 2)}
         </>
       );
+    }
     case "breakpoints":
       return (
         <>
