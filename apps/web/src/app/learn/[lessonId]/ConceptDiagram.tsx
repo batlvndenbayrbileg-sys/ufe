@@ -63,14 +63,26 @@ function render(kind: DiagramKind): React.ReactNode {
     case "box-model":
       return (
         <>
-          <Box x={6} y={6} width={268} height={118} fill="none" stroke={BOR} strokeDasharray="4 3" />
-          <text x={12} y={18} fill={MUT} style={t}>margin</text>
-          <Box x={40} y={26} width={200} height={80} fill={SUB} stroke={ACC} />
-          <text x={46} y={38} fill="var(--accent-text)" style={t}>border</text>
-          <Box x={70} y={46} width={140} height={44} fill={SURF} stroke={BOR} />
-          <text x={76} y={58} fill={MUT} style={t}>padding</text>
-          <Box x={108} y={62} width={64} height={20} fill={ACC} rx={3} />
-          <text x={140} y={76} fill="var(--on-accent)" textAnchor="middle" style={t}>content</text>
+          {/* margin — transparent space around the box (dashed) */}
+          <Box
+            x={6}
+            y={6}
+            width={268}
+            height={118}
+            fill="color-mix(in srgb, var(--warning) 12%, var(--surface))"
+            stroke="var(--warning)"
+            strokeDasharray="4 3"
+          />
+          <text x={12} y={19} fill="var(--warning)" style={t}>margin</text>
+          {/* border — the real edge line */}
+          <Box x={44} y={24} width={192} height={82} fill="color-mix(in srgb, var(--text-subtle) 22%, var(--surface))" stroke={BOR} strokeWidth={2} />
+          <text x={50} y={37} fill={TXT} style={t}>border</text>
+          {/* padding — breathing room inside the border */}
+          <Box x={72} y={40} width={136} height={50} fill="color-mix(in srgb, var(--success) 16%, var(--surface))" stroke="var(--success)" />
+          <text x={78} y={53} fill="var(--success)" style={t}>padding</text>
+          {/* content */}
+          <Box x={100} y={54} width={80} height={22} fill={ACC} rx={3} />
+          <text x={140} y={69} fill="var(--on-accent)" textAnchor="middle" style={t}>агуулга</text>
         </>
       );
     case "flex-row":
