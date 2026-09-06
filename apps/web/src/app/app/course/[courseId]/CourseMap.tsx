@@ -1,8 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { motion, type Variants } from "framer-motion";
 import { Check, CircleCheckBig, Lock, LockOpen, Play } from "lucide-react";
 import { Alert, AppShell, Badge, Button, Card, ProgressBar, Spinner, ThemeToggle } from "@khiye/ui";
+
+// Cards rise in with a small stagger as the map loads.
+const container: Variants = { show: { transition: { staggerChildren: 0.05 } } };
+const rise: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.2, 0.8, 0.2, 1] } },
+};
 import { loadProgress, lessonProgress, type Progress } from "@/lib/progress";
 import { useIsAdmin } from "@/lib/admin";
 import { flattenLessons, isLessonAccessible } from "../../course-types";
@@ -120,7 +128,8 @@ export function CourseMap() {
         </>
       }
     >
-      <div className={styles.page}>
+      <motion.div className={styles.page} variants={container} initial="hidden" animate="show">
+        <motion.div variants={rise}>
         <Card padded={false} className={styles.summaryCard}>
           <div className={styles.summary}>
             <span className={styles.summaryCount}>
@@ -137,6 +146,7 @@ export function CourseMap() {
             label="Курсын явц"
           />
         </Card>
+        </motion.div>
 
         {map.stages.map((stage) => {
           const count = counts.byStage.get(stage.id) ?? { done: 0, total: 0 };
@@ -147,8 +157,9 @@ export function CourseMap() {
           const stagePct = count.total > 0 ? Math.round((count.done / count.total) * 100) : 0;
 
           return (
-            <section
+            <motion.section
               key={stage.id}
+              variants={rise}
               className={`${styles.stage} ${isCurrent ? styles.stageCurrent : ""} ${complete ? styles.stageComplete : ""}`}
             >
               <button
@@ -247,10 +258,10 @@ export function CourseMap() {
                   </div>
                 ))}
               </div>
-            </section>
+            </motion.section>
           );
         })}
-      </div>
+      </motion.div>
     </AppShell>
   );
 }
