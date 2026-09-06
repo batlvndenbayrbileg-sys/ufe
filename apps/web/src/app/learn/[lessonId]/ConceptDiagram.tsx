@@ -39,7 +39,8 @@ export type DiagramKind =
   | "try-catch"
   | "localstorage"
   | "conditional"
-  | "useeffect";
+  | "useeffect"
+  | "router";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -821,6 +822,36 @@ function render(kind: DiagramKind): React.ReactNode {
               <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
             </marker>
             <marker id="aruel" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "router":
+      return (
+        <>
+          {/* a link click changes the URL hash */}
+          <Box x={14} y={10} width={62} height={20} fill={SURF} stroke={BOR} rx={4} />
+          <text x={45} y={24} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 10 }}>#/home</text>
+          <line x1={78} y1={20} x2={130} y2={20} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arrt)" />
+          <text x={104} y={14} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>холбоос дарах</text>
+          <Box x={132} y={10} width={62} height={20} fill={SUB} stroke={ACC} rx={4} />
+          <text x={163} y={24} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>#/cart</text>
+          <text x={236} y={22} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>hashchange</text>
+
+          {/* the app shell: header stays, only the view swaps */}
+          <Box x={54} y={40} width={172} height={72} fill={SURF} stroke={BOR} rx={6} />
+          <path d="M54,46 a6,6 0 0 1 6,-6 h160 a6,6 0 0 1 6,6 v16 h-172 z" fill={SUB} />
+          <text x={66} y={56} fill={TXT} style={{ ...t, fontWeight: 700, fontSize: 10 }}>Shop.mn</text>
+          <text x={150} y={56} fill={MUT} style={{ ...t, fontSize: 10 }}>Нүүр</text>
+          <text x={192} y={56} fill="var(--accent-text)" style={{ ...t, fontSize: 10, fontWeight: 700 }}>Сагс</text>
+          <line x1={185} y1={59} x2={211} y2={59} stroke={ACC} strokeWidth={1.5} />
+          <text x={140} y={90} textAnchor="middle" style={{ ...t, fontSize: 16 }}>🛒</text>
+          <text x={140} y={104} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>Сагс харагдац</text>
+
+          <text x={140} y={126} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>толгой тогтмол · reload-гүй солигдоно</text>
+          <defs>
+            <marker id="arrt" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>

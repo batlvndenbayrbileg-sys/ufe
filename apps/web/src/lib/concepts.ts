@@ -1770,6 +1770,11 @@ const DIAGRAMS: Record<string, string> = {
   "side effect": "useeffect",
   "useEffect cleanup": "useeffect",
   "useEffect on mount": "useeffect",
+  // routing / SPA
+  "single page app": "router",
+  "location.hash": "router",
+  hashchange: "router",
+  "route switch": "router",
   forEach: "array",
   "list rendering": "array",
   object: "object",
