@@ -260,19 +260,36 @@ function render(kind: DiagramKind): React.ReactNode {
     case "hash":
       return (
         <>
-          <Box x={8} y={44} width={92} height={38} fill={SURF} stroke={BOR} />
-          <text x={54} y={67} fill={TXT} textAnchor="middle" style={t}>нууц үг</text>
-          <Box x={116} y={40} width={48} height={46} fill={ACC} />
-          <text x={140} y={67} fill="var(--on-accent)" textAnchor="middle" style={t}>hash</text>
-          <Box x={180} y={44} width={92} height={38} fill={SUB} stroke={ACC} />
-          <text x={226} y={67} fill="var(--accent-text)" textAnchor="middle" style={t}>a3f9…</text>
-          <line x1={100} y1={63} x2={114} y2={63} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arh)" />
-          <line x1={164} y1={63} x2={178} y2={63} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arh)" />
-          <path d="M178,96 Q140,110 102,96" fill="none" stroke="var(--danger)" strokeDasharray="4 3" />
-          <text x={140} y={122} fill="var(--danger)" textAnchor="middle" style={t}>буцаах боломжгүй</text>
+          {/* inputs: password + salt both feed the hash */}
+          <Box x={6} y={18} width={74} height={24} fill={SURF} stroke={BOR} />
+          <text x={43} y={34} fill={TXT} textAnchor="middle" style={t}>нууц үг</text>
+          <Box x={6} y={50} width={74} height={24} fill="color-mix(in srgb, var(--warning) 16%, var(--surface))" stroke="var(--warning)" />
+          <text x={43} y={66} fill="var(--warning)" textAnchor="middle" style={t}>+ salt</text>
+          <line x1={80} y1={30} x2={112} y2={44} stroke={BOR} strokeWidth={1.5} markerEnd="url(#arh)" />
+          <line x1={80} y1={62} x2={112} y2={50} stroke={BOR} strokeWidth={1.5} markerEnd="url(#arh)" />
+
+          {/* one-way hash function */}
+          <Box x={114} y={30} width={50} height={34} fill={ACC} rx={6} />
+          <text x={139} y={51} fill="var(--on-accent)" textAnchor="middle" style={t}>hash()</text>
+
+          {/* digest out */}
+          <line x1={164} y1={47} x2={182} y2={47} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arh)" />
+          <Box x={184} y={30} width={90} height={34} fill={SUB} stroke={ACC} />
+          <text x={229} y={51} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>a3f9c8b1…</text>
+
+          {/* one-way: reverse is impossible */}
+          <path d="M226,66 Q140,104 44,80" fill="none" stroke="var(--danger)" strokeWidth={1.5} strokeDasharray="4 3" markerEnd="url(#arhx)" />
+          <g transform="translate(140,96)">
+            <circle r={9} fill="var(--surface)" stroke="var(--danger)" strokeWidth={1.5} />
+            <path d="M-4,-4 L4,4 M4,-4 L-4,4" stroke="var(--danger)" strokeWidth={1.5} />
+          </g>
+          <text x={140} y={124} fill="var(--danger)" textAnchor="middle" style={t}>буцааж тайлах боломжгүй</text>
           <defs>
             <marker id="arh" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+            <marker id="arhx" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--danger)" />
             </marker>
           </defs>
         </>
