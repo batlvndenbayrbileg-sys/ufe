@@ -51,6 +51,10 @@ export interface CodeMirrorProps {
   onChange?: (value: string) => void;
   onCursor?: (pos: number) => void;
   ariaLabel?: string;
+  /** Anti-cheat: block paste/drop so students type the code themselves. */
+  blockPaste?: boolean;
+  /** Fired when a paste/drop is blocked (for a UI hint). */
+  onPasteBlocked?: () => void;
 }
 
 // A one-shot pulse decoration for marker anchoring.
@@ -73,7 +77,7 @@ const pulseField = StateField.define<DecorationSet>({
 });
 
 export const CodeMirror = forwardRef<CodeMirrorHandle, CodeMirrorProps>(function CodeMirror(
-  { value, language, dark = false, readOnly = false, readOnlyRanges = [], onChange, onCursor, ariaLabel },
+  { value, language, dark = false, readOnly = false, readOnlyRanges = [], onChange, onCursor, ariaLabel, blockPaste = false, onPasteBlocked },
   ref,
 ) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -84,15 +88,25 @@ export const CodeMirror = forwardRef<CodeMirrorHandle, CodeMirrorProps>(function
   const onChangeRef = useRef(onChange);
   const onCursorRef = useRef(onCursor);
   const rangesRef = useRef<Range[]>(readOnlyRanges);
+  const blockPasteRef = useRef(blockPaste);
+  const onPasteBlockedRef = useRef(onPasteBlocked);
   onChangeRef.current = onChange;
   onCursorRef.current = onCursor;
   rangesRef.current = readOnlyRanges;
+  blockPasteRef.current = blockPaste;
+  onPasteBlockedRef.current = onPasteBlocked;
 
   // Mount once.
   useEffect(() => {
     if (!hostRef.current) return;
     const readOnlyGuard = EditorState.transactionFilter.of((tr) => {
       if (!tr.docChanged) return tr;
+      // Anti-cheat: reject paste/drop-originated edits outright, whatever the
+      // DOM-event ordering — students must type the code themselves.
+      if (blockPasteRef.current && (tr.isUserEvent("input.paste") || tr.isUserEvent("input.drop"))) {
+        onPasteBlockedRef.current?.();
+        return [];
+      }
       let blocked = false;
       tr.changes.iterChangedRanges((fromA, toA) => {
         if (intersectsRange(fromA, toA, rangesRef.current)) blocked = true;
@@ -128,6 +142,21 @@ export const CodeMirror = forwardRef<CodeMirrorHandle, CodeMirrorProps>(function
         themeComp.current.of([khiyeEditorTheme(dark), khiyeHighlight(dark)]),
         roComp.current.of(readOnly ? EditorState.readOnly.of(true) : []),
         readOnlyGuard,
+        // Anti-cheat: swallow paste & drop so answers are typed by hand.
+        EditorView.domEventHandlers({
+          paste(event) {
+            if (!blockPasteRef.current) return false;
+            event.preventDefault();
+            onPasteBlockedRef.current?.();
+            return true;
+          },
+          drop(event) {
+            if (!blockPasteRef.current) return false;
+            event.preventDefault();
+            onPasteBlockedRef.current?.();
+            return true;
+          },
+        }),
         EditorView.lineWrapping,
         EditorView.updateListener.of((u) => {
           if (u.docChanged) onChangeRef.current?.(u.state.doc.toString());

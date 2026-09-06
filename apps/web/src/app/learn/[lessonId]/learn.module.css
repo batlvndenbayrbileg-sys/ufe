@@ -668,3 +668,42 @@ details[open] > .whySummary .whyChevron {
 .quizExplainNo {
   border-left-color: var(--danger);
 }
+
+/* ── editor: anti-cheat paste hint ───────────────────────────────────────── */
+.editorWrap {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.pasteToast {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translate(-50%, 8px);
+  z-index: 5;
+  pointer-events: none;
+  max-width: calc(100% - 24px);
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  background: var(--text);
+  color: var(--surface);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.pasteToastShow {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pasteToast {
+    transition: opacity var(--dur-fast) var(--ease-out);
+    transform: translate(-50%, 0);
+  }
+}

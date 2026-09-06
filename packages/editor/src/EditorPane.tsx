@@ -13,12 +13,16 @@ export interface EditorPaneProps {
   showTree?: boolean;
   showKeyStrip?: boolean;
   className?: string;
+  /** Anti-cheat: block paste/drop so students type the code themselves. */
+  blockPaste?: boolean;
+  /** Fired when a paste/drop is blocked (for a UI hint). */
+  onPasteBlocked?: () => void;
 }
 
 /** Store-connected editor: tabs + (optional) tree + CodeMirror + key strip.
  *  Forwards the active CodeMirror handle (scrollToMarker, etc.) for E7. */
 export const EditorPane = forwardRef<CodeMirrorHandle, EditorPaneProps>(function EditorPane(
-  { dark = false, showTree = false, showKeyStrip = false, className },
+  { dark = false, showTree = false, showKeyStrip = false, className, blockPaste = false, onPasteBlocked },
   ref,
 ) {
   const cmRef = useRef<CodeMirrorHandle>(null);
@@ -73,6 +77,8 @@ export const EditorPane = forwardRef<CodeMirrorHandle, EditorPaneProps>(function
               dark={dark}
               readOnly={readOnly}
               ariaLabel={`${active} код засварлагч`}
+              blockPaste={blockPaste}
+              onPasteBlocked={onPasteBlocked}
               onChange={(v) => workspaceStore.getState().setFileContent(active, v)}
               onCursor={(pos) => workspaceStore.getState().setCursor(active, pos)}
             />

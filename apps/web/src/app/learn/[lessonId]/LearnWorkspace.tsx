@@ -37,6 +37,15 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [checking, setChecking] = useState(false);
   const [logs, setLogs] = useState<ConsoleEntry[]>([]);
+  const [pasteHint, setPasteHint] = useState(false);
+  const pasteHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const onPasteBlocked = useCallback(() => {
+    setPasteHint(true);
+    if (pasteHintTimer.current) clearTimeout(pasteHintTimer.current);
+    pasteHintTimer.current = setTimeout(() => setPasteHint(false), 2600);
+  }, []);
+  useEffect(() => () => { if (pasteHintTimer.current) clearTimeout(pasteHintTimer.current); }, []);
 
   const task = tasks[taskIndex]!;
   const files = useWorkspace((st) => st.files) as FileSet;
@@ -256,7 +265,21 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
 
         </div>
       }
-      editor={<EditorPane ref={editorRef} dark={dark} showTree showKeyStrip />}
+      editor={
+        <div className={s.editorWrap}>
+          <EditorPane
+            ref={editorRef}
+            dark={dark}
+            showTree
+            showKeyStrip
+            blockPaste
+            onPasteBlocked={onPasteBlocked}
+          />
+          <div className={`${s.pasteToast} ${pasteHint ? s.pasteToastShow : ""}`} role="status" aria-live="polite">
+            Кодоо өөрөө бичээрэй — хуулж тавих боломжгүй.
+          </div>
+        </div>
+      }
       preview={
         <div className={s.previewCol}>
           <div style={{ flex: 1, minHeight: 0 }}>
