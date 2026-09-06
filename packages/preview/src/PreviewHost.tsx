@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { assembleSrcdoc, diffFiles } from "./assemble";
+import { isBlockedLoop } from "./watchdog";
 import { HARNESS_JS } from "./harness-bundle";
 import {
   isHarnessMessage,
@@ -239,21 +240,47 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
   }, [post, onConsole, onError, onReady, reload]);
 
   // Infinite-loop watchdog: no heartbeat for 3s while "ready" → recover.
-  // Only while the tab is visible: browsers throttle background timers to about
-  // once a minute, so a hidden tab would otherwise "detect" a loop that isn't
-  // there and greet the student with a scary banner on their way back.
+  //
+  // A real loop blocks the STUDENT's iframe but not this parent app — they are
+  // separate JS contexts. Throttling is the opposite: a backgrounded or
+  // unpainted tab slows BOTH. So the reliable "is this a real loop?" test is
+  // whether THIS interval is itself running on schedule. When our own tick
+  // arrives late (tab hidden, occluded, the machine asleep, or an embedded
+  // pane that reports "visible" while its timers are throttled — the case a
+  // visibilityState check misses), the iframe was paused too, not looping:
+  // reset the baseline and give it a fresh grace period. Only when our clock is
+  // ticking normally yet the heartbeat has stopped is the iframe truly blocked.
   useEffect(() => {
     const onVisible = () => {
       if (document.visibilityState === "visible") lastHeartbeat.current = Date.now();
     };
     document.addEventListener("visibilitychange", onVisible);
+    const TICK_MS = 1000;
+    let lastTick = Date.now();
     const id = window.setInterval(() => {
-      if (document.visibilityState !== "visible") return;
-      if (readyRef.current && Date.now() - lastHeartbeat.current > HEARTBEAT_TIMEOUT_MS) {
+      const now = Date.now();
+      const tickDriftMs = now - lastTick - TICK_MS;
+      lastTick = now;
+      const visible = document.visibilityState === "visible";
+      // A suspended/throttled tick means the iframe was paused too — hand the
+      // heartbeat a clean slate so it isn't judged on a gap it couldn't fill.
+      if (!visible || tickDriftMs > HEARTBEAT_TIMEOUT_MS) {
+        lastHeartbeat.current = now;
+        return;
+      }
+      if (
+        isBlockedLoop({
+          ready: readyRef.current,
+          visible,
+          tickDriftMs,
+          sinceHeartbeatMs: now - lastHeartbeat.current,
+          timeoutMs: HEARTBEAT_TIMEOUT_MS,
+        })
+      ) {
         setLooping(true);
         readyRef.current = false;
       }
-    }, 1000);
+    }, TICK_MS);
     return () => {
       document.removeEventListener("visibilitychange", onVisible);
       window.clearInterval(id);
