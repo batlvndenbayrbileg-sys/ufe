@@ -201,11 +201,33 @@
   font-variant-numeric: tabular-nums;
 }
 
-.courseLink {
-  display: inline-block;
+.courseLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
   margin-top: var(--space-3);
+}
+.courseLink {
   font-size: var(--text-sm);
   font-weight: 500;
+}
+.certLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent-subtle);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.certLink:hover {
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
 }
 
 /* ── two-column body (skills wide, badges narrow) ────────────────────────── */

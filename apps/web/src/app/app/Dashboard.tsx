@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion, type Variants } from "framer-motion";
-import { Flame, Zap, Medal, Trophy, Palette, ArrowRight } from "lucide-react";
+import { Flame, Zap, Medal, Trophy, Palette, ArrowRight, Award } from "lucide-react";
 import { Alert, AppShell, Badge, Button, Card, ProgressBar, ProgressRing, Spinner, ThemeToggle } from "@khiye/ui";
 
 // A gentle staggered rise as the dashboard mounts.
@@ -157,9 +157,16 @@ export function Dashboard() {
               </span>
             </div>
             <ProgressBar value={percent} />
-            <a href={`/app/course/${map.id}`} className={s.courseLink}>
-              Бүх хичээл харах →
-            </a>
+            <div className={s.courseLinks}>
+              <a href={`/app/course/${map.id}`} className={s.courseLink}>
+                Бүх хичээл харах →
+              </a>
+              {done ? (
+                <a href={`/app/certificate/${map.id}`} className={s.certLink}>
+                  <Award size={15} strokeWidth={2.2} /> Гэрчилгээ авах
+                </a>
+              ) : null}
+            </div>
           </Card>
         </motion.div>
 
