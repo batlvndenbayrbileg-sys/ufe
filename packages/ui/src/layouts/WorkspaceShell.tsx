@@ -47,6 +47,8 @@ export function WorkspaceShell({
   const containerRef = useRef<HTMLDivElement>(null);
   const [sizes, setSizes] = useState<PaneSizes>({ instructions: 360, preview: 440 });
   const [collapsed, setCollapsed] = useState(false);
+  // On phones the three panes don't fit side by side, so they become tabs.
+  const [mobileTab, setMobileTab] = useState<"instructions" | "editor" | "preview">("instructions");
   const dragRef = useRef<{ target: DragTarget; startX: number; startWidth: number }>({
     target: null,
     startX: 0,
@@ -112,16 +114,40 @@ export function WorkspaceShell({
     <div className={cn(styles.shell, className)}>
       <div className={styles.header}>{header}</div>
 
-      <div
-        ref={containerRef}
-        className={styles.panes}
-        style={{
-          gridTemplateColumns: `${leftWidth}px 6px minmax(0, 1fr) 6px ${sizes.preview}px`,
-        }}
-        onPointerMove={onPointerMove}
-        onPointerUp={endDrag}
-        onPointerCancel={endDrag}
-      >
+      <div className={styles.body}>
+        {/* Phone-only: switch which single pane is showing. */}
+        <div className={styles.mobileTabs} role="tablist" aria-label="Талбар">
+          {(
+            [
+              ["instructions", "Заавар"],
+              ["editor", "Код"],
+              ["preview", "Preview"],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={mobileTab === id}
+              className={cn(styles.mobileTab, mobileTab === id && styles.mobileTabActive)}
+              onClick={() => setMobileTab(id)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <div
+          ref={containerRef}
+          className={styles.panes}
+          data-mobile-tab={mobileTab}
+          style={{
+            gridTemplateColumns: `${leftWidth}px 6px minmax(0, 1fr) 6px ${sizes.preview}px`,
+          }}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+        >
         <aside className={cn(styles.pane, styles.instructions)} data-collapsed={collapsed}>
           <button
             type="button"
@@ -159,6 +185,7 @@ export function WorkspaceShell({
         />
 
         <section className={cn(styles.pane, styles.preview)}>{preview}</section>
+        </div>
       </div>
 
       <div className={styles.actionBar}>{actionBar}</div>

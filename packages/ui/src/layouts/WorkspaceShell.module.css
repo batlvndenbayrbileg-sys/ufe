@@ -17,9 +17,38 @@
   z-index: 3;
 }
 
+/* Middle row: the tab bar (phones only) over the panes. */
+.body {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .panes {
   display: grid;
   min-height: 0;
+  flex: 1;
+}
+
+/* Phone-only tab bar — hidden on desktop. */
+.mobileTabs {
+  display: none;
+}
+.mobileTab {
+  flex: 1;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 11px 8px;
+  cursor: pointer;
+}
+.mobileTabActive {
+  color: var(--accent-text);
+  border-bottom-color: var(--accent);
 }
 
 .pane {
@@ -111,20 +140,38 @@
   z-index: 3;
 }
 
-/* Below the 3-pane threshold, stack. Full mobile tab UX arrives in E7. */
+/* Below the 3-pane threshold the panes become tabs: one fills the area, the
+   tab bar switches between them. */
 @media (max-width: 1023px) {
-  .panes {
+  .mobileTabs {
     display: flex;
-    flex-direction: column;
-    overflow-y: auto;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex: none;
+  }
+  .panes {
+    display: block !important;
     grid-template-columns: none !important;
+    position: relative;
   }
   .resizer {
     display: none;
   }
   .pane {
-    min-height: 280px;
+    display: none;
+    height: 100%;
     border-right: none;
-    border-bottom: 1px solid var(--border);
+  }
+  .panes[data-mobile-tab="instructions"] .instructions,
+  .panes[data-mobile-tab="editor"] .editor,
+  .panes[data-mobile-tab="preview"] .preview {
+    display: flex;
+  }
+  /* On mobile the tabs replace the collapse affordance. */
+  .collapseBtn {
+    display: none;
+  }
+  .instructions .paneScroll {
+    height: 100%;
   }
 }
