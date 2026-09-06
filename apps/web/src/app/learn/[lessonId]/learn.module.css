@@ -134,29 +134,33 @@
 .reqList {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: var(--space-3) var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-2);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 .req {
   display: flex;
   gap: var(--space-2);
-  align-items: baseline;
+  align-items: flex-start;
   font-size: var(--text-base);
-  color: var(--text-muted);
+  line-height: 1.5;
+  color: var(--text);
 }
-.req::before {
-  content: "○";
+.reqIcon {
+  flex: none;
+  display: grid;
+  place-items: center;
   color: var(--text-subtle);
-  font-size: 0.85em;
-  flex-shrink: 0;
+  margin-top: 1px;
 }
 .reqDone {
-  color: var(--success);
+  color: var(--text-muted);
 }
-.reqDone::before {
-  content: "✓";
+.reqDone .reqIcon {
   color: var(--success);
 }
 .req code {
@@ -177,8 +181,12 @@
   overflow: hidden;
 }
 .whySummary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
   font-size: var(--text-sm);
+  font-weight: 500;
   color: var(--text-muted);
   padding: 10px var(--space-4);
   list-style: none;
@@ -187,12 +195,13 @@
 .whySummary::-webkit-details-marker {
   display: none;
 }
-.whySummary::before {
-  content: "▸ ";
+.whyChevron {
+  flex: none;
   color: var(--text-subtle);
+  transition: transform var(--dur-fast) var(--ease-out);
 }
-details[open] > .whySummary::before {
-  content: "▾ ";
+details[open] > .whySummary .whyChevron {
+  transform: rotate(90deg);
 }
 .whySummary:hover {
   background: var(--bg-muted);
@@ -206,21 +215,31 @@ details[open] > .whySummary::before {
   line-height: var(--leading-prose);
 }
 
-/* expected result */
+/* expected result — a small callout, label above the description */
 .expected {
   display: flex;
-  gap: var(--space-3);
+  flex-direction: column;
+  gap: 5px;
   padding: var(--space-3) var(--space-4);
   background: var(--accent-subtle);
   border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-left: 3px solid var(--accent);
   border-radius: var(--radius);
-  font-size: var(--text-base);
-  line-height: 1.55;
 }
 .expectedLabel {
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--accent-text);
-  white-space: nowrap;
+}
+.expectedText {
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--text);
 }
 
 /* ── result panel ───────────────────────────────────────────────────────── */

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Check, PartyPopper, Trophy } from "lucide-react";
+import { Check, PartyPopper, Trophy, Circle, CircleCheckBig, Eye, ChevronRight } from "lucide-react";
 import { WorkspaceShell, Badge, ProgressRing, ThemeToggle, useTheme } from "@khiye/ui";
 import { EditorPane, workspaceStore, useWorkspace, type CodeMirrorHandle } from "@khiye/editor";
 import { PreviewFrame, type ConsoleEntry, type FileSet } from "@khiye/preview";
@@ -207,24 +207,30 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
           {task.requirements?.length ? (
             <ul className={s.reqList}>
               {task.requirements.map((r, i) => (
-                <li
-                  key={i}
-                  className={`${s.req} ${solved ? s.reqDone : ""}`}
-                  dangerouslySetInnerHTML={{ __html: mdInline(r.mn) }}
-                />
+                <li key={i} className={`${s.req} ${solved ? s.reqDone : ""}`}>
+                  <span className={s.reqIcon} aria-hidden>
+                    {solved ? <CircleCheckBig size={16} strokeWidth={2.2} /> : <Circle size={16} strokeWidth={2} />}
+                  </span>
+                  <span dangerouslySetInnerHTML={{ __html: mdInline(r.mn) }} />
+                </li>
               ))}
             </ul>
           ) : null}
 
           {task.expected?.description ? (
             <div className={s.expected}>
-              <span className={s.expectedLabel}>Үр дүн:</span>
-              <span>{task.expected.description.mn}</span>
+              <span className={s.expectedLabel}>
+                <Eye size={15} strokeWidth={2.2} /> Хүлээгдэх үр дүн
+              </span>
+              <span className={s.expectedText}>{task.expected.description.mn}</span>
             </div>
           ) : null}
 
           <details className={s.why}>
-            <summary className={s.whySummary}>Яагаад үүнийг сурах вэ?</summary>
+            <summary className={s.whySummary}>
+              <ChevronRight size={15} className={s.whyChevron} />
+              Яагаад үүнийг сурах вэ?
+            </summary>
             <p className={s.whyBody}>{lesson.why.mn}</p>
           </details>
 
