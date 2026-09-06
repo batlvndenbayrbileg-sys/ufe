@@ -4,9 +4,9 @@
  * with the four-part structure: Юу болов / Хаана / Яагаад / Яаж олох вэ.
  * See docs/blueprint/05-validation-engine.md §5.5.
  *
- * This is a STUB with a handful of the most common beginner errors for
- * stages 1–2. Coverage of the top-20 errors per stage is a content deliverable
- * (E6/T6.6) tracked in /author/health.
+ * Covers the common beginner errors across the course: JS/DOM (stages 1–2),
+ * React (stage 3), and SQLite (stage 6). More specific rules must precede the
+ * generic `reading '…'` catch-alls to win the match.
  */
 
 export interface TranslatedError {
@@ -204,6 +204,91 @@ const RULES: Rule[] = [
       what: "`null` эсвэл `undefined`-ийг объект мэт ашиглалаа.",
       why: "`Object.keys`, тархалт зэрэг үйлдэл `null`/`undefined`-д ажилладаггүй.",
       howToFind: "Тухайн хувьсагчид утга орсон эсэхийг эхлээд шалгаарай.",
+    }),
+  },
+
+  // ── React (Stage 3) ────────────────────────────────────────────────────────
+  {
+    // Too many re-renders / Maximum update depth exceeded
+    match: /Too many re-renders|Maximum update depth exceeded/,
+    build: () => ({
+      what: "Компонент өөрийгөө хязгааргүй дахин зурж байна.",
+      why: "`setState`-ийг render дотор шууд дуудсан бол шинэ утга дахин render хийж, дахин `setState` дуудаж давталт үүсдэг.",
+      howToFind: "`onClick={handler}` гэж БИЧ, `onClick={handler()}` гэж БИЧИХГҮЙ — сүүлийнх нь render болгонд дууддаг.",
+    }),
+  },
+  {
+    // Objects are not valid as a React child
+    match: /Objects are not valid as a React child/,
+    build: () => ({
+      what: "Объектыг шууд дэлгэцэнд гаргах гэж оролдлоо.",
+      why: "React зөвхөн текст, тоо, элементийг харуулдаг — объектыг шууд `{ }` дотор тавьж болохгүй.",
+      howToFind: "Объектын аль талбарыг харуулахаа заа, ж: `{product.name}` (`{product}` биш).",
+    }),
+  },
+  {
+    // Rendered more/fewer hooks / order of Hooks changed
+    match: /Rendered (?:more|fewer) hooks|change in the order of Hooks|Rules of Hooks/,
+    build: () => ({
+      what: "Hook-уудыг (`useState`, `useEffect`) буруу байрлалд дуудлаа.",
+      why: "Hook-ийг `if`, давталт, эсвэл функц дотор дуудаж болохгүй — компонентын эхэнд, ижил дарааллаар дуудна.",
+      howToFind: "Бүх `useState`/`useEffect`-ээ компонентын хамгийн дээр, нөхцөлгүйгээр байрлуулаарай.",
+    }),
+  },
+  {
+    // setState during render of another component
+    match: /Cannot update a component .* while rendering a different component/,
+    build: () => ({
+      what: "Нэг компонентыг зурж байх үед өөр компонентын төлөвийг өөрчлөх гэлээ.",
+      why: "`setState`-ийг render явцад биш, event (`onClick`) эсвэл `useEffect` дотор дуудах ёстой.",
+      howToFind: "`setState` дуудлагаа `onClick` эсвэл `useEffect` рүү зөөгөөрэй.",
+    }),
+  },
+
+  // ── SQL / SQLite (Stage 6) ──────────────────────────────────────────────────
+  {
+    // no such table: products
+    match: /no such table:?\s*(\w+)/,
+    build: (m) => ({
+      what: `\`${m[1]}\` нэртэй хүснэгт байхгүй байна.`,
+      why: "Хүснэгтийн нэрийг буруу бичсэн, эсвэл `CREATE TABLE` хараахан ажиллаагүй байж магадгүй.",
+      howToFind: `Хүснэгтийн нэр (\`${m[1]}\`) зөв бичигдсэн эсэх, схемд байгаа эсэхийг шалгаарай.`,
+    }),
+  },
+  {
+    // no such column: price
+    match: /no such column:?\s*(\S+)/,
+    build: (m) => ({
+      what: `\`${m[1]}\` нэртэй багана байхгүй байна.`,
+      why: "Баганы нэрийг буруу бичсэн, эсвэл өөр хүснэгтэд хамаарах багана байж магадгүй.",
+      howToFind: `\`SELECT * FROM ...\` хийж багануудын жинхэнэ нэрийг хараарай.`,
+    }),
+  },
+  {
+    // near "SELCT": syntax error
+    match: /near ["']([^"']+)["']:\s*syntax error/,
+    build: (m) => ({
+      what: `SQL бичлэгт алдаа байна — \`${m[1]}\`-ийн ойролцоо.`,
+      why: "Түлхүүр үгийг буруу бичсэн (ж: `SELCT`), эсвэл таслал/хаалт дутуу байж магадгүй.",
+      howToFind: `\`${m[1]}\`-ийн орчмыг шалгаад SQL түлхүүр үгсийн бичлэгээ нягтлаарай.`,
+    }),
+  },
+  {
+    // UNIQUE constraint failed: products.id
+    match: /UNIQUE constraint failed:?\s*([\w.]+)/,
+    build: (m) => ({
+      what: `\`${m[1]}\`-д давхардсан утга оруулах гэлээ.`,
+      why: "Энэ багана давтагдашгүй (`UNIQUE`) — ижил утга хоёр удаа байж болохгүй.",
+      howToFind: "Оруулж буй утга (ж: id) өмнө нь байгаа эсэхийг шалгаарай.",
+    }),
+  },
+  {
+    // NOT NULL constraint failed: products.name
+    match: /NOT NULL constraint failed:?\s*([\w.]+)/,
+    build: (m) => ({
+      what: `\`${m[1]}\` багана хоосон (\`NULL\`) байж болохгүй.`,
+      why: "Энэ баганад заавал утга шаардлагатай, гэтэл утга өгөлгүй үлдээжээ.",
+      howToFind: `\`INSERT\` хийхдээ \`${m[1]}\`-д утга өгсөн эсэхээ шалгаарай.`,
     }),
   },
 ];

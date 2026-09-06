@@ -30,11 +30,28 @@ describe("runtime error translation", () => {
     expect(t?.howToFind).toContain("console.log");
   });
 
-  it("covers the common beginner errors (≥ 20 rules)", () => {
-    expect(RUNTIME_ERROR_RULE_COUNT).toBeGreaterThanOrEqual(20);
+  it("covers the common beginner errors (≥ 25 rules)", () => {
+    expect(RUNTIME_ERROR_RULE_COUNT).toBeGreaterThanOrEqual(25);
     expect(translateRuntimeError("Cannot read properties of null (reading 'addEventListener')")?.what).toContain("null");
     expect(translateRuntimeError("Assignment to constant variable.")?.howToFind).toContain("let");
     expect(translateRuntimeError("Identifier 'cart' has already been declared")?.what).toContain("cart");
+  });
+
+  it("translates React errors (stage 3)", () => {
+    expect(
+      translateRuntimeError("Too many re-renders. React limits the number of renders")?.what,
+    ).toContain("дахин зурж");
+    expect(translateRuntimeError("Objects are not valid as a React child (found: object)")?.what).toContain("Объект");
+    expect(
+      translateRuntimeError("React has detected a change in the order of Hooks")?.howToFind,
+    ).toContain("useState");
+  });
+
+  it("translates SQLite errors (stage 6), naming the table/column", () => {
+    expect(translateRuntimeError("no such table: products")?.what).toContain("products");
+    expect(translateRuntimeError("no such column: price")?.what).toContain("price");
+    expect(translateRuntimeError('near "SELCT": syntax error')?.what).toContain("SELCT");
+    expect(translateRuntimeError("UNIQUE constraint failed: products.id")?.what).toContain("products.id");
   });
 
   it("returns null for an unknown error", () => {
