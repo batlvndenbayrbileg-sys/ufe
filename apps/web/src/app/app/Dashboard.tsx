@@ -16,11 +16,13 @@ import { flattenLessons, type MapLesson } from "./course-types";
 import { useCourseMap } from "./useCourseMap";
 import { BrandLockup } from "../BrandMark";
 import { AccountControl } from "../AccountControl";
+import { useIsAdmin } from "@/lib/admin";
 import { badgeLabel } from "@/lib/badges";
 import s from "./dashboard.module.css";
 
 export function Dashboard() {
   const { map, error, reload } = useCourseMap();
+  const isAdmin = useIsAdmin();
   const [progress, setProgress] = useState<Progress | null>(null);
 
   useEffect(() => {
@@ -78,6 +80,11 @@ export function Dashboard() {
             <span className={`${s.headerChip} ${s.chipXp}`} title="Оноо">
               <Zap size={15} strokeWidth={2.4} /> {progress.xp.toLocaleString()}
             </span>
+            {isAdmin ? (
+              <a href="/app/teacher" className={s.staffLink}>
+                Багшийн самбар
+              </a>
+            ) : null}
             <Badge tone="neutral">Level {lvl}</Badge>
             <AccountControl />
             <ThemeToggle />

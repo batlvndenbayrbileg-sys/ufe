@@ -51,6 +51,20 @@
   background: color-mix(in srgb, var(--xp) 10%, var(--surface));
   border-color: color-mix(in srgb, var(--xp) 24%, var(--border));
 }
+.staffLink {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-text);
+  text-decoration: none;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  background: var(--accent-subtle);
+  white-space: nowrap;
+}
+.staffLink:hover {
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+}
 
 /* ── greeting ────────────────────────────────────────────────────────────── */
 .greeting {
