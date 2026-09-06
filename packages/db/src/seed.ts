@@ -137,10 +137,12 @@ async function seedBootstrapCourse() {
 
 async function seedDemoStudents() {
   const password = await hashPassword("Test1234");
-  const demos = [
+  const demos: Array<{ username: string; name: string; xp: number; level: number; role?: "ADMIN" }> = [
     { username: "anuujin", name: "Ануужин", xp: 0, level: 1 },
     { username: "batsaikhan", name: "Батсайхан", xp: 1240, level: 5 },
     { username: "saraa", name: "Сараа", xp: 5400, level: 10 },
+    // A demo admin (password: Test1234) — sees every lesson, unlocked.
+    { username: "admin", name: "Админ", xp: 0, level: 1, role: "ADMIN" },
   ];
   for (const d of demos) {
     const user = await prisma.user.upsert({
@@ -151,11 +153,12 @@ async function seedDemoStudents() {
         username: d.username,
         passwordHash: password,
         emailVerified: new Date(),
+        ...(d.role ? { role: d.role } : {}),
         profile: {
           create: { totalXp: d.xp, level: d.level, goal: "job", hoursPerWeek: 10, onboardedAt: new Date() },
         },
       },
-      update: {},
+      update: d.role ? { role: d.role } : {},
       select: { id: true },
     });
     await prisma.enrollment.upsert({

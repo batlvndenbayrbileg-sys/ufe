@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Alert, AppShell, Badge, Button, Card, ProgressBar, Spinner, ThemeToggle } from "@khiye/ui";
 import { loadProgress, lessonProgress, type Progress } from "@/lib/progress";
-import { flattenLessons } from "../../course-types";
+import { useIsAdmin } from "@/lib/admin";
+import { flattenLessons, isLessonAccessible } from "../../course-types";
 import { useCourseMap } from "../../useCourseMap";
 import styles from "./courseMap.module.css";
 
@@ -11,6 +12,7 @@ type State = "done" | "current" | "locked";
 
 export function CourseMap() {
   const { map, error, reload } = useCourseMap();
+  const isAdmin = useIsAdmin();
   const [progress, setProgress] = useState<Progress | null>(null);
   const [openStages, setOpenStages] = useState<Set<string> | null>(null);
 
@@ -125,6 +127,7 @@ export function CourseMap() {
             </span>
             <span className={styles.summaryLabel}>хичээл дууссан</span>
             <span className={styles.summaryRight}>
+              {isAdmin ? <Badge tone="warning">Админ · бүх хичээл нээлттэй</Badge> : null}
               {map.stages.length} шат · {map.stages.reduce((n, s) => n + s.modules.length, 0)} модуль
             </span>
           </div>
@@ -186,21 +189,33 @@ export function CourseMap() {
                       {mod.lessons.map((l) => {
                         const state = states.get(l.id) ?? "locked";
                         const prog = lessonProgress(l.taskIds, progress);
+                        const accessible = isLessonAccessible(state, isAdmin);
+                        // An admin opening a not-yet-reached lesson: keep the
+                        // locked styling off, mark it as admin-unlocked.
+                        const adminOpen = isAdmin && state === "locked";
                         const className = `${styles.lesson} ${
                           state === "current"
                             ? styles.lessonCurrent
-                            : state === "locked"
-                              ? styles.lessonLocked
-                              : styles.lessonDone
+                            : state === "done"
+                              ? styles.lessonDone
+                              : adminOpen
+                                ? styles.lessonAdmin
+                                : styles.lessonLocked
                         }`;
 
                         const inner = (
                           <>
                             <span aria-hidden className={styles.mark}>
-                              {state === "done" ? "✅" : state === "current" ? "▸" : "🔒"}
+                              {state === "done" ? "✅" : state === "current" ? "▸" : adminOpen ? "🔓" : "🔒"}
                             </span>
                             <span className={styles.srOnly}>
-                              {state === "done" ? "Дууссан. " : state === "current" ? "Одоогийн хичээл. " : "Түгжээтэй. "}
+                              {state === "done"
+                                ? "Дууссан. "
+                                : state === "current"
+                                  ? "Одоогийн хичээл. "
+                                  : adminOpen
+                                    ? "Админ горим — нээлттэй. "
+                                    : "Түгжээтэй. "}
                             </span>
                             <span className={styles.lessonTitle}>{l.title.mn}</span>
                             <span className={styles.lessonCount}>
@@ -209,14 +224,14 @@ export function CourseMap() {
                           </>
                         );
 
-                        return state === "locked" ? (
-                          <div key={l.id} className={className} aria-disabled title="Өмнөх хичээлээ дуусгаарай">
-                            {inner}
-                          </div>
-                        ) : (
+                        return accessible ? (
                           <a key={l.id} href={`/learn/${l.id}`} className={className}>
                             {inner}
                           </a>
+                        ) : (
+                          <div key={l.id} className={className} aria-disabled title="Өмнөх хичээлээ дуусгаарай">
+                            {inner}
+                          </div>
                         );
                       })}
                     </div>

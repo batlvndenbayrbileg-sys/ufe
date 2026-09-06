@@ -49,6 +49,9 @@
 }
 .summaryRight {
   margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
   color: var(--text-subtle);
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
@@ -229,6 +232,14 @@ a.lesson:focus-visible {
 .lessonLocked {
   opacity: 0.55;
   cursor: not-allowed;
+}
+/* Admin-unlocked: reachable, but visibly not part of the student's own path. */
+.lessonAdmin {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--warning) 34%, var(--border));
+}
+.lessonAdmin .lessonTitle {
+  color: var(--text);
 }
 
 .mark {

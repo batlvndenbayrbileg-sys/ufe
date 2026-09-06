@@ -31,3 +31,15 @@ export interface CourseMapData {
 export function flattenLessons(map: CourseMapData): MapLesson[] {
   return map.stages.flatMap((s) => s.modules.flatMap((m) => m.lessons));
 }
+
+/** A lesson's place in the ladder: finished, the one to do now, or still locked. */
+export type LessonState = "done" | "current" | "locked";
+
+/**
+ * Whether a lesson can be opened. Students may open what they have finished and
+ * the one lesson they are on; an admin (or the local "preview all" flag) may
+ * open every lesson regardless of progress. Pure so it can be unit-tested.
+ */
+export function isLessonAccessible(state: LessonState, isAdmin: boolean): boolean {
+  return isAdmin || state !== "locked";
+}
