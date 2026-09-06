@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Lightbulb } from "lucide-react";
 import s from "./learn.module.css";
 
 interface HintMeta {
@@ -55,8 +56,8 @@ export function HintLadder({
         </div>
       ))}
       {canRequest ? (
-        <button type="button" className={s.ghostBtn} onClick={request} disabled={busy}>
-          💡 Заавар авах{cost > 0 ? ` (−${cost} XP)` : ""}
+        <button type="button" className={`${s.ghostBtn} ${s.ghostBtnIcon}`} onClick={request} disabled={busy}>
+          <Lightbulb size={15} strokeWidth={2.2} /> Заавар авах{cost > 0 ? ` (−${cost} XP)` : ""}
         </button>
       ) : (
         <span className={s.gateNote}>Бүх заавар харагдлаа.</span>

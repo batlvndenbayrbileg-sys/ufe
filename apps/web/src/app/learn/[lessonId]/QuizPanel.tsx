@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ListChecks } from "lucide-react";
 import type { QuizQuestionPublic, QuizResult } from "@/lib/content";
 import s from "./learn.module.css";
 
@@ -43,7 +44,9 @@ export function QuizPanel({ lessonId, quiz }: { lessonId: string; quiz: QuizQues
   return (
     <div className={s.quiz}>
       <div className={s.quizHead}>
-        <span className={s.quizTitle}>📝 Ойлголтын шалгалт</span>
+        <span className={s.quizTitle}>
+          <ListChecks size={18} strokeWidth={2.2} /> Ойлголтын шалгалт
+        </span>
         {results ? (
           <span className={score === quiz.length ? s.quizScoreFull : s.quizScore}>
             {score}/{quiz.length}

@@ -350,6 +350,14 @@ details[open] > .whySummary::before {
 .ghostBtn:hover:not(:disabled) {
   background: var(--bg-muted);
 }
+.ghostBtnIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ghostBtnIcon svg {
+  color: var(--warning);
+}
 .ghostBtn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
@@ -495,8 +503,12 @@ details[open] > .whySummary::before {
   gap: var(--space-2);
 }
 .quizTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 700;
   font-size: var(--text-md);
+  color: var(--accent-text);
 }
 .quizScore,
 .quizScoreFull {

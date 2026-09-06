@@ -20,6 +20,7 @@
     "@khiye/preview": "workspace:*",
     "@khiye/shared": "workspace:*",
     "@khiye/ui": "workspace:*",
+    "lucide-react": "^1.41.0",
     "next": "15.1.6",
     "next-auth": "5.0.0-beta.32",
     "next-intl": "3.26.3",

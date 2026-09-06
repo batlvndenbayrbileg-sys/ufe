@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { Hammer, Zap, ShieldCheck, ArrowRight } from "lucide-react";
 import { AppShell, ThemeToggle } from "@khiye/ui";
 import { getCourseMap } from "@/lib/content";
 import { BrandLockup } from "./BrandMark";
@@ -18,9 +19,9 @@ export default async function HomePage() {
   const stages = course.stages.length;
 
   const features = [
-    { icon: "🛠️", title: t("f1Title"), body: t("f1Body") },
-    { icon: "⚡", title: t("f2Title"), body: t("f2Body") },
-    { icon: "✓", title: t("f3Title"), body: t("f3Body") },
+    { Icon: Hammer, title: t("f1Title"), body: t("f1Body") },
+    { Icon: Zap, title: t("f2Title"), body: t("f2Body") },
+    { Icon: ShieldCheck, title: t("f3Title"), body: t("f3Body") },
   ];
 
   return (
@@ -42,7 +43,7 @@ export default async function HomePage() {
           <p className={s.lede}>{t("lede")}</p>
           <div className={s.ctaRow}>
             <a href="/app" className={s.ctaPrimary}>
-              {t("cta")} →
+              {t("cta")} <ArrowRight size={18} strokeWidth={2.4} />
             </a>
             <a href={`/app/course/${course.slug}`} className={s.ctaSecondary}>
               {t("ctaSecondary")}
@@ -71,7 +72,7 @@ export default async function HomePage() {
           {features.map((f) => (
             <div key={f.title} className={s.feature}>
               <span className={s.featureIcon} aria-hidden>
-                {f.icon}
+                <f.Icon size={22} strokeWidth={2} />
               </span>
               <h2 className={s.featureTitle}>{f.title}</h2>
               <p className={s.featureBody}>{f.body}</p>

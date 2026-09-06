@@ -163,7 +163,7 @@
   place-items: center;
   border-radius: var(--radius);
   background: var(--accent-subtle);
-  font-size: 20px;
+  color: var(--accent-text);
   margin-bottom: var(--space-1);
 }
 .featureTitle {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Flame, Zap, Medal, Trophy, Palette, ArrowRight } from "lucide-react";
 import { Alert, AppShell, Badge, Button, Card, ProgressBar, ProgressRing, Spinner, ThemeToggle } from "@khiye/ui";
 import { level, loadProgress, lessonProgress, type Progress } from "@/lib/progress";
 import { flattenLessons, type MapLesson } from "./course-types";
@@ -64,10 +65,10 @@ export function Dashboard() {
           <BrandLockup />
           <div className={s.headerStats}>
             <span className={`${s.headerChip} ${s.chipStreak}`} title="Дараалал">
-              🔥 {progress.streakDays}
+              <Flame size={15} strokeWidth={2.4} /> {progress.streakDays}
             </span>
             <span className={`${s.headerChip} ${s.chipXp}`} title="Оноо">
-              ⚡ {progress.xp.toLocaleString()}
+              <Zap size={15} strokeWidth={2.4} /> {progress.xp.toLocaleString()}
             </span>
             <Badge tone="neutral">Level {lvl}</Badge>
             <AccountControl />
@@ -100,7 +101,7 @@ export function Dashboard() {
               </div>
             </div>
             <a href={`/learn/${nextLesson.id}`} className={s.heroCta}>
-              {done ? "Дахин үзэх →" : "Үргэлжлүүлэх →"}
+              {done ? "Дахин үзэх" : "Үргэлжлүүлэх"} <ArrowRight size={17} strokeWidth={2.4} />
             </a>
           </div>
         ) : null}
@@ -108,7 +109,9 @@ export function Dashboard() {
         {/* Gamification at a glance. */}
         <div className={s.stats}>
           <div className={s.stat}>
-            <span className={`${s.statIcon} ${s.iconStreak}`}>🔥</span>
+            <span className={`${s.statIcon} ${s.iconStreak}`}>
+              <Flame size={22} strokeWidth={2.2} />
+            </span>
             <div>
               <div className={s.statValue}>
                 {progress.streakDays} <span style={{ fontSize: "var(--text-md)", fontWeight: 600 }}>өдөр</span>
@@ -117,14 +120,18 @@ export function Dashboard() {
             </div>
           </div>
           <div className={s.stat}>
-            <span className={`${s.statIcon} ${s.iconXp}`}>⚡</span>
+            <span className={`${s.statIcon} ${s.iconXp}`}>
+              <Zap size={22} strokeWidth={2.2} />
+            </span>
             <div>
               <div className={s.statValue}>{progress.xp.toLocaleString()}</div>
               <div className={s.statLabel}>Нийт оноо (XP)</div>
             </div>
           </div>
           <div className={s.stat}>
-            <span className={`${s.statIcon} ${s.iconLevel}`}>🎖️</span>
+            <span className={`${s.statIcon} ${s.iconLevel}`}>
+              <Medal size={22} strokeWidth={2.2} />
+            </span>
             <div>
               <div className={s.statValue}>Level {lvl}</div>
               <div className={s.statLabel}>Түвшин</div>
@@ -183,9 +190,15 @@ export function Dashboard() {
             ) : (
               <div className={s.badgeEmpty}>
                 <div className={s.badgePlaceholders} aria-hidden>
-                  <span className={s.badgeDot}>🏆</span>
-                  <span className={s.badgeDot}>⚡</span>
-                  <span className={s.badgeDot}>🎨</span>
+                  <span className={s.badgeDot}>
+                    <Trophy size={18} />
+                  </span>
+                  <span className={s.badgeDot}>
+                    <Zap size={18} />
+                  </span>
+                  <span className={s.badgeDot}>
+                    <Palette size={18} />
+                  </span>
                 </div>
                 <p className={s.badgeEmptyText}>Эхний хичээлээ дуусгаад анхны тэмдгээ ав.</p>
               </div>
