@@ -14,6 +14,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "db:setup": "pnpm --filter @khiye/db exec prisma migrate deploy && pnpm --filter @khiye/db db:seed && pnpm --filter @khiye/content-sdk content sync ../../content/courses/internet-programming",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md,css}\"",
     "clean": "turbo run clean && rimraf node_modules"

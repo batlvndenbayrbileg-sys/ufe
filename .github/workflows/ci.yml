@@ -57,6 +57,12 @@ jobs:
       - name: Apply migrations
         run: pnpm --filter @khiye/db exec prisma migrate deploy
 
+      - name: Seed database
+        run: pnpm --filter @khiye/db db:seed
+
+      - name: Sync course content into the database
+        run: pnpm --filter @khiye/content-sdk content sync ../../content/courses/internet-programming
+
       - name: Typecheck
         run: pnpm typecheck
 

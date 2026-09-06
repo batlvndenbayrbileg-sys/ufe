@@ -1,10 +1,17 @@
 /**
- * Seed: skills, achievements, one org+cohort, and 3 demo students at
- * different progress levels (docs/blueprint/18 T2.2). Idempotent (upserts).
- * Real course content is imported separately by the content pipeline (E3/E10);
- * a tiny placeholder course is seeded so the loop has something to target.
+ * Seed: skills, achievements, one org+cohort, and 3 demo students at different
+ * progress levels (docs/blueprint/18 T2.2). Idempotent (upserts).
  *
- * Run: pnpm --filter @khiye/db db:seed  (requires DATABASE_URL)
+ * The REAL course content — all 84 lessons with their tasks, checks, hints and
+ * solutions — is loaded from content/ by `content sync`, which lives in
+ * @khiye/content-sdk (the package that may depend on @khiye/db; the reverse
+ * would be a cycle). This seed only lays down a bootstrap course row so the demo
+ * enrollments below have a foreign-key target; `content sync` then fills it in.
+ *
+ * Full local setup:
+ *   pnpm --filter @khiye/db db:seed
+ *   pnpm --filter @khiye/content-sdk content sync ../../content/courses/internet-programming
+ * (both need DATABASE_URL)
  */
 import { prisma } from "./client";
 import { hashPassword } from "./auth/password";
@@ -27,14 +34,23 @@ const SKILLS: Array<{ id: string; mn: string; order: number }> = [
   { id: "deployment", mn: "Deploy", order: 15 },
 ];
 
+// One achievement per stage, keyed by the stage's badgeId — the same ids the
+// lessons award and @khiye/web's badge labels use. Kept in stage order.
 const ACHIEVEMENTS: Array<{ id: string; mn: string; desc: string; icon: string; category: string }> =
   [
-    { id: "first-website", mn: "Анхны вэб", desc: "Эхний вэб хуудсаа бүтээлээ.", icon: "🏆", category: "milestone" },
-    { id: "js-starter", mn: "JavaScript эхлэл", desc: "Эхний JavaScript логикоо бичлээ.", icon: "⚡", category: "milestone" },
-    { id: "ui-builder", mn: "UI бүтээгч", desc: "Загварлаг хэсэг хийлээ.", icon: "🎨", category: "milestone" },
-    { id: "responsive-master", mn: "Responsive мастер", desc: "Бүх төхөөрөмжид тохирлоо.", icon: "📱", category: "milestone" },
-    { id: "debugger", mn: "Дебаггер", desc: "5 удаа унасны дараа алдаагаа өөрөө зассан.", icon: "🔧", category: "behavioural" },
-    { id: "independent", mn: "Бие даасан", desc: "10 даалгаврыг заавар аваагүй хийсэн.", icon: "📚", category: "behavioural" },
+    { id: "first-website", mn: "Анхны вэб", desc: "HTML + CSS шатыг дуусгаж, Shop.mn-ийн нүүрийг бүтээлээ.", icon: "🏆", category: "stage" },
+    { id: "js-starter", mn: "JavaScript эхлэл", desc: "JavaScript шатыг дуусгаж, дэлгүүрээ амьд болголоо.", icon: "⚡", category: "stage" },
+    { id: "react-dev", mn: "React хөгжүүлэгч", desc: "React шатыг дуусгаж, компонентоор дэлгүүр угсарлаа.", icon: "⚛️", category: "stage" },
+    { id: "router-builder", mn: "Router эзэн", desc: "Олон хуудасны router-оо гараар бичлээ.", icon: "🧭", category: "stage" },
+    { id: "api-caller", mn: "API холбогч", desc: "fetch-ээр API-аас өгөгдөл татаж сурлаа.", icon: "🔌", category: "stage" },
+    { id: "sql-reader", mn: "SQL уншигч", desc: "Өгөгдлийн сан, SQL-ийн шатыг дуусгалаа.", icon: "🗄️", category: "stage" },
+    { id: "backend-builder", mn: "Backend бүтээгч", desc: "Серверийн талыг Request → Response-оор бичлээ.", icon: "🖥️", category: "stage" },
+    { id: "auth-builder", mn: "Нэвтрэлтийн эзэн", desc: "Нэвтрэлт, аюулгүй байдлын шатыг дуусгалаа.", icon: "🔐", category: "stage" },
+    { id: "shipper", mn: "Deploy хийгч", desc: "Shop.mn-ийг production-д гаргахад бэлэн болголоо.", icon: "🚀", category: "stage" },
+    { id: "test-writer", mn: "Тест бичигч", desc: "Өөрийн тестүүдээ бичиж, чанарыг баталгаажууллаа.", icon: "🧪", category: "stage" },
+    { id: "a11y-advocate", mn: "Хүртээмжийн төлөө", desc: "Хүртээмжийн шатыг дуусгалаа.", icon: "♿", category: "stage" },
+    { id: "type-safe", mn: "Type-safe", desc: "TypeScript-ээр төрлийн аюулгүй код бичлээ.", icon: "🛡️", category: "stage" },
+    { id: "shop-mn-builder", mn: "Shop.mn бүтээгч", desc: "Төгсгөлийн төслийг дуусгаж, бүтэн Shop.mn-ийг бүтээлээ.", icon: "👑", category: "stage" },
   ];
 
 async function seedSkillsAndAchievements() {
@@ -61,8 +77,12 @@ async function seedSkillsAndAchievements() {
   }
 }
 
-/** Minimal placeholder course so the workspace/loop has a target before E10 content lands. */
-async function seedPlaceholderCourse() {
+/**
+ * A bootstrap course row (id/slug/level + stage 1's first lesson and task) so
+ * the demo enrollments have a foreign-key target. `content sync` (see the file
+ * header) upserts the real 84-lesson content over this, keyed by the same ids.
+ */
+async function seedBootstrapCourse() {
   await prisma.course.upsert({
     where: { id: "ip-101" },
     create: {
@@ -77,12 +97,12 @@ async function seedPlaceholderCourse() {
   });
   await prisma.stage.upsert({
     where: { id: "s1" },
-    create: { id: "s1", courseId: "ip-101", order: 1, title: { mn: "HTML + CSS" } },
+    create: { id: "s1", courseId: "ip-101", order: 1, title: { mn: "HTML + CSS" }, badgeId: "first-website" },
     update: {},
   });
   await prisma.module.upsert({
     where: { id: "m1-html" },
-    create: { id: "m1-html", stageId: "s1", order: 1, title: { mn: "HTML" }, description: { mn: "Shop.mn-ийн араг яс" }, estimatedHours: 6 },
+    create: { id: "m1-html", stageId: "s1", order: 1, title: { mn: "HTML" }, description: { mn: "Shop.mn-ийн араг яс" }, estimatedHours: 3 },
     update: {},
   });
   await prisma.lesson.upsert({
@@ -107,7 +127,7 @@ async function seedPlaceholderCourse() {
       order: 1,
       title: { mn: "Гарчиг нэм" },
       statement: { mn: "`<h1>` дотор Shop.mn гэж бич." },
-      expected: { mn_description: "Shop.mn гарчиг харагдана." },
+      expected: { description: { mn: "Shop.mn гарчиг харагдана." } },
       xp: 10,
       skills: ["html"],
     },
@@ -168,10 +188,11 @@ async function seedOrgAndCohort() {
 
 async function main() {
   await seedSkillsAndAchievements();
-  await seedPlaceholderCourse();
+  await seedBootstrapCourse();
   await seedDemoStudents();
   await seedOrgAndCohort();
-  console.log("✓ Seed complete: skills, achievements, placeholder course, 3 demo students, 1 cohort.");
+  console.log("✓ Seed: skills, achievements, bootstrap course, 3 demo students, 1 cohort.");
+  console.log("  → run `content sync ../../content/courses/internet-programming` to load all 84 lessons.");
 }
 
 main()
