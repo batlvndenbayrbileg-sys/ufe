@@ -361,19 +361,32 @@ function render(kind: DiagramKind): React.ReactNode {
     case "state-cycle":
       return (
         <>
-          <Box x={14} y={52} width={70} height={34} fill={SUB} stroke={ACC} />
-          <text x={49} y={73} fill="var(--accent-text)" textAnchor="middle" style={t}>төлөв</text>
-          <Box x={105} y={52} width={70} height={34} fill={SURF} stroke={BOR} />
-          <text x={140} y={73} fill={TXT} textAnchor="middle" style={t}>UI зурна</text>
-          <Box x={196} y={52} width={70} height={34} fill={SURF} stroke={BOR} />
-          <text x={231} y={73} fill={TXT} textAnchor="middle" style={t}>үйлдэл</text>
-          <line x1={84} y1={69} x2={103} y2={69} stroke={ACC} strokeWidth={1.5} markerEnd="url(#ars)" />
-          <line x1={175} y1={69} x2={194} y2={69} stroke={ACC} strokeWidth={1.5} markerEnd="url(#ars)" />
-          <path d="M231,88 Q231,112 49,112 Q49,100 49,90" fill="none" stroke={ACC} strokeWidth={1.5} markerEnd="url(#ars)" />
-          <text x={140} y={108} fill={MUT} textAnchor="middle" style={t}>setState → дахин зурна</text>
+          {/* three nodes in a triangle → a clear closed loop */}
+          <Box x={16} y={16} width={82} height={30} fill={SUB} stroke={ACC} />
+          <text x={57} y={35} fill="var(--accent-text)" textAnchor="middle" style={t}>төлөв</text>
+          <Box x={182} y={16} width={82} height={30} fill={SURF} stroke={BOR} />
+          <text x={223} y={35} fill={TXT} textAnchor="middle" style={t}>UI зурна</text>
+          <Box x={99} y={90} width={82} height={30} fill={SURF} stroke={BOR} />
+          <text x={140} y={109} fill={TXT} textAnchor="middle" style={t}>үйлдэл</text>
+
+          {/* төлөв → UI (render) */}
+          <line x1={100} y1={31} x2={180} y2={31} stroke={BOR} strokeWidth={1.5} markerEnd="url(#arsm)" />
+          <text x={140} y={26} fill={MUT} textAnchor="middle" style={t}>зурна</text>
+
+          {/* UI → үйлдэл (user acts) */}
+          <path d="M222,48 Q212,78 178,92" fill="none" stroke={BOR} strokeWidth={1.5} markerEnd="url(#arsm)" />
+          <text x={222} y={78} fill={MUT} textAnchor="middle" style={t}>хэрэглэгч</text>
+
+          {/* үйлдэл → төлөв (setState, the key transition) */}
+          <path d="M102,92 Q66,78 56,48" fill="none" stroke={ACC} strokeWidth={1.8} markerEnd="url(#ars)" />
+          <text x={52} y={78} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>setState</text>
+
           <defs>
             <marker id="ars" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+            <marker id="arsm" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
             </marker>
           </defs>
         </>
