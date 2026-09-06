@@ -105,20 +105,27 @@ function render(kind: DiagramKind): React.ReactNode {
     case "grid":
       return (
         <>
-          <text x={8} y={16} fill={MUT} style={t}>grid · 3 багана</text>
+          <text x={140} y={13} fill={MUT} textAnchor="middle" style={t}>grid · 3 × 1fr багана</text>
+          <Box x={8} y={20} width={264} height={86} fill="none" stroke={BOR} rx={6} />
+          {/* highlight one column-gap and one row-gap */}
+          <rect x={92} y={28} width={10} height={70} fill="color-mix(in srgb, var(--accent) 16%, var(--surface))" />
+          <rect x={16} y={62} width={248} height={8} fill="color-mix(in srgb, var(--accent) 16%, var(--surface))" />
           {[0, 1, 2].map((c) =>
-            [0, 1].map((r) => (
-              <Box
-                key={`${c}-${r}`}
-                x={16 + c * 88}
-                y={26 + r * 46}
-                width={76}
-                height={36}
-                fill={SUB}
-                stroke={ACC}
-              />
-            )),
+            [0, 1].map((r) => {
+              const x = 16 + c * 86;
+              const y = 28 + r * 42;
+              return (
+                <g key={`${c}-${r}`}>
+                  <Box x={x} y={y} width={76} height={34} fill={SUB} stroke={ACC} />
+                  <rect x={x + 7} y={y + 6} width={24} height={22} rx={2} fill={BOR} />
+                  <rect x={x + 37} y={y + 9} width={30} height={4} rx={2} fill={ACC} />
+                  <rect x={x + 37} y={y + 18} width={20} height={4} rx={2} fill={BOR} />
+                </g>
+              );
+            }),
           )}
+          <text x={97} y={122} fill="var(--accent-text)" textAnchor="middle" style={t}>gap</text>
+          <line x1={97} y1={106} x2={97} y2={114} stroke={ACC} strokeWidth={1.2} />
         </>
       );
     case "dom-tree": {
