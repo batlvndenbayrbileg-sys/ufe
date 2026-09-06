@@ -25,6 +25,8 @@ export interface ConceptNote {
 
 export interface ResolvedConcept extends ConceptNote {
   slug: string;
+  /** Optional schematic diagram kind rendered in the card (see ConceptDiagram). */
+  diagram?: string;
 }
 
 const CONCEPTS: Record<string, ConceptNote> = {
@@ -1696,6 +1698,99 @@ const ALIASES: Record<string, string> = {
 };
 
 /**
+ * Reusable schematic diagrams, keyed by canonical concept key (post-alias).
+ * Many concepts share one diagram — see ConceptDiagram for the drawings.
+ */
+const DIAGRAMS: Record<string, string> = {
+  // CSS layout
+  "box-model": "box-model",
+  padding: "box-model",
+  flexbox: "flex-row",
+  "flex-direction": "flex-row",
+  "justify-content": "flex-row",
+  "align-items": "flex-row",
+  display: "flex-row",
+  grid: "grid",
+  "grid-template-columns": "grid",
+  gap: "grid",
+  selector: "selector",
+  // HTML structure
+  DOM: "dom-tree",
+  "semantic-html": "dom-tree",
+  main: "dom-tree",
+  header: "dom-tree",
+  nav: "dom-tree",
+  // responsive
+  "media-query": "breakpoints",
+  breakpoint: "breakpoints",
+  "mobile-first": "breakpoints",
+  viewport: "breakpoints",
+  "responsive-images": "breakpoints",
+  // client ↔ server
+  fetch: "client-server",
+  Request: "client-server",
+  Response: "client-server",
+  REST: "client-server",
+  routing: "client-server",
+  "async/await": "client-server",
+  // status codes
+  "status code": "http-status",
+  "404": "http-status",
+  "201 Created": "http-status",
+  "400 Bad Request": "http-status",
+  "401 Unauthorized": "http-status",
+  "409 Conflict": "http-status",
+  "500": "http-status",
+  // data
+  array: "array",
+  "array.map": "array",
+  "array.filter": "array",
+  filter: "array",
+  "array.find": "array",
+  find: "array",
+  "array.reduce": "array",
+  reduce: "array",
+  forEach: "array",
+  "list rendering": "array",
+  object: "object",
+  destructuring: "object",
+  // functions
+  function: "function",
+  parameter: "function",
+  return: "function",
+  "return type": "function",
+  "helper function": "function",
+  "custom hook": "function",
+  // auth
+  "password hashing": "hash",
+  salt: "hash",
+  verifyPassword: "hash",
+  "session token": "token-flow",
+  "Authorization header": "token-flow",
+  Bearer: "token-flow",
+  // React
+  component: "props-flow",
+  props: "props-flow",
+  useState: "state-cycle",
+  state: "state-cycle",
+  "re-render": "state-cycle",
+  render: "state-cycle",
+  "immutable update": "state-cycle",
+  // SQL
+  JOIN: "join",
+  ON: "join",
+  "foreign key": "join",
+  "multi-table JOIN": "join",
+  "qualified column": "join",
+  SELECT: "table",
+  FROM: "table",
+  WHERE: "table",
+  "ORDER BY": "table",
+  "GROUP BY": "table",
+  comparison: "table",
+};
+
+/**
  * Resolve a lesson's concept slugs to display cards. Slugs without an entry are
  * dropped (they can still be shown as plain tags by the caller).
  */
@@ -1707,7 +1802,7 @@ export function resolveConcepts(slugs: string[]): ResolvedConcept[] {
     const note = CONCEPTS[key];
     if (!note || seen.has(key)) continue;
     seen.add(key);
-    out.push({ slug, ...note });
+    out.push({ slug, ...note, diagram: DIAGRAMS[key] });
   }
   return out;
 }

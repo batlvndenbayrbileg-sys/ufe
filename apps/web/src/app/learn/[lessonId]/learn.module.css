@@ -359,6 +359,13 @@
   margin-top: 2px;
   color: var(--xp, #d97706);
 }
+.conceptDiagram {
+  margin: 0 var(--space-3) var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
 .conceptExample {
   margin: 0 var(--space-3) var(--space-3);
   padding: var(--space-2) var(--space-3);

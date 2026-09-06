@@ -20,6 +20,7 @@ import { applyPatch } from "@khiye/content-sdk/patch";
 import type { LessonPublic } from "@/lib/content";
 import { awardBadge, recordTaskPass } from "@/lib/progress";
 import { badgeLabel } from "@/lib/badges";
+import { ConceptDiagram } from "./ConceptDiagram";
 import { ResultPanel, type SubmitResult } from "./ResultPanel";
 import { HintLadder } from "./HintLadder";
 import { SolutionGate } from "./SolutionGate";
@@ -294,6 +295,11 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
                             <Lightbulb size={15} strokeWidth={2.2} className={s.conceptWhyIcon} />
                             <span>{c.why}</span>
                           </p>
+                          {c.diagram ? (
+                            <div className={s.conceptDiagram}>
+                              <ConceptDiagram kind={c.diagram} />
+                            </div>
+                          ) : null}
                           {c.example ? (
                             <pre className={s.conceptExample}>
                               <code>{c.example}</code>
