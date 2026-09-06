@@ -394,15 +394,39 @@ function render(kind: DiagramKind): React.ReactNode {
     case "join":
       return (
         <>
-          <text x={8} y={16} fill={MUT} style={t}>orders</text>
-          <Box x={8} y={22} width={104} height={26} fill={SUB} stroke={ACC} />
-          <text x={16} y={39} fill="var(--accent-text)" style={t}>user_id = 7</text>
-          <text x={168} y={16} fill={MUT} style={t}>users</text>
-          <Box x={168} y={22} width={104} height={26} fill={SURF} stroke={BOR} />
-          <text x={176} y={39} fill={TXT} style={t}>id = 7</text>
-          <line x1={112} y1={35} x2={168} y2={35} stroke={ACC} strokeWidth={1.5} />
-          <text x={140} y={72} fill="var(--accent-text)" textAnchor="middle" style={t}>ON orders.user_id = users.id</text>
-          <text x={140} y={92} fill={MUT} textAnchor="middle" style={t}>→ хоёр хүснэгт нэг мөр болно</text>
+          {/* orders table */}
+          <text x={8} y={12} fill={MUT} style={t}>orders</text>
+          <rect x={6} y={16} width={116} height={17} fill={ACC} />
+          <text x={12} y={28} fill="var(--on-accent)" style={t}>id</text>
+          <text x={52} y={28} fill="var(--on-accent)" style={t}>user_id</text>
+          <rect x={6} y={33} width={116} height={17} fill={SUB} stroke={ACC} />
+          <text x={12} y={45} fill={TXT} style={t}>12</text>
+          <text x={52} y={45} fill="var(--accent-text)" style={{ ...t, fontWeight: 700 }}>7</text>
+          <rect x={6} y={50} width={116} height={17} fill={SURF} stroke={BOR} />
+          <text x={12} y={62} fill={MUT} style={t}>13</text>
+          <text x={52} y={62} fill={MUT} style={t}>4</text>
+          <line x1={46} y1={16} x2={46} y2={67} stroke={BOR} />
+
+          {/* users table */}
+          <text x={160} y={12} fill={MUT} style={t}>users</text>
+          <rect x={158} y={16} width={116} height={17} fill={ACC} />
+          <text x={164} y={28} fill="var(--on-accent)" style={t}>id</text>
+          <text x={198} y={28} fill="var(--on-accent)" style={t}>name</text>
+          <rect x={158} y={33} width={116} height={17} fill={SUB} stroke={ACC} />
+          <text x={164} y={45} fill="var(--accent-text)" style={{ ...t, fontWeight: 700 }}>7</text>
+          <text x={198} y={45} fill={TXT} style={t}>Бат</text>
+          <rect x={158} y={50} width={116} height={17} fill={SURF} stroke={BOR} />
+          <text x={164} y={62} fill={MUT} style={t}>4</text>
+          <text x={198} y={62} fill={MUT} style={t}>Сараа</text>
+          <line x1={192} y1={16} x2={192} y2={67} stroke={BOR} />
+
+          {/* the foreign-key link between the matching rows */}
+          <circle cx={122} cy={41} r={2.4} fill={ACC} />
+          <circle cx={158} cy={41} r={2.4} fill={ACC} />
+          <line x1={122} y1={41} x2={158} y2={41} stroke={ACC} strokeWidth={2} />
+
+          <text x={140} y={88} fill="var(--accent-text)" textAnchor="middle" style={t}>ON orders.user_id = users.id</text>
+          <text x={140} y={106} fill={MUT} textAnchor="middle" style={t}>→ таарсан мөрүүд нийлнэ</text>
         </>
       );
     case "table":
