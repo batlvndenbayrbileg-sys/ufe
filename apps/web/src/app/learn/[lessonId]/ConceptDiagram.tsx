@@ -297,15 +297,41 @@ function render(kind: DiagramKind): React.ReactNode {
     case "token-flow":
       return (
         <>
-          <Box x={10} y={50} width={80} height={40} fill={SUB} stroke={ACC} />
-          <text x={50} y={74} fill="var(--accent-text)" textAnchor="middle" style={t}>Хөтөч</text>
-          <Box x={190} y={50} width={80} height={40} fill={SURF} stroke={BOR} />
-          <text x={230} y={74} fill={TXT} textAnchor="middle" style={t}>Сервер</text>
-          <line x1={92} y1={60} x2={188} y2={60} stroke={ACC} strokeWidth={1.5} markerEnd="url(#art)" />
-          <text x={140} y={54} fill={MUT} textAnchor="middle" style={t}>нэвтрэх</text>
-          <line x1={188} y1={82} x2={92} y2={82} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#artb)" />
-          <text x={140} y={100} fill={MUT} textAnchor="middle" style={t}>token</text>
-          <text x={140} y={22} fill={MUT} textAnchor="middle" style={t}>дараа: Authorization: Bearer …</text>
+          {/* Browser (client) */}
+          <Box x={6} y={20} width={70} height={84} fill={SURF} stroke={BOR} />
+          <path d="M6,34 H76" stroke={BOR} />
+          <circle cx={15} cy={27} r={2.2} fill="var(--danger)" />
+          <circle cx={23} cy={27} r={2.2} fill="var(--warning)" />
+          <circle cx={31} cy={27} r={2.2} fill="var(--success)" />
+          <text x={41} y={118} fill={MUT} textAnchor="middle" style={t}>Хөтөч</text>
+
+          {/* Server (rack) */}
+          <Box x={204} y={20} width={70} height={84} fill={SURF} stroke={BOR} />
+          {[30, 52, 74].map((y) => (
+            <g key={y}>
+              <rect x={210} y={y} width={58} height={14} rx={3} fill={SUB} stroke={BOR} />
+              <circle cx={217} cy={y + 7} r={2.2} fill="var(--success)" />
+            </g>
+          ))}
+          <text x={239} y={118} fill={MUT} textAnchor="middle" style={t}>Сервер</text>
+
+          {/* 1 · login → */}
+          <line x1={78} y1={38} x2={202} y2={38} stroke={ACC} strokeWidth={1.5} markerEnd="url(#art)" />
+          <Box x={96} y={29} width={88} height={18} rx={9} fill={SUB} stroke={ACC} />
+          <text x={140} y={41} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>1 · нэвтрэх</text>
+
+          {/* 2 · token ← (key badge) */}
+          <line x1={202} y1={64} x2={78} y2={64} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#artb)" />
+          <Box x={96} y={55} width={88} height={18} rx={9} fill="color-mix(in srgb, var(--success) 16%, var(--surface))" stroke="var(--success)" />
+          <circle cx={110} cy={64} r={3} fill="none" stroke="var(--success)" strokeWidth={1.4} />
+          <path d="M112,64 H120 M118,64 V68" stroke="var(--success)" strokeWidth={1.4} />
+          <text x={146} y={68} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>2 · токен</text>
+
+          {/* 3 · reuse token on later requests → */}
+          <line x1={78} y1={90} x2={202} y2={90} stroke={ACC} strokeWidth={1.5} markerEnd="url(#art)" />
+          <Box x={90} y={81} width={100} height={18} rx={9} fill={SUB} stroke={ACC} />
+          <text x={140} y={93} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9.5 }}>3 · Bearer токен</text>
+
           <defs>
             <marker id="art" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
