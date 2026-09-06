@@ -32,7 +32,8 @@ export type DiagramKind =
   | "state-cycle"
   | "join"
   | "table"
-  | "aaa";
+  | "aaa"
+  | "heading-order";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -370,6 +371,39 @@ function render(kind: DiagramKind): React.ReactNode {
               <path d="M0,0 L6,0 L3,6 Z" fill={BOR} />
             </marker>
           </defs>
+        </>
+      );
+    }
+    case "heading-order": {
+      const rows: Array<[string, string, number, number]> = [
+        // level tag, sample text, indent level, font size
+        ["h1", "Shop.mn", 0, 13],
+        ["h2", "Ангилал", 1, 12],
+        ["h3", "Гутал", 2, 11],
+        ["h2", "Бидний тухай", 1, 12],
+      ];
+      return (
+        <>
+          {rows.map(([tag, label, lvl, fs], i) => {
+            const y = 8 + i * 30;
+            const x = 8 + lvl * 26;
+            const tone = lvl === 0 ? ACC : SUB;
+            const fg = lvl === 0 ? "var(--on-accent)" : "var(--accent-text)";
+            return (
+              <g key={i}>
+                {lvl > 0 ? (
+                  <line x1={x - 13} y1={y - 4} x2={x - 13} y2={y + 12} stroke={BOR} />
+                ) : null}
+                {lvl > 0 ? <line x1={x - 13} y1={y + 12} x2={x} y2={y + 12} stroke={BOR} /> : null}
+                <Box x={x} y={y} width={40} height={22} fill={tone} stroke={lvl === 0 ? ACC : "none"} />
+                <text x={x + 20} y={y + 15} fill={fg} textAnchor="middle" style={t}>{tag}</text>
+                <text x={x + 50} y={y + 15} fill={TXT} style={{ ...t, fontFamily: "inherit", fontSize: fs, fontWeight: lvl === 0 ? 700 : 500 }}>
+                  {label}
+                </text>
+              </g>
+            );
+          })}
+          <text x={8} y={126} fill="var(--success)" style={t}>✓ алгасахгүй: h1 → h2 → h3</text>
         </>
       );
     }

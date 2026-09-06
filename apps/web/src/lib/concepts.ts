@@ -1792,6 +1792,8 @@ const DIAGRAMS: Record<string, string> = {
   "arrange-act-assert": "aaa",
   "unit test": "aaa",
   "expect/toBe": "aaa",
+  // accessibility
+  "heading order": "heading-order",
 };
 
 /**
