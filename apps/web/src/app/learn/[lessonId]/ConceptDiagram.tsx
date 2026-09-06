@@ -34,7 +34,8 @@ export type DiagramKind =
   | "table"
   | "aaa"
   | "heading-order"
-  | "map-filter";
+  | "map-filter"
+  | "reduce";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -331,6 +332,43 @@ function render(kind: DiagramKind): React.ReactNode {
             </marker>
             <marker id="armfs" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+          </defs>
+        </>
+      );
+    }
+    case "reduce": {
+      // the accumulator rolls the array up into one value
+      const steps: Array<[number, string, string, string, string]> = [
+        // x, value, fill, fg, addLabel (above the incoming arrow)
+        [8, "0", SURF, TXT, "эхлэл"],
+        [82, "10", SUB, "var(--accent-text)", "+10"],
+        [156, "30", SUB, "var(--accent-text)", "+20"],
+        [230, "60", ACC, "var(--on-accent)", "+30"],
+      ];
+      return (
+        <>
+          <text x={140} y={14} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>
+            .reduce((acc, x) ⇒ acc + x, 0)
+          </text>
+          {steps.map(([x, v, fill, fg, add], i) => (
+            <g key={i}>
+              {i > 0 ? (
+                <>
+                  <line x1={(x as number) - 32} y1={61} x2={x as number} y2={61} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arr)" />
+                  <text x={(x as number) - 16} y={44} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 10 }}>{add}</text>
+                </>
+              ) : null}
+              <Box x={x as number} y={48} width={40} height={26} fill={fill as string} stroke={i === 3 ? ACC : i === 0 ? BOR : ACC} />
+              <text x={(x as number) + 20} y={65} fill={fg as string} textAnchor="middle" style={{ ...t, fontWeight: i === 3 ? 700 : 400 }}>{v}</text>
+            </g>
+          ))}
+          <text x={28} y={86} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>эхлэл</text>
+          <text x={250} y={86} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>нийлбэр</text>
+          <text x={140} y={108} fill={MUT} textAnchor="middle" style={t}>[10, 20, 30] → нэг утга (60)</text>
+          <defs>
+            <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>
         </>
