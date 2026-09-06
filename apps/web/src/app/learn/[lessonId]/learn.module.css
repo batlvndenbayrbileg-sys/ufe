@@ -229,6 +229,7 @@ details[open] > .whySummary::before {
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--surface);
+  animation: popIn 0.32s var(--ease-out) both;
 }
 .resultHead {
   display: flex;
@@ -269,7 +270,9 @@ details[open] > .whySummary::before {
 }
 .checkMark {
   flex-shrink: 0;
-  font-weight: 700;
+  display: inline-grid;
+  place-items: center;
+  align-self: center;
 }
 .checkPass .checkMark {
   color: var(--success);
@@ -434,8 +437,12 @@ details[open] > .whySummary::before {
   flex-direction: column;
   gap: var(--space-2);
   align-items: center;
+  animation: popIn 0.4s var(--ease-out) both;
 }
 .completionTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: var(--text-lg);
   font-weight: 700;
   color: var(--success);
@@ -483,8 +490,36 @@ details[open] > .whySummary::before {
   outline-offset: 2px;
 }
 .completionDone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-weight: 600;
   color: var(--success);
+}
+
+/* Entrance animations (disabled under prefers-reduced-motion via tokens.css). */
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  60% {
+    transform: scale(1.015);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* ── quiz ────────────────────────────────────────────────────────────────── */
@@ -496,6 +531,7 @@ details[open] > .whySummary::before {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  animation: riseIn 0.35s var(--ease-out) both;
 }
 .quizHead {
   display: flex;
@@ -569,8 +605,10 @@ details[open] > .whySummary::before {
 }
 .quizBullet {
   flex: none;
-  width: 1.2em;
+  display: grid;
+  place-items: center;
   color: var(--text-subtle);
+  margin-top: 1px;
 }
 .quizChosen {
   border-color: var(--accent);

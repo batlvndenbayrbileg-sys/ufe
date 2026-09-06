@@ -245,7 +245,16 @@ a.lesson:focus-visible {
 .mark {
   flex: none;
   width: 18px;
-  text-align: center;
+  display: grid;
+  place-items: center;
+  color: var(--text-subtle);
+}
+.markDone {
+  color: var(--success);
+}
+.markCurrent {
+  color: var(--accent);
+  fill: var(--accent);
 }
 .lessonTitle {
   flex: 1;

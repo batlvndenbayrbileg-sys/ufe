@@ -1,5 +1,6 @@
 "use client";
 
+import { Check, X } from "lucide-react";
 import s from "./learn.module.css";
 
 export interface CheckRow {
@@ -52,7 +53,7 @@ export function ResultPanel({
             <li key={c.key} className={c.passed ? s.checkPass : s.checkFail}>
               <div className={s.checkRow}>
                 <span className={s.checkMark} aria-hidden>
-                  {c.passed ? "✓" : "✗"}
+                  {c.passed ? <Check size={16} strokeWidth={2.6} /> : <X size={16} strokeWidth={2.6} />}
                 </span>
                 <span style={{ color: c.passed ? "var(--text-muted)" : "var(--text)" }}>
                   {c.passed ? "Шалгалт давлаа" : (c.onFail ?? "Шалгалт давсангүй")}

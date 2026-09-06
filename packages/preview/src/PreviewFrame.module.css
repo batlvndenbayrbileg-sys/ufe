@@ -70,9 +70,9 @@
   font-size: var(--text-sm);
 }
 .urlLock {
-  font-size: 10px;
-  line-height: 1;
-  opacity: 0.8;
+  flex: none;
+  color: var(--success);
+  opacity: 0.9;
 }
 .urlHost {
   color: var(--text);

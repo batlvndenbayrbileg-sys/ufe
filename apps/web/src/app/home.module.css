@@ -11,6 +11,30 @@
   padding: var(--space-6) 0 var(--space-12);
 }
 
+/* A quiet staggered rise on load. Disabled under prefers-reduced-motion by the
+   global rule in tokens.css. */
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.hero,
+.stats,
+.features {
+  animation: riseIn 0.5s var(--ease-out) both;
+}
+.stats {
+  animation-delay: 0.09s;
+}
+.features {
+  animation-delay: 0.18s;
+}
+
 /* ── hero ────────────────────────────────────────────────────────────────── */
 .hero {
   display: flex;

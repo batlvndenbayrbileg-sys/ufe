@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Check, CircleCheckBig, Lock, LockOpen, Play } from "lucide-react";
 import { Alert, AppShell, Badge, Button, Card, ProgressBar, Spinner, ThemeToggle } from "@khiye/ui";
 import { loadProgress, lessonProgress, type Progress } from "@/lib/progress";
 import { useIsAdmin } from "@/lib/admin";
@@ -163,7 +164,7 @@ export function CourseMap() {
                     complete ? styles.medallionComplete : isCurrent ? styles.medallionCurrent : ""
                   }`}
                 >
-                  {complete ? "✓" : stage.order}
+                  {complete ? <Check size={18} strokeWidth={2.6} /> : stage.order}
                 </span>
                 <span className={styles.stageText}>
                   <span className={styles.stageOrder}>Шат {stage.order}</span>
@@ -206,7 +207,15 @@ export function CourseMap() {
                         const inner = (
                           <>
                             <span aria-hidden className={styles.mark}>
-                              {state === "done" ? "✅" : state === "current" ? "▸" : adminOpen ? "🔓" : "🔒"}
+                              {state === "done" ? (
+                                <CircleCheckBig size={16} className={styles.markDone} />
+                              ) : state === "current" ? (
+                                <Play size={14} className={styles.markCurrent} />
+                              ) : adminOpen ? (
+                                <LockOpen size={14} />
+                              ) : (
+                                <Lock size={14} />
+                              )}
                             </span>
                             <span className={styles.srOnly}>
                               {state === "done"

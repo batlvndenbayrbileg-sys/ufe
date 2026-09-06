@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Check, PartyPopper, Trophy } from "lucide-react";
 import { WorkspaceShell, Badge, ProgressRing, ThemeToggle, useTheme } from "@khiye/ui";
 import { EditorPane, workspaceStore, useWorkspace, type CodeMirrorHandle } from "@khiye/editor";
 import { PreviewFrame, type ConsoleEntry, type FileSet } from "@khiye/preview";
@@ -182,14 +183,18 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
 
           {lessonDone ? (
             <div className={s.completion}>
-              <span className={s.completionTitle}>🎉 Хичээл дууслаа!</span>
+              <span className={s.completionTitle}>
+                <PartyPopper size={18} strokeWidth={2.2} /> Хичээл дууслаа!
+              </span>
               {lesson.completion.badge ? <Badge tone="success" size="md">{badgeLabel(lesson.completion.badge)}</Badge> : null}
               {next ? (
                 <a href={`/learn/${next.id}`} className={s.completionNext}>
                   Дараагийн хичээл: {next.title.mn} →
                 </a>
               ) : (
-                <span className={s.completionDone}>Энэ курсын сүүлчийн хичээл байлаа. Баяр хүргэе! 🏆</span>
+                <span className={s.completionDone}>
+                  <Trophy size={16} strokeWidth={2.2} /> Энэ курсын сүүлчийн хичээл байлаа. Баяр хүргэе!
+                </span>
               )}
               <a href="/app/course/internet-programming" className={s.back}>
                 Бүх хичээл
@@ -277,7 +282,8 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
           <div className={s.barRight}>
             <span className={s.kbd}>Ctrl + Enter</span>
             <button type="button" className={s.primaryBtn} onClick={check} disabled={checking || solved}>
-              {checking ? "Шалгаж байна…" : solved ? "✓ Давсан" : "✓ Шалгах"}
+              {checking ? null : <Check size={17} strokeWidth={2.6} />}
+              {checking ? "Шалгаж байна…" : solved ? "Давсан" : "Шалгах"}
             </button>
           </div>
         </>

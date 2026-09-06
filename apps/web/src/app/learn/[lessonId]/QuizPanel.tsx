@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ListChecks } from "lucide-react";
+import { Check, X, Circle, CircleDot, ListChecks } from "lucide-react";
 import type { QuizQuestionPublic, QuizResult } from "@/lib/content";
 import s from "./learn.module.css";
 
@@ -82,7 +82,15 @@ export function QuizPanel({ lessonId, quiz }: { lessonId: string; quiz: QuizQues
                     onClick={() => setAnswers((a) => a.map((v, i) => (i === qi ? oi : v)))}
                   >
                     <span className={s.quizBullet} aria-hidden>
-                      {r && oi === r.correctIndex ? "✓" : r && chosen ? "✗" : chosen ? "●" : "○"}
+                      {r && oi === r.correctIndex ? (
+                        <Check size={15} strokeWidth={2.6} />
+                      ) : r && chosen ? (
+                        <X size={15} strokeWidth={2.6} />
+                      ) : chosen ? (
+                        <CircleDot size={15} />
+                      ) : (
+                        <Circle size={15} />
+                      )}
                     </span>
                     {opt.mn}
                   </button>

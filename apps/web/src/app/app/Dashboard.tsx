@@ -1,8 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { motion, type Variants } from "framer-motion";
 import { Flame, Zap, Medal, Trophy, Palette, ArrowRight } from "lucide-react";
 import { Alert, AppShell, Badge, Button, Card, ProgressBar, ProgressRing, Spinner, ThemeToggle } from "@khiye/ui";
+
+// A gentle staggered rise as the dashboard mounts.
+const container: Variants = { show: { transition: { staggerChildren: 0.07 } } };
+const rise: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.2, 0.8, 0.2, 1] } },
+};
 import { level, loadProgress, lessonProgress, type Progress } from "@/lib/progress";
 import { flattenLessons, type MapLesson } from "./course-types";
 import { useCourseMap } from "./useCourseMap";
@@ -77,17 +85,17 @@ export function Dashboard() {
         </>
       }
     >
-      <div className={s.page}>
-        <div>
+      <motion.div className={s.page} variants={container} initial="hidden" animate="show">
+        <motion.div variants={rise}>
           <h1 className={s.greeting}>Сайн уу 👋</h1>
           <p className={s.subGreeting}>
             {done ? "Курсээ бүрэн дуусгалаа — гоё!" : "Өнөөдөр хаанаас үргэлжлүүлэх вэ?"}
           </p>
-        </div>
+        </motion.div>
 
         {/* The one card that matters. */}
         {nextLesson ? (
-          <div className={s.hero}>
+          <motion.div className={s.hero} variants={rise}>
             <ProgressRing
               className={s.heroRing}
               size={72}
@@ -103,11 +111,11 @@ export function Dashboard() {
             <a href={`/learn/${nextLesson.id}`} className={s.heroCta}>
               {done ? "Дахин үзэх" : "Үргэлжлүүлэх"} <ArrowRight size={17} strokeWidth={2.4} />
             </a>
-          </div>
+          </motion.div>
         ) : null}
 
         {/* Gamification at a glance. */}
-        <div className={s.stats}>
+        <motion.div className={s.stats} variants={rise}>
           <div className={s.stat}>
             <span className={`${s.statIcon} ${s.iconStreak}`}>
               <Flame size={22} strokeWidth={2.2} />
@@ -137,23 +145,25 @@ export function Dashboard() {
               <div className={s.statLabel}>Түвшин</div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Course progress. */}
-        <Card>
-          <div className={s.panelHead}>
-            <strong style={{ fontSize: "var(--text-md)" }}>{map.title.mn}</strong>
-            <span className={s.panelRight}>
-              {doneLessons.length}/{lessons.length} хичээл · {percent}%
-            </span>
-          </div>
-          <ProgressBar value={percent} />
-          <a href={`/app/course/${map.id}`} className={s.courseLink}>
-            Бүх хичээл харах →
-          </a>
-        </Card>
+        <motion.div variants={rise}>
+          <Card>
+            <div className={s.panelHead}>
+              <strong style={{ fontSize: "var(--text-md)" }}>{map.title.mn}</strong>
+              <span className={s.panelRight}>
+                {doneLessons.length}/{lessons.length} хичээл · {percent}%
+              </span>
+            </div>
+            <ProgressBar value={percent} />
+            <a href={`/app/course/${map.id}`} className={s.courseLink}>
+              Бүх хичээл харах →
+            </a>
+          </Card>
+        </motion.div>
 
-        <div className={s.body}>
+        <motion.div className={s.body} variants={rise}>
           {/* Skills — two columns so 17 rows read as a grid, not a ledger. */}
           <Card>
             <div className={s.panelHead}>
@@ -204,8 +214,8 @@ export function Dashboard() {
               </div>
             )}
           </Card>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </AppShell>
   );
 }

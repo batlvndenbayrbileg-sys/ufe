@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { LockOpen } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { readDemoAdmin, setDemoAdmin } from "@/lib/admin";
 import s from "./account.module.css";
@@ -34,7 +35,10 @@ export function AccountControl() {
   if (demoAdmin) {
     return (
       <span className={s.account}>
-        <span className={s.name}>🔓 Админ (демо)</span>
+        <span className={s.name}>
+          <LockOpen size={13} strokeWidth={2.4} style={{ verticalAlign: "-2px", marginRight: 4 }} />
+          Админ (демо)
+        </span>
         <button
           type="button"
           className={s.signout}

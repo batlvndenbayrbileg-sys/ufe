@@ -59,9 +59,10 @@ export const PreviewFrame = forwardRef<PreviewHostHandle, PreviewFrameProps>(fun
 
         {/* A quiet address bar — frames the pane as the student's live site. */}
         <span className={s.urlBar} title="Таны амьд сайт">
-          <span className={s.urlLock} aria-hidden>
-            🔒
-          </span>
+          <svg className={s.urlLock} width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <rect x="4" y="11" width="16" height="10" rx="2" fill="currentColor" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="currentColor" strokeWidth="2.2" fill="none" />
+          </svg>
           <span className={s.urlHost}>shop.mn</span>
         </span>
 

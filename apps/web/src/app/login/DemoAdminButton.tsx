@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { LockOpen } from "lucide-react";
 import { Button } from "@khiye/ui";
 import { setDemoAdmin } from "@/lib/admin";
 
@@ -20,7 +21,9 @@ export function DemoAdminButton() {
         router.refresh();
       }}
     >
-      🔓 Админаар нэвтрэх (демо)
+      <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
+        <LockOpen size={15} strokeWidth={2.4} /> Админаар нэвтрэх (демо)
+      </span>
     </Button>
   );
 }
