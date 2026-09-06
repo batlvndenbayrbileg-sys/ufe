@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { EditorPane, Console, workspaceStore, useWorkspace, type CodeMirrorHandle } from "@khiye/editor";
 import { PreviewFrame, type ConsoleEntry, type FileSet } from "@khiye/preview";
+import { Button } from "@khiye/ui";
+import dev from "../dev.module.css";
 
 const INITIAL = {
   "index.html": {
@@ -43,26 +45,26 @@ export default function DevEditorPage() {
   if (!ready) return null;
 
   return (
-    <div style={{ height: "100dvh", display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "auto 1fr 160px" }}>
-      <div style={{ gridColumn: "1 / -1", display: "flex", gap: 8, alignItems: "center", padding: 8, borderBottom: "1px solid var(--border,#e4e4e7)" }}>
-        <strong>Хийе Editor (E4)</strong>
-        <button
-          onClick={() => editorRef.current?.scrollToMarker("<!-- энд бичнэ үү -->")}
-          style={{ padding: "4px 10px", borderRadius: 6, border: "1px solid var(--border,#ddd)", cursor: "pointer", fontSize: 12 }}
-        >
+    <div className={dev.shell}>
+      <div className={dev.bar}>
+        <span className={dev.barTitle}>
+          Editor <span className={dev.barTag}>E4</span>
+        </span>
+        <Button size="sm" variant="secondary" onClick={() => editorRef.current?.scrollToMarker("<!-- энд бичнэ үү -->")}>
           Marker руу очих
-        </button>
+        </Button>
       </div>
 
-      <div style={{ minHeight: 0, borderRight: "1px solid var(--border,#e4e4e7)" }}>
-        <EditorPane ref={editorRef} showTree showKeyStrip />
+      <div className={dev.split}>
+        <div className={dev.paneLeft}>
+          <EditorPane ref={editorRef} showTree showKeyStrip />
+        </div>
+        <div className={dev.paneRight}>
+          <PreviewFrame files={files} entry="index.html" onConsole={(e) => setLogs((l) => [...l.slice(-30), e])} />
+        </div>
       </div>
 
-      <div style={{ minHeight: 0 }}>
-        <PreviewFrame files={files} entry="index.html" onConsole={(e) => setLogs((l) => [...l.slice(-30), e])} />
-      </div>
-
-      <div style={{ gridColumn: "1 / -1", minHeight: 0 }}>
+      <div style={{ minHeight: 0, height: 160 }}>
         <Console entries={logs} onClear={() => setLogs([])} />
       </div>
     </div>

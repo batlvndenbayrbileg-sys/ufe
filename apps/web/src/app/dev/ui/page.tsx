@@ -18,26 +18,13 @@ import {
   ThemeToggle,
   useTheme,
 } from "@khiye/ui";
+import dev from "../dev.module.css";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <h2
-        style={{
-          fontSize: 13,
-          textTransform: "uppercase",
-          letterSpacing: "0.1em",
-          color: "var(--text-subtle)",
-          margin: 0,
-          borderBottom: "1px solid var(--border)",
-          paddingBottom: 6,
-        }}
-      >
-        {title}
-      </h2>
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
-        {children}
-      </div>
+    <section className={dev.section}>
+      <h2 className={dev.sectionTitle}>{title}</h2>
+      <div className={dev.sectionRow}>{children}</div>
     </section>
   );
 }
@@ -48,36 +35,29 @@ export default function DevUiPage() {
   const [loading, setLoading] = useState(false);
 
   return (
-    <main
-      style={{
-        maxWidth: 900,
-        margin: "0 auto",
-        padding: "40px 24px 96px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 32,
-      }}
-    >
-      <header style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <h1 style={{ fontSize: 28, margin: 0, letterSpacing: "-0.02em" }}>Хийе UI</h1>
-        <Badge tone="accent">E1</Badge>
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
-          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
-            {theme} → {resolvedTheme}
-          </span>
-          <Button size="sm" variant="ghost" onClick={() => setTheme("light")}>
-            Light
-          </Button>
-          <Button size="sm" variant="ghost" onClick={() => setTheme("dark")}>
-            Dark
-          </Button>
-          <Button size="sm" variant="ghost" onClick={() => setTheme("system")}>
-            System
-          </Button>
-          <ThemeToggle />
-        </div>
-      </header>
+    <div className={dev.shell}>
+      <div className={dev.bar}>
+        <span className={dev.barTitle}>
+          UI <span className={dev.barTag}>E1 · Design system</span>
+        </span>
+        <div className={dev.barSpacer} />
+        <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>
+          {theme} → {resolvedTheme}
+        </span>
+        <Button size="sm" variant="ghost" onClick={() => setTheme("light")}>
+          Light
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => setTheme("dark")}>
+          Dark
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => setTheme("system")}>
+          System
+        </Button>
+        <ThemeToggle />
+      </div>
 
+      <div className={dev.gallery}>
+        <div className={dev.galleryInner}>
       <Section title="Товч (Button)">
         <Button variant="primary">Шалгах</Button>
         <Button variant="secondary">Ажиллуулах</Button>
@@ -152,6 +132,8 @@ export default function DevUiPage() {
           </div>
         </Card>
       </Section>
-    </main>
+        </div>
+      </div>
+    </div>
   );
 }

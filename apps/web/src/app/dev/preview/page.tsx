@@ -8,6 +8,8 @@ import {
   type HarnessCheckResult,
   type PreviewHostHandle,
 } from "@khiye/preview";
+import { Button } from "@khiye/ui";
+import dev from "../dev.module.css";
 
 const START_HTML = `<!doctype html>
 <html>
@@ -62,33 +64,22 @@ export default function DevPreviewPage() {
     setResults(r ?? []);
   };
 
-  const cell: React.CSSProperties = { display: "flex", flexDirection: "column", minHeight: 0 };
-  const ta: React.CSSProperties = {
-    flex: 1,
-    fontFamily: "var(--font-mono, monospace)",
-    fontSize: 12,
-    padding: 8,
-    border: "1px solid var(--border,#e4e4e7)",
-    borderRadius: 6,
-    resize: "none",
-    background: "var(--code-bg,#fafafa)",
-    color: "var(--code-text,#111)",
-  };
-
   return (
-    <main style={{ height: "100dvh", display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "auto 1fr 200px", gap: 8, padding: 12 }}>
-      <div style={{ gridColumn: "1 / -1", display: "flex", gap: 8, alignItems: "center" }}>
-        <strong>Хийе Preview (E5)</strong>
-        <button onClick={runChecks} style={{ padding: "6px 14px", borderRadius: 6, background: "var(--accent,#2563eb)", color: "#fff", border: 0, cursor: "pointer" }}>
+    <div className={dev.shell}>
+      <div className={dev.bar}>
+        <span className={dev.barTitle}>
+          Preview <span className={dev.barTag}>E5</span>
+        </span>
+        <Button size="sm" onClick={runChecks}>
           ✓ Шалгах
-        </button>
-        <button onClick={() => setJs(js + "\nwhile(true){}")} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid var(--border,#ddd)", cursor: "pointer" }}>
-          ∞ давталт нэмэх (watchdog тест)
-        </button>
+        </Button>
+        <Button size="sm" variant="secondary" onClick={() => setJs(js + "\nwhile(true){}")}>
+          ∞ давталт нэмэх (watchdog)
+        </Button>
         {results ? (
-          <span style={{ fontSize: 13 }}>
+          <span className={dev.results}>
             {results.map((r) => (
-              <span key={r.id} style={{ marginRight: 10, color: r.passed ? "var(--success,#16a34a)" : "var(--danger,#dc2626)" }}>
+              <span key={r.id} className={r.passed ? dev.resultPass : dev.resultFail}>
                 {r.passed ? "✓" : "✗"} {r.id}
               </span>
             ))}
@@ -96,33 +87,37 @@ export default function DevPreviewPage() {
         ) : null}
       </div>
 
-      <div style={{ ...cell, gap: 6 }}>
-        <label style={{ fontSize: 11 }}>index.html</label>
-        <textarea value={html} onChange={(e) => setHtml(e.target.value)} style={ta} spellCheck={false} />
-        <label style={{ fontSize: 11 }}>styles/main.css (edit → hot-swap, no reload)</label>
-        <textarea value={css} onChange={(e) => setCss(e.target.value)} style={{ ...ta, flex: 0.7 }} spellCheck={false} />
-        <label style={{ fontSize: 11 }}>js/main.js</label>
-        <textarea value={js} onChange={(e) => setJs(e.target.value)} style={{ ...ta, flex: 0.7 }} spellCheck={false} />
+      <div className={dev.split}>
+        <div className={dev.editors}>
+          <label className={dev.label}>index.html</label>
+          <textarea className={dev.textarea} value={html} onChange={(e) => setHtml(e.target.value)} spellCheck={false} rows={9} />
+          <label className={dev.label}>styles/main.css — edit → hot-swap, no reload</label>
+          <textarea className={dev.textarea} value={css} onChange={(e) => setCss(e.target.value)} spellCheck={false} rows={5} />
+          <label className={dev.label}>js/main.js</label>
+          <textarea className={dev.textarea} value={js} onChange={(e) => setJs(e.target.value)} spellCheck={false} rows={5} />
+        </div>
+
+        <div className={dev.paneRight}>
+          <div className={dev.previewWrap}>
+            <PreviewFrame
+              ref={previewRef}
+              files={files}
+              entry="index.html"
+              onConsole={(e) => setLogs((l) => [...l.slice(-40), e])}
+              onError={(e) => setLogs((l) => [...l.slice(-40), { level: "error", args: [e.message], time: Date.now() }])}
+            />
+          </div>
+        </div>
       </div>
 
-      <div style={{ ...cell, border: "1px solid var(--border,#e4e4e7)", borderRadius: 8, overflow: "hidden" }}>
-        <PreviewFrame
-          ref={previewRef}
-          files={files}
-          entry="index.html"
-          onConsole={(e) => setLogs((l) => [...l.slice(-40), e])}
-          onError={(e) => setLogs((l) => [...l.slice(-40), { level: "error", args: [e.message], time: Date.now() }])}
-        />
-      </div>
-
-      <div style={{ gridColumn: "1 / -1", overflow: "auto", background: "var(--code-bg,#0d0d0f)", color: "#ddd", borderRadius: 6, padding: 8, fontFamily: "monospace", fontSize: 12 }}>
-        {logs.length === 0 ? <span style={{ opacity: 0.5 }}>Console…</span> : null}
+      <div className={dev.console}>
+        {logs.length === 0 ? <span className={dev.consoleEmpty}>Console…</span> : null}
         {logs.map((l, i) => (
-          <div key={i} style={{ color: l.level === "error" ? "#ff6b6b" : l.level === "warn" ? "#ffd166" : "#ddd" }}>
+          <div key={i} className={l.level === "error" ? dev.consoleErr : l.level === "warn" ? dev.consoleWarn : undefined}>
             [{l.level}] {l.args.join(" ")}
           </div>
         ))}
       </div>
-    </main>
+    </div>
   );
 }
