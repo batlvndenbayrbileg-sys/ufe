@@ -156,14 +156,38 @@ function render(kind: DiagramKind): React.ReactNode {
     case "client-server":
       return (
         <>
-          <Box x={10} y={40} width={90} height={50} fill={SUB} stroke={ACC} />
-          <text x={55} y={68} fill="var(--accent-text)" textAnchor="middle" style={t}>Хөтөч</text>
-          <Box x={180} y={40} width={90} height={50} fill={SURF} stroke={BOR} />
-          <text x={225} y={68} fill={TXT} textAnchor="middle" style={t}>Сервер</text>
-          <line x1={102} y1={54} x2={178} y2={54} stroke={ACC} strokeWidth={1.5} markerEnd="url(#ar3)" />
-          <text x={140} y={48} fill={MUT} textAnchor="middle" style={t}>хүсэлт</text>
-          <line x1={178} y1={78} x2={102} y2={78} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#ar3b)" />
-          <text x={140} y={94} fill={MUT} textAnchor="middle" style={t}>хариу</text>
+          {/* Browser window (client) */}
+          <Box x={6} y={24} width={86} height={78} fill={SURF} stroke={BOR} />
+          <path d="M6,40 H92" stroke={BOR} />
+          <circle cx={16} cy={32} r={2.6} fill="var(--danger)" />
+          <circle cx={25} cy={32} r={2.6} fill="var(--warning)" />
+          <circle cx={34} cy={32} r={2.6} fill="var(--success)" />
+          <rect x={16} y={52} width={52} height={6} rx={3} fill={SUB} />
+          <rect x={16} y={64} width={64} height={6} rx={3} fill={SUB} />
+          <rect x={16} y={76} width={38} height={6} rx={3} fill={SUB} />
+          <text x={49} y={118} fill={MUT} textAnchor="middle" style={t}>Хөтөч</text>
+
+          {/* Server (rack) */}
+          <Box x={188} y={24} width={86} height={78} fill={SURF} stroke={BOR} />
+          {[38, 60, 82].map((y) => (
+            <g key={y}>
+              <rect x={196} y={y} width={70} height={16} rx={3} fill={SUB} stroke={BOR} />
+              <circle cx={204} cy={y + 8} r={2.6} fill="var(--success)" />
+              <rect x={214} y={y + 6} width={44} height={4} rx={2} fill={BOR} />
+            </g>
+          ))}
+          <text x={231} y={118} fill={MUT} textAnchor="middle" style={t}>Сервер</text>
+
+          {/* Request → labelled on the arrow */}
+          <line x1={94} y1={42} x2={186} y2={42} stroke={ACC} strokeWidth={1.5} markerEnd="url(#ar3)" />
+          <Box x={100} y={33} width={80} height={18} rx={9} fill={SUB} stroke={ACC} />
+          <text x={140} y={45} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>GET /бараа</text>
+
+          {/* Response ← */}
+          <line x1={186} y1={86} x2={94} y2={86} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#ar3b)" />
+          <Box x={98} y={77} width={84} height={18} rx={9} fill="color-mix(in srgb, var(--success) 16%, var(--surface))" stroke="var(--success)" />
+          <text x={140} y={89} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>200 · JSON</text>
+
           <defs>
             <marker id="ar3" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
