@@ -54,6 +54,34 @@
   pointer-events: none;
 }
 
+/* a quiet, browser-like address bar */
+.urlBar {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 260px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+.urlLock {
+  font-size: 10px;
+  line-height: 1;
+  opacity: 0.8;
+}
+.urlHost {
+  color: var(--text);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* divider between control clusters */
 .divider {
   width: 1px;

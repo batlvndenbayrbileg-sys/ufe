@@ -154,10 +154,15 @@ const PLACEHOLDER =
   encodeURIComponent(
     // Intrinsic 96×72: small enough that an unstyled <img> (a logo, say) stays
     // logo-sized, while CSS that sizes images (width/aspect-ratio) still wins.
-    '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="72" viewBox="0 0 4 3">' +
-      '<rect width="4" height="3" fill="#e7e7ec"/>' +
-      '<path d="M0.5 2.2l0.9-0.9 0.7 0.7 0.8-1 0.6 1.2v0.3h-3z" fill="#c3c3cc"/>' +
-      '<circle cx="1.05" cy="0.95" r="0.28" fill="#c3c3cc"/>' +
+    // `preserveAspectRatio=none` lets the soft gradient fill any box the CSS
+    // gives the image, so it reads as "photo coming" rather than "broken".
+    '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="72" viewBox="0 0 4 3" preserveAspectRatio="none">' +
+      '<defs><linearGradient id="p" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0" stop-color="#f3f5f9"/><stop offset="1" stop-color="#e7ebf2"/>' +
+      "</linearGradient></defs>" +
+      '<rect width="4" height="3" fill="url(#p)"/>' +
+      '<circle cx="1.2" cy="1.02" r="0.3" fill="#c3ccdb"/>' +
+      '<path d="M0.5 2.42 L1.55 1.34 L2.2 2.0 L2.9 1.12 L3.55 2.42 Z" fill="#c3ccdb"/>' +
       "</svg>",
   );
 

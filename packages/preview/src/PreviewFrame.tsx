@@ -57,6 +57,14 @@ export const PreviewFrame = forwardRef<PreviewHostHandle, PreviewFrameProps>(fun
           </span>
         </span>
 
+        {/* A quiet address bar — frames the pane as the student's live site. */}
+        <span className={s.urlBar} title="Таны амьд сайт">
+          <span className={s.urlLock} aria-hidden>
+            🔒
+          </span>
+          <span className={s.urlHost}>shop.mn</span>
+        </span>
+
         {/* Zoom only scales a fixed-size device; in fit mode it does nothing,
             so it isn't shown. */}
         {fit ? null : (
