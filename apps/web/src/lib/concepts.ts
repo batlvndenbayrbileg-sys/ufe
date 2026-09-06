@@ -1764,6 +1764,12 @@ const DIAGRAMS: Record<string, string> = {
   "conditional rendering": "conditional",
   ternary: "conditional",
   "empty state": "conditional",
+  // effects
+  useEffect: "useeffect",
+  "dependency array": "useeffect",
+  "side effect": "useeffect",
+  "useEffect cleanup": "useeffect",
+  "useEffect on mount": "useeffect",
   forEach: "array",
   "list rendering": "array",
   object: "object",

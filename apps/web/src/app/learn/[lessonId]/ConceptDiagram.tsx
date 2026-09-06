@@ -38,7 +38,8 @@ export type DiagramKind =
   | "reduce"
   | "try-catch"
   | "localstorage"
-  | "conditional";
+  | "conditional"
+  | "useeffect";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -786,6 +787,41 @@ function render(kind: DiagramKind): React.ReactNode {
             </marker>
             <marker id="arcf" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "useeffect":
+      return (
+        <>
+          {/* render */}
+          <Box x={88} y={8} width={104} height={24} fill={SURF} stroke={BOR} rx={4} />
+          <text x={140} y={24} fill={TXT} textAnchor="middle" style={{ ...t, fontWeight: 700 }}>render</text>
+          <line x1={140} y1={32} x2={140} y2={44} stroke={BOR} strokeWidth={1.5} markerEnd="url(#arue)" />
+          <text x={196} y={42} fill={MUT} style={{ ...t, fontSize: 8 }}>зурсны дараа</text>
+
+          {/* effect — the side effect */}
+          <Box x={76} y={46} width={128} height={30} fill={SUB} stroke={ACC} rx={4} />
+          <text x={140} y={60} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>effect()</text>
+          <text x={140} y={72} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>гаж нөлөө: fetch, subscribe</text>
+          <line x1={140} y1={76} x2={140} y2={88} stroke={BOR} strokeWidth={1.5} markerEnd="url(#arue)" />
+          <text x={206} y={86} fill={MUT} style={{ ...t, fontSize: 8 }}>[deps] өөрчлөгдвөл</text>
+
+          {/* cleanup, then the effect can run again */}
+          <Box x={76} y={90} width={128} height={24} fill="color-mix(in srgb, var(--warning) 14%, var(--surface))" stroke="var(--warning)" rx={4} />
+          <text x={140} y={106} fill="var(--warning)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>cleanup()</text>
+
+          {/* loop back to effect */}
+          <path d="M74,102 C34,100 34,60 74,60" fill="none" stroke={ACC} strokeWidth={1.5} markerEnd="url(#aruel)" />
+          <text x={30} y={84} fill="var(--accent-text)" style={{ ...t, fontSize: 8 }}>↺ дахин</text>
+
+          <text x={140} y={126} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>[] → зөвхөн нэг удаа</text>
+          <defs>
+            <marker id="arue" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
+            </marker>
+            <marker id="aruel" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>
         </>
