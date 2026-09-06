@@ -539,26 +539,25 @@ function render(kind: DiagramKind): React.ReactNode {
       );
     case "aaa": {
       const rows: Array<[string, string, string, string]> = [
-        ["1", "Бэлдэх", "const a = 2, b = 3", SUB],
-        ["2", "Хийх", "sum(a, b)", SUB],
-        ["3", "Батлах", "expect(…).toBe(5)", "success"],
+        // number, phase — gloss, code, colour
+        ["1", "Бэлдэх — өгөгдлөө бэлд", "const a = 2, b = 3", "var(--text-subtle)"],
+        ["2", "Хийх — функцээ дууд", "sum(a, b)", ACC],
+        ["3", "Батлах — үр дүнг шалга", "expect(res).toBe(5)", "var(--success)"],
       ];
       return (
         <>
-          {rows.map(([n, label, code, tone], i) => {
-            const y = 8 + i * 40;
-            const fill = tone === "success" ? "color-mix(in srgb, var(--success) 16%, var(--surface))" : SUB;
-            const line = tone === "success" ? "var(--success)" : ACC;
+          {rows.map(([n, label, code, c], i) => {
+            const y = 6 + i * 40;
             return (
               <g key={n}>
                 {i > 0 ? (
-                  <line x1={26} y1={y - 8} x2={26} y2={y} stroke={BOR} strokeWidth={1.5} markerEnd="url(#araaa)" />
+                  <line x1={22} y1={y - 6} x2={22} y2={y} stroke={BOR} strokeWidth={1.5} markerEnd="url(#araaa)" />
                 ) : null}
-                <Box x={8} y={y} width={264} height={32} fill={fill} stroke={line} />
-                <circle cx={26} cy={y + 16} r={9} fill={line} />
-                <text x={26} y={y + 20} fill="var(--on-accent)" textAnchor="middle" style={t}>{n}</text>
-                <text x={44} y={y + 20} fill={TXT} style={{ ...t, fontFamily: "inherit", fontWeight: 600 }}>{label}</text>
-                <text x={266} y={y + 20} fill={MUT} textAnchor="end" style={t}>{code}</text>
+                <Box x={8} y={y} width={264} height={34} fill={`color-mix(in srgb, ${c} 12%, var(--surface))`} stroke={c} />
+                <circle cx={23} cy={y + 17} r={9} fill={c} />
+                <text x={23} y={y + 21} fill="var(--on-accent)" textAnchor="middle" style={t}>{n}</text>
+                <text x={40} y={y + 15} fill={TXT} style={{ ...t, fontFamily: "inherit", fontWeight: 600, fontSize: 11 }}>{label}</text>
+                <text x={40} y={y + 28} fill={MUT} style={{ ...t, fontSize: 10 }}>{code}</text>
               </g>
             );
           })}
@@ -571,35 +570,34 @@ function render(kind: DiagramKind): React.ReactNode {
       );
     }
     case "heading-order": {
-      const rows: Array<[string, string, number, number]> = [
-        // level tag, sample text, indent level, font size
-        ["h1", "Shop.mn", 0, 13],
-        ["h2", "Ангилал", 1, 12],
-        ["h3", "Гутал", 2, 11],
-        ["h2", "Бидний тухай", 1, 12],
-      ];
+      const chip = (x: number, y: number, tag: string, fill: string, stroke: string, fg: string) => (
+        <>
+          <Box x={x} y={y} width={34} height={20} fill={fill} stroke={stroke} rx={4} />
+          <text x={x + 17} y={y + 14} fill={fg} textAnchor="middle" style={t}>{tag}</text>
+        </>
+      );
       return (
         <>
-          {rows.map(([tag, label, lvl, fs], i) => {
-            const y = 8 + i * 30;
-            const x = 8 + lvl * 26;
-            const tone = lvl === 0 ? ACC : SUB;
-            const fg = lvl === 0 ? "var(--on-accent)" : "var(--accent-text)";
-            return (
-              <g key={i}>
-                {lvl > 0 ? (
-                  <line x1={x - 13} y1={y - 4} x2={x - 13} y2={y + 12} stroke={BOR} />
-                ) : null}
-                {lvl > 0 ? <line x1={x - 13} y1={y + 12} x2={x} y2={y + 12} stroke={BOR} /> : null}
-                <Box x={x} y={y} width={40} height={22} fill={tone} stroke={lvl === 0 ? ACC : "none"} />
-                <text x={x + 20} y={y + 15} fill={fg} textAnchor="middle" style={t}>{tag}</text>
-                <text x={x + 50} y={y + 15} fill={TXT} style={{ ...t, fontFamily: "inherit", fontSize: fs, fontWeight: lvl === 0 ? 700 : 500 }}>
-                  {label}
-                </text>
-              </g>
-            );
-          })}
-          <text x={8} y={126} fill="var(--success)" style={t}>✓ алгасахгүй: h1 → h2 → h3</text>
+          {/* ✓ correct: never skip a level */}
+          <text x={8} y={13} fill="var(--success)" style={{ ...t, fontWeight: 700 }}>✓ зөв</text>
+          <path d="M31,46 V58 M31,58 H40 M31,72 V84 M31,84 H66" fill="none" stroke={BOR} />
+          {chip(14, 26, "h1", ACC, ACC, "var(--on-accent)")}
+          {chip(40, 58, "h2", SUB, ACC, "var(--accent-text)")}
+          {chip(66, 86, "h3", SUB, ACC, "var(--accent-text)")}
+
+          {/* divider */}
+          <line x1={140} y1={18} x2={140} y2={112} stroke={BOR} strokeDasharray="3 3" />
+
+          {/* ✗ wrong: h1 → h3 skips h2 */}
+          <text x={156} y={13} fill="var(--danger)" style={{ ...t, fontWeight: 700 }}>✗ алгассан</text>
+          {chip(160, 26, "h1", ACC, ACC, "var(--on-accent)")}
+          {chip(212, 74, "h3", "color-mix(in srgb, var(--danger) 14%, var(--surface))", "var(--danger)", "var(--danger)")}
+          <path d="M177,46 Q196,60 212,74" fill="none" stroke="var(--danger)" strokeWidth={1.5} strokeDasharray="4 3" />
+          <g transform="translate(196,58)">
+            <circle r={8} fill="var(--surface)" stroke="var(--danger)" strokeWidth={1.5} />
+            <path d="M-3,-3 L3,3 M3,-3 L-3,3" stroke="var(--danger)" strokeWidth={1.5} />
+          </g>
+          <text x={214} y={106} fill="var(--danger)" style={{ ...t, fontSize: 9 }}>h2 алгассан</text>
         </>
       );
     }
