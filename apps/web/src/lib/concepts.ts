@@ -1788,6 +1788,10 @@ const DIAGRAMS: Record<string, string> = {
   "ORDER BY": "table",
   "GROUP BY": "table",
   comparison: "table",
+  // testing
+  "arrange-act-assert": "aaa",
+  "unit test": "aaa",
+  "expect/toBe": "aaa",
 };
 
 /**

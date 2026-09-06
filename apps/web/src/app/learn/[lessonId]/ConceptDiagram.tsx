@@ -31,7 +31,8 @@ export type DiagramKind =
   | "props-flow"
   | "state-cycle"
   | "join"
-  | "table";
+  | "table"
+  | "aaa";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -339,6 +340,39 @@ function render(kind: DiagramKind): React.ReactNode {
           <text x={190} y={61 + 26} fill="var(--accent-text)" style={t}>← WHERE</text>
         </>
       );
+    case "aaa": {
+      const rows: Array<[string, string, string, string]> = [
+        ["1", "Бэлдэх", "const a = 2, b = 3", SUB],
+        ["2", "Хийх", "sum(a, b)", SUB],
+        ["3", "Батлах", "expect(…).toBe(5)", "success"],
+      ];
+      return (
+        <>
+          {rows.map(([n, label, code, tone], i) => {
+            const y = 8 + i * 40;
+            const fill = tone === "success" ? "color-mix(in srgb, var(--success) 16%, var(--surface))" : SUB;
+            const line = tone === "success" ? "var(--success)" : ACC;
+            return (
+              <g key={n}>
+                {i > 0 ? (
+                  <line x1={26} y1={y - 8} x2={26} y2={y} stroke={BOR} strokeWidth={1.5} markerEnd="url(#araaa)" />
+                ) : null}
+                <Box x={8} y={y} width={264} height={32} fill={fill} stroke={line} />
+                <circle cx={26} cy={y + 16} r={9} fill={line} />
+                <text x={26} y={y + 20} fill="var(--on-accent)" textAnchor="middle" style={t}>{n}</text>
+                <text x={44} y={y + 20} fill={TXT} style={{ ...t, fontFamily: "inherit", fontWeight: 600 }}>{label}</text>
+                <text x={266} y={y + 20} fill={MUT} textAnchor="end" style={t}>{code}</text>
+              </g>
+            );
+          })}
+          <defs>
+            <marker id="araaa" markerWidth="7" markerHeight="7" refX="3" refY="6" orient="auto">
+              <path d="M0,0 L6,0 L3,6 Z" fill={BOR} />
+            </marker>
+          </defs>
+        </>
+      );
+    }
     default:
       return null;
   }
