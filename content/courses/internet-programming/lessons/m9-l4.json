@@ -347,7 +347,10 @@
     }
   ],
   "completion": {
-    "xp": 25
+    "xp": 25,
+    "badge": "api-caller",
+    "milestone": true,
+    "celebration": "large"
   },
   "status": "published",
   "version": 1,

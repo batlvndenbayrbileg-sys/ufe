@@ -3,63 +3,191 @@
   "moduleId": "m1-html",
   "slug": "product-card",
   "order": 3,
-  "title": { "mn": "Бүтээгдэхүүний карт хийцгээе" },
-  "why": { "mn": "Shop.mn дээр олон бүтээгдэхүүн бүгд ижил хэлбэрийн жижиг \"карт\"-д харагдана. Тиймээс эхлээд нэг картыг сайн хийж сурна. Карт дотор зураг, нэр, үнэ, товч байна." },
+  "title": {
+    "mn": "Бүтээгдэхүүний карт хийцгээе"
+  },
+  "why": {
+    "mn": "Shop.mn дээр олон бүтээгдэхүүн бүгд ижил хэлбэрийн жижиг \"карт\"-д харагдана. Тиймээс эхлээд нэг картыг сайн хийж сурна. Карт дотор зураг, нэр, үнэ, товч байна."
+  },
   "buildsInProject": "Нүүр хуудасны эхний бүтээгдэхүүний карт",
   "difficulty": "beginner",
   "estimatedMinutes": 14,
-  "skills": ["html"],
-  "concepts": ["article", "img", "button", "class", "data-attribute"],
-  "prerequisites": ["m1-l2"],
-  "execution": { "tier": 1, "runtime": "static", "entry": "index.html", "autoRun": true },
+  "skills": [
+    "html"
+  ],
+  "concepts": [
+    "article",
+    "img",
+    "button",
+    "class",
+    "data-attribute"
+  ],
+  "prerequisites": [
+    "m1-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
   "workspace": {
     "patch": [
-      { "op": "create", "path": "index.html", "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Shop.mn</title>\n  </head>\n  <body>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <section class=\"product-grid\">\n        <!-- энд бичнэ үү -->\n      </section>\n    </main>\n  </body>\n</html>\n" }
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Shop.mn</title>\n  </head>\n  <body>\n    <main>\n      <h1>Shop.mn</h1>\n      <p>Монголын шилдэг онлайн дэлгүүр</p>\n      <section class=\"product-grid\">\n        <!-- энд бичнэ үү -->\n      </section>\n    </main>\n  </body>\n</html>\n"
+      }
     ],
-    "visibleFiles": ["index.html"],
-    "openFiles": ["index.html"],
+    "visibleFiles": [
+      "index.html"
+    ],
+    "openFiles": [
+      "index.html"
+    ],
     "activeFile": "index.html"
   },
   "tasks": [
     {
       "id": "m1-l3-t1",
       "order": 1,
-      "title": { "mn": "Картаа бүтээ" },
-      "statement": { "mn": "`.product-grid` дотор нэг бүтээгдэхүүний карт үүсгэ. Карт нь `<article class=\"product-card\">` байх ба дотор нь дараах 4 зүйл байна: зураг, нэр (`<h3>`), үнэ (`<p class=\"price\">`), `Сагсанд хийх` товч." },
+      "title": {
+        "mn": "Картаа бүтээ"
+      },
+      "statement": {
+        "mn": "`.product-grid` дотор нэг бүтээгдэхүүний карт үүсгэ. Карт нь `<article class=\"product-card\">` байх ба дотор нь дараах 4 зүйл байна: зураг, нэр (`<h3>`), үнэ (`<p class=\"price\">`), `Сагсанд хийх` товч."
+      },
       "requirements": [
-        { "mn": "`<article class=\"product-card\">` байх" },
-        { "mn": "`<img>`-д `alt` тайлбар байх" },
-        { "mn": "Нэр нь `<h3>` дотор" },
-        { "mn": "Үнэ нь `<p class=\"price\">` дотор, `₮` тэмдэгтэй" },
-        { "mn": "`data-testid=\"add-to-cart\"` бүхий товч байх" }
+        {
+          "mn": "`<article class=\"product-card\">` байх"
+        },
+        {
+          "mn": "`<img>`-д `alt` тайлбар байх"
+        },
+        {
+          "mn": "Нэр нь `<h3>` дотор"
+        },
+        {
+          "mn": "Үнэ нь `<p class=\"price\">` дотор, `₮` тэмдэгтэй"
+        },
+        {
+          "mn": "`data-testid=\"add-to-cart\"` бүхий товч байх"
+        }
       ],
-      "expected": { "description": { "mn": "Preview дээр зураг (эвдэрсэн байж болно), нэр, үнэ, товч бүхий нэг карт харагдана." } },
+      "expected": {
+        "description": {
+          "mn": "Preview дээр зураг (эвдэрсэн байж болно), нэр, үнэ, товч бүхий нэг карт харагдана."
+        }
+      },
       "targetFile": "index.html",
       "marker": "<!-- энд бичнэ үү -->",
       "checks": [
-        { "id": "c1", "type": "dom.exists", "args": { "selector": "section.product-grid article.product-card", "min": 1 }, "onFail": { "mn": "`.product-grid` дотроос `product-card` class-тай `<article>` олдсонгүй. Class-ийн бичлэгээ (зураас -) шалгаарай." } },
-        { "id": "c2", "type": "dom.attr", "args": { "selector": "article.product-card img", "name": "alt", "minLength": 2 }, "onFail": { "mn": "Картын `<img>`-д `alt` тайлбар алга. Зураг ачаалагдаагүй үед энэ текст харагдана — хоосон орхиж болохгүй." } },
-        { "id": "c3", "type": "dom.exists", "args": { "selector": "article.product-card h3" }, "onFail": { "mn": "Бүтээгдэхүүний нэрийг `<h3>` дотор бичээгүй байна." } },
-        { "id": "c4", "type": "dom.text", "args": { "selector": "article.product-card p.price", "matches": "₮" }, "onFail": { "mn": "Үнэ `<p class=\"price\">` дотор, `₮` тэмдэгттэй байх ёстой. Тэмдэгтийг хуулж болно: ₮" } },
-        { "id": "c5", "type": "dom.exists", "args": { "selector": "article.product-card button[data-testid=\"add-to-cart\"]" }, "onFail": { "mn": "`data-testid=\"add-to-cart\"` бүхий товч олдсонгүй. Энэ шинж дараагийн модульд JavaScript-д хэрэгтэй." } }
+        {
+          "id": "c1",
+          "type": "dom.exists",
+          "args": {
+            "selector": "section.product-grid article.product-card",
+            "min": 1
+          },
+          "onFail": {
+            "mn": "`.product-grid` дотроос `product-card` class-тай `<article>` олдсонгүй. Class-ийн бичлэгээ (зураас -) шалгаарай."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.attr",
+          "args": {
+            "selector": "article.product-card img",
+            "name": "alt",
+            "minLength": 2
+          },
+          "onFail": {
+            "mn": "Картын `<img>`-д `alt` тайлбар алга. Зураг ачаалагдаагүй үед энэ текст харагдана — хоосон орхиж болохгүй."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.exists",
+          "args": {
+            "selector": "article.product-card h3"
+          },
+          "onFail": {
+            "mn": "Бүтээгдэхүүний нэрийг `<h3>` дотор бичээгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "dom.text",
+          "args": {
+            "selector": "article.product-card p.price",
+            "matches": "₮"
+          },
+          "onFail": {
+            "mn": "Үнэ `<p class=\"price\">` дотор, `₮` тэмдэгттэй байх ёстой. Тэмдэгтийг хуулж болно: ₮"
+          }
+        },
+        {
+          "id": "c5",
+          "type": "dom.exists",
+          "args": {
+            "selector": "article.product-card button[data-testid=\"add-to-cart\"]"
+          },
+          "onFail": {
+            "mn": "`data-testid=\"add-to-cart\"` бүхий товч олдсонгүй. Энэ шинж дараагийн модульд JavaScript-д хэрэгтэй."
+          }
+        }
       ],
       "hints": [
-        { "level": 1, "xpCost": 0, "text": { "mn": "`<article>` бол бие даасан агуулгыг илэрхийлэх элемент. Түүнд `class=\"product-card\"` өгнө." } },
-        { "level": 2, "xpCost": 1, "text": { "mn": "Дотор нь дарааллаар: `<img src=\"...\" alt=\"...\">`, `<h3>Нэр</h3>`, `<p class=\"price\">₮ ...</p>`, `<button>`. Товчид `data-testid=\"add-to-cart\"` нэм." } },
-        { "level": 3, "xpCost": 3, "text": { "mn": "Ингэж эхэл (үлдсэнийг нь өөрөө гүйцээ):" }, "code": "<article class=\"product-card\">\n  <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n  <h3>Монгол дээл</h3>\n  <!-- үнэ ба товч -->\n</article>" }
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`<article>` бол бие даасан агуулгыг илэрхийлэх элемент. Түүнд `class=\"product-card\"` өгнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Дотор нь дарааллаар: `<img src=\"...\" alt=\"...\">`, `<h3>Нэр</h3>`, `<p class=\"price\">₮ ...</p>`, `<button>`. Товчид `data-testid=\"add-to-cart\"` нэм."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Ингэж эхэл (үлдсэнийг нь өөрөө гүйцээ):"
+          },
+          "code": "<article class=\"product-card\">\n  <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n  <h3>Монгол дээл</h3>\n  <!-- үнэ ба товч -->\n</article>"
+        }
       ],
       "solution": {
-        "patch": [{ "op": "insertAfter", "path": "index.html", "anchor": "<!-- энд бичнэ үү -->", "content": "\n        <article class=\"product-card\">\n          <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n          <h3>Монгол дээл</h3>\n          <p class=\"price\">₮ 129,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>" }],
-        "explanation": { "mn": "`<article>` нь бусад агуулгаас тусад нь ойлгогдох хэсэгт тохиромжтой. `data-testid` бол JavaScript болон тестээс элементийг олоход зориулсан тусгай шинж." },
+        "patch": [
+          {
+            "op": "insertAfter",
+            "path": "index.html",
+            "anchor": "<!-- энд бичнэ үү -->",
+            "content": "\n        <article class=\"product-card\">\n          <img src=\"images/deel.jpg\" alt=\"Монгол дээл\">\n          <h3>Монгол дээл</h3>\n          <p class=\"price\">₮ 129,000</p>\n          <button class=\"btn-add\" data-testid=\"add-to-cart\">Сагсанд хийх</button>\n        </article>"
+          }
+        ],
+        "explanation": {
+          "mn": "`<article>` нь бусад агуулгаас тусад нь ойлгогдох хэсэгт тохиромжтой. `data-testid` бол JavaScript болон тестээс элементийг олоход зориулсан тусгай шинж."
+        },
         "xpPenalty": 12
       },
       "xp": 20,
       "estimatedMinutes": 12,
-      "skills": ["html"]
+      "skills": [
+        "html"
+      ]
     }
   ],
-  "completion": { "xp": 15, "badge": "ui-builder" },
+  "completion": {
+    "xp": 15
+  },
   "status": "published",
   "version": 1,
-  "authors": ["delgermaa"]
+  "authors": [
+    "delgermaa"
+  ]
 }

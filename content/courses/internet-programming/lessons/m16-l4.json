@@ -220,7 +220,10 @@
     }
   ],
   "completion": {
-    "xp": 30
+    "xp": 30,
+    "badge": "type-safe",
+    "milestone": true,
+    "celebration": "large"
   },
   "status": "published",
   "version": 1,

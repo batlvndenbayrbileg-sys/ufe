@@ -317,7 +317,10 @@
     }
   ],
   "completion": {
-    "xp": 25
+    "xp": 25,
+    "badge": "test-writer",
+    "milestone": true,
+    "celebration": "large"
   },
   "status": "published",
   "version": 1,

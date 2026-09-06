@@ -6,16 +6,8 @@ import { level, loadProgress, lessonProgress, type Progress } from "@/lib/progre
 import { flattenLessons, type MapLesson } from "./course-types";
 import { useCourseMap } from "./useCourseMap";
 import { BrandLockup } from "../BrandMark";
+import { badgeLabel } from "@/lib/badges";
 import s from "./dashboard.module.css";
-
-const BADGE_LABEL: Record<string, string> = {
-  "first-website": "🏆 Анхны вэб",
-  "js-starter": "⚡ JavaScript эхлэл",
-  "ui-builder": "🎨 UI бүтээгч",
-  "responsive-master": "📱 Responsive",
-  debugger: "🔧 Дебаггер",
-  independent: "📚 Бие даасан",
-};
 
 export function Dashboard() {
   const { map, error, reload } = useCourseMap();
@@ -182,7 +174,7 @@ export function Dashboard() {
               <div className={s.badgeWrap}>
                 {progress.badges.map((b) => (
                   <Badge key={b} tone="accent" size="md">
-                    {BADGE_LABEL[b] ?? b}
+                    {badgeLabel(b)}
                   </Badge>
                 ))}
               </div>

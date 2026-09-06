@@ -222,7 +222,10 @@
     }
   ],
   "completion": {
-    "xp": 25
+    "xp": 25,
+    "badge": "sql-reader",
+    "milestone": true,
+    "celebration": "large"
   },
   "status": "published",
   "version": 1,

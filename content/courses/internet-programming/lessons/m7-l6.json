@@ -336,7 +336,10 @@
     }
   ],
   "completion": {
-    "xp": 20
+    "xp": 20,
+    "badge": "react-dev",
+    "milestone": true,
+    "celebration": "large"
   },
   "status": "published",
   "version": 1,

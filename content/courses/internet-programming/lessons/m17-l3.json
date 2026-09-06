@@ -340,7 +340,10 @@
     }
   ],
   "completion": {
-    "xp": 40
+    "xp": 40,
+    "badge": "shop-mn-builder",
+    "milestone": true,
+    "celebration": "large"
   },
   "status": "published",
   "version": 1,

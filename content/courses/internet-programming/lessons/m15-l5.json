@@ -229,7 +229,10 @@
     }
   ],
   "completion": {
-    "xp": 25
+    "xp": 25,
+    "badge": "a11y-advocate",
+    "milestone": true,
+    "celebration": "large"
   },
   "status": "published",
   "version": 1,

@@ -298,7 +298,10 @@
     }
   ],
   "completion": {
-    "xp": 30
+    "xp": 30,
+    "badge": "auth-builder",
+    "milestone": true,
+    "celebration": "large"
   },
   "status": "published",
   "version": 1,

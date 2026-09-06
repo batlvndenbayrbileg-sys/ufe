@@ -7,6 +7,7 @@ import { PreviewFrame, type ConsoleEntry, type FileSet } from "@khiye/preview";
 import { applyPatch } from "@khiye/content-sdk/patch";
 import type { LessonPublic } from "@/lib/content";
 import { awardBadge, recordTaskPass } from "@/lib/progress";
+import { badgeLabel } from "@/lib/badges";
 import { ResultPanel, type SubmitResult } from "./ResultPanel";
 import { HintLadder } from "./HintLadder";
 import { SolutionGate } from "./SolutionGate";
@@ -177,7 +178,7 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
           {lessonDone ? (
             <div className={s.completion}>
               <span className={s.completionTitle}>🎉 Хичээл дууслаа!</span>
-              {lesson.completion.badge ? <Badge tone="success" size="md">{lesson.completion.badge}</Badge> : null}
+              {lesson.completion.badge ? <Badge tone="success" size="md">{badgeLabel(lesson.completion.badge)}</Badge> : null}
               {next ? (
                 <a href={`/learn/${next.id}`} className={s.completionNext}>
                   Дараагийн хичээл: {next.title.mn} →
