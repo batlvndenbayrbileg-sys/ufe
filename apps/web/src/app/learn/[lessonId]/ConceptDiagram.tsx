@@ -88,18 +88,25 @@ function render(kind: DiagramKind): React.ReactNode {
     case "flex-row":
       return (
         <>
-          <Box x={6} y={30} width={268} height={70} fill="none" stroke={BOR} />
-          <Box x={20} y={48} width={54} height={34} fill={SUB} stroke={ACC} />
-          <Box x={92} y={48} width={54} height={34} fill={SUB} stroke={ACC} />
-          <Box x={164} y={48} width={54} height={34} fill={SUB} stroke={ACC} />
-          <line x1={20} y1={116} x2={240} y2={116} stroke={ACC} strokeWidth={1.5} markerEnd="url(#ar)" />
+          <text x={20} y={18} fill={MUT} style={t}>display: flex</text>
+          {/* a real flex header: logo left, nav right → space-between */}
+          <Box x={8} y={26} width={264} height={40} fill="none" stroke={ACC} rx={4} />
+          <Box x={16} y={36} width={46} height={20} fill={ACC} rx={3} />
+          <text x={39} y={50} fill="var(--on-accent)" textAnchor="middle" style={t}>лого</text>
+          {[0, 1, 2].map((i) => (
+            <Box key={i} x={150 + i * 40} y={36} width={34} height={20} fill={SUB} stroke={ACC} rx={3} />
+          ))}
+          {/* the free space between them */}
+          <line x1={64} y1={46} x2={148} y2={46} stroke={BOR} strokeDasharray="3 3" />
+          <text x={106} y={42} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>space-between</text>
+          {/* main axis */}
+          <line x1={16} y1={86} x2={256} y2={86} stroke={ACC} strokeWidth={1.5} markerEnd="url(#ar)" />
+          <text x={132} y={80} fill={MUT} textAnchor="middle" style={t}>гол тэнхлэг (justify-content) →</text>
           <defs>
             <marker id="ar" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>
-          <text x={20} y={22} fill={MUT} style={t}>display: flex</text>
-          <text x={130} y={112} fill={MUT} style={t}>гол тэнхлэг →</text>
         </>
       );
     case "grid":
@@ -156,29 +163,43 @@ function render(kind: DiagramKind): React.ReactNode {
     case "breakpoints":
       return (
         <>
-          <line x1={12} y1={70} x2={268} y2={70} stroke={BOR} strokeWidth={1.5} />
-          <line x1={150} y1={40} x2={150} y2={100} stroke={ACC} strokeDasharray="4 3" />
-          <text x={150} y={34} fill="var(--accent-text)" textAnchor="middle" style={t}>768px</text>
-          <Box x={20} y={54} width={30} height={44} fill={SUB} stroke={ACC} rx={3} />
-          <text x={35} y={116} fill={MUT} textAnchor="middle" style={t}>утас</text>
-          <Box x={175} y={48} width={80} height={40} fill={SUB} stroke={ACC} rx={3} />
-          <text x={215} y={116} fill={MUT} textAnchor="middle" style={t}>компьютер</text>
+          {/* the same page reflows across the 768px breakpoint */}
+          <line x1={140} y1={16} x2={140} y2={110} stroke={ACC} strokeDasharray="4 3" />
+          <text x={140} y={12} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>768px</text>
+          {/* phone → one column stacked */}
+          <Box x={40} y={22} width={50} height={82} fill={SURF} stroke={BOR} rx={8} />
+          {[0, 1, 2].map((i) => (
+            <rect key={i} x={48} y={30 + i * 24} width={34} height={18} rx={2} fill={SUB} stroke={ACC} />
+          ))}
+          <text x={65} y={122} fill={MUT} textAnchor="middle" style={t}>утас · 1 багана</text>
+          {/* desktop → three columns */}
+          <Box x={168} y={34} width={100} height={58} fill={SURF} stroke={BOR} rx={4} />
+          {[0, 1, 2].map((i) => (
+            <rect key={i} x={176 + i * 30} y={42} width={26} height={42} rx={2} fill={SUB} stroke={ACC} />
+          ))}
+          <text x={218} y={122} fill={MUT} textAnchor="middle" style={t}>компьютер · 3 багана</text>
         </>
       );
     case "selector":
       return (
         <>
-          <Box x={8} y={40} width={110} height={46} fill="var(--code-bg)" stroke="var(--code-border)" />
-          <text x={20} y={60} fill={ACC} style={t}>h1 {"{"}</text>
-          <text x={30} y={76} fill={TXT} style={t}>color: red</text>
-          <line x1={122} y1={62} x2={168} y2={62} stroke={ACC} strokeWidth={1.5} markerEnd="url(#ar2)" />
+          {/* a class selector matches every element that carries it */}
+          <Box x={8} y={42} width={94} height={46} fill="var(--code-bg)" stroke="var(--code-border)" />
+          <text x={16} y={60} fill="var(--accent-text)" style={t}>.card {"{"}</text>
+          <text x={20} y={78} fill={MUT} style={{ ...t, fontSize: 10 }}>radius…</text>
+          <line x1={104} y1={64} x2={144} y2={53} stroke={ACC} strokeWidth={1.5} markerEnd="url(#ar2)" />
+          <line x1={104} y1={64} x2={144} y2={81} stroke={ACC} strokeWidth={1.5} markerEnd="url(#ar2)" />
+          <Box x={148} y={42} width={60} height={22} fill={SUB} stroke={ACC} />
+          <text x={178} y={57} fill="var(--accent-text)" textAnchor="middle" style={t}>.card</text>
+          <Box x={148} y={70} width={60} height={22} fill={SUB} stroke={ACC} />
+          <text x={178} y={85} fill="var(--accent-text)" textAnchor="middle" style={t}>.card</text>
+          <text x={216} y={68} fill={MUT} style={{ ...t, fontSize: 9 }}>тохирох</text>
+          <text x={216} y={80} fill={MUT} style={{ ...t, fontSize: 9 }}>бүхэнд</text>
           <defs>
             <marker id="ar2" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>
-          <Box x={172} y={44} width={100} height={38} fill={SUB} stroke={ACC} />
-          <text x={222} y={67} fill="var(--accent-text)" textAnchor="middle" style={t}>&lt;h1&gt;</text>
         </>
       );
     case "client-server":
@@ -226,58 +247,90 @@ function render(kind: DiagramKind): React.ReactNode {
           </defs>
         </>
       );
-    case "http-status":
+    case "http-status": {
+      const rows: Array<[string, string, string]> = [
+        ["200", "амжилттай (OK)", "var(--success)"],
+        ["404", "олдсонгүй", "var(--warning)"],
+        ["500", "серверийн алдаа", "var(--danger)"],
+      ];
       return (
         <>
-          <Box x={16} y={50} width={72} height={30} fill="color-mix(in srgb, var(--success) 18%, var(--surface))" stroke="var(--success)" rx={15} />
-          <text x={52} y={69} fill="var(--success)" textAnchor="middle" style={t}>2xx OK</text>
-          <Box x={104} y={50} width={72} height={30} fill="color-mix(in srgb, var(--warning) 20%, var(--surface))" stroke="var(--warning)" rx={15} />
-          <text x={140} y={69} fill="var(--warning)" textAnchor="middle" style={t}>4xx</text>
-          <Box x={192} y={50} width={72} height={30} fill="color-mix(in srgb, var(--danger) 18%, var(--surface))" stroke="var(--danger)" rx={15} />
-          <text x={228} y={69} fill="var(--danger)" textAnchor="middle" style={t}>5xx</text>
-          <text x={140} y={30} fill={MUT} textAnchor="middle" style={t}>статус код</text>
+          <text x={140} y={13} fill={MUT} textAnchor="middle" style={t}>статус код</text>
+          {rows.map(([code, meaning, color], i) => {
+            const y = 22 + i * 34;
+            return (
+              <g key={code}>
+                <rect
+                  x={16}
+                  y={y}
+                  width={58}
+                  height={26}
+                  rx={6}
+                  fill={`color-mix(in srgb, ${color} 16%, var(--surface))`}
+                  stroke={color}
+                />
+                <text x={45} y={y + 18} fill={color} textAnchor="middle" style={{ ...t, fontWeight: 700 }}>{code}</text>
+                <text x={86} y={y + 18} fill={TXT} style={t}>{meaning}</text>
+              </g>
+            );
+          })}
         </>
       );
+    }
     case "array":
       return (
         <>
-          <text x={8} y={40} fill={MUT} style={t}>индекс</text>
-          {[0, 1, 2, 3].map((i) => (
-            <g key={i}>
-              <Box x={16 + i * 62} y={48} width={54} height={38} fill={SUB} stroke={ACC} />
-              <text x={43 + i * 62} y={72} fill="var(--accent-text)" textAnchor="middle" style={t}>
-                {["🍎", "🍌", "🍇", "🍊"][i]}
-              </text>
-              <text x={43 + i * 62} y={104} fill={MUT} textAnchor="middle" style={t}>{i}</text>
-            </g>
-          ))}
+          <text x={8} y={16} fill={MUT} style={t}>items</text>
+          <text x={12} y={74} fill={ACC} style={{ ...t, fontSize: 26 }}>[</text>
+          {[0, 1, 2, 3].map((i) => {
+            const x = 30 + i * 56;
+            const on = i === 1;
+            return (
+              <g key={i}>
+                <Box x={x} y={44} width={48} height={36} fill={on ? SUB : SURF} stroke={ACC} strokeWidth={on ? 2 : 1} />
+                <text x={x + 24} y={69} textAnchor="middle" style={{ ...t, fontSize: 16 }}>
+                  {["🍎", "🍌", "🍇", "🍊"][i]}
+                </text>
+                <text x={x + 24} y={94} fill={on ? "var(--accent-text)" : MUT} textAnchor="middle" style={t}>{i}</text>
+              </g>
+            );
+          })}
+          <text x={256} y={74} fill={ACC} style={{ ...t, fontSize: 26 }}>]</text>
+          <text x={140} y={116} fill="var(--accent-text)" textAnchor="middle" style={t}>items[1] = 🍌</text>
         </>
       );
     case "object":
       return (
         <>
-          <Box x={40} y={16} width={200} height={100} fill={SURF} stroke={BOR} />
+          <text x={34} y={13} fill={MUT} style={t}>product</text>
+          <Box x={30} y={16} width={176} height={80} fill={SURF} stroke={BOR} />
+          <text x={40} y={33} fill={MUT} style={t}>{"{"}</text>
           {[
             ["name", "\"Гутал\""],
             ["price", "90000"],
             ["stock", "5"],
           ].map(([k, v], i) => (
             <g key={k}>
-              <text x={56} y={42 + i * 28} fill={ACC} style={t}>{k}:</text>
-              <text x={140} y={42 + i * 28} fill={TXT} style={t}>{v}</text>
+              <text x={54} y={50 + i * 16} fill={ACC} style={t}>{k}:</text>
+              <text x={112} y={50 + i * 16} fill={TXT} style={t}>{v}</text>
             </g>
           ))}
+          <text x={40} y={90} fill={MUT} style={t}>{"}"}</text>
+          <text x={140} y={116} fill="var(--accent-text)" textAnchor="middle" style={t}>product.price → 90000</text>
         </>
       );
     case "function":
       return (
         <>
-          <text x={30} y={68} fill={MUT} textAnchor="middle" style={t}>оролт</text>
-          <line x1={54} y1={62} x2={96} y2={62} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arf)" />
-          <Box x={100} y={40} width={80} height={44} fill={ACC} />
-          <text x={140} y={66} fill="var(--on-accent)" textAnchor="middle" style={t}>функц</text>
-          <line x1={184} y1={62} x2={226} y2={62} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arf)" />
-          <text x={252} y={68} fill={MUT} textAnchor="middle" style={t}>үр дүн</text>
+          <text x={34} y={44} fill={MUT} textAnchor="middle" style={t}>оролт</text>
+          <text x={34} y={65} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>(2, 3)</text>
+          <line x1={64} y1={60} x2={96} y2={60} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arf)" />
+          <Box x={100} y={40} width={80} height={42} fill={ACC} rx={6} />
+          <text x={140} y={58} fill="var(--on-accent)" textAnchor="middle" style={t}>sum()</text>
+          <text x={140} y={72} fill="var(--on-accent)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>return a+b</text>
+          <line x1={184} y1={60} x2={216} y2={60} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arf)" />
+          <text x={248} y={44} fill={MUT} textAnchor="middle" style={t}>үр дүн</text>
+          <text x={248} y={65} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>5</text>
           <defs>
             <marker id="arf" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
@@ -373,12 +426,19 @@ function render(kind: DiagramKind): React.ReactNode {
     case "props-flow":
       return (
         <>
-          <Box x={16} y={44} width={96} height={42} fill={ACC} />
-          <text x={64} y={69} fill="var(--on-accent)" textAnchor="middle" style={t}>Parent</text>
-          <Box x={168} y={44} width={96} height={42} fill={SUB} stroke={ACC} />
-          <text x={216} y={69} fill="var(--accent-text)" textAnchor="middle" style={t}>Child</text>
-          <line x1={114} y1={64} x2={166} y2={64} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arp)" />
-          <text x={140} y={40} fill={MUT} textAnchor="middle" style={t}>props ↓</text>
+          {/* Parent holds the data */}
+          <Box x={8} y={26} width={104} height={74} fill={SURF} stroke={BOR} />
+          <text x={60} y={42} fill={TXT} textAnchor="middle" style={{ ...t, fontWeight: 700 }}>Parent</text>
+          <text x={18} y={64} fill={ACC} style={{ ...t, fontSize: 10 }}>name=&quot;Гутал&quot;</text>
+          <text x={18} y={80} fill={ACC} style={{ ...t, fontSize: 10 }}>price=90000</text>
+          {/* props flow to the child */}
+          <line x1={114} y1={62} x2={160} y2={62} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arp)" />
+          <text x={137} y={56} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>props</text>
+          {/* Child renders a card from the props */}
+          <Box x={166} y={26} width={104} height={74} fill={SUB} stroke={ACC} />
+          <rect x={176} y={36} width={84} height={26} rx={3} fill={BOR} />
+          <text x={176} y={80} fill={TXT} style={t}>Гутал</text>
+          <text x={230} y={80} fill="var(--accent-text)" style={t}>₮90000</text>
           <defs>
             <marker id="arp" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
@@ -460,17 +520,21 @@ function render(kind: DiagramKind): React.ReactNode {
     case "table":
       return (
         <>
-          <Box x={16} y={20} width={248} height={24} fill={ACC} />
-          <text x={30} y={36} fill="var(--on-accent)" style={t}>name</text>
-          <text x={150} y={36} fill="var(--on-accent)" style={t}>price</text>
+          <text x={16} y={13} fill={MUT} style={t}>products</text>
+          {/* SELECT picks a column · WHERE picks a row → their cell is the answer */}
+          <rect x={146} y={18} width={118} height={98} fill="color-mix(in srgb, var(--accent) 12%, transparent)" />
+          <text x={205} y={13} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>SELECT</text>
+          <Box x={16} y={18} width={248} height={24} fill={ACC} />
+          <text x={30} y={34} fill="var(--on-accent)" style={t}>name</text>
+          <text x={152} y={34} fill="var(--on-accent)" style={t}>price</text>
           {[0, 1, 2].map((r) => (
             <g key={r}>
-              <Box x={16} y={44 + r * 26} width={248} height={26} fill={r === 1 ? SUB : SURF} stroke={BOR} />
-              <text x={30} y={61 + r * 26} fill={TXT} style={t}>{["Гутал", "Цамц", "Малгай"][r]}</text>
-              <text x={150} y={61 + r * 26} fill={TXT} style={t}>{["90000", "45000", "20000"][r]}</text>
+              <Box x={16} y={42 + r * 24} width={248} height={24} fill={r === 1 ? SUB : SURF} stroke={BOR} />
+              <text x={30} y={58 + r * 24} fill={TXT} style={t}>{["Гутал", "Цамц", "Малгай"][r]}</text>
+              <text x={152} y={58 + r * 24} fill={TXT} style={t}>{["90000", "45000", "20000"][r]}</text>
             </g>
           ))}
-          <text x={190} y={61 + 26} fill="var(--accent-text)" style={t}>← WHERE</text>
+          <text x={196} y={58 + 24} fill="var(--accent-text)" style={{ ...t, fontWeight: 700 }}>← WHERE</text>
         </>
       );
     case "aaa": {
