@@ -1755,6 +1755,11 @@ const DIAGRAMS: Record<string, string> = {
   "try/catch": "try-catch",
   "try/catch/finally": "try-catch",
   "defensive coding": "try-catch",
+  // persistence
+  localStorage: "localstorage",
+  persistence: "localstorage",
+  "JSON.stringify": "localstorage",
+  "JSON.parse": "localstorage",
   forEach: "array",
   "list rendering": "array",
   object: "object",

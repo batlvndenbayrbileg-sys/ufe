@@ -36,7 +36,8 @@ export type DiagramKind =
   | "heading-order"
   | "map-filter"
   | "reduce"
-  | "try-catch";
+  | "try-catch"
+  | "localstorage";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -713,6 +714,41 @@ function render(kind: DiagramKind): React.ReactNode {
             </marker>
             <marker id="artcn" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "localstorage":
+      return (
+        <>
+          {/* the app's data */}
+          <Box x={8} y={28} width={92} height={58} fill={SURF} stroke={BOR} rx={6} />
+          <text x={54} y={46} fill={TXT} textAnchor="middle" style={{ ...t, fontWeight: 700 }}>App</text>
+          <text x={54} y={68} fill={ACC} textAnchor="middle" style={t}>{"{ cart }"}</text>
+
+          {/* browser storage drum */}
+          <Box x={180} y={28} width={92} height={58} fill={SUB} stroke={ACC} rx={6} />
+          {[40, 44, 48].map((cy) => (
+            <ellipse key={cy} cx={196} cy={cy} rx={7} ry={2.4} fill="none" stroke={ACC} />
+          ))}
+          <text x={240} y={44} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>localStorage</text>
+          <rect x={188} y={56} width={76} height={22} rx={3} fill={SURF} stroke={BOR} />
+          <text x={226} y={70} fill={TXT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>cart: […]</text>
+
+          {/* save → */}
+          <line x1={102} y1={44} x2={178} y2={44} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arls)" />
+          <text x={140} y={38} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>setItem · stringify</text>
+          {/* load ← */}
+          <line x1={178} y1={72} x2={102} y2={72} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#arll)" />
+          <text x={140} y={84} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>getItem · parse</text>
+
+          <text x={140} y={106} fill={MUT} textAnchor="middle" style={t}>↻ хуудас шинэчилсэн ч үлдэнэ</text>
+          <defs>
+            <marker id="arls" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+            <marker id="arll" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
             </marker>
           </defs>
         </>
