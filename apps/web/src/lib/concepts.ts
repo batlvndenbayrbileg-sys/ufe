@@ -1751,6 +1751,10 @@ const DIAGRAMS: Record<string, string> = {
   "array.reduce": "reduce",
   reduce: "reduce",
   accumulator: "reduce",
+  // error handling
+  "try/catch": "try-catch",
+  "try/catch/finally": "try-catch",
+  "defensive coding": "try-catch",
   forEach: "array",
   "list rendering": "array",
   object: "object",

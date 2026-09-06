@@ -35,7 +35,8 @@ export type DiagramKind =
   | "aaa"
   | "heading-order"
   | "map-filter"
-  | "reduce";
+  | "reduce"
+  | "try-catch";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -676,6 +677,46 @@ function render(kind: DiagramKind): React.ReactNode {
         </>
       );
     }
+    case "try-catch":
+      return (
+        <>
+          {/* risky code lives in try */}
+          <Box x={92} y={8} width={96} height={24} fill={SUB} stroke={ACC} />
+          <text x={140} y={24} fill="var(--accent-text)" textAnchor="middle" style={t}>try {"{ … }"}</text>
+
+          {/* success path → keep going */}
+          <line x1={168} y1={32} x2={205} y2={50} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#artco)" />
+          <text x={206} y={44} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>✓ OK</text>
+          {/* error path → caught */}
+          <line x1={112} y1={32} x2={72} y2={50} stroke="var(--danger)" strokeWidth={1.5} markerEnd="url(#artce)" />
+          <text x={72} y={44} fill="var(--danger)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>✗ алдаа</text>
+
+          <Box x={14} y={52} width={104} height={26} fill="color-mix(in srgb, var(--danger) 14%, var(--surface))" stroke="var(--danger)" />
+          <text x={66} y={69} fill="var(--danger)" textAnchor="middle" style={t}>catch (e)</text>
+          <Box x={150} y={52} width={116} height={26} fill="color-mix(in srgb, var(--success) 14%, var(--surface))" stroke="var(--success)" />
+          <text x={208} y={69} fill="var(--success)" textAnchor="middle" style={t}>үргэлжилнэ</text>
+          {/* caught → recover, app keeps running */}
+          <line x1={118} y1={65} x2={148} y2={65} stroke={BOR} strokeWidth={1.5} markerEnd="url(#artcn)" />
+
+          {/* finally always runs */}
+          <line x1={66} y1={78} x2={66} y2={96} stroke={BOR} markerEnd="url(#artcn)" />
+          <line x1={208} y1={78} x2={208} y2={96} stroke={BOR} markerEnd="url(#artcn)" />
+          <Box x={40} y={98} width={200} height={22} fill={SURF} stroke={BOR} />
+          <text x={140} y={113} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 10 }}>finally — заавал ажиллана</text>
+
+          <defs>
+            <marker id="artco" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+            <marker id="artce" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--danger)" />
+            </marker>
+            <marker id="artcn" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
+            </marker>
+          </defs>
+        </>
+      );
     default:
       return null;
   }
