@@ -11,6 +11,7 @@ import { badgeLabel } from "@/lib/badges";
 import { ResultPanel, type SubmitResult } from "./ResultPanel";
 import { HintLadder } from "./HintLadder";
 import { SolutionGate } from "./SolutionGate";
+import { QuizPanel } from "./QuizPanel";
 import s from "./learn.module.css";
 
 type Status = "current" | "passed" | "locked";
@@ -173,6 +174,10 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
                 isLastTask={taskIndex === tasks.length - 1}
               />
             </div>
+          ) : null}
+
+          {lessonDone && lesson.quiz.length > 0 ? (
+            <QuizPanel lessonId={lesson.id} quiz={lesson.quiz} />
           ) : null}
 
           {lessonDone ? (

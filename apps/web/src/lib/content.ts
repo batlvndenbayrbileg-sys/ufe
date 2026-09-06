@@ -124,6 +124,14 @@ function redactTask(task: Task): TaskPublic {
   };
 }
 
+/** A quiz question with the answer key stripped — options stay, `correct` and
+ *  the explanation are revealed only by the grading endpoint. */
+export interface QuizQuestionPublic {
+  id: string;
+  question: { mn: string; en?: string };
+  options: Array<{ mn: string; en?: string }>;
+}
+
 export interface LessonPublic {
   id: string;
   moduleId: string;
@@ -139,6 +147,7 @@ export interface LessonPublic {
   completion: Lesson["completion"];
   mobileFriendly: boolean;
   tasks: TaskPublic[];
+  quiz: QuizQuestionPublic[];
 }
 
 export function getLessonPublic(lessonId: string): LessonPublic | null {
@@ -159,7 +168,35 @@ export function getLessonPublic(lessonId: string): LessonPublic | null {
     completion: lesson.completion,
     mobileFriendly: lesson.mobileFriendly,
     tasks: [...lesson.tasks].sort((a, b) => a.order - b.order).map(redactTask),
+    quiz: lesson.quiz.map((q) => ({ id: q.id, question: q.question, options: q.options })),
   };
+}
+
+export interface QuizResult {
+  id: string;
+  correct: boolean;
+  correctIndex: number;
+  explanation: { mn: string; en?: string };
+}
+
+/**
+ * Grade a quiz submission against the (server-side) answer key. `answers[i]` is
+ * the chosen option index for question i, or -1/undefined if unanswered.
+ * Returns per-question results plus the score, or null if the lesson is unknown.
+ */
+export function gradeQuiz(
+  lessonId: string,
+  answers: number[],
+): { results: QuizResult[]; score: number; total: number } | null {
+  const lesson = getLessonFull(lessonId);
+  if (!lesson) return null;
+  const results = lesson.quiz.map((q, i) => ({
+    id: q.id,
+    correct: answers[i] === q.correct,
+    correctIndex: q.correct,
+    explanation: q.explanation,
+  }));
+  return { results, score: results.filter((r) => r.correct).length, total: results.length };
 }
 
 /** The next lesson id in course order (for unlock), or null. */

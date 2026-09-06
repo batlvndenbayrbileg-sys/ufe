@@ -478,3 +478,124 @@ details[open] > .whySummary::before {
   font-weight: 600;
   color: var(--success);
 }
+
+/* ── quiz ────────────────────────────────────────────────────────────────── */
+.quiz {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.quizHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.quizTitle {
+  font-weight: 700;
+  font-size: var(--text-md);
+}
+.quizScore,
+.quizScoreFull {
+  margin-left: auto;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+}
+.quizScore {
+  color: var(--warning);
+  background: var(--warning-subtle);
+}
+.quizScoreFull {
+  color: var(--success);
+  background: var(--success-subtle);
+}
+.quizQ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.quizQuestion {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.quizOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.quizOption {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  font-size: var(--text-base);
+  padding: 9px var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+.quizOption:hover:not(:disabled) {
+  border-color: var(--border-strong);
+  background: var(--bg-muted);
+}
+.quizOption:disabled {
+  cursor: default;
+}
+.quizBullet {
+  flex: none;
+  width: 1.2em;
+  color: var(--text-subtle);
+}
+.quizChosen {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+.quizChosen .quizBullet {
+  color: var(--accent);
+}
+.quizCorrect {
+  border-color: color-mix(in srgb, var(--success) 45%, var(--border));
+  background: var(--success-subtle);
+  color: var(--success);
+}
+.quizCorrect .quizBullet {
+  color: var(--success);
+}
+.quizWrong {
+  border-color: color-mix(in srgb, var(--danger) 45%, var(--border));
+  background: var(--danger-subtle);
+  color: var(--danger);
+}
+.quizWrong .quizBullet {
+  color: var(--danger);
+}
+.quizExplain {
+  margin: 2px 0 0;
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--border-strong);
+  background: var(--bg-muted);
+  color: var(--text-muted);
+}
+.quizExplainOk {
+  border-left-color: var(--success);
+}
+.quizExplainNo {
+  border-left-color: var(--danger);
+}

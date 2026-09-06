@@ -231,5 +231,55 @@
   "version": 1,
   "authors": [
     "delgermaa"
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`GROUP BY category_id` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Мөрүүдийг эрэмбэлдэг"
+        },
+        {
+          "mn": "Ижил `category_id`-тай мөрүүдийг бүлэглэж, бүлэг бүрт нэгтгэх функц ажиллуулдаг"
+        },
+        {
+          "mn": "Багана нэмдэг"
+        },
+        {
+          "mn": "Давхардлыг устгадаг"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`GROUP BY` нь бүлэг үүсгэж, `COUNT`, `SUM`, `AVG` зэрэг нэгтгэх функцийг бүлэг тус бүрд тооцуулдаг — тайлан гаргах үндэс."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Хамгийн үнэтэй 3 барааг авахад аль нь зөв вэ?"
+      },
+      "options": [
+        {
+          "mn": "`WHERE price = 3`"
+        },
+        {
+          "mn": "`ORDER BY price DESC LIMIT 3`"
+        },
+        {
+          "mn": "`GROUP BY price`"
+        },
+        {
+          "mn": "`COUNT(price) = 3`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`ORDER BY price DESC` буурахаар эрэмбэлж, `LIMIT 3` эхний гурвыг авна."
+      }
+    }
   ]
 }

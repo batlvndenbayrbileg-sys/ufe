@@ -260,5 +260,55 @@
   "version": 1,
   "authors": [
     "delgermaa"
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Web-стандарт сервер handler ямар загвартай вэ?"
+      },
+      "options": [
+        {
+          "mn": "`handleRequest(Request) → Response`"
+        },
+        {
+          "mn": "`main(args)`"
+        },
+        {
+          "mn": "`onClick(event)`"
+        },
+        {
+          "mn": "`render(state)`"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Орчин үеийн edge/сервер орчин (Workers, Deno, Next route) нь `Request` авч `Response` буцаадаг цэвэр функцийн загвартай."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Клиент JSON өгөгдөл хүлээж байвал сервер юу буцаах ёстой вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн текст"
+        },
+        {
+          "mn": "`Content-Type: application/json` толгойтой JSON бие"
+        },
+        {
+          "mn": "HTML хуудас"
+        },
+        {
+          "mn": "Хоосон хариу"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хариуны бие JSON бол `Content-Type: application/json` толгой зааж өгснөөр клиент зөв уншиж чадна."
+      }
+    }
   ]
 }

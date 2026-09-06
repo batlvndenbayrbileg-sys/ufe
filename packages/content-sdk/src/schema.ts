@@ -114,6 +114,22 @@ export const CompletionSchema = z.object({
   celebration: z.enum(["small", "medium", "large"]).default("small"),
 });
 
+/** A multiple-choice question checking the concept behind the lesson. */
+export const QuizQuestionSchema = z
+  .object({
+    id: z.string().min(1),
+    question: LocalizedSchema,
+    options: z.array(LocalizedSchema).min(2, "a question needs at least two options"),
+    /** Index into `options` of the correct answer. */
+    correct: z.number().int().nonnegative(),
+    explanation: LocalizedSchema,
+  })
+  .refine((q) => q.correct < q.options.length, {
+    message: "`correct` must index into `options`",
+    path: ["correct"],
+  });
+export type QuizQuestion = z.infer<typeof QuizQuestionSchema>;
+
 export const LessonSchema = z.object({
   id: z.string().min(1),
   moduleId: z.string().min(1),
@@ -131,6 +147,7 @@ export const LessonSchema = z.object({
   execution: ExecutionSchema,
   workspace: WorkspaceSpecSchema.default({}),
   tasks: z.array(TaskSchema).min(1, "a lesson needs at least one task"),
+  quiz: z.array(QuizQuestionSchema).default([]),
   completion: CompletionSchema.default({}),
   mobileFriendly: z.boolean().default(true),
   status: z.enum(["draft", "review", "published", "deprecated"]).default("draft"),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getLessonPublic, getNextLesson, getNextLessonId } from "./content";
+import { getLessonPublic, getNextLesson, getNextLessonId, gradeQuiz } from "./content";
 
 /**
  * Finishing a lesson hands the student the next one. Across 84 lessons the
@@ -55,5 +55,33 @@ describe("getLessonPublic", () => {
     const serialised = JSON.stringify(lesson);
     expect(serialised).not.toContain("xpPenalty");
     expect(serialised).not.toContain("explanation");
+  });
+});
+
+describe("gradeQuiz", () => {
+  it("scores a checkpoint quiz and returns the key and explanations", () => {
+    const graded = gradeQuiz("m1-l6", [1, 1]);
+    expect(graded).not.toBeNull();
+    expect(graded!.total).toBe(2);
+    expect(graded!.score).toBe(2);
+    expect(graded!.results.every((r) => r.correct)).toBe(true);
+    expect(graded!.results[0]!.explanation.mn.length).toBeGreaterThan(0);
+  });
+
+  it("marks wrong answers and still names the correct index", () => {
+    const graded = gradeQuiz("m1-l6", [0, 1])!;
+    expect(graded.score).toBe(1);
+    expect(graded.results[0]!.correct).toBe(false);
+    expect(graded.results[0]!.correctIndex).toBe(1);
+  });
+
+  it("is null for an unknown lesson", () => {
+    expect(gradeQuiz("nope", [])).toBeNull();
+  });
+
+  it("treats a lesson without a quiz as an empty quiz", () => {
+    const graded = gradeQuiz("m1-l1", [])!;
+    expect(graded.total).toBe(0);
+    expect(graded.score).toBe(0);
   });
 });
