@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Alert, AppShell, Badge, Button, Card, ProgressBar, ThemeToggle } from "@khiye/ui";
+import { Alert, AppShell, Badge, Button, Card, ProgressBar, Spinner, ThemeToggle } from "@khiye/ui";
 import { loadProgress, lessonProgress, type Progress } from "@/lib/progress";
 import { flattenLessons } from "../../course-types";
 import { useCourseMap } from "../../useCourseMap";
@@ -85,7 +85,10 @@ export function CourseMap() {
   if (!map || !progress) {
     return (
       <AppShell header={<strong>Хичээлүүд</strong>}>
-        <div style={{ color: "var(--text-muted)" }}>Ачааллаж байна…</div>
+        <div className={styles.loading}>
+          <Spinner size={24} label="Ачааллаж байна" />
+          <span>Ачааллаж байна…</span>
+        </div>
       </AppShell>
     );
   }

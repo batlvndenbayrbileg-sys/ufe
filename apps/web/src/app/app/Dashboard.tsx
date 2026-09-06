@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Alert, AppShell, Badge, Button, Card, ProgressBar, ProgressRing, ThemeToggle } from "@khiye/ui";
+import { Alert, AppShell, Badge, Button, Card, ProgressBar, ProgressRing, Spinner, ThemeToggle } from "@khiye/ui";
 import { level, loadProgress, lessonProgress, type Progress } from "@/lib/progress";
 import { flattenLessons, type MapLesson } from "./course-types";
 import { useCourseMap } from "./useCourseMap";
+import { BrandLockup } from "../BrandMark";
 import s from "./dashboard.module.css";
 
 const BADGE_LABEL: Record<string, string> = {
@@ -28,7 +29,7 @@ export function Dashboard() {
 
   if (error) {
     return (
-      <AppShell header={<strong style={{ fontSize: 18 }}>Хийе</strong>}>
+      <AppShell header={<BrandLockup />}>
         <Alert tone="danger" title="Хичээлүүд ачаалагдсангүй">
           <p style={{ margin: "0 0 12px" }}>{error}</p>
           <Button onClick={reload}>Дахин оролдох</Button>
@@ -39,8 +40,11 @@ export function Dashboard() {
 
   if (!map || !progress) {
     return (
-      <AppShell header={<strong style={{ fontSize: 18 }}>Хийе</strong>}>
-        <div style={{ color: "var(--text-muted)" }}>Ачааллаж байна…</div>
+      <AppShell header={<BrandLockup />}>
+        <div className={s.loading}>
+          <Spinner size={24} label="Ачааллаж байна" />
+          <span>Ачааллаж байна…</span>
+        </div>
       </AppShell>
     );
   }
@@ -64,7 +68,7 @@ export function Dashboard() {
     <AppShell
       header={
         <>
-          <strong style={{ fontSize: 18, letterSpacing: "-0.01em" }}>Хийе</strong>
+          <BrandLockup />
           <div className={s.headerStats}>
             <span className={`${s.headerChip} ${s.chipStreak}`} title="Дараалал">
               🔥 {progress.streakDays}

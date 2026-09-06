@@ -7,8 +7,16 @@
     "eyebrow": "Internet Programming",
     "title": "Build it yourself. See it live.",
     "lede": "Mongolian students build a real online store, Shop.mn, from scratch — writing every line themselves and seeing the result instantly.",
-    "status": "E0 — Foundations are in place.",
-    "healthLink": "Check system health",
-    "next": "Next up: E1 Design system, E2 Data layer, E3 Content SDK"
+    "cta": "Start learning",
+    "ctaSecondary": "Browse the lessons",
+    "statLessons": "lessons",
+    "statModules": "modules",
+    "statStages": "stages",
+    "f1Title": "Build a real app",
+    "f1Body": "Not toy exercises — you write the Shop.mn store line by line, yourself.",
+    "f2Title": "See your code live",
+    "f2Body": "Every line you write renders instantly in the live preview beside it.",
+    "f3Title": "Verified by a server",
+    "f3Body": "Each task is really run and checked on a server — never guessed at."
   }
 }
