@@ -1,0 +1,51 @@
+.slot {
+  display: inline-block;
+  width: 60px;
+  height: 20px;
+}
+.loginLink {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  padding: 5px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+.loginLink:hover {
+  background: var(--bg-muted);
+  border-color: var(--accent);
+}
+.account {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.name {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  max-width: 16ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.signout {
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+.signout:hover {
+  background: var(--bg-muted);
+  color: var(--text);
+}

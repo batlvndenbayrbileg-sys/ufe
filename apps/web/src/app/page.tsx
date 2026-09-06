@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { AppShell, ThemeToggle } from "@khiye/ui";
 import { getCourseMap } from "@/lib/content";
 import { BrandLockup } from "./BrandMark";
+import { AccountControl } from "./AccountControl";
 import s from "./home.module.css";
 
 export default async function HomePage() {
@@ -28,9 +29,7 @@ export default async function HomePage() {
         <>
           <BrandLockup />
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
-            <a href="/app" className={s.ctaSecondary} style={{ padding: "7px 16px", fontSize: "var(--text-sm)" }}>
-              {t("cta")} →
-            </a>
+            <AccountControl />
             <ThemeToggle />
           </div>
         </>

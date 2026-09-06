@@ -1,6 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { applyPatch, type FileSet } from "@khiye/content-sdk/patch";
 import { getLessonFull } from "@/lib/content";
+
+// Grade as a signed-out visitor: getSessionUserId → null keeps the route on the
+// demo path and avoids pulling Auth.js (which needs the Next runtime) into the
+// test. The signed-in persistence path is covered by the DB integration tests.
+vi.mock("@/lib/session", () => ({ getSessionUserId: async () => null }));
+
 import { POST } from "./[taskId]/submit/route";
 
 /**

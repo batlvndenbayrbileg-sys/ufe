@@ -1,7 +1,9 @@
 import type { NextRequest } from "next/server";
 import { AppError, errors } from "@khiye/shared";
 import { runChecksOnFiles, runOptionsFor, type FileSet } from "@khiye/checkers/server";
+import { awardTaskCompletion } from "@khiye/db";
 import { getNextLessonId, getTaskFull } from "@/lib/content";
+import { getSessionUserId } from "@/lib/session";
 import { ok, route } from "@/lib/api";
 
 export const runtime = "nodejs";
@@ -68,12 +70,32 @@ export function POST(req: NextRequest, { params }: { params: Promise<{ taskId: s
       ? { nextTaskId: nextTask?.id ?? null, nextLessonId: nextTask ? null : getNextLessonId(lesson.id) }
       : { nextTaskId: null, nextLessonId: null };
 
-    // Demo mode: the verdict is authoritative (server-run checks); the client
-    // tracks progress locally. Persistence via the E2 awardTaskCompletion
-    // transaction attaches here once auth + DB are wired (E7 auth follow-up) —
-    // kept out of the web bundle for now (it pulls native argon2/prisma).
-    const xpAwarded = passed ? task.xp : 0;
-    const attemptNo = body.attemptNo ?? 1;
+    // The verdict is authoritative (server-run checks) either way. A signed-in
+    // student's result is persisted through the E2 transaction — XP, streak,
+    // mastery and unlocks in one atomic write; a signed-out visitor keeps their
+    // progress in the browser (demo mode) and the values come from the task.
+    let xpAwarded = passed ? task.xp : 0;
+    let attemptNo = body.attemptNo ?? 1;
+
+    const userId = await getSessionUserId();
+    if (userId) {
+      try {
+        const award = await awardTaskCompletion({
+          userId,
+          taskId: task.id,
+          passed,
+          hintsUsed: body.hintsUsed ?? 0,
+          durationMs: body.durationMs ?? 0,
+          assisted: body.assisted ?? false,
+          verifiedBy: "server",
+        });
+        xpAwarded = award.xpAwarded;
+        attemptNo = award.attemptNo;
+      } catch (e) {
+        // Never let a persistence hiccup swallow an authoritative verdict.
+        console.error("[submit] awardTaskCompletion failed", e);
+      }
+    }
 
     // The verdict speaks for the task only. Finishing the lesson is the
     // completion card's news to break — saying it twice on the same screen

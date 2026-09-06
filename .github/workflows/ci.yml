@@ -13,6 +13,9 @@ env:
   NODE_VERSION: "22"
   PNPM_VERSION: "9.15.0"
   DATABASE_URL: "postgresql://khiye:khiye@localhost:5432/khiye?schema=public"
+  # CI-only Auth.js secret so the build and any auth() calls have one; real
+  # deployments set their own AUTH_SECRET.
+  AUTH_SECRET: "ci-only-not-a-real-secret-0123456789abcdef"
 
 jobs:
   verify:

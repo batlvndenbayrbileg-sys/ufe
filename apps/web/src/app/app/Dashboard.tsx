@@ -6,6 +6,7 @@ import { level, loadProgress, lessonProgress, type Progress } from "@/lib/progre
 import { flattenLessons, type MapLesson } from "./course-types";
 import { useCourseMap } from "./useCourseMap";
 import { BrandLockup } from "../BrandMark";
+import { AccountControl } from "../AccountControl";
 import { badgeLabel } from "@/lib/badges";
 import s from "./dashboard.module.css";
 
@@ -69,6 +70,7 @@ export function Dashboard() {
               ⚡ {progress.xp.toLocaleString()}
             </span>
             <Badge tone="neutral">Level {lvl}</Badge>
+            <AccountControl />
             <ThemeToggle />
           </div>
         </>

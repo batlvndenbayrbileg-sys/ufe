@@ -12,24 +12,27 @@
     "clean": "rimraf .next .turbo"
   },
   "dependencies": {
+    "@auth/core": "0.41.3",
+    "@khiye/checkers": "workspace:*",
+    "@khiye/content-sdk": "workspace:*",
+    "@khiye/db": "workspace:*",
+    "@khiye/editor": "workspace:*",
     "@khiye/preview": "workspace:*",
     "@khiye/shared": "workspace:*",
     "@khiye/ui": "workspace:*",
     "next": "15.1.6",
+    "next-auth": "5.0.0-beta.32",
     "next-intl": "3.26.3",
     "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "@khiye/editor": "workspace:*",
-    "@khiye/checkers": "workspace:*",
-    "@khiye/content-sdk": "workspace:*"
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
     "@types/node": "22.10.7",
     "@types/react": "19.0.7",
     "@types/react-dom": "19.0.3",
     "eslint": "9.18.0",
+    "sql.js": "1.14.2",
     "typescript": "5.7.3",
-    "vitest": "2.1.8",
-    "sql.js": "1.14.2"
+    "vitest": "2.1.8"
   }
 }

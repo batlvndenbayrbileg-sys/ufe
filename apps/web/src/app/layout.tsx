@@ -5,6 +5,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import { ThemeProvider, ThemeScript } from "@khiye/ui";
 import "@khiye/ui/styles/tokens.css";
 import { inter, jetbrainsMono } from "./fonts";
+import { Providers } from "./Providers";
 
 export const metadata: Metadata = {
   title: "Хийе",
@@ -21,7 +22,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body>
         <ThemeScript />
         <ThemeProvider defaultTheme="system">
-          <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+          <Providers>
+            <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>

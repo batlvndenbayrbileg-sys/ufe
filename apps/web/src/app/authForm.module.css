@@ -1,0 +1,44 @@
+/* Shared styling for the login / signup forms inside AuthShell. */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text);
+}
+.error {
+  font-size: var(--text-sm);
+  color: var(--danger);
+  background: var(--danger-subtle);
+  border: 1px solid color-mix(in srgb, var(--danger) 24%, transparent);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+}
+.submit {
+  margin-top: var(--space-1);
+}
+.brandLockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 700;
+  font-size: var(--text-lg);
+  letter-spacing: -0.01em;
+}
+.footerText {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+.hint {
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+}
