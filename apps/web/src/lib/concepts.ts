@@ -1760,6 +1760,10 @@ const DIAGRAMS: Record<string, string> = {
   persistence: "localstorage",
   "JSON.stringify": "localstorage",
   "JSON.parse": "localstorage",
+  // conditional UI
+  "conditional rendering": "conditional",
+  ternary: "conditional",
+  "empty state": "conditional",
   forEach: "array",
   "list rendering": "array",
   object: "object",

@@ -37,7 +37,8 @@ export type DiagramKind =
   | "map-filter"
   | "reduce"
   | "try-catch"
-  | "localstorage";
+  | "localstorage"
+  | "conditional";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -749,6 +750,42 @@ function render(kind: DiagramKind): React.ReactNode {
             </marker>
             <marker id="arll" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+          </defs>
+        </>
+      );
+    case "conditional":
+      return (
+        <>
+          {/* the condition */}
+          <Box x={74} y={8} width={132} height={26} fill={SUB} stroke={ACC} />
+          <text x={140} y={25} fill="var(--accent-text)" textAnchor="middle" style={t}>items.length &gt; 0 ?</text>
+
+          {/* true → the list */}
+          <line x1={112} y1={34} x2={74} y2={58} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#arct)" />
+          <text x={84} y={50} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>✓ тийм</text>
+          <Box x={14} y={60} width={116} height={46} fill={SURF} stroke={BOR} />
+          {[0, 1, 2].map((i) => (
+            <g key={i}>
+              <rect x={24} y={68 + i * 12} width={9} height={9} rx={2} fill={SUB} stroke={ACC} />
+              <rect x={38} y={71 + i * 12} width={80} height={4} rx={2} fill={BOR} />
+            </g>
+          ))}
+
+          {/* false → empty state */}
+          <line x1={168} y1={34} x2={206} y2={58} stroke={BOR} strokeWidth={1.5} markerEnd="url(#arcf)" />
+          <text x={196} y={50} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>✗ үгүй</text>
+          <Box x={150} y={60} width={116} height={46} fill={SURF} stroke={BOR} strokeDasharray="4 3" />
+          <text x={208} y={82} textAnchor="middle" style={{ ...t, fontSize: 16 }}>🛒</text>
+          <text x={208} y={98} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>Сагс хоосон</text>
+
+          <text x={140} y={122} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>cond ? &lt;List/&gt; : &lt;Empty/&gt;</text>
+          <defs>
+            <marker id="arct" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+            <marker id="arcf" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
             </marker>
           </defs>
         </>
