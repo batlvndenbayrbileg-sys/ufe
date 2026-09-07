@@ -1795,6 +1795,9 @@ const DIAGRAMS: Record<string, string> = {
   "spread copy": "immutable",
   // lifting state
   "lifting state": "lifting-state",
+  // derived state
+  "derived state": "derived-state",
+  "derived errors": "derived-state",
   forEach: "array",
   "list rendering": "array",
   object: "object",

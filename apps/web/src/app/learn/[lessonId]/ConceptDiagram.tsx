@@ -48,7 +48,8 @@ export type DiagramKind =
   | "form-submit"
   | "immutable"
   | "lifting-state"
-  | "custom-hook";
+  | "custom-hook"
+  | "derived-state";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1101,6 +1102,31 @@ function render(kind: DiagramKind): React.ReactNode {
           <text x={140} y={126} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>нэг hook → олон компонент, тус тусын төлөв</text>
           <defs>
             <marker id="arch" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "derived-state":
+      return (
+        <>
+          {/* the single stored source */}
+          <Box x={12} y={42} width={90} height={44} fill={SUB} stroke={ACC} rx={6} />
+          <text x={57} y={62} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>items</text>
+          <text x={57} y={78} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>[state] · 3 зүйл</text>
+
+          {/* derived values are computed, not stored (dashed) */}
+          <text x={124} y={60} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>тооцоолно</text>
+          <line x1={102} y1={54} x2={146} y2={44} stroke={ACC} strokeWidth={1.5} markerEnd="url(#ards)" />
+          <Box x={148} y={32} width={118} height={24} fill={SURF} stroke={ACC} strokeDasharray="4 3" rx={4} />
+          <text x={207} y={48} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>total = Σ items</text>
+          <line x1={102} y1={74} x2={146} y2={84} stroke={ACC} strokeWidth={1.5} markerEnd="url(#ards)" />
+          <Box x={148} y={72} width={118} height={24} fill={SURF} stroke={ACC} strokeDasharray="4 3" rx={4} />
+          <text x={207} y={88} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>count = items.length</text>
+
+          <text x={140} y={120} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>тусад нь хадгалахгүй → хэзээ ч зөрөхгүй</text>
+          <defs>
+            <marker id="ards" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>
