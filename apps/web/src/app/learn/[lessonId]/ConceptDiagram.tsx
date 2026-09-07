@@ -65,7 +65,8 @@ export type DiagramKind =
   | "cart-total"
   | "destructure"
   | "format"
-  | "ternary";
+  | "ternary"
+  | "form-validation";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1661,6 +1662,38 @@ function render(kind: DiagramKind): React.ReactNode {
             </marker>
             <marker id="artre" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill="var(--danger)" />
+            </marker>
+          </defs>
+        </>
+      );
+    case "form-validation":
+      return (
+        <>
+          <text x={140} y={14} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>оролт зөв бол л товч идэвхжинэ</text>
+
+          {/* invalid → button disabled */}
+          <Box x={8} y={26} width={104} height={26} fill={SURF} stroke="var(--danger)" rx={4} />
+          <text x={16} y={43} fill={TXT} style={{ ...t, fontSize: 9 }}>bat@</text>
+          <text x={102} y={43} fill="var(--danger)" textAnchor="end" style={t}>✗</text>
+          <line x1={114} y1={39} x2={166} y2={39} stroke={BOR} strokeWidth={1.5} markerEnd="url(#arfvn)" />
+          <Box x={168} y={26} width={96} height={26} fill="var(--bg-muted)" stroke={BOR} rx={4} />
+          <text x={216} y={43} fill="var(--text-subtle)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>🔒 Илгээх</text>
+
+          {/* valid → button enabled */}
+          <Box x={8} y={74} width={104} height={26} fill={SURF} stroke="var(--success)" rx={4} />
+          <text x={16} y={91} fill={TXT} style={{ ...t, fontSize: 9 }}>bat@shop.mn</text>
+          <text x={102} y={91} fill="var(--success)" textAnchor="end" style={t}>✓</text>
+          <line x1={114} y1={87} x2={166} y2={87} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#arfv)" />
+          <Box x={168} y={74} width={96} height={26} fill={ACC} rx={4} />
+          <text x={216} y={91} fill="var(--on-accent)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>Илгээх</text>
+
+          <text x={140} y={116} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>алдаатай бол disabled — алдаатай илгээхээс сэргийлнэ</text>
+          <defs>
+            <marker id="arfv" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+            <marker id="arfvn" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
             </marker>
           </defs>
         </>

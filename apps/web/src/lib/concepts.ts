@@ -1833,6 +1833,9 @@ const DIAGRAMS: Record<string, string> = {
   // number formatting
   toLocaleString: "format",
   formatting: "format",
+  // form validation
+  validation: "form-validation",
+  disabled: "form-validation",
   forEach: "array",
   "list rendering": "array",
   object: "object",
