@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import {
   Check,
   PartyPopper,
@@ -20,8 +21,14 @@ import { applyPatch } from "@khiye/content-sdk/patch";
 import type { LessonPublic } from "@/lib/content";
 import { awardBadge, recordTaskPass } from "@/lib/progress";
 import { badgeLabel } from "@/lib/badges";
-import { ConceptDiagram } from "./ConceptDiagram";
 import { ResultPanel, type SubmitResult } from "./ResultPanel";
+
+// Code-split: the 38 diagram schematics load as their own chunk, off the
+// initial /learn bundle. They only render inside an expanded concept card.
+const ConceptDiagram = dynamic(
+  () => import("./ConceptDiagram").then((m) => ({ default: m.ConceptDiagram })),
+  { ssr: false },
+);
 import { HintLadder } from "./HintLadder";
 import { SolutionGate } from "./SolutionGate";
 import { QuizPanel } from "./QuizPanel";
