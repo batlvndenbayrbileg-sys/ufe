@@ -1732,7 +1732,6 @@ const DIAGRAMS: Record<string, string> = {
   Response: "client-server",
   REST: "client-server",
   routing: "client-server",
-  "async/await": "client-server",
   // status codes
   "status code": "http-status",
   "404": "http-status",
@@ -1775,6 +1774,17 @@ const DIAGRAMS: Record<string, string> = {
   "location.hash": "router",
   hashchange: "router",
   "route switch": "router",
+  "route params": "route-params",
+  "dynamic segment": "route-params",
+  // forms
+  "controlled input": "controlled-input",
+  "value/onChange": "controlled-input",
+  // events
+  "event delegation": "event-delegation",
+  "event.target": "event-delegation",
+  closest: "event-delegation",
+  // async
+  "async/await": "async-await",
   forEach: "array",
   "list rendering": "array",
   object: "object",

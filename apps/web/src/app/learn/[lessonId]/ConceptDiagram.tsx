@@ -40,7 +40,11 @@ export type DiagramKind =
   | "localstorage"
   | "conditional"
   | "useeffect"
-  | "router";
+  | "router"
+  | "controlled-input"
+  | "event-delegation"
+  | "async-await"
+  | "route-params";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -853,6 +857,109 @@ function render(kind: DiagramKind): React.ReactNode {
           <defs>
             <marker id="arrt" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "controlled-input":
+      return (
+        <>
+          <text x={140} y={13} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>хяналттай оролт</text>
+          {/* the input shows the value from state */}
+          <Box x={70} y={20} width={140} height={30} fill={SURF} stroke={ACC} rx={4} />
+          <text x={84} y={40} fill={TXT} style={t}>Гут</text>
+          <line x1={110} y1={28} x2={110} y2={42} stroke={ACC} strokeWidth={1} />
+          {/* single source of truth */}
+          <Box x={82} y={86} width={116} height={26} fill={SUB} stroke={ACC} rx={4} />
+          <text x={140} y={103} fill="var(--accent-text)" textAnchor="middle" style={t}>state = &quot;Гут&quot;</text>
+          {/* value: state → input */}
+          <path d="M88,88 C46,82 46,38 68,34" fill="none" stroke={ACC} strokeWidth={1.5} markerEnd="url(#arci)" />
+          <text x={38} y={64} fill="var(--accent-text)" style={{ ...t, fontSize: 9 }}>value</text>
+          {/* onChange: input → state */}
+          <path d="M212,42 C252,48 252,86 200,90" fill="none" stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#arcio)" />
+          <text x={250} y={66} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>onChange</text>
+          <text x={140} y={126} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>нэг эх сурвалж — state</text>
+          <defs>
+            <marker id="arci" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+            <marker id="arcio" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+          </defs>
+        </>
+      );
+    case "event-delegation":
+      return (
+        <>
+          <Box x={16} y={22} width={178} height={88} fill={SUB} stroke={ACC} rx={6} />
+          <text x={28} y={38} fill="var(--accent-text)" style={{ ...t, fontWeight: 700 }}>ul</text>
+          <text x={150} y={38} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>👂 1 listener</text>
+          {[0, 1, 2].map((i) => {
+            const y = 46 + i * 20;
+            const on = i === 1;
+            return (
+              <g key={i}>
+                <rect x={30} y={y} width={150} height={16} rx={2} fill={on ? "color-mix(in srgb, var(--accent) 18%, var(--surface))" : SURF} stroke={BOR} />
+                <text x={38} y={y + 12} fill={TXT} style={{ ...t, fontSize: 9 }}>li · Бараа {i + 1}</text>
+              </g>
+            );
+          })}
+          {/* a click on the middle li bubbles up to the one listener */}
+          <circle cx={150} cy={74} r={3} fill={ACC} />
+          <path d="M150,72 Q120,54 150,42" fill="none" stroke={ACC} strokeWidth={1.5} strokeDasharray="3 3" markerEnd="url(#ared)" />
+          <text x={112} y={58} fill="var(--accent-text)" style={{ ...t, fontSize: 8 }}>bubble ↑</text>
+          <text x={140} y={124} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>1 сонсогч · e.target = дарсан li</text>
+          <defs>
+            <marker id="ared" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "async-await":
+      return (
+        <>
+          <text x={140} y={14} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>async / await</text>
+          <Box x={8} y={46} width={96} height={30} fill={SUB} stroke={ACC} rx={4} />
+          <text x={56} y={65} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>await fetch()</text>
+          {/* wait for the promise */}
+          <text x={131} y={40} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>хүлээнэ</text>
+          <line x1={106} y1={61} x2={156} y2={61} stroke={BOR} strokeWidth={1.5} strokeDasharray="4 3" markerEnd="url(#araw)" />
+          <text x={131} y={66} textAnchor="middle" style={{ ...t, fontSize: 14 }}>⏳</text>
+          <Box x={158} y={46} width={114} height={30} fill="color-mix(in srgb, var(--success) 14%, var(--surface))" stroke="var(--success)" rx={4} />
+          <text x={215} y={65} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 10 }}>хариу → үргэлжилнэ</text>
+          <text x={140} y={104} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>await — хариу иртэл кодыг түр зогсооно</text>
+          <defs>
+            <marker id="araw" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "route-params":
+      return (
+        <>
+          {/* the pattern with a dynamic segment */}
+          <Box x={56} y={12} width={168} height={26} fill="var(--code-bg)" stroke="var(--code-border)" rx={4} />
+          <text x={140} y={29} textAnchor="middle" style={t}>
+            <tspan fill={MUT}>/product/</tspan>
+            <tspan fill="var(--accent-text)">:id</tspan>
+          </text>
+          <line x1={140} y1={40} x2={140} y2={52} stroke={BOR} strokeWidth={1.5} markerEnd="url(#arrp)" />
+          <text x={188} y={50} fill={MUT} style={{ ...t, fontSize: 8 }}>тохирно</text>
+          {/* a concrete URL */}
+          <Box x={56} y={54} width={168} height={26} fill={SUB} stroke={ACC} rx={4} />
+          <text x={140} y={71} textAnchor="middle" style={t}>
+            <tspan fill={TXT}>/product/</tspan>
+            <tspan fill="var(--accent-text)" style={{ fontWeight: 700 }}>42</tspan>
+          </text>
+          <line x1={140} y1={82} x2={140} y2={92} stroke={BOR} strokeWidth={1.5} markerEnd="url(#arrp)" />
+          <text x={140} y={106} fill="var(--accent-text)" textAnchor="middle" style={t}>params.id = &quot;42&quot;</text>
+          <text x={140} y={126} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>нэг загвар → олон бараа</text>
+          <defs>
+            <marker id="arrp" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
             </marker>
           </defs>
         </>
