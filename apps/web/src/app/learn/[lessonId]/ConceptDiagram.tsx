@@ -44,7 +44,8 @@ export type DiagramKind =
   | "controlled-input"
   | "event-delegation"
   | "async-await"
-  | "route-params";
+  | "route-params"
+  | "form-submit";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -960,6 +961,40 @@ function render(kind: DiagramKind): React.ReactNode {
           <defs>
             <marker id="arrp" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "form-submit":
+      return (
+        <>
+          {/* the form */}
+          <Box x={8} y={14} width={106} height={80} fill={SURF} stroke={BOR} rx={6} />
+          <text x={18} y={30} fill={MUT} style={{ ...t, fontWeight: 700, fontSize: 10 }}>form</text>
+          <rect x={18} y={38} width={86} height={16} rx={2} fill={SURF} stroke={BOR} />
+          <Box x={18} y={62} width={56} height={20} fill={ACC} rx={3} />
+          <text x={46} y={76} fill="var(--on-accent)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>Илгээх</text>
+
+          {/* submit fires onSubmit */}
+          <line x1={114} y1={44} x2={146} y2={44} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arfs)" />
+          <text x={130} y={38} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>onSubmit</text>
+
+          {/* preventDefault blocks the reload */}
+          <Box x={148} y={34} width={124} height={22} fill="color-mix(in srgb, var(--accent) 12%, var(--surface))" stroke={ACC} rx={4} />
+          <text x={210} y={49} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>e.preventDefault()</text>
+
+          {/* the default (reload) — cancelled */}
+          <text x={206} y={73} fill="var(--danger)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>↻ хуудас reload</text>
+          <line x1={152} y1={70} x2={260} y2={70} stroke="var(--danger)" strokeWidth={1.5} />
+
+          {/* instead, JS handles it */}
+          <Box x={150} y={82} width={122} height={22} fill="color-mix(in srgb, var(--success) 14%, var(--surface))" stroke="var(--success)" rx={4} />
+          <text x={211} y={97} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>✓ JS шалгаж илгээнэ</text>
+
+          <text x={140} y={122} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>reload-г болиулж, өөрөө зохицуулна</text>
+          <defs>
+            <marker id="arfs" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>
         </>

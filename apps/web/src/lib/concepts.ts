@@ -1785,6 +1785,10 @@ const DIAGRAMS: Record<string, string> = {
   closest: "event-delegation",
   // async
   "async/await": "async-await",
+  // form submission
+  form: "form-submit",
+  onSubmit: "form-submit",
+  preventDefault: "form-submit",
   forEach: "array",
   "list rendering": "array",
   object: "object",
