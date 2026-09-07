@@ -302,6 +302,12 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
                             <Lightbulb size={15} strokeWidth={2.2} className={s.conceptWhyIcon} />
                             <span>{c.why}</span>
                           </p>
+                          {c.analogy ? (
+                            <p className={s.conceptAnalogy}>
+                              <span className={s.conceptAnalogyTag}>Энгийнээр</span>
+                              <span>{c.analogy}</span>
+                            </p>
+                          ) : null}
                           {c.diagram ? (
                             <div className={s.conceptDiagram}>
                               <ConceptDiagram kind={c.diagram} />
