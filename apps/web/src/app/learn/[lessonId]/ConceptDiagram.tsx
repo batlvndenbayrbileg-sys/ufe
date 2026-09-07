@@ -56,7 +56,8 @@ export type DiagramKind =
   | "query-text"
   | "search-filter"
   | "sort"
-  | "post-body";
+  | "post-body"
+  | "find";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1358,6 +1359,38 @@ function render(kind: DiagramKind): React.ReactNode {
               <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
             </marker>
           </defs>
+        </>
+      );
+    case "find":
+      return (
+        <>
+          <text x={140} y={16} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>.find(x ⇒ x.id === 2)</text>
+          {[1, 2, 3, 4].map((v, i) => {
+            const x = 14 + i * 38;
+            const match = v === 2;
+            const skipped = v > 2;
+            return (
+              <g key={v}>
+                <Box
+                  x={x}
+                  y={30}
+                  width={34}
+                  height={28}
+                  fill={match ? SUB : SURF}
+                  stroke={match ? ACC : BOR}
+                  strokeWidth={match ? 2 : 1}
+                  rx={3}
+                />
+                <text x={x + 17} y={48} fill={skipped ? "var(--text-subtle)" : match ? "var(--accent-text)" : TXT} textAnchor="middle" style={{ ...t, fontSize: 10 }}>{v}</text>
+              </g>
+            );
+          })}
+          <text x={69} y={24} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>✓ олдлоо</text>
+          <text x={135} y={72} fill="var(--text-subtle)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>шалгахгүй (зогсоно)</text>
+          <line x1={90} y1={64} x2={180} y2={64} stroke="var(--text-subtle)" strokeDasharray="3 3" />
+
+          <text x={140} y={92} fill="var(--accent-text)" textAnchor="middle" style={t}>буцаана: {"{ id: 2 }"} — эхний нэг</text>
+          <text x={140} y={112} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>эхний тохирлыг олоод зогсоно (filter → бүгд)</text>
         </>
       );
     default:
