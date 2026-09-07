@@ -1808,6 +1808,9 @@ const DIAGRAMS: Record<string, string> = {
   querySelector: "query-text",
   querySelectorAll: "query-text",
   textContent: "query-text",
+  // live search
+  "input event": "search-filter",
+  toLowerCase: "search-filter",
   forEach: "array",
   "list rendering": "array",
   object: "object",

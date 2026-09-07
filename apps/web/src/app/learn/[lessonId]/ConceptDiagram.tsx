@@ -53,7 +53,8 @@ export type DiagramKind =
   | "jsx-component"
   | "create-append"
   | "event-listen"
-  | "query-text";
+  | "query-text"
+  | "search-filter";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1260,6 +1261,36 @@ function render(kind: DiagramKind): React.ReactNode {
           <text x={140} y={112} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>элемент ол → текстийг нь солино</text>
           <defs>
             <marker id="arqt" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "search-filter":
+      return (
+        <>
+          {/* the search box — each keystroke fires input */}
+          <Box x={40} y={10} width={150} height={26} fill={SURF} stroke={ACC} rx={6} />
+          <text x={52} y={27} style={{ ...t, fontSize: 11 }}>🔍</text>
+          <text x={70} y={27} fill={TXT} style={t}>гут</text>
+          <line x1={88} y1={16} x2={88} y2={30} stroke={ACC} strokeWidth={1} />
+          <line x1={196} y1={23} x2={228} y2={23} stroke={MUT} strokeWidth={1.5} strokeDasharray="3 3" />
+          <text x={244} y={26} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>input</text>
+          <line x1={100} y1={36} x2={100} y2={50} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arsf)" />
+
+          {/* toLowerCase makes the match case-insensitive */}
+          <text x={122} y={46} fill="var(--accent-text)" style={{ ...t, fontSize: 8 }}>«Гутал» → «гутал» ⊇ «гут»</text>
+
+          {/* filtered results */}
+          <rect x={40} y={52} width={200} height={18} rx={3} fill="color-mix(in srgb, var(--accent) 16%, var(--surface))" stroke={ACC} />
+          <text x={48} y={64} fill="var(--accent-text)" style={{ ...t, fontSize: 9 }}>Гутал ✓</text>
+          <rect x={40} y={74} width={200} height={18} rx={3} fill={SURF} stroke={BOR} />
+          <text x={48} y={86} fill={MUT} style={{ ...t, fontSize: 9 }}>Малгай</text>
+          <text x={232} y={86} fill={MUT} textAnchor="end" style={{ ...t, fontSize: 8 }}>нуугдана</text>
+
+          <text x={140} y={112} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>бичих бүрт шүүнэ · том/жижиг үсэг адил</text>
+          <defs>
+            <marker id="arsf" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>
