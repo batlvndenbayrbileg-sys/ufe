@@ -47,7 +47,8 @@ export type DiagramKind =
   | "route-params"
   | "form-submit"
   | "immutable"
-  | "lifting-state";
+  | "lifting-state"
+  | "custom-hook";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1074,6 +1075,33 @@ function render(kind: DiagramKind): React.ReactNode {
             </marker>
             <marker id="arlo" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+          </defs>
+        </>
+      );
+    case "custom-hook":
+      return (
+        <>
+          {/* the reusable hook holds the logic once */}
+          <Box x={80} y={12} width={120} height={38} fill={SUB} stroke={ACC} rx={8} />
+          <text x={140} y={29} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>useCart()</text>
+          <text x={140} y={43} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>useState · логик</text>
+
+          {/* two components reuse it, each with its own state */}
+          <Box x={12} y={84} width={104} height={28} fill={SURF} stroke={BOR} rx={4} />
+          <text x={64} y={102} fill={TXT} textAnchor="middle" style={t}>Компонент A</text>
+          <Box x={164} y={84} width={104} height={28} fill={SURF} stroke={BOR} rx={4} />
+          <text x={216} y={102} fill={TXT} textAnchor="middle" style={t}>Компонент B</text>
+
+          <line x1={110} y1={50} x2={66} y2={82} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arch)" />
+          <text x={64} y={68} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>{"{ items, add }"}</text>
+          <line x1={170} y1={50} x2={214} y2={82} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arch)" />
+          <text x={216} y={68} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>{"{ items, add }"}</text>
+
+          <text x={140} y={126} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>нэг hook → олон компонент, тус тусын төлөв</text>
+          <defs>
+            <marker id="arch" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>
         </>

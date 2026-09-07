@@ -1805,7 +1805,8 @@ const DIAGRAMS: Record<string, string> = {
   return: "function",
   "return type": "function",
   "helper function": "function",
-  "custom hook": "function",
+  "custom hook": "custom-hook",
+  "return object": "custom-hook",
   // auth
   "password hashing": "hash",
   salt: "hash",
