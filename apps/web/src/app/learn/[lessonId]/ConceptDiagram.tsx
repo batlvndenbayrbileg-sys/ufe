@@ -54,7 +54,8 @@ export type DiagramKind =
   | "create-append"
   | "event-listen"
   | "query-text"
-  | "search-filter";
+  | "search-filter"
+  | "sort";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1296,6 +1297,36 @@ function render(kind: DiagramKind): React.ReactNode {
           </defs>
         </>
       );
+    case "sort": {
+      const cell = (x: number, y: number, v: number, fill: string, stroke: string, fg: string) => (
+        <>
+          <Box x={x} y={y} width={30} height={24} fill={fill} stroke={stroke} rx={3} />
+          <text x={x + 15} y={y + 16} fill={fg} textAnchor="middle" style={{ ...t, fontSize: 10 }}>{v}</text>
+        </>
+      );
+      const rowA = [90, 20, 45];
+      const rowB = [20, 45, 90];
+      return (
+        <>
+          <text x={53} y={24} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>эрэмбэлээгүй</text>
+          {rowA.map((v, i) => <g key={i}>{cell(8 + i * 32, 28, v, SURF, BOR, TXT)}</g>)}
+          <line x1={104} y1={40} x2={158} y2={40} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arso)" />
+          <text x={131} y={32} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>.sort(cmp)</text>
+          <text x={207} y={24} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>өсөхөөр ↑</text>
+          {rowB.map((v, i) => <g key={i}>{cell(162 + i * 32, 28, v, SUB, ACC, "var(--accent-text)")}</g>)}
+
+          {/* the comparator decides the order */}
+          <Box x={40} y={66} width={200} height={26} fill="var(--code-bg)" stroke="var(--code-border)" rx={4} />
+          <text x={140} y={83} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>(a, b) ⇒ a − b</text>
+          <text x={140} y={110} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>&lt; 0 → a түрүүнд · &gt; 0 → b түрүүнд</text>
+          <defs>
+            <marker id="arso" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    }
     default:
       return null;
   }

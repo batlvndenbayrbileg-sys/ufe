@@ -1811,6 +1811,10 @@ const DIAGRAMS: Record<string, string> = {
   // live search
   "input event": "search-filter",
   toLowerCase: "search-filter",
+  // sorting
+  "array.sort": "sort",
+  comparator: "sort",
+  sorting: "sort",
   forEach: "array",
   "list rendering": "array",
   object: "object",
