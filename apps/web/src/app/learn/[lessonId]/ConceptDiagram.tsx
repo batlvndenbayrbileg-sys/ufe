@@ -63,7 +63,8 @@ export type DiagramKind =
   | "response-ok"
   | "spread-obj"
   | "cart-total"
-  | "destructure";
+  | "destructure"
+  | "format";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1596,6 +1597,32 @@ function render(kind: DiagramKind): React.ReactNode {
           <text x={140} y={114} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>объектоос утгыг нэрээр нь салгаж авна</text>
           <defs>
             <marker id="arde" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "format":
+      return (
+        <>
+          <text x={140} y={16} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>тоо → уншихад хялбар хэлбэр</text>
+
+          {/* raw number — hard to read */}
+          <text x={60} y={40} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>түүхий</text>
+          <Box x={16} y={44} width={88} height={32} fill={SURF} stroke={BOR} rx={6} />
+          <text x={60} y={65} fill={MUT} textAnchor="middle" style={t}>90000</text>
+
+          {/* toLocaleString → grouped + currency */}
+          <line x1={106} y1={60} x2={160} y2={60} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arfm)" />
+          <text x={133} y={52} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>.toLocaleString()</text>
+
+          <text x={212} y={40} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>харагдац</text>
+          <Box x={162} y={44} width={100} height={32} fill="color-mix(in srgb, var(--success) 14%, var(--surface))" stroke="var(--success)" rx={6} />
+          <text x={212} y={65} fill="var(--success)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>90,000₮</text>
+
+          <text x={140} y={104} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>мянгатын таслал нэмж, уншихад тодорхой</text>
+          <defs>
+            <marker id="arfm" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>

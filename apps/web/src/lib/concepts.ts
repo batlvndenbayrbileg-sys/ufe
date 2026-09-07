@@ -1830,6 +1830,9 @@ const DIAGRAMS: Record<string, string> = {
   // cart total
   quantity: "cart-total",
   "price × quantity": "cart-total",
+  // number formatting
+  toLocaleString: "format",
+  formatting: "format",
   forEach: "array",
   "list rendering": "array",
   object: "object",
@@ -1879,6 +1882,12 @@ const DIAGRAMS: Record<string, string> = {
   "heading order": "heading-order",
 };
 
+// Own-property lookup: some slugs (e.g. "toLocaleString", "toString") collide
+// with Object.prototype members, so plain `obj[key]` would return an inherited
+// function instead of undefined and silently drop the concept.
+const own = <T>(obj: Record<string, T>, key: string): T | undefined =>
+  Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : undefined;
+
 /**
  * Resolve a lesson's concept slugs to display cards. Slugs without an entry are
  * dropped (they can still be shown as plain tags by the caller).
@@ -1887,16 +1896,16 @@ export function resolveConcepts(slugs: string[]): ResolvedConcept[] {
   const out: ResolvedConcept[] = [];
   const seen = new Set<string>();
   for (const slug of slugs) {
-    const key = ALIASES[slug] ?? slug;
-    const note = CONCEPTS[key];
+    const key = own(ALIASES, slug) ?? slug;
+    const note = own(CONCEPTS, key);
     if (!note || seen.has(key)) continue;
     seen.add(key);
-    out.push({ slug, ...note, diagram: DIAGRAMS[key] });
+    out.push({ slug, ...note, diagram: own(DIAGRAMS, key) });
   }
   return out;
 }
 
 /** True when at least one slug has a glossary entry. */
 export function hasConceptNotes(slugs: string[]): boolean {
-  return slugs.some((s) => Boolean(CONCEPTS[ALIASES[s] ?? s]));
+  return slugs.some((s) => Boolean(own(CONCEPTS, own(ALIASES, s) ?? s)));
 }
