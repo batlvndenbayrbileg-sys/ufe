@@ -61,7 +61,8 @@ export type DiagramKind =
   | "refetch"
   | "loading-state"
   | "response-ok"
-  | "spread-obj";
+  | "spread-obj"
+  | "cart-total";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1527,6 +1528,42 @@ function render(kind: DiagramKind): React.ReactNode {
           <defs>
             <marker id="arsp" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    }
+    case "cart-total": {
+      // each row: price × qty = line total; the lines sum to the cart total
+      const line = (y: number, price: string, qty: string, sub: string) => (
+        <>
+          <Box x={6} y={y} width={62} height={22} fill={SURF} stroke={BOR} rx={3} />
+          <text x={37} y={y + 15} fill={TXT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>{price}</text>
+          <text x={74} y={y + 15} fill={MUT} textAnchor="middle" style={t}>×</text>
+          <Box x={82} y={y} width={26} height={22} fill={SUB} stroke={ACC} rx={3} />
+          <text x={95} y={y + 15} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>{qty}</text>
+          <text x={116} y={y + 15} fill={MUT} textAnchor="middle" style={t}>=</text>
+          <Box x={124} y={y} width={66} height={22} fill={SUB} stroke={ACC} rx={3} />
+          <text x={157} y={y + 15} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>{sub}</text>
+        </>
+      );
+      return (
+        <>
+          <text x={98} y={14} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>үнэ × тоо ширхэг = мөрийн дүн</text>
+          {line(20, "90,000", "2", "180,000")}
+          {line(46, "45,000", "1", "45,000")}
+
+          {/* the line totals sum to the cart total */}
+          <line x1={157} y1={68} x2={157} y2={82} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#arct)" />
+          <text x={196} y={78} fill="var(--success)" style={{ ...t, fontSize: 8 }}>Σ нийлбэр</text>
+          <text x={37} y={99} fill={TXT} textAnchor="middle" style={{ ...t, fontWeight: 700, fontSize: 9 }}>Нийт</text>
+          <Box x={124} y={84} width={66} height={22} fill="color-mix(in srgb, var(--success) 16%, var(--surface))" stroke="var(--success)" rx={3} />
+          <text x={157} y={99} fill="var(--success)" textAnchor="middle" style={{ ...t, fontWeight: 700, fontSize: 9 }}>225,000₮</text>
+
+          <text x={140} y={122} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>мөр бүрийн дүнг нэмж нийт үнэ гарна</text>
+          <defs>
+            <marker id="arct" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
             </marker>
           </defs>
         </>

@@ -1827,6 +1827,9 @@ const DIAGRAMS: Record<string, string> = {
   "error UI": "loading-state",
   // response check
   "response.ok": "response-ok",
+  // cart total
+  quantity: "cart-total",
+  "price × quantity": "cart-total",
   forEach: "array",
   "list rendering": "array",
   object: "object",
