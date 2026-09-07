@@ -1,4 +1,5 @@
 import { getRequestConfig } from "next-intl/server";
+import type { AbstractIntlMessages } from "next-intl";
 import { cookies } from "next/headers";
 import { DEFAULT_LOCALE, resolveLocale } from "@khiye/shared";
 import mn from "./messages/mn.json";
@@ -14,5 +15,7 @@ const MESSAGES = { mn, en } as const;
 export default getRequestConfig(async () => {
   const store = await cookies();
   const locale = resolveLocale(store.get("locale")?.value ?? DEFAULT_LOCALE);
-  return { locale, messages: MESSAGES[locale] };
+  // Cast: next-intl supports arrays (e.g. home.showcaseSlides) at runtime, but
+  // its AbstractIntlMessages type only models strings and nested objects.
+  return { locale, messages: MESSAGES[locale] as unknown as AbstractIntlMessages };
 });

@@ -5,6 +5,7 @@ import { getCourseMap } from "@/lib/content";
 import { BrandLockup } from "./BrandMark";
 import { AccountControl } from "./AccountControl";
 import { HandwritingText } from "./HandwritingText";
+import { LandingShowcase, type ShowcaseSlide } from "./LandingShowcase";
 import s from "./home.module.css";
 
 export default async function HomePage() {
@@ -27,6 +28,8 @@ export default async function HomePage() {
     { Icon: PenLine, title: t("f5Title"), body: t("f5Body") },
     { Icon: Languages, title: t("f6Title"), body: t("f6Body") },
   ];
+
+  const showcaseSlides = t.raw("showcaseSlides") as ShowcaseSlide[];
 
   const products = [
     { name: "Монгол дээл", price: "₮129,000" },
@@ -142,6 +145,20 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
+
+        {/* The skills arc, as a squeeze carousel: one panel open, the rest as
+            slats down the side. */}
+        <section className={s.showcase}>
+          <p className={s.eyebrow}>{t("showcaseEyebrow")}</p>
+          <h2 className={s.sectionTitle}>{t("showcaseTitle")}</h2>
+          <p className={s.sectionLede}>{t("showcaseLede")}</p>
+          <LandingShowcase
+            slides={showcaseSlides}
+            courseHref={`/app/course/${course.slug}`}
+            actionLabel={t("showcaseAction")}
+            label={t("showcaseTitle")}
+          />
+        </section>
 
         <section className={s.closeBand}>
           <h2 className={s.closeTitle}>{t("closeTitle")}</h2>

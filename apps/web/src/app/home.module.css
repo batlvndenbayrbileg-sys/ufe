@@ -411,6 +411,26 @@
   line-height: var(--leading-prose);
 }
 
+/* ── skills showcase (squeeze carousel) ──────────────────────────────────── */
+.showcase {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  animation: riseIn 0.5s var(--ease-out) both;
+  animation-delay: 0.24s;
+}
+/* Only the heading above the carousel is centred; the carousel reads L→R. */
+.showcase .eyebrow,
+.showcase .sectionTitle {
+  text-align: center;
+}
+.showcase .sectionLede {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: var(--space-5);
+}
+
 /* ── closing CTA band ────────────────────────────────────────────────────── */
 .closeBand {
   display: flex;

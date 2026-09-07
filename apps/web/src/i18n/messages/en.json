@@ -26,9 +26,45 @@
     "f6Body": "Instructions, explanations and error messages are all in Mongolian.",
     "buildLabel": "You build this",
     "journeyEyebrow": "A 13-stage journey",
-    "journeyTitle": "From your first <h1> to a full app",
+    "journeyTitle": "From your first '<h1>' to a full app",
     "journeyLede": "Each lesson builds on the last, step by step, until it becomes a real store.",
     "closeTitle": "Write your first line today",
-    "closeBody": "The first lesson takes just minutes. Start now."
+    "closeBody": "The first lesson takes just minutes. Start now.",
+    "showcaseEyebrow": "The skills you'll build",
+    "showcaseTitle": "A whole stack, line by line",
+    "showcaseLede": "From HTML to shipping on a server — the milestones on the way to building Shop.mn.",
+    "showcaseAction": "See the lessons",
+    "showcaseSlides": [
+      {
+        "tag": "HTML",
+        "title": "HTML — raise your first page.",
+        "desc": "Headings, buttons, images. You assemble the first structure the browser shows."
+      },
+      {
+        "tag": "CSS",
+        "title": "CSS — make the store look good.",
+        "desc": "Colour, spacing, grid. Bare text starts to look like a real shop."
+      },
+      {
+        "tag": "JavaScript",
+        "title": "JavaScript — bring it to life.",
+        "desc": "A click adds to the cart. The page starts to respond to you."
+      },
+      {
+        "tag": "React",
+        "title": "React — reusable components.",
+        "desc": "Write a piece once and reuse it everywhere. State and effects."
+      },
+      {
+        "tag": "Backend",
+        "title": "A server and a database.",
+        "desc": "APIs and a database. Orders are really saved and really checked."
+      },
+      {
+        "tag": "Deploy",
+        "title": "Ship it — Shop.mn goes live.",
+        "desc": "Put the app you built on the internet for others to use."
+      }
+    ]
   }
 }
