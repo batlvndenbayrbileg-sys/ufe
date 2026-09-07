@@ -1833,7 +1833,7 @@ const DIAGRAMS: Record<string, string> = {
   forEach: "array",
   "list rendering": "array",
   object: "object",
-  destructuring: "object",
+  destructuring: "destructure",
   // functions
   function: "function",
   parameter: "function",

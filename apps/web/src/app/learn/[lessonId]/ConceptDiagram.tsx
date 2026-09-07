@@ -62,7 +62,8 @@ export type DiagramKind =
   | "loading-state"
   | "response-ok"
   | "spread-obj"
-  | "cart-total";
+  | "cart-total"
+  | "destructure";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1569,6 +1570,37 @@ function render(kind: DiagramKind): React.ReactNode {
         </>
       );
     }
+    case "destructure":
+      return (
+        <>
+          <text x={140} y={14} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>const {"{ name, price }"} = product</text>
+
+          {/* the source object */}
+          <text x={14} y={26} fill={MUT} style={{ ...t, fontSize: 8 }}>product</text>
+          <Box x={8} y={30} width={104} height={64} fill={SURF} stroke={BOR} rx={6} />
+          <text x={18} y={58} style={{ ...t, fontSize: 9 }}>
+            <tspan fill={ACC}>name:</tspan> <tspan fill={TXT}>Гутал</tspan>
+          </text>
+          <text x={18} y={82} style={{ ...t, fontSize: 9 }}>
+            <tspan fill={ACC}>price:</tspan> <tspan fill={TXT}>90000</tspan>
+          </text>
+
+          {/* pulled out into named variables */}
+          <line x1={114} y1={54} x2={166} y2={46} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arde)" />
+          <line x1={114} y1={78} x2={166} y2={82} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arde)" />
+          <Box x={168} y={34} width={104} height={24} fill={SUB} stroke={ACC} rx={4} />
+          <text x={220} y={50} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>name = «Гутал»</text>
+          <Box x={168} y={70} width={104} height={24} fill={SUB} stroke={ACC} rx={4} />
+          <text x={220} y={86} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>price = 90000</text>
+
+          <text x={140} y={114} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>объектоос утгыг нэрээр нь салгаж авна</text>
+          <defs>
+            <marker id="arde" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
     default:
       return null;
   }
