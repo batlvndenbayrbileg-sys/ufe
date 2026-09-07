@@ -55,7 +55,8 @@ export type DiagramKind =
   | "event-listen"
   | "query-text"
   | "search-filter"
-  | "sort";
+  | "sort"
+  | "post-body";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1327,6 +1328,38 @@ function render(kind: DiagramKind): React.ReactNode {
         </>
       );
     }
+    case "post-body":
+      return (
+        <>
+          {/* client builds an object and sends it as a JSON body */}
+          <Box x={8} y={26} width={92} height={48} fill={SURF} stroke={BOR} rx={6} />
+          <text x={54} y={46} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>{"{ order }"}</text>
+          <text x={54} y={62} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>items · total</text>
+
+          <line x1={102} y1={44} x2={160} y2={44} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arpb)" />
+          <text x={131} y={36} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>POST</text>
+          <text x={131} y={58} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>JSON.stringify</text>
+
+          {/* server creates the record */}
+          <Box x={164} y={26} width={64} height={48} fill={SUB} stroke={ACC} rx={6} />
+          <text x={196} y={46} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>Сервер</text>
+          <text x={196} y={60} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>+ үүсгэнэ</text>
+          <line x1={196} y1={74} x2={196} y2={86} stroke={BOR} strokeWidth={1.5} markerEnd="url(#arpbn)" />
+
+          <Box x={148} y={88} width={120} height={22} fill="color-mix(in srgb, var(--success) 14%, var(--surface))" stroke="var(--success)" rx={4} />
+          <text x={208} y={103} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>201 Created ✓</text>
+
+          <text x={140} y={124} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>headers: Content-Type: application/json</text>
+          <defs>
+            <marker id="arpb" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+            <marker id="arpbn" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
+            </marker>
+          </defs>
+        </>
+      );
     default:
       return null;
   }

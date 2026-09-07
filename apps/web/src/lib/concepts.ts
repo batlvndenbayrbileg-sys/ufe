@@ -1815,6 +1815,10 @@ const DIAGRAMS: Record<string, string> = {
   "array.sort": "sort",
   comparator: "sort",
   sorting: "sort",
+  // sending data
+  POST: "post-body",
+  "JSON body": "post-body",
+  headers: "post-body",
   forEach: "array",
   "list rendering": "array",
   object: "object",
