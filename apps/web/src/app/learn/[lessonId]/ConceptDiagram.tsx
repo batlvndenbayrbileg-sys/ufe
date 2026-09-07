@@ -57,7 +57,8 @@ export type DiagramKind =
   | "search-filter"
   | "sort"
   | "post-body"
-  | "find";
+  | "find"
+  | "refetch";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1391,6 +1392,37 @@ function render(kind: DiagramKind): React.ReactNode {
 
           <text x={140} y={92} fill="var(--accent-text)" textAnchor="middle" style={t}>буцаана: {"{ id: 2 }"} — эхний нэг</text>
           <text x={140} y={112} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>эхний тохирлыг олоод зогсоно (filter → бүгд)</text>
+        </>
+      );
+    case "refetch":
+      return (
+        <>
+          {/* client and server */}
+          <Box x={8} y={24} width={76} height={66} fill={SURF} stroke={BOR} rx={6} />
+          <text x={46} y={52} fill={TXT} textAnchor="middle" style={{ ...t, fontWeight: 700 }}>UI</text>
+          <text x={46} y={68} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>жагсаалт</text>
+          <Box x={196} y={24} width={76} height={66} fill={SUB} stroke={ACC} rx={6} />
+          <text x={234} y={60} fill="var(--accent-text)" textAnchor="middle" style={t}>Сервер</text>
+
+          {/* 1 · POST (create) */}
+          <line x1={86} y1={40} x2={194} y2={40} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arrf)" />
+          <text x={140} y={34} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>1 · POST — үүсгэх</text>
+          {/* 2 · GET (refetch) */}
+          <line x1={86} y1={60} x2={194} y2={60} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arrf)" />
+          <text x={140} y={54} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>2 · GET — дахин татах</text>
+          {/* 3 · fresh list back */}
+          <line x1={194} y1={80} x2={86} y2={80} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#arrfs)" />
+          <text x={140} y={96} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>3 · шинэ жагсаалт ✓</text>
+
+          <text x={140} y={116} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>таамаглахгүй — серверийн үнэнийг дахин татна</text>
+          <defs>
+            <marker id="arrf" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+            <marker id="arrfs" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+          </defs>
         </>
       );
     default:

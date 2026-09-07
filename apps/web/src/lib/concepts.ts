@@ -1819,6 +1819,9 @@ const DIAGRAMS: Record<string, string> = {
   POST: "post-body",
   "JSON body": "post-body",
   headers: "post-body",
+  // refetch
+  refetch: "refetch",
+  "GET after POST": "refetch",
   forEach: "array",
   "list rendering": "array",
   object: "object",
