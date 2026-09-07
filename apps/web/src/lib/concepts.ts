@@ -1761,7 +1761,7 @@ const DIAGRAMS: Record<string, string> = {
   "JSON.parse": "localstorage",
   // conditional UI
   "conditional rendering": "conditional",
-  ternary: "conditional",
+  ternary: "ternary",
   "empty state": "conditional",
   // effects
   useEffect: "useeffect",

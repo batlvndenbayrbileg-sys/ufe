@@ -64,7 +64,8 @@ export type DiagramKind =
   | "spread-obj"
   | "cart-total"
   | "destructure"
-  | "format";
+  | "format"
+  | "ternary";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1624,6 +1625,42 @@ function render(kind: DiagramKind): React.ReactNode {
           <defs>
             <marker id="arfm" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "ternary":
+      return (
+        <>
+          {/* the ternary expression, colour-coded by part */}
+          <text x={140} y={16} textAnchor="middle" style={{ ...t, fontSize: 9 }}>
+            <tspan fill="var(--accent-text)">age &gt;= 18</tspan>
+            <tspan fill={MUT}> ? </tspan>
+            <tspan fill="var(--success)">«том»</tspan>
+            <tspan fill={MUT}> : </tspan>
+            <tspan fill="var(--danger)">«хүүхэд»</tspan>
+          </text>
+
+          <Box x={16} y={44} width={96} height={34} fill={SUB} stroke={ACC} rx={6} />
+          <text x={64} y={65} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>age &gt;= 18 ?</text>
+
+          <line x1={114} y1={54} x2={158} y2={44} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#artr)" />
+          <text x={130} y={40} fill="var(--success)" style={{ ...t, fontSize: 8 }}>true</text>
+          <line x1={114} y1={68} x2={158} y2={80} stroke="var(--danger)" strokeWidth={1.5} markerEnd="url(#artre)" />
+          <text x={130} y={84} fill="var(--danger)" style={{ ...t, fontSize: 8 }}>false</text>
+
+          <Box x={160} y={30} width={104} height={26} fill="color-mix(in srgb, var(--success) 14%, var(--surface))" stroke="var(--success)" rx={4} />
+          <text x={212} y={47} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>«том»</text>
+          <Box x={160} y={66} width={104} height={26} fill="color-mix(in srgb, var(--danger) 14%, var(--surface))" stroke="var(--danger)" rx={4} />
+          <text x={212} y={83} fill="var(--danger)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>«хүүхэд»</text>
+
+          <text x={140} y={112} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>= нэг мөрөнд багтсан богино if/else</text>
+          <defs>
+            <marker id="artr" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+            <marker id="artre" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--danger)" />
             </marker>
           </defs>
         </>
