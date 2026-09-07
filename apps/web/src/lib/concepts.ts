@@ -1822,6 +1822,9 @@ const DIAGRAMS: Record<string, string> = {
   // refetch
   refetch: "refetch",
   "GET after POST": "refetch",
+  // async UI states
+  "loading state": "loading-state",
+  "error UI": "loading-state",
   forEach: "array",
   "list rendering": "array",
   object: "object",

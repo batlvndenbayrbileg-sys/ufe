@@ -58,7 +58,8 @@ export type DiagramKind =
   | "sort"
   | "post-body"
   | "find"
-  | "refetch";
+  | "refetch"
+  | "loading-state";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1421,6 +1422,35 @@ function render(kind: DiagramKind): React.ReactNode {
             </marker>
             <marker id="arrfs" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+          </defs>
+        </>
+      );
+    case "loading-state":
+      return (
+        <>
+          {/* while the fetch is in flight, show a loading state */}
+          <Box x={10} y={44} width={112} height={34} fill={SUB} stroke={ACC} rx={6} />
+          <text x={30} y={66} style={{ ...t, fontSize: 13 }}>⏳</text>
+          <text x={78} y={65} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>Ачаалж байна…</text>
+
+          {/* then, when the response arrives, one of two states */}
+          <line x1={124} y1={54} x2={158} y2={44} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#arld)" />
+          <line x1={124} y1={66} x2={158} y2={78} stroke="var(--danger)" strokeWidth={1.5} markerEnd="url(#arlde)" />
+          <text x={130} y={38} fill={MUT} style={{ ...t, fontSize: 8 }}>хариу ирэхэд</text>
+
+          <Box x={160} y={30} width={108} height={28} fill="color-mix(in srgb, var(--success) 14%, var(--surface))" stroke="var(--success)" rx={4} />
+          <text x={214} y={48} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>✓ Жагсаалт харагдана</text>
+          <Box x={160} y={64} width={108} height={28} fill="color-mix(in srgb, var(--danger) 14%, var(--surface))" stroke="var(--danger)" rx={4} />
+          <text x={214} y={82} fill="var(--danger)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>✗ Алдаа · дахин оролд</text>
+
+          <text x={140} y={112} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>хоосон дэлгэц биш — төлөв бүрт эвтэйхэн UI</text>
+          <defs>
+            <marker id="arld" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+            <marker id="arlde" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--danger)" />
             </marker>
           </defs>
         </>
