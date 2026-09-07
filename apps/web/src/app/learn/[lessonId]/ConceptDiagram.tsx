@@ -66,7 +66,8 @@ export type DiagramKind =
   | "destructure"
   | "format"
   | "ternary"
-  | "form-validation";
+  | "form-validation"
+  | "usestate";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1694,6 +1695,39 @@ function render(kind: DiagramKind): React.ReactNode {
             </marker>
             <marker id="arfvn" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "usestate":
+      return (
+        <>
+          <text x={140} y={14} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>const [count, setCount] = useState(0)</text>
+
+          {/* the hook returns a [value, setter] pair */}
+          <Box x={98} y={22} width={84} height={24} fill={SUB} stroke={ACC} rx={6} />
+          <text x={140} y={38} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>useState(0)</text>
+          <line x1={116} y1={46} x2={78} y2={64} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arus)" />
+          <line x1={164} y1={46} x2={202} y2={64} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arus)" />
+
+          <Box x={16} y={66} width={104} height={28} fill={SUB} stroke={ACC} rx={4} />
+          <text x={68} y={80} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>count = 0</text>
+          <text x={68} y={90} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>одоогийн утга</text>
+          <Box x={160} y={66} width={104} height={28} fill={SURF} stroke={BOR} rx={4} />
+          <text x={212} y={80} fill={TXT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>setCount()</text>
+          <text x={212} y={90} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>шинэчлэгч</text>
+
+          {/* calling the setter updates the value → re-render */}
+          <line x1={158} y1={80} x2={122} y2={80} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#aruss)" />
+          <text x={140} y={74} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 7 }}>1</text>
+
+          <text x={140} y={114} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>setCount дуудвал утга шинэчлэгдэж дахин зурна</text>
+          <defs>
+            <marker id="arus" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+            <marker id="aruss" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
             </marker>
           </defs>
         </>

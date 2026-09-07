@@ -1861,7 +1861,7 @@ const DIAGRAMS: Record<string, string> = {
   "JSX expression": "jsx-component",
   createRoot: "jsx-component",
   props: "props-flow",
-  useState: "state-cycle",
+  useState: "usestate",
   state: "state-cycle",
   "re-render": "state-cycle",
   render: "state-cycle",
