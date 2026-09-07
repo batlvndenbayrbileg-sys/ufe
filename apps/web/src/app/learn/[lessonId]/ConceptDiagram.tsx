@@ -60,7 +60,8 @@ export type DiagramKind =
   | "find"
   | "refetch"
   | "loading-state"
-  | "response-ok";
+  | "response-ok"
+  | "spread-obj";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1485,6 +1486,52 @@ function render(kind: DiagramKind): React.ReactNode {
           </defs>
         </>
       );
+    case "spread-obj": {
+      const rows: Array<[string, string]> = [
+        ["name", "Гутал"],
+        ["price", "90000"],
+        ["stock", "5"],
+      ];
+      return (
+        <>
+          {/* the original object */}
+          <text x={56} y={16} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>хуучин</text>
+          <Box x={8} y={20} width={96} height={86} fill={SURF} stroke={BOR} rx={6} />
+          {rows.map(([k, v], i) => (
+            <text key={k} x={18} y={44 + i * 20} style={{ ...t, fontSize: 9 }}>
+              <tspan fill={ACC}>{k}:</tspan> <tspan fill={TXT}>{v}</tspan>
+            </text>
+          ))}
+
+          {/* spread copy + override one field */}
+          <line x1={106} y1={63} x2={172} y2={63} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arsp)" />
+          <text x={140} y={44} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>{"{ ...old,"}</text>
+          <text x={140} y={56} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>price: 80000 {"}"}</text>
+
+          {/* the new object — copied, one field changed */}
+          <text x={224} y={16} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>шинэ хуулбар</text>
+          <Box x={176} y={20} width={96} height={86} fill={SUB} stroke={ACC} rx={6} />
+          {rows.map(([k, v], i) => {
+            const changed = k === "price";
+            return (
+              <text key={k} x={186} y={44 + i * 20} style={{ ...t, fontSize: 9 }}>
+                <tspan fill="var(--accent-text)">{k}:</tspan>{" "}
+                <tspan fill={changed ? "var(--accent-text)" : MUT} style={{ fontWeight: changed ? 700 : 400 }}>
+                  {changed ? "80000" : v}
+                </tspan>
+              </text>
+            );
+          })}
+
+          <text x={140} y={122} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>хуучныг хуулж, зарим талбарыг дарж бичнэ</text>
+          <defs>
+            <marker id="arsp" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    }
     default:
       return null;
   }

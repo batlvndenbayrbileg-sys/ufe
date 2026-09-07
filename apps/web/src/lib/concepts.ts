@@ -1791,8 +1791,8 @@ const DIAGRAMS: Record<string, string> = {
   preventDefault: "form-submit",
   // immutable updates
   "immutable update": "immutable",
-  spread: "immutable",
-  "spread copy": "immutable",
+  spread: "spread-obj",
+  "spread copy": "spread-obj",
   // lifting state
   "lifting state": "lifting-state",
   // derived state
