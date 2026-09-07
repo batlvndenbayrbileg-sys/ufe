@@ -1793,6 +1793,8 @@ const DIAGRAMS: Record<string, string> = {
   "immutable update": "immutable",
   spread: "immutable",
   "spread copy": "immutable",
+  // lifting state
+  "lifting state": "lifting-state",
   forEach: "array",
   "list rendering": "array",
   object: "object",

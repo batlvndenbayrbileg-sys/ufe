@@ -46,7 +46,8 @@ export type DiagramKind =
   | "async-await"
   | "route-params"
   | "form-submit"
-  | "immutable";
+  | "immutable"
+  | "lifting-state";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1041,6 +1042,42 @@ function render(kind: DiagramKind): React.ReactNode {
         </>
       );
     }
+    case "lifting-state":
+      return (
+        <>
+          {/* shared state lives in the common parent */}
+          <Box x={88} y={10} width={104} height={32} fill={SURF} stroke={BOR} rx={6} />
+          <text x={100} y={30} fill={TXT} style={{ ...t, fontWeight: 700, fontSize: 10 }}>Parent</text>
+          <rect x={148} y={18} width={36} height={16} rx={8} fill={ACC} />
+          <text x={166} y={29} fill="var(--on-accent)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>state</text>
+
+          {/* two children */}
+          <Box x={18} y={78} width={84} height={30} fill={SUB} stroke={ACC} rx={4} />
+          <text x={60} y={97} fill="var(--accent-text)" textAnchor="middle" style={t}>Child A</text>
+          <Box x={178} y={78} width={84} height={30} fill={SUB} stroke={ACC} rx={4} />
+          <text x={220} y={97} fill="var(--accent-text)" textAnchor="middle" style={t}>Child B</text>
+
+          {/* props flow down to both */}
+          <line x1={116} y1={42} x2={68} y2={76} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arli)" />
+          <text x={80} y={58} fill="var(--accent-text)" style={{ ...t, fontSize: 8 }}>props ↓</text>
+          <line x1={164} y1={42} x2={212} y2={76} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arli)" />
+          <text x={182} y={58} fill="var(--accent-text)" style={{ ...t, fontSize: 8 }}>props ↓</text>
+
+          {/* a child sends changes back up */}
+          <path d="M240,78 C258,64 258,36 194,30" fill="none" stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#arlo)" />
+          <text x={250} y={58} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>setState ↑</text>
+
+          <text x={140} y={124} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>хуваалцах төлөв → нийтлэг эцэгт</text>
+          <defs>
+            <marker id="arli" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+            <marker id="arlo" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+          </defs>
+        </>
+      );
     default:
       return null;
   }
