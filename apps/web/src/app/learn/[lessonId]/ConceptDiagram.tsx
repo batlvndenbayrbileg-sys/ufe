@@ -59,7 +59,8 @@ export type DiagramKind =
   | "post-body"
   | "find"
   | "refetch"
-  | "loading-state";
+  | "loading-state"
+  | "response-ok";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1450,6 +1451,35 @@ function render(kind: DiagramKind): React.ReactNode {
               <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
             </marker>
             <marker id="arlde" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--danger)" />
+            </marker>
+          </defs>
+        </>
+      );
+    case "response-ok":
+      return (
+        <>
+          {/* res.ok is true only for 2xx — check before using the data */}
+          <Box x={8} y={42} width={100} height={36} fill={SUB} stroke={ACC} rx={6} />
+          <text x={58} y={60} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>res.ok ?</text>
+          <text x={58} y={73} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>статус 200–299?</text>
+
+          <line x1={110} y1={52} x2={158} y2={44} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#arok)" />
+          <text x={130} y={40} fill="var(--success)" style={{ ...t, fontSize: 8 }}>true</text>
+          <line x1={110} y1={68} x2={158} y2={78} stroke="var(--danger)" strokeWidth={1.5} markerEnd="url(#aroke)" />
+          <text x={130} y={82} fill="var(--danger)" style={{ ...t, fontSize: 8 }}>false</text>
+
+          <Box x={160} y={30} width={108} height={28} fill="color-mix(in srgb, var(--success) 14%, var(--surface))" stroke="var(--success)" rx={4} />
+          <text x={214} y={48} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>✓ res.json() ашиглах</text>
+          <Box x={160} y={64} width={108} height={28} fill="color-mix(in srgb, var(--danger) 14%, var(--surface))" stroke="var(--danger)" rx={4} />
+          <text x={214} y={82} fill="var(--danger)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>✗ алдаа шид</text>
+
+          <text x={140} y={112} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>алдааг чимээгүй өнгөрөөхгүй</text>
+          <defs>
+            <marker id="arok" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
+            </marker>
+            <marker id="aroke" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill="var(--danger)" />
             </marker>
           </defs>

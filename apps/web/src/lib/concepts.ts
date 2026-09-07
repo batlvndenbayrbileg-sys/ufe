@@ -1825,6 +1825,8 @@ const DIAGRAMS: Record<string, string> = {
   // async UI states
   "loading state": "loading-state",
   "error UI": "loading-state",
+  // response check
+  "response.ok": "response-ok",
   forEach: "array",
   "list rendering": "array",
   object: "object",
