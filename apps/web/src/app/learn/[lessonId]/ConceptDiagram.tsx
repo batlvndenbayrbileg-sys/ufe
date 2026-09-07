@@ -45,7 +45,8 @@ export type DiagramKind =
   | "event-delegation"
   | "async-await"
   | "route-params"
-  | "form-submit";
+  | "form-submit"
+  | "immutable";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -999,6 +1000,47 @@ function render(kind: DiagramKind): React.ReactNode {
           </defs>
         </>
       );
+    case "immutable": {
+      const cell = (x: number, y: number, v: number, fill: string, stroke: string, fg: string) => (
+        <>
+          <Box x={x} y={y} width={15} height={18} fill={fill} stroke={stroke} rx={2} />
+          <text x={x + 7.5} y={y + 13} fill={fg} textAnchor="middle" style={{ ...t, fontSize: 9 }}>{v}</text>
+        </>
+      );
+      const row = (xs: number, y: number, vals: number[], fill: string, stroke: string, fg: string) =>
+        vals.map((v, i) => <g key={i}>{cell(xs + i * 17, y, v, fill, stroke, fg)}</g>);
+      return (
+        <>
+          {/* ✓ immutable: a new array = a new reference React can see */}
+          <text x={8} y={38} fill="var(--success)" style={{ ...t, fontWeight: 700, fontSize: 12 }}>✓</text>
+          {row(20, 24, [1, 2], SURF, BOR, TXT)}
+          <text x={28} y={53} fill={MUT} style={{ ...t, fontSize: 8 }}>@A</text>
+          <line x1={58} y1={33} x2={100} y2={33} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arim)" />
+          <text x={79} y={25} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>[...a, 3]</text>
+          {row(104, 24, [1, 2, 3], SUB, ACC, "var(--accent-text)")}
+          <text x={130} y={53} fill="var(--success)" style={{ ...t, fontSize: 8 }}>@B шинэ</text>
+          <text x={214} y={37} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>✓ re-render</text>
+
+          {/* ✗ mutation: same reference → React misses it */}
+          <text x={8} y={94} fill="var(--danger)" style={{ ...t, fontWeight: 700, fontSize: 12 }}>✗</text>
+          {row(20, 80, [1, 2], SURF, BOR, TXT)}
+          <text x={28} y={109} fill={MUT} style={{ ...t, fontSize: 8 }}>@A</text>
+          <line x1={58} y1={89} x2={100} y2={89} stroke={BOR} strokeWidth={1.5} markerEnd="url(#arimn)" />
+          <text x={79} y={81} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>a.push(3)</text>
+          {row(104, 80, [1, 2, 3], SURF, "var(--danger)", MUT)}
+          <text x={130} y={109} fill="var(--danger)" style={{ ...t, fontSize: 8 }}>@A ижил</text>
+          <text x={214} y={93} fill="var(--danger)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>✗ мартна</text>
+          <defs>
+            <marker id="arim" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+            <marker id="arimn" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
+            </marker>
+          </defs>
+        </>
+      );
+    }
     default:
       return null;
   }

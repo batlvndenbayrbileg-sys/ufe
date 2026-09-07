@@ -1789,6 +1789,10 @@ const DIAGRAMS: Record<string, string> = {
   form: "form-submit",
   onSubmit: "form-submit",
   preventDefault: "form-submit",
+  // immutable updates
+  "immutable update": "immutable",
+  spread: "immutable",
+  "spread copy": "immutable",
   forEach: "array",
   "list rendering": "array",
   object: "object",
@@ -1814,7 +1818,6 @@ const DIAGRAMS: Record<string, string> = {
   state: "state-cycle",
   "re-render": "state-cycle",
   render: "state-cycle",
-  "immutable update": "state-cycle",
   // SQL
   JOIN: "join",
   ON: "join",
