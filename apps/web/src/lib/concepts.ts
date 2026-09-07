@@ -1798,6 +1798,9 @@ const DIAGRAMS: Record<string, string> = {
   // derived state
   "derived state": "derived-state",
   "derived errors": "derived-state",
+  // DOM creation
+  createElement: "create-append",
+  append: "create-append",
   forEach: "array",
   "list rendering": "array",
   object: "object",

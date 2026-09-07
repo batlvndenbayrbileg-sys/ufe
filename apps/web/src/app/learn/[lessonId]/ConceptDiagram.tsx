@@ -50,7 +50,8 @@ export type DiagramKind =
   | "lifting-state"
   | "custom-hook"
   | "derived-state"
-  | "jsx-component";
+  | "jsx-component"
+  | "create-append";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1167,6 +1168,37 @@ function render(kind: DiagramKind): React.ReactNode {
           <text x={140} y={122} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>нэг компонент → олон удаа</text>
           <defs>
             <marker id="arjc" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "create-append":
+      return (
+        <>
+          {/* 1 · create — the element exists only in memory (dashed) */}
+          <Box x={6} y={14} width={128} height={22} fill="var(--code-bg)" stroke="var(--code-border)" rx={4} />
+          <text x={16} y={29} fill="var(--accent-text)" style={{ ...t, fontSize: 9 }}>createElement(&apos;li&apos;)</text>
+          <Box x={34} y={48} width={72} height={22} fill={SURF} stroke={BOR} strokeDasharray="4 3" rx={3} />
+          <text x={70} y={63} fill={MUT} textAnchor="middle" style={t}>&lt;li&gt;</text>
+          <text x={70} y={84} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>санах ойд · харагдахгүй</text>
+
+          {/* 2 · append — joins the DOM tree, now visible */}
+          <line x1={108} y1={59} x2={166} y2={59} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arca)" />
+          <text x={137} y={52} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>append()</text>
+
+          <Box x={170} y={22} width={100} height={90} fill={SUB} stroke={ACC} rx={6} />
+          <text x={180} y={38} fill="var(--accent-text)" style={{ ...t, fontWeight: 700, fontSize: 9 }}>ul (DOM)</text>
+          <rect x={178} y={44} width={84} height={16} rx={2} fill={SURF} stroke={BOR} />
+          <text x={184} y={56} fill={TXT} style={{ ...t, fontSize: 9 }}>li · Бараа 1</text>
+          <rect x={178} y={64} width={84} height={16} rx={2} fill={SURF} stroke={BOR} />
+          <text x={184} y={76} fill={TXT} style={{ ...t, fontSize: 9 }}>li · Бараа 2</text>
+          <rect x={178} y={88} width={84} height={16} rx={2} fill="color-mix(in srgb, var(--accent) 18%, var(--surface))" stroke={ACC} />
+          <text x={184} y={100} fill="var(--accent-text)" style={{ ...t, fontSize: 9 }}>li · шинэ ✓</text>
+
+          <text x={140} y={124} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>үүсгэ → нэм → харагдана</text>
+          <defs>
+            <marker id="arca" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>
