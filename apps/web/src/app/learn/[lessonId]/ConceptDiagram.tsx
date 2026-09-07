@@ -49,7 +49,8 @@ export type DiagramKind =
   | "immutable"
   | "lifting-state"
   | "custom-hook"
-  | "derived-state";
+  | "derived-state"
+  | "jsx-component";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1127,6 +1128,45 @@ function render(kind: DiagramKind): React.ReactNode {
           <text x={140} y={120} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>тусад нь хадгалахгүй → хэзээ ч зөрөхгүй</text>
           <defs>
             <marker id="ards" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "jsx-component":
+      return (
+        <>
+          {/* a component is a function that returns JSX */}
+          <Box x={8} y={22} width={132} height={62} fill="var(--code-bg)" stroke="var(--code-border)" rx={6} />
+          <text x={16} y={40} style={t}>
+            <tspan fill={MUT}>function </tspan>
+            <tspan fill="var(--accent-text)" style={{ fontWeight: 700 }}>Card()</tspan>
+          </text>
+          <text x={24} y={58} style={{ ...t, fontSize: 10 }}>
+            <tspan fill={MUT}>return </tspan>
+            <tspan fill="var(--accent-text)">&lt;li&gt;…&lt;/li&gt;</tspan>
+          </text>
+          <text x={16} y={74} fill={MUT} style={t}>{"}"}</text>
+          <rect x={98} y={62} width={34} height={14} rx={7} fill={ACC} />
+          <text x={115} y={72} fill="var(--on-accent)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>JSX</text>
+
+          {/* renders → reused many times */}
+          <line x1={142} y1={52} x2={162} y2={52} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arjc)" />
+          <text x={152} y={46} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>зурна</text>
+          {[0, 1, 2].map((i) => {
+            const y = 24 + i * 26;
+            return (
+              <g key={i}>
+                <Box x={166} y={y} width={104} height={22} fill={SUB} stroke={ACC} rx={3} />
+                <rect x={172} y={y + 5} width={12} height={12} rx={2} fill={BOR} />
+                <rect x={190} y={y + 9} width={62} height={4} rx={2} fill={ACC} />
+              </g>
+            );
+          })}
+
+          <text x={140} y={122} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>нэг компонент → олон удаа</text>
+          <defs>
+            <marker id="arjc" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>

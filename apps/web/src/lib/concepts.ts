@@ -1818,7 +1818,10 @@ const DIAGRAMS: Record<string, string> = {
   "Authorization header": "token-flow",
   Bearer: "token-flow",
   // React
-  component: "props-flow",
+  component: "jsx-component",
+  JSX: "jsx-component",
+  "JSX expression": "jsx-component",
+  createRoot: "jsx-component",
   props: "props-flow",
   useState: "state-cycle",
   state: "state-cycle",
