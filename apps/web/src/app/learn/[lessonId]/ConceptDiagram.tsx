@@ -52,7 +52,8 @@ export type DiagramKind =
   | "derived-state"
   | "jsx-component"
   | "create-append"
-  | "event-listen";
+  | "event-listen"
+  | "query-text";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1230,6 +1231,36 @@ function render(kind: DiagramKind): React.ReactNode {
             </marker>
             <marker id="areln" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "query-text":
+      return (
+        <>
+          {/* 1 · find the element */}
+          <Box x={6} y={12} width={156} height={22} fill="var(--code-bg)" stroke="var(--code-border)" rx={4} />
+          <text x={14} y={27} fill="var(--accent-text)" style={{ ...t, fontSize: 9 }}>querySelector(&apos;.total&apos;)</text>
+          <line x1={60} y1={34} x2={60} y2={44} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arqt)" />
+          <text x={80} y={42} fill={MUT} style={{ ...t, fontSize: 8 }}>олно</text>
+
+          {/* the element, before */}
+          <Box x={20} y={46} width={84} height={28} fill={SURF} stroke={BOR} rx={4} />
+          <text x={28} y={57} fill={MUT} style={{ ...t, fontSize: 8 }}>.total</text>
+          <text x={62} y={69} fill={TXT} textAnchor="middle" style={t}>0₮</text>
+
+          {/* 2 · change its text */}
+          <line x1={106} y1={60} x2={166} y2={60} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arqt)" />
+          <text x={136} y={52} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>textContent =</text>
+
+          {/* the element, after */}
+          <Box x={168} y={46} width={96} height={28} fill={SUB} stroke={ACC} rx={4} />
+          <text x={216} y={65} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontWeight: 700 }}>5,000₮</text>
+
+          <text x={140} y={112} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>элемент ол → текстийг нь солино</text>
+          <defs>
+            <marker id="arqt" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
             </marker>
           </defs>
         </>

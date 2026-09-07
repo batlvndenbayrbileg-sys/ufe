@@ -1804,6 +1804,10 @@ const DIAGRAMS: Record<string, string> = {
   // events (DOM)
   addEventListener: "event-listen",
   click: "event-listen",
+  // DOM query / update
+  querySelector: "query-text",
+  querySelectorAll: "query-text",
+  textContent: "query-text",
   forEach: "array",
   "list rendering": "array",
   object: "object",
