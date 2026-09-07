@@ -17,6 +17,18 @@
     "f2Title": "See your code live",
     "f2Body": "Every line you write renders instantly in the live preview beside it.",
     "f3Title": "Verified by a server",
-    "f3Body": "Each task is really run and checked on a server — never guessed at."
+    "f3Body": "Each task is really run and checked on a server — never guessed at.",
+    "f4Title": "Explained with pictures",
+    "f4Body": "Every concept comes with a diagram and an everyday analogy — clear even for a beginner.",
+    "f5Title": "Type it yourself",
+    "f5Body": "No copy-paste. You type every line and actually learn it.",
+    "f6Title": "Fully in Mongolian",
+    "f6Body": "Instructions, explanations and error messages are all in Mongolian.",
+    "buildLabel": "You build this",
+    "journeyEyebrow": "A 13-stage journey",
+    "journeyTitle": "From your first <h1> to a full app",
+    "journeyLede": "Each lesson builds on the last, step by step, until it becomes a real store.",
+    "closeTitle": "Write your first line today",
+    "closeBody": "The first lesson takes just minutes. Start now."
   }
 }
