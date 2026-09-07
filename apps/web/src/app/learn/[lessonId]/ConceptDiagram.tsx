@@ -51,7 +51,8 @@ export type DiagramKind =
   | "custom-hook"
   | "derived-state"
   | "jsx-component"
-  | "create-append";
+  | "create-append"
+  | "event-listen";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1200,6 +1201,35 @@ function render(kind: DiagramKind): React.ReactNode {
           <defs>
             <marker id="arca" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+          </defs>
+        </>
+      );
+    case "event-listen":
+      return (
+        <>
+          {/* a click on the button runs the handler */}
+          <Box x={14} y={34} width={88} height={30} fill={ACC} rx={4} />
+          <text x={58} y={53} fill="var(--on-accent)" textAnchor="middle" style={t}>Сагслах</text>
+          <text x={96} y={68} style={{ ...t, fontSize: 13 }}>🖱</text>
+
+          <line x1={104} y1={48} x2={152} y2={48} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arel)" />
+          <text x={128} y={40} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>click</text>
+
+          <Box x={154} y={34} width={114} height={30} fill={SUB} stroke={ACC} rx={4} />
+          <text x={211} y={53} fill="var(--accent-text)" textAnchor="middle" style={t}>handler()</text>
+          <line x1={211} y1={64} x2={211} y2={80} stroke={BOR} strokeWidth={1.5} markerEnd="url(#areln)" />
+
+          <Box x={150} y={82} width={122} height={22} fill="color-mix(in srgb, var(--success) 14%, var(--surface))" stroke="var(--success)" rx={4} />
+          <text x={211} y={97} fill="var(--success)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>Сагсанд +1 ✓</text>
+
+          <text x={140} y={122} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>addEventListener(&apos;click&apos;, fn) — дарахад ажиллана</text>
+          <defs>
+            <marker id="arel" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={ACC} />
+            </marker>
+            <marker id="areln" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill={BOR} />
             </marker>
           </defs>
         </>

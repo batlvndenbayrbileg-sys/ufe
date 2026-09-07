@@ -1801,6 +1801,9 @@ const DIAGRAMS: Record<string, string> = {
   // DOM creation
   createElement: "create-append",
   append: "create-append",
+  // events (DOM)
+  addEventListener: "event-listen",
+  click: "event-listen",
   forEach: "array",
   "list rendering": "array",
   object: "object",
