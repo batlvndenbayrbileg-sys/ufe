@@ -100,47 +100,60 @@
   flex-wrap: wrap;
   margin-top: var(--space-2);
 }
+/* Pill-shaped, 3D buttons: a solid darker edge sits below the face, and the
+   button lifts on hover and presses down onto the edge on click. */
 .ctaPrimary {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 13px 28px;
-  border-radius: var(--radius);
+  padding: 14px 30px;
+  border-radius: var(--radius-full);
   background: var(--accent);
   color: var(--on-accent);
   text-decoration: none;
   font-weight: 600;
   font-size: var(--text-md);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 6px 0 0 color-mix(in srgb, var(--accent) 58%, #000);
   transition:
-    background var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-fast) var(--ease-out);
+    box-shadow var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
 }
 .ctaPrimary:hover {
   background: var(--accent-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 0 color-mix(in srgb, var(--accent) 58%, #000);
+}
+.ctaPrimary:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 0 color-mix(in srgb, var(--accent) 58%, #000);
 }
 .ctaSecondary {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 13px 22px;
-  border-radius: var(--radius);
+  padding: 14px 24px;
+  border-radius: var(--radius-full);
   border: 1px solid var(--border-strong);
   background: var(--surface);
   color: var(--text);
   text-decoration: none;
   font-weight: 600;
   font-size: var(--text-md);
+  box-shadow: 0 5px 0 0 var(--border-strong);
   transition:
-    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out);
 }
 .ctaSecondary:hover {
-  background: var(--bg-muted);
   border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 0 var(--border-strong);
+}
+.ctaSecondary:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 0 var(--border-strong);
 }
 
 /* ── hero mock: the Shop.mn store you build ──────────────────────────────── */
@@ -257,7 +270,7 @@
   margin-top: 2px;
   text-align: center;
   padding: 4px 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   background: var(--accent);
   color: var(--on-accent);
   font-size: 11px;
@@ -501,5 +514,73 @@
 @media (max-width: 560px) {
   .features {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ── scroll-driven parallax + reveal ─────────────────────────────────────────
+   Progressive enhancement: only where the browser has CSS scroll-driven
+   animations, and only when the reader hasn't asked for less motion. Everywhere
+   else the page is static (below-fold sections keep their one-time load rise). */
+@media (prefers-reduced-motion: no-preference) {
+  /* Parallax: hero text and the store mock scroll at different rates, so the
+     mock appears to float in front as the page moves. */
+  @supports (animation-timeline: scroll()) {
+    .heroMockWrap {
+      animation: parallaxMock linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 80vh;
+      will-change: transform;
+    }
+    .heroText {
+      animation: parallaxText linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 80vh;
+      will-change: transform;
+    }
+    .buildBadge {
+      animation: parallaxBadge linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 80vh;
+    }
+  }
+
+  /* Reveal: below-fold bands rise and fade in as they enter the viewport,
+     replacing their time-based load animation with a scroll-driven one. */
+  @supports (animation-timeline: view()) {
+    .stats,
+    .journey,
+    .features,
+    .showcase,
+    .closeBand {
+      animation: riseIn linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 60%;
+    }
+  }
+}
+
+@keyframes parallaxMock {
+  from {
+    transform: translateY(34px);
+  }
+  to {
+    transform: translateY(-44px);
+  }
+}
+@keyframes parallaxText {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-16px);
+    opacity: 0.9;
+  }
+}
+@keyframes parallaxBadge {
+  from {
+    transform: translate(-50%, 10px);
+  }
+  to {
+    transform: translate(-50%, -18px);
   }
 }
