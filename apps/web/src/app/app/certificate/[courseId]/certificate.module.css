@@ -11,7 +11,7 @@
 /* ── toolbar (hidden when printing) ──────────────────────────────────────── */
 .toolbar {
   width: 100%;
-  max-width: 780px;
+  max-width: 980px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -41,8 +41,8 @@
   color: var(--on-accent);
   background: var(--accent);
   border: 0;
-  border-radius: var(--radius);
-  padding: 9px 18px;
+  border-radius: var(--radius-full);
+  padding: 10px 20px;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: background var(--dur-fast) var(--ease-out);
@@ -51,152 +51,173 @@
   background: var(--accent-hover);
 }
 
-/* ── certificate ─────────────────────────────────────────────────────────── */
+/* ── certificate: an elegant, formal, gold-framed sheet ──────────────────────
+   Always light — a certificate is white paper regardless of the app theme. */
 .certificate {
+  --gold: #c19a4e;
+  --gold-2: #e7cd86;
+  --cink: #2b2b28;
+  --cmut: #6d6a60;
+  --serif: Georgia, "Times New Roman", "Noto Serif", serif;
+
   width: 100%;
-  max-width: 780px;
-  background:
-    radial-gradient(120% 130% at 50% 0%, color-mix(in srgb, var(--accent) 10%, var(--surface)) 0%, var(--surface) 55%);
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  padding: 6px;
+  max-width: 980px;
+  aspect-ratio: 1.5 / 1;
+  color-scheme: light;
+  background: #ffffff;
+  color: var(--cink);
+  box-shadow: var(--shadow-lg, 0 24px 60px rgb(0 0 0 / 0.18));
+  padding: 10px;
 }
-/* the inner rule, an ornate frame within the card */
-.certInner {
-  border: 1.5px solid color-mix(in srgb, var(--accent) 28%, var(--border));
-  border-radius: var(--radius-lg);
-  padding: var(--space-10) var(--space-10) var(--space-8);
+/* Two nested gold rules with a white gap between them. */
+.frame {
+  height: 100%;
+  border: 2px solid var(--gold);
+  padding: 7px;
+}
+.frameInner {
+  height: 100%;
+  border: 1px solid var(--gold);
+  padding: clamp(20px, 4.5vw, 60px) clamp(20px, 6vw, 84px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  gap: var(--space-3);
+  gap: clamp(8px, 1.6vw, 16px);
+  overflow: hidden;
 }
 
-.certHead {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-2);
-}
 .certBrand {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   font-weight: 700;
-  font-size: var(--text-lg);
-  letter-spacing: -0.01em;
+  font-size: var(--text-md);
+  letter-spacing: 0.02em;
+  color: var(--cink);
+}
+
+.certTitle {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(2.2rem, 6.5vw, 4rem);
+  letter-spacing: 0.18em;
+  line-height: 1;
+  color: var(--cink);
+  text-indent: 0.18em; /* balance the trailing letter-spacing */
 }
 .certKind {
-  font-size: var(--text-xs);
+  margin: 0;
+  font-size: clamp(0.7rem, 1.6vw, 0.9rem);
   text-transform: uppercase;
-  letter-spacing: 0.22em;
-  color: var(--accent-text);
-  font-weight: 700;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  color: var(--gold);
+  font-weight: 600;
+}
+.rule {
+  width: clamp(80px, 16vw, 150px);
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: clamp(2px, 1vw, 8px) 0;
 }
 
 .certLead {
-  margin: var(--space-4) 0 0;
-  color: var(--text-muted);
-  font-size: var(--text-md);
+  margin: 0;
+  color: var(--cmut);
+  font-size: clamp(0.85rem, 1.7vw, 1rem);
 }
 
 .certNameWrap {
   display: block;
   width: 100%;
-  max-width: 30ch;
+  max-width: 24ch;
 }
 .certName {
   width: 100%;
   text-align: center;
-  font-family: Georgia, "Times New Roman", "Noto Serif", serif;
-  font-size: clamp(1.9rem, 5vw, 2.75rem);
-  font-weight: 700;
-  color: var(--text);
+  font-family: var(--serif);
+  font-size: clamp(1.7rem, 5.2vw, 3.1rem);
+  font-weight: 600;
+  color: var(--cink);
   background: transparent;
   border: 0;
-  border-bottom: 2px solid color-mix(in srgb, var(--accent) 30%, var(--border));
-  padding: 2px 8px 6px;
+  border-bottom: 1.5px solid var(--gold);
+  padding: 2px 8px 8px;
   outline: none;
 }
 .certName:focus {
-  border-bottom-color: var(--accent);
+  border-bottom-color: #a67c2e;
 }
 .certName::placeholder {
-  color: var(--text-subtle);
+  color: #b9b4a6;
   font-style: italic;
 }
 
 .certBody {
-  margin: var(--space-3) 0 0;
-  font-size: var(--text-md);
-  line-height: var(--leading-prose);
-  color: var(--text);
-  max-width: 46ch;
+  margin: 0;
+  font-size: clamp(0.85rem, 1.7vw, 1.05rem);
+  line-height: 1.6;
+  color: var(--cmut);
+  max-width: 62ch;
 }
-
-.certStats {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-4);
-  color: var(--text-muted);
-  font-size: var(--text-sm);
+.certBody strong {
+  color: var(--cink);
+}
+.certBody b {
+  color: #a67c2e;
   font-variant-numeric: tabular-nums;
 }
-.certStats b {
-  color: var(--accent-text);
-  font-size: var(--text-md);
-}
-.certDot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--border-strong);
-}
 
+/* footer: date · seal · serial, laid out like signatories */
 .certFoot {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   width: 100%;
-  margin-top: var(--space-10);
+  max-width: 640px;
+  margin-top: clamp(10px, 2.5vw, 26px);
   gap: var(--space-4);
 }
-.certMeta {
+.sig {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  text-align: left;
-  min-width: 9rem;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
 }
-.certMetaRight {
-  text-align: right;
-  align-items: flex-end;
-}
-.certMetaLabel {
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-subtle);
-}
-.certMetaValue {
-  font-size: var(--text-sm);
-  font-weight: 600;
+.sigValue {
+  font-family: var(--serif);
+  font-size: clamp(0.8rem, 1.7vw, 1rem);
+  color: var(--cink);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
-.certSeal {
+.sigLine {
+  width: 100%;
+  max-width: 160px;
+  height: 1px;
+  background: var(--gold);
+}
+.sigLabel {
+  font-size: clamp(0.6rem, 1.3vw, 0.72rem);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--cmut);
+}
+.seal {
   flex: none;
-  width: 58px;
-  height: 58px;
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  color: var(--accent-text);
-  background: var(--accent-subtle);
-  border: 2px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  margin: 0 clamp(4px, 2vw, 20px);
+  filter: drop-shadow(0 4px 8px rgb(166 124 46 / 0.3));
 }
 
 /* ── not-yet / loading states ────────────────────────────────────────────── */
@@ -244,8 +265,27 @@
   font-weight: 600;
 }
 
+/* ── responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .certificate {
+    aspect-ratio: auto;
+  }
+  .certFoot {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .seal {
+    order: -1;
+  }
+}
+
 /* ── print ───────────────────────────────────────────────────────────────── */
 @media print {
+  @page {
+    size: landscape;
+    margin: 12mm;
+  }
   .toolbar {
     display: none;
   }
@@ -256,9 +296,11 @@
   .certificate {
     box-shadow: none;
     max-width: none;
-    border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+    width: 100%;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .certName {
-    border-bottom-color: transparent;
+    border-bottom-color: var(--gold);
   }
 }

@@ -84,60 +84,88 @@ export function CertificateView({ courseId }: { courseId: string }) {
       </div>
 
       <article className={s.certificate}>
-        <div className={s.certInner}>
-          <div className={s.certHead}>
-            <span className={s.certBrand}>
-              <BrandMark size={26} /> Хийе
-            </span>
-            <span className={s.certKind}>Дүүргэсний гэрчилгээ</span>
-          </div>
+        <div className={s.frame}>
+          <div className={s.frameInner}>
+            <p className={s.certBrand}>
+              <BrandMark size={22} /> Хийе
+            </p>
 
-          <p className={s.certLead}>Энэхүү гэрчилгээг</p>
+            <h1 className={s.certTitle}>ГЭРЧИЛГЭЭ</h1>
+            <p className={s.certKind}>Курс дүүргэсний</p>
+            <span className={s.rule} aria-hidden />
 
-          <label className={s.certNameWrap}>
-            <input
-              className={s.certName}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onBlur={onNameBlur}
-              placeholder="Нэрээ бичнэ үү"
-              aria-label="Нэр"
-            />
-          </label>
+            <p className={s.certLead}>Энэхүү гэрчилгээг</p>
 
-          <p className={s.certBody}>
-            «<strong>{map.title.mn}</strong>» курсыг амжилттай дүүргэсэн тул олгов.
-          </p>
+            <label className={s.certNameWrap}>
+              <input
+                className={s.certName}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onBlur={onNameBlur}
+                placeholder="Нэрээ бичнэ үү"
+                aria-label="Нэр"
+              />
+            </label>
 
-          <div className={s.certStats}>
-            <span>
-              <b>{completion.total}</b> хичээл
-            </span>
-            <span className={s.certDot} aria-hidden />
-            <span>
-              <b>{modules}</b> модуль
-            </span>
-            <span className={s.certDot} aria-hidden />
-            <span>
-              <b>{map.stages.length}</b> шат
-            </span>
-          </div>
+            <p className={s.certBody}>
+              «<strong>{map.title.mn}</strong>» курсыг амжилттай дүүргэж,{" "}
+              <b>{completion.total}</b> хичээл, <b>{modules}</b> модуль, <b>{map.stages.length}</b> шатыг
+              бүрэн эзэмшсэн тул олгов.
+            </p>
 
-          <div className={s.certFoot}>
-            <div className={s.certMeta}>
-              <span className={s.certMetaLabel}>Огноо</span>
-              <span className={s.certMetaValue}>{dateText}</span>
-            </div>
-            <div className={s.certSeal} aria-hidden>
-              <Award size={30} strokeWidth={1.8} />
-            </div>
-            <div className={`${s.certMeta} ${s.certMetaRight}`}>
-              <span className={s.certMetaLabel}>Дугаар</span>
-              <span className={s.certMetaValue}>{cert?.serial ?? "—"}</span>
+            <div className={s.certFoot}>
+              <div className={s.sig}>
+                <span className={s.sigValue}>{dateText}</span>
+                <span className={s.sigLine} aria-hidden />
+                <span className={s.sigLabel}>Огноо</span>
+              </div>
+
+              <span className={s.seal} aria-hidden>
+                <Seal />
+              </span>
+
+              <div className={s.sig}>
+                <span className={s.sigValue}>{cert?.serial ?? "—"}</span>
+                <span className={s.sigLine} aria-hidden />
+                <span className={s.sigLabel}>Дугаар</span>
+              </div>
             </div>
           </div>
         </div>
       </article>
     </div>
+  );
+}
+
+/** A gold medallion with a ribbon — the certificate's seal. */
+function Seal() {
+  return (
+    <svg viewBox="0 0 100 132" width="88" height="116" role="img" aria-label="Тамга">
+      <defs>
+        <linearGradient id="certGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#e7cd86" />
+          <stop offset="0.5" stopColor="#c9a24b" />
+          <stop offset="1" stopColor="#a67c2e" />
+        </linearGradient>
+        <linearGradient id="certGoldSoft" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#f3e6bf" />
+          <stop offset="1" stopColor="#d8b866" />
+        </linearGradient>
+      </defs>
+      {/* ribbon tails */}
+      <path d="M38 84 L28 128 L44 118 L50 128 L50 90 Z" fill="url(#certGold)" />
+      <path d="M62 84 L72 128 L56 118 L50 128 L50 90 Z" fill="url(#certGoldSoft)" />
+      {/* medallion */}
+      <circle cx="50" cy="46" r="42" fill="url(#certGoldSoft)" />
+      <circle cx="50" cy="46" r="42" fill="none" stroke="#a67c2e" strokeWidth="1.5" />
+      <circle cx="50" cy="46" r="33" fill="url(#certGold)" />
+      <circle cx="50" cy="46" r="26" fill="none" stroke="#fff" strokeOpacity="0.5" strokeWidth="1.5" />
+      {/* star */}
+      <path
+        d="M50 30 l4.6 9.6 10.6 1.4 -7.8 7.3 2 10.5 -9.4 -5.1 -9.4 5.1 2 -10.5 -7.8 -7.3 10.6 -1.4 Z"
+        fill="#fff"
+        fillOpacity="0.92"
+      />
+    </svg>
   );
 }
