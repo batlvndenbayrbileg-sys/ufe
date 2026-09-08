@@ -1,0 +1,297 @@
+{
+  "id": "m16-l5",
+  "moduleId": "m16-typescript",
+  "slug": "generic-interface",
+  "order": 5,
+  "title": {
+    "mn": "Ерөнхий interface ба хязгаарлалт (generic)"
+  },
+  "why": {
+    "mn": "Shop.mn-ий сервер бараа, захиалга, хэрэглэгч гээд өөр өөр өгөгдлийг ижил `{ ok, data }` дугтуйгаар буцаадаг. Дугтуй бүрд тусдаа төрөл бичих үү? `ApiResult<T>` нэг л удаа бичээд `data`-гийн жинхэнэ төрлийг САНАДАГ. Мөн `pluck(item, key)` нь зөвхөн БАЙГАА талбарын нэрийг зөвшөөрнө — буруу нэр бичвэл хөрвүүлэгч тэр даруй барина."
+  },
+  "buildsInProject": "Дахин ашиглагдах API дугтуй ба талбар татагч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 22,
+  "skills": [
+    "typescript",
+    "javascript"
+  ],
+  "concepts": [
+    "generic interface",
+    "generic constraint",
+    "keyof",
+    "indexed access type"
+  ],
+  "prerequisites": [
+    "m16-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — TypeScript</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — TypeScript</h1>\n    <ul id=\"output\"></ul>\n\n    <script src=\"src/cart.ts\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\n#output {\n  list-style: none;\n  padding: 0;\n  max-width: 520px;\n}\n\n#output li {\n  display: flex;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 16px;\n  background-color: #ffffff;\n  border-radius: 8px;\n  padding: 10px 14px;\n  margin-bottom: 8px;\n}\n\n#output span { color: #3f3f46; font-size: 14px; }\n\n#output code {\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  font-weight: 700;\n  color: #1d4ed8;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/cart.ts",
+        "content": "// Shop.mn — TypeScript.\n// Preview нь төрлийг хуулаад ажиллуулна; «Шалгах» дарахад ЖИНХЭНЭ TypeScript\n// хөрвүүлэгч төрлүүдийг чинь шалгана.\n\n// энд бичнэ үү\nfunction wrap(data) {\n  return { ok: true, data: data };\n}\n\nfunction pluck(item, key) {\n  return item[key];\n}\n\n// Tier 1-д модуль байхгүй тул функцүүдээ ил гаргана.\n(globalThis as unknown as Record<string, unknown>).SHOP = { wrap, pluck };\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// Үр дүнг харуулах жижиг самбар. Энэ файлыг өөрчлөх шаардлагагүй.\n\nconst output = document.getElementById(\"output\");\n\nfunction row(label, value) {\n  const line = document.createElement(\"li\");\n  const name = document.createElement(\"span\");\n  name.textContent = label;\n  const result = document.createElement(\"code\");\n  result.textContent = value;\n  line.append(name, result);\n  output.append(line);\n}\n\n(function () {\n  const shop = window.SHOP || {};\n  window.OUT = {};\n\n  const items = [\n    { id: 1, name: \"Монгол дээл\", price: 129000, quantity: 2 },\n    { id: 2, name: \"Малгай\", price: 45000, quantity: 1 },\n  ];\n\n  try {\n    if (typeof shop.wrap === \"function\") {\n      const res = shop.wrap(items);\n      window.OUT.wrappedOk = res.ok;\n      window.OUT.count = res.data.length;\n      row(\"wrap(items).ok\", String(window.OUT.wrappedOk));\n      row(\"wrap(items).data.length\", String(window.OUT.count));\n    }\n\n    if (typeof shop.pluck === \"function\") {\n      window.OUT.firstName = shop.pluck(items[0], \"name\");\n      window.OUT.firstPrice = shop.pluck(items[0], \"price\");\n      row('pluck(items[0], \"name\")', String(window.OUT.firstName));\n      row('pluck(items[0], \"price\")', String(window.OUT.firstPrice));\n    }\n  } catch (problem) {\n    row(\"алдаа\", problem.message);\n  }\n\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/cart.ts",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/cart.ts"
+    ],
+    "activeFile": "src/cart.ts"
+  },
+  "tasks": [
+    {
+      "id": "m16-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Ерөнхий interface ба хязгаарлалт"
+      },
+      "statement": {
+        "mn": "1) `ApiResult<T>` ерөнхий interface зарла: `ok: boolean`, `data: T`. 2) `wrap<T>(data: T): ApiResult<T>` бич — `{ ok: true, data }` буцаа; `T`-г дуудах үед тодорхойлно. 3) `pluck<T, K extends keyof T>(item: T, key: K): T[K]` бич — `item[key]` буцаа. `K extends keyof T` нь `key`-г зөвхөн БАЙГАА талбарын нэрээр хязгаарлана."
+      },
+      "requirements": [
+        {
+          "mn": "`ApiResult<T>` ерөнхий interface (`ok`, `data: T`)"
+        },
+        {
+          "mn": "`wrap<T>` нь `ApiResult<T>` буцаана"
+        },
+        {
+          "mn": "`pluck<T, K extends keyof T>` талбар татна"
+        },
+        {
+          "mn": "Хөрвүүлэлт алдаагүй"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Хөрвүүлэгч алдаа өгөхгүй; `wrap(items).ok` нь `true`, `data.length` нь `2`, `pluck(items[0], \"name\")` нь «Монгол дээл» гарна."
+        }
+      },
+      "targetFile": "src/cart.ts",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ts.typecheck",
+          "args": {},
+          "onFail": {
+            "mn": "TypeScript хөрвүүлэгч алдаа олсон байна — мессежийг уншаад засаарай."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/cart.ts",
+            "kind": "interface",
+            "name": "ApiResult"
+          },
+          "onFail": {
+            "mn": "`ApiResult<T>` ерөнхий interface зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "ts.rejects",
+          "args": {
+            "file": "src/cart.ts",
+            "code": "const bad: ApiResult<number> = wrap(\"сайн уу\");"
+          },
+          "onFail": {
+            "mn": "`wrap(\"сайн уу\")` нь `ApiResult<string>` буцаана — `ApiResult<number>`-д онооход татгалзах ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "ts.rejects",
+          "args": {
+            "file": "src/cart.ts",
+            "code": "const bad = pluck({ id: 1, name: \"Дээл\" }, \"price\");"
+          },
+          "onFail": {
+            "mn": "`\"price\"` нь тухайн объектын талбар биш — `K extends keyof T` хязгаарлалт татгалзах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.OUT.wrappedOk",
+                  "equals": true
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "window.OUT.count",
+                  "equals": 2
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "window.OUT.firstName",
+                  "equals": "Монгол дээл"
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "window.OUT.firstPrice",
+                  "equals": 129000
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Ажиллах үеийн үр дүн буруу байна — `wrap` ба `pluck`-ийг шалгаарай."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Generic бол «төрлийн параметр». `interface ApiResult<T>` гэдэг нь «`T`-г нөхөж бичих боломжтой дугтуй» гэсэн үг — `ApiResult<CartItem>`, `ApiResult<number>` гэх мэтээр өөр өөр төрлөөр дүүргэнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`keyof T` нь `T`-ийн бүх талбарын НЭРийн union. `K extends keyof T` гэвэл `key`-г зөвхөн тэр нэрсээр хязгаарлана. Буцах төрөл `T[K]` нь тухайн талбарын жинхэнэ төрөл (indexed access)."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гурван хэсгээ гүйцээ:"
+          },
+          "code": "interface ApiResult<T> {\n  ok: boolean;\n  data: /* ? */;\n}\n\nfunction wrap<T>(data: T): ApiResult</* ? */> {\n  return { ok: true, data };\n}\n\nfunction pluck<T, K extends keyof T>(item: T, key: K): /* ? */ {\n  return item[key];\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/cart.ts",
+            "content": "// Shop.mn — TypeScript.\n// Preview нь төрлийг хуулаад ажиллуулна; «Шалгах» дарахад ЖИНХЭНЭ TypeScript\n// хөрвүүлэгч төрлүүдийг чинь шалгана.\n\ninterface ApiResult<T> {\n  ok: boolean;\n  data: T;\n}\n\nfunction wrap<T>(data: T): ApiResult<T> {\n  return { ok: true, data };\n}\n\nfunction pluck<T, K extends keyof T>(item: T, key: K): T[K] {\n  return item[key];\n}\n\n// Tier 1-д модуль байхгүй тул функцүүдээ ил гаргана.\n(globalThis as unknown as Record<string, unknown>).SHOP = { wrap, pluck };\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`ApiResult<T>` нэг л удаа бичигдээд бүх төрлийн дугтуйнд үйлчилнэ — `wrap(items)` нь `ApiResult<CartItem[]>`, `wrap(\"текст\")` нь `ApiResult<string>` болж, `data`-гийн төрлийг хөрвүүлэгч санана. `pluck`-ийн `K extends keyof T` хязгаарлалт нь бичгийн алдаатай талбарын нэрийг (жишээ нь `\"prise\"`) шууд барьж, буцах төрлийг `T[K]`-ээр яг зөв гаргана."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 20,
+      "skills": [
+        "typescript"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`ApiResult<T>` дэх `T` юуг илэрхийлдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Дугтуй ашиглах үед нөхөгддөг төрлийн параметр (жишээ нь `CartItem[]`)"
+        },
+        {
+          "mn": "Заавал `string` байх тогтмол төрөл"
+        },
+        {
+          "mn": "Функц хэдэн удаа дуудагдсаныг"
+        },
+        {
+          "mn": "Серверийн хариу код (200, 404 гэх мэт)"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "`T` бол төрлийн параметр — `wrap(items)` дуудахад `T` нь `CartItem[]` болж, `ApiResult<CartItem[]>` үүсэн `data`-гийн жинхэнэ төрлийг хадгална."
+      },
+      "hint": {
+        "mn": "`ApiResult<CartItem[]>` ба `ApiResult<number>` хоёрын ялгаа юунд байна вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`pluck<T, K extends keyof T>` дэх `K extends keyof T` хязгаарлалт юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`item`-ийг хувилж хадгалдаг"
+        },
+        {
+          "mn": "`T`-г заавал массив болгодог"
+        },
+        {
+          "mn": "`key`-г зөвхөн `T`-д БАЙГАА талбарын нэрсээр хязгаарлаж, буруу нэрийг татгалзана"
+        },
+        {
+          "mn": "Ямар ч `string`-ийг түлхүүр болгон зөвшөөрдөг"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "`keyof T` нь талбаруудын нэрсийн union; `K extends keyof T` гэдэг нь `key` тэр union-д багтах ёстой гэсэн үг тул байхгүй талбарын нэр (`\"price\"` гэх мэт) хөрвүүлэх үед алдаа өгнө."
+      },
+      "hint": {
+        "mn": "`keyof { id: number; name: string }` ямар утгуудыг зөвшөөрөх вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

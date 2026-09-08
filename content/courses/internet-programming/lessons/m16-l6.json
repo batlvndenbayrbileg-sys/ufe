@@ -1,0 +1,291 @@
+{
+  "id": "m16-l6",
+  "moduleId": "m16-typescript",
+  "slug": "discriminated-union",
+  "order": 6,
+  "title": {
+    "mn": "Ялгах union (discriminated union)"
+  },
+  "why": {
+    "mn": "Shop.mn-ий сагсны үйлдэл бүр өөр өөр өгөгдөл авдаг: «нэмэх» нь нэр, үнэ; «хасах» нь зөвхөн `id`; «цэвэрлэх» нь юу ч биш. Бүгдийг нэг задгай объектод хийвэл ямар үйлдэлд юу байхыг андуурна. Нийтлэг `kind` талбартай ялгах union нь `kind`-ыг шалгах бүрд ЗӨВ талбаруудыг л нээж өгдөг — байхгүй талбар руу хандвал хөрвүүлэгч тэр даруй барина."
+  },
+  "buildsInProject": "Сагсны үйлдлийг төрлөөр ялган боловсруулах",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 22,
+  "skills": [
+    "typescript",
+    "javascript"
+  ],
+  "concepts": [
+    "discriminated union",
+    "discriminant field",
+    "narrowing",
+    "never exhaustiveness"
+  ],
+  "prerequisites": [
+    "m16-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — TypeScript</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — TypeScript</h1>\n    <ul id=\"output\"></ul>\n\n    <script src=\"src/cart.ts\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\n#output {\n  list-style: none;\n  padding: 0;\n  max-width: 520px;\n}\n\n#output li {\n  display: flex;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 16px;\n  background-color: #ffffff;\n  border-radius: 8px;\n  padding: 10px 14px;\n  margin-bottom: 8px;\n}\n\n#output span { color: #3f3f46; font-size: 14px; }\n\n#output code {\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  font-weight: 700;\n  color: #1d4ed8;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/cart.ts",
+        "content": "// Shop.mn — TypeScript.\n// Preview нь төрлийг хуулаад ажиллуулна; «Шалгах» дарахад ЖИНХЭНЭ TypeScript\n// хөрвүүлэгч төрлүүдийг чинь шалгана.\n\n// энд бичнэ үү\nfunction describeAction(action) {\n  return action.kind;\n}\n\n// Tier 1-д модуль байхгүй тул функцүүдээ ил гаргана.\n(globalThis as unknown as Record<string, unknown>).SHOP = { describeAction };\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// Үр дүнг харуулах жижиг самбар. Энэ файлыг өөрчлөх шаардлагагүй.\n\nconst output = document.getElementById(\"output\");\n\nfunction row(label, value) {\n  const line = document.createElement(\"li\");\n  const name = document.createElement(\"span\");\n  name.textContent = label;\n  const result = document.createElement(\"code\");\n  result.textContent = value;\n  line.append(name, result);\n  output.append(line);\n}\n\n(function () {\n  const shop = window.SHOP || {};\n  window.OUT = {};\n\n  const actions = [\n    { kind: \"add\", name: \"Монгол дээл\", price: 129000 },\n    { kind: \"remove\", id: 2 },\n    { kind: \"clear\" },\n  ];\n\n  try {\n    if (typeof shop.describeAction === \"function\") {\n      window.OUT.descriptions = actions.map(shop.describeAction);\n      window.OUT.addText = window.OUT.descriptions[0];\n      window.OUT.removeText = window.OUT.descriptions[1];\n      window.OUT.clearText = window.OUT.descriptions[2];\n      row('describeAction({ kind: \"add\" })', window.OUT.addText);\n      row('describeAction({ kind: \"remove\" })', window.OUT.removeText);\n      row('describeAction({ kind: \"clear\" })', window.OUT.clearText);\n    }\n  } catch (problem) {\n    row(\"алдаа\", problem.message);\n  }\n\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/cart.ts",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/cart.ts"
+    ],
+    "activeFile": "src/cart.ts"
+  },
+  "tasks": [
+    {
+      "id": "m16-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Ялгах union ба нарийсгах"
+      },
+      "statement": {
+        "mn": "1) `CartAction` ялгах union зарла: `{ kind: \"add\"; name: string; price: number }`, `{ kind: \"remove\"; id: number }`, `{ kind: \"clear\" }`. 2) `describeAction(action: CartAction): string` бич — `switch (action.kind)`-ээр гурван салаа: `add` бол «Нэмэв: {name}», `remove` бол «Хаслаа: #{id}», `clear` бол «Сагс цэвэрлэв». `kind`-ыг шалгасны дараа л тухайн салааны талбарууд (жишээ нь `action.name`) нээгдэнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`CartAction` нь `kind`-аар ялгагдах гурван хувилбартай"
+        },
+        {
+          "mn": "`describeAction` нь `kind`-аар нарийсгана"
+        },
+        {
+          "mn": "Гурван салаа бүр зөв мессеж буцаана"
+        },
+        {
+          "mn": "Хөрвүүлэлт алдаагүй"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Хөрвүүлэгч алдаа өгөхгүй; `describeAction`-ийн гурван дуудалт «Нэмэв: Монгол дээл», «Хаслаа: #2», «Сагс цэвэрлэв» гэж буцаана."
+        }
+      },
+      "targetFile": "src/cart.ts",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ts.typecheck",
+          "args": {},
+          "onFail": {
+            "mn": "TypeScript хөрвүүлэгч алдаа олсон байна — мессежийг уншаад засаарай."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/cart.ts",
+            "kind": "type",
+            "name": "CartAction"
+          },
+          "onFail": {
+            "mn": "`CartAction` төрөл зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "ts.rejects",
+          "args": {
+            "file": "src/cart.ts",
+            "code": "const bad: CartAction = { kind: \"buy\", id: 1 };"
+          },
+          "onFail": {
+            "mn": "`\"buy\"` бол зөвшөөрөгдсөн `kind` биш — union нь гурван хувилбарыг л зөвшөөрч, татгалзах ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "ts.rejects",
+          "args": {
+            "file": "src/cart.ts",
+            "code": "const bad: CartAction = { kind: \"add\", price: 100 };"
+          },
+          "onFail": {
+            "mn": "`add` хувилбар нь `name`-ыг ЗААВАЛ шаарддаг — `name`-гүй бол хөрвүүлэгч татгалзах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.OUT.addText",
+                  "equals": "Нэмэв: Монгол дээл"
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "window.OUT.removeText",
+                  "equals": "Хаслаа: #2"
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "window.OUT.clearText",
+                  "equals": "Сагс цэвэрлэв"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Гурван салааны буцаах мессеж буруу байна — `switch`-ийг шалгаарай."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Ялгах union бол «нийтлэг тэмдэг талбартай» хувилбаруудын union. Энд тэр тэмдэг нь `kind`. `kind`-ыг шалгамагц TypeScript тухайн хувилбарт ямар талбар байгааг мэддэг болно — үүнийг «narrowing» гэнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`switch (action.kind)`-ийн `case \"add\":` дотор `action` нь зөвхөн `add` хувилбар гэдэг нь батлагдсан тул `action.name` аюулгүй нээгдэнэ. Харин `action.id` руу хандвал (add-д байхгүй) хөрвүүлэгч татгалзана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Union ба switch-ээ гүйцээ:"
+          },
+          "code": "type CartAction =\n  | { kind: \"add\"; name: string; price: number }\n  | { kind: \"remove\"; id: number }\n  | { kind: \"clear\" };\n\nfunction describeAction(action: CartAction): string {\n  switch (action.kind) {\n    case \"add\":\n      return `Нэмэв: ${action.name}`;\n    /* remove, clear салаанууд */\n  }\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/cart.ts",
+            "content": "// Shop.mn — TypeScript.\n// Preview нь төрлийг хуулаад ажиллуулна; «Шалгах» дарахад ЖИНХЭНЭ TypeScript\n// хөрвүүлэгч төрлүүдийг чинь шалгана.\n\ntype CartAction =\n  | { kind: \"add\"; name: string; price: number }\n  | { kind: \"remove\"; id: number }\n  | { kind: \"clear\" };\n\nfunction describeAction(action: CartAction): string {\n  switch (action.kind) {\n    case \"add\":\n      return `Нэмэв: ${action.name}`;\n    case \"remove\":\n      return `Хаслаа: #${action.id}`;\n    case \"clear\":\n      return \"Сагс цэвэрлэв\";\n    default: {\n      const _exhaustive: never = action;\n      return _exhaustive;\n    }\n  }\n}\n\n// Tier 1-д модуль байхгүй тул функцүүдээ ил гаргана.\n(globalThis as unknown as Record<string, unknown>).SHOP = { describeAction };\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Нийтлэг `kind` талбар нь TypeScript-д «аль хувилбар вэ?» гэдгийг хэлж өгдөг. `switch (action.kind)` дотор салаа бүрд `action` автоматаар нарийсаж, зөвхөн тэр хувилбарын талбарууд нээгдэнэ — `remove`-д `name` руу хандах гэвэл шууд алдаа өгнө. `default` дэх `const _exhaustive: never = action;` нь бүх хувилбарыг хамарсан эсэхийг батална: хэрэв шинэ `kind` нэмээд салаа мартвал `action` нь `never` болохгүй тул хөрвүүлэгч сануулна."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 20,
+      "skills": [
+        "typescript"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Ялгах union (discriminated union)-д нийтлэг `kind` талбар яагаад хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "`kind`-ыг шалгамагц TypeScript аль хувилбар болохыг мэдэж, зөв талбаруудыг нээж өгдөг"
+        },
+        {
+          "mn": "Объектыг хурдан хувилахын тулд"
+        },
+        {
+          "mn": "Зөвхөн гоо сайхны үүрэгтэй, ямар ч нөлөөгүй"
+        },
+        {
+          "mn": "Функцийг олон удаа дуудахыг зөвшөөрдөг"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "`kind` бол ялгагч (discriminant) талбар. `action.kind === \"add\"` гэдгийг шалгамагц TypeScript `action`-ийг `add` хувилбар болгон нарийсгаж, `name`, `price`-г аюулгүй нээнэ."
+      },
+      "hint": {
+        "mn": "`switch (action.kind)`-ийн `case`-ийн дотор ямар талбарууд нээгдэхийг бод."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`default` салаа дахь `const _exhaustive: never = action;` юуг баталгаажуулдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`action`-ийг `string` болгон хувиргадаг"
+        },
+        {
+          "mn": "Функцийг хурдан ажиллуулдаг"
+        },
+        {
+          "mn": "Бүх `kind` хувилбарыг хамарсан эсэхийг — салаа мартвал хөрвүүлэгч алдаа өгнө"
+        },
+        {
+          "mn": "Console-д мессеж хэвлэдэг"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "Бүх хувилбарыг зохицуулсан бол `default`-д `action` нь `never` болно. Хэрэв шинэ `kind` нэмээд салаа нэмэхээ мартвал `action` нь `never` биш болж, `never`-т оноох мөр алдаа өгч сануулна — энэ бол бүрэн хамралтын (exhaustiveness) шалгалт."
+      },
+      "hint": {
+        "mn": "Бүх хувилбар зохицуулагдсан үед `action` ямар төрөл болох вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}
