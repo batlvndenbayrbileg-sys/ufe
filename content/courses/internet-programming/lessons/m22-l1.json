@@ -1,0 +1,329 @@
+{
+  "id": "m22-l1",
+  "moduleId": "m22-orchestration",
+  "slug": "reconcile",
+  "order": 1,
+  "title": {
+    "mn": "Хүссэн төлөв (reconcile)"
+  },
+  "why": {
+    "mn": "Kubernetes зэрэг orchestrator нь «хэдэн хувь (replica) ажиллах ёстой»-г заавал биелүүлдэг. Одоогийн байдлыг хүссэн байдалтай харьцуулж, зөрүүг арилгах үйлдлүүдийг (нэмэх/хасах) гаргадаг — үүнийг reconcile гэнэ."
+  },
+  "buildsInProject": "Reconcile шийдвэрлэгч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "devops",
+    "javascript"
+  ],
+  "concepts": [
+    "desired state",
+    "reconciliation",
+    "replicas",
+    "control loop"
+  ],
+  "prerequisites": [
+    "m19-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — Orchestration</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — Orchestration</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/orchestrate.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/orchestrate.js",
+        "content": "// reconcile(desired, currentPods): хүссэн тоонд хүрэх ҮЙЛДЛҮҮДИЙГ гарга.\n// Дутуу бол \"create\", илүү бол \"delete\" үйлдэл.\n// [{ action, pod }] жагсаалт буцаа.\n\nfunction reconcile(desired, currentPods) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Orchestration турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\nwindow.SCALE_UP = reconcile(3, [\"pod-1\"]);\nwindow.SCALE_DOWN = reconcile(1, [\"pod-1\", \"pod-2\", \"pod-3\"]);\nwindow.STABLE = reconcile(2, [\"pod-1\", \"pod-2\"]);\n\npanel(\"ok\", \"up\", \"1 → 3 (өсгөх)\", [JSON.stringify(window.SCALE_UP)]);\npanel(\"ok\", \"down\", \"3 → 1 (багасгах)\", [JSON.stringify(window.SCALE_DOWN)]);\npanel(\"ok\", \"stable\", \"2 → 2 (тогтвортой)\", [JSON.stringify(window.STABLE)]);\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/orchestrate.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/orchestrate.js"
+    ],
+    "activeFile": "src/orchestrate.js"
+  },
+  "tasks": [
+    {
+      "id": "m22-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хүссэн төлөв (reconcile)"
+      },
+      "statement": {
+        "mn": "`reconcile(desired, currentPods)`-ыг бич. `currentPods` нь ажиллаж буй pod нэрсийн жагсаалт. 1) Одоогийнх дутуу бол дутуу тоогоор `{ action: \"create\", pod: \"pod-N\" }` нэм. 2) Илүү бол илүү тоогоор `{ action: \"delete\", pod }` нэм. 3) Тэнцүү бол хоосон жагсаалт. Үйлдлүүдийн жагсаалт буцаа."
+      },
+      "requirements": [
+        {
+          "mn": "Дутуу → create үйлдэл"
+        },
+        {
+          "mn": "Илүү → delete үйлдэл"
+        },
+        {
+          "mn": "Тэнцүү → хоосон"
+        },
+        {
+          "mn": "Зөрүүний тоогоор үйлдэл"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "1→3 нь 2 create; 3→1 нь 2 delete; 2→2 нь үйлдэлгүй."
+        }
+      },
+      "targetFile": "src/orchestrate.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/orchestrate.js",
+            "kind": "function",
+            "name": "reconcile"
+          },
+          "onFail": {
+            "mn": "`reconcile` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.SCALE_UP.length",
+                  "equals": 2
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "1-ээс 3 болоход 2 pod нэмэх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.SCALE_UP[0].action",
+                  "equals": "create"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дутуу үед `create` үйлдэл гарна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.SCALE_DOWN.length",
+                  "equals": 2
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "3-аас 1 болоход 2 pod хасах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.SCALE_DOWN[0].action",
+                  "equals": "delete"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Илүү үед `delete` үйлдэл гарна."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.STABLE.length",
+                  "equals": 0
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хүссэн = одоогийн бол үйлдэл гарахгүй."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Orchestrator бол «хүссэн төлөв»-ийг байнга барих давталт (control loop): одоогийн байдлыг хүссэнтэй харьцуулж зөрүүг арилгана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Зөвхөн ЗӨРҮҮГ засах үйлдэл гарга: дутуу бол хэд дутуугаараа create, илүү бол илүүгээрээ delete."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гүйцээ:"
+          },
+          "code": "if (currentPods.length < desired) {\n  for (let i = currentPods.length; i < desired; i++) actions.push({ action: \"create\", pod: \"pod-\" + (i + 1) });\n} else if (currentPods.length > desired) {\n  for (let i = currentPods.length; i > desired; i--) actions.push({ action: \"delete\", pod: currentPods[i - 1] });\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/orchestrate.js",
+            "content": "function reconcile(desired, currentPods) {\n  const actions = [];\n  if (currentPods.length < desired) {\n    for (let i = currentPods.length; i < desired; i++) {\n      actions.push({ action: \"create\", pod: \"pod-\" + (i + 1) });\n    }\n  } else if (currentPods.length > desired) {\n    for (let i = currentPods.length; i > desired; i--) {\n      actions.push({ action: \"delete\", pod: currentPods[i - 1] });\n    }\n  }\n  return actions;\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Reconciliation бол Kubernetes-ийн зүрх: чи «юу байхыг хүсэж байгаагаа» (3 replica) зарлана, orchestrator түүнийг хэрхэн биелүүлэхийг өөрөө бодно. Pod унавал автоматаар шинийг үүсгэж, байнга хүссэн төлөв рүү «түлхдэг» — энэ нь өөрийгөө засдаг систем болгодог."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Kubernetes-д «reconciliation» гэж юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Одоогийн төлөвийг хүссэн төлөвтэй харьцуулж, зөрүүг арилгах давталт"
+        },
+        {
+          "mn": "Кодыг эрэмбэлэх"
+        },
+        {
+          "mn": "Логыг устгах"
+        },
+        {
+          "mn": "Өнгө сонгох"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Orchestrator одоогийн ба хүссэн төлөвийн зөрүүг байнга илрүүлж, түүнийг арилгах үйлдэл хийдэг."
+      },
+      "hint": {
+        "mn": "«Хүссэн» ба «одоогийн» хоёрын юуг арилгах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Хэрэв pod унаж, ажиллаж буй тоо хүссэнээс дутвал orchestrator юу хийх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Юу ч хийхгүй"
+        },
+        {
+          "mn": "Бүгдийг устгана"
+        },
+        {
+          "mn": "Хүссэн тоонд хүрэх хүртэл шинэ pod автоматаар үүсгэнэ"
+        },
+        {
+          "mn": "Сервер унтраана"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "Control loop нь дутууг илрүүлж, хүссэн тоонд хүртэл шинэ pod үүсгэдэг — өөрийгөө засдаг."
+      },
+      "hint": {
+        "mn": "«Хүссэн төлөв»-ийг барихын тулд дутуу үед юу хийх вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

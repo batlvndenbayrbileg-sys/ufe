@@ -1,0 +1,328 @@
+{
+  "id": "m21-l3",
+  "moduleId": "m21-performance",
+  "slug": "pagination",
+  "order": 3,
+  "title": {
+    "mn": "Хуудаслалт (pagination)"
+  },
+  "why": {
+    "mn": "10,000 бараатай Shop.mn-ий бүх барааг нэг дор татвал хуудас удаан ачаалагдаж, сервер ачаална. Хуудаслалт нь өгөгдлийг хэсэгчлэн (хуудас бүрд 20) татаж, хэрэглэгчийн харах хэсгийг л дамжуулна."
+  },
+  "buildsInProject": "Хуудаслалтын тооцоолол",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "javascript"
+  ],
+  "concepts": [
+    "pagination",
+    "slice",
+    "total pages",
+    "hasNext"
+  ],
+  "prerequisites": [
+    "m21-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — Performance</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — Performance</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/perf.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/perf.js",
+        "content": "// paginate(items, page, perPage): нэг хуудасны өгөгдөл + мета мэдээлэл.\n// page нь 1-ээс эхэлнэ. { items, page, perPage, total, totalPages, hasNext } буцаа.\n\nfunction paginate(items, page, perPage) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Performance турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\nconst all = [];\nfor (let i = 1; i <= 23; i++) all.push(i);\n\nwindow.P2 = paginate(all, 2, 10);\nwindow.P3 = paginate(all, 3, 10);\n\npanel(\"ok\", \"p2\", \"Хуудас 2/3\", [JSON.stringify(window.P2)]);\npanel(\"ok\", \"p3\", \"Хуудас 3/3 (сүүлчийн)\", [JSON.stringify(window.P3)]);\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/perf.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/perf.js"
+    ],
+    "activeFile": "src/perf.js"
+  },
+  "tasks": [
+    {
+      "id": "m21-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хуудаслалт (pagination)"
+      },
+      "statement": {
+        "mn": "`paginate(items, page, perPage)`-ыг бич (`page` нь 1-ээс эхэлнэ). 1) `total` = нийт тоо. 2) `totalPages` = `Math.ceil(total / perPage)`. 3) `items` = зөвхөн энэ хуудасны зүсэм (`slice`). 4) `hasNext` = дараагийн хуудас байгаа эсэх. `{ items, page, perPage, total, totalPages, hasNext }` буцаа."
+      },
+      "requirements": [
+        {
+          "mn": "Зөв зүсмийг тайрна (slice)"
+        },
+        {
+          "mn": "`totalPages`-ыг тооцно"
+        },
+        {
+          "mn": "`hasNext`-ийг зөв гаргана"
+        },
+        {
+          "mn": "Мета талбаруудыг буцаана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "23 барааг 10-аар хуудаслахад: хуудас 2 → 10 бараа (11-20), hasNext true; хуудас 3 → 3 бараа, hasNext false."
+        }
+      },
+      "targetFile": "src/perf.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/perf.js",
+            "kind": "function",
+            "name": "paginate"
+          },
+          "onFail": {
+            "mn": "`paginate` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.P2.items.length",
+                  "equals": 10
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хоёрдугаар хуудас 10 элементтэй байх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.P2.items[0]",
+                  "equals": 11
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хоёрдугаар хуудас 11-ээс эхлэх ёстой (`(page-1)*perPage`)."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.P2.totalPages",
+                  "equals": 3
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "23 элемент / 10 = 3 хуудас (`Math.ceil`)."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.P2.hasNext",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хоёрдугаар хуудсанд дараагийнх байгаа тул `hasNext` = true."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.P3.hasNext",
+                  "equals": false
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Сүүлчийн хуудсанд `hasNext` = false."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Бүх өгөгдлийг нэг дор татах шаардлагагүй — хэрэглэгч нэг удаад нэг хуудас л хардаг. Зөвхөн тэр зүсмийг тат."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Эхлэх индекс нь `(page - 1) * perPage`. `slice(start, start + perPage)` нь тухайн хуудсыг өгнө. `hasNext` нь `page < totalPages`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гүйцээ:"
+          },
+          "code": "const total = items.length;\nconst totalPages = Math.ceil(total / perPage);\nconst start = (page - 1) * perPage;\nreturn { items: items.slice(start, start + perPage), page, perPage, total, totalPages, hasNext: page < totalPages };"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/perf.js",
+            "content": "function paginate(items, page, perPage) {\n  const total = items.length;\n  const totalPages = Math.ceil(total / perPage);\n  const start = (page - 1) * perPage;\n  const pageItems = items.slice(start, start + perPage);\n  return {\n    items: pageItems,\n    page: page,\n    perPage: perPage,\n    total: total,\n    totalPages: totalPages,\n    hasNext: page < totalPages,\n  };\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Хуудаслалт нь клиент ба сервер хоёуланд ачааллыг бууруулна: сүлжээгээр бага өгөгдөл, хөтөч дээр бага DOM. Бодит API-д энэ нь ихэвчлэн SQL-ийн `LIMIT`/`OFFSET` (эсвэл cursor) болж хувирдаг — зарчим ижил: хэрэгтэй зүсмийг л дамжуул."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "javascript"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "10,000 бараатай жагсаалтыг харуулахад pagination яагаад чухал вэ?"
+      },
+      "options": [
+        {
+          "mn": "Бүгдийг нэг дор татахгүй — хуудас, сүлжээ, DOM-ын ачааллыг бууруулна"
+        },
+        {
+          "mn": "Барааг эрэмбэлэх гэж"
+        },
+        {
+          "mn": "Өнгө нэмэх гэж"
+        },
+        {
+          "mn": "Нууц үг хамгаалах гэж"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Зөвхөн харагдах хуудсыг татаж дамжуулснаар ачаалал болон DOM-ын хэмжээ эрс багасна."
+      },
+      "hint": {
+        "mn": "10,000-ыг нэг дор татах уу, эсвэл хэсэгчлэх үү?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Бодит API-д pagination ихэвчлэн SQL-ийн юу болж хувирдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`DROP TABLE`"
+        },
+        {
+          "mn": "`LIMIT` / `OFFSET` (эсвэл cursor)"
+        },
+        {
+          "mn": "`CREATE INDEX`"
+        },
+        {
+          "mn": "`GRANT`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`LIMIT`/`OFFSET` нь өгөгдлийн сангаас зөвхөн хэрэгтэй зүсмийг татдаг — хуудаслалтын серверийн хувилбар."
+      },
+      "hint": {
+        "mn": "Аль SQL түлхүүр үг нь «хэдэн мөр, хаанаас» гэдгийг заадаг вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

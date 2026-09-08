@@ -1,0 +1,288 @@
+{
+  "id": "m21-l2",
+  "moduleId": "m21-performance",
+  "slug": "batch-loader",
+  "order": 2,
+  "title": {
+    "mn": "N+1-ийг багцлах (batch)"
+  },
+  "why": {
+    "mn": "Захиалгын жагсаалт харуулахдаа захиалга бүрийн хэрэглэгчийг тус тусад нь татвал 100 захиалгад 100 хүсэлт болно (N+1 асуудал). Оронд нь бүх id-г цуглуулж НЭГ л удаа багцаар татвал сервер хамаагүй хурдан."
+  },
+  "buildsInProject": "Багц ачаалагч (dataloader)",
+  "difficulty": "advanced",
+  "estimatedMinutes": 20,
+  "skills": [
+    "javascript"
+  ],
+  "concepts": [
+    "N+1 problem",
+    "batching",
+    "dataloader",
+    "deduplication"
+  ],
+  "prerequisites": [
+    "m21-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — Performance</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — Performance</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/perf.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/perf.js",
+        "content": "// batchGet(ids, loader): олон id-г НЭГ л loader дуудлагаар тат.\n// Давхардсан id-г ялгаж (unique) нэг удаа ач, дараа нь бүх id-д тааруул.\n// loader(uniqueIds) → [{ id, ... }] буцаана.\n\nfunction batchGet(ids, loader) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Performance турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\nlet loaderCalls = 0;\nfunction loader(ids) {\n  loaderCalls = loaderCalls + 1;\n  return ids.map((id) => ({ id: id, name: \"Хэрэглэгч \" + id }));\n}\n\nwindow.RESULT = batchGet([1, 2, 2, 3], loader);\nwindow.LOADER_CALLS = loaderCalls;\n\npanel(\"ok\", \"res\", \"Багц ачаалалт\", [\"loader дуудлага: \" + window.LOADER_CALLS, JSON.stringify(window.RESULT, null, 2)]);\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/perf.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/perf.js"
+    ],
+    "activeFile": "src/perf.js"
+  },
+  "tasks": [
+    {
+      "id": "m21-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "N+1-ийг багцлах (batch)"
+      },
+      "statement": {
+        "mn": "`batchGet(ids, loader)`-ыг бич. 1) `ids` доторх давхардлыг арилга (unique). 2) `loader`-ыг НЭГ л удаа, бүх unique id-аар дууд — `[{ id, ... }]` буцаана. 3) Үр дүнг id-аар нь `Map` болгож, ЭХНИЙ `ids`-ийн дараалалд (давхардал орно) тааруулж буцаа."
+      },
+      "requirements": [
+        {
+          "mn": "Давхардлыг арилгана"
+        },
+        {
+          "mn": "`loader`-ыг нэг л удаа дуудна"
+        },
+        {
+          "mn": "id-аар тааруулна"
+        },
+        {
+          "mn": "Анхны дараалал/давхардлыг хадгална"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "`[1,2,2,3]`-д loader НЭГ л удаа дуудагдаж, 4 элемент (давхардалтай) буцна."
+        }
+      },
+      "targetFile": "src/perf.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/perf.js",
+            "kind": "function",
+            "name": "batchGet"
+          },
+          "onFail": {
+            "mn": "`batchGet` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.LOADER_CALLS",
+                  "equals": 1
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`loader` нь N удаа биш, НЭГ л удаа дуудагдах ёстой (N+1-ийг багцал)."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULT.length",
+                  "equals": 4
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Үр дүн нь анхны `ids`-ийн урттай (давхардал орсон) байх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULT[1].name",
+                  "equals": "Хэрэглэгч 2"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "id бүрийг зөв мөрлүү нь тааруулах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "N+1 асуудал: нэг жагсаалт (1) + элемент бүрд нэг хүсэлт (N). Шийдэл нь бүх хэрэгтэйг цуглуулаад НЭГ багц хүсэлт."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`new Set` давхардлыг арилгана. Дараа нь буцах үр дүнг `Map`-аар id → мөр болгож, анхны `ids`-ийн дарааллаар буцаа."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гурван алхам:"
+          },
+          "code": "const unique = [...new Set(ids)];\nconst rows = loader(unique);\nconst byId = new Map(rows.map((r) => [r.id, r]));\nreturn ids.map((id) => byId.get(id));"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/perf.js",
+            "content": "function batchGet(ids, loader) {\n  const unique = [...new Set(ids)];\n  const rows = loader(unique);\n  const byId = new Map(rows.map((r) => [r.id, r]));\n  return ids.map((id) => byId.get(id));\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "N+1 асуудал бол өгөгдлийн сан удаашрах хамгийн түгээмэл шалтгаан. GraphQL-ийн DataLoader, SQL-ийн `WHERE id IN (...)` нь бүгд энэ санаа — олон бие даасан хүсэлтийг нэг багц болгож, сүлжээ/сангийн эргэлтийн тоог эрс бууруулна."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "javascript"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "«N+1 асуудал» гэж юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Нэг жагсаалт татаад, элемент тус бүрд нэг нэмэлт хүсэлт (нийт N+1) илгээх"
+        },
+        {
+          "mn": "Нэгээр их санах ой"
+        },
+        {
+          "mn": "Нэг мөр илүү код"
+        },
+        {
+          "mn": "Нэг секунд удаах"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Жагсаалт (1) + элемент бүрд хүсэлт (N) = N+1 хүсэлт — багцлаж 2 болгож бууруулна."
+      },
+      "hint": {
+        "mn": "Яагаад «N+1» гэж нэрлэдэг вэ — нэг ба хэд вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "N+1-ийг хэрхэн шийддэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Илүү хүчирхэг сервер авах"
+        },
+        {
+          "mn": "Хэрэгтэй бүх id-г цуглуулаад НЭГ багц хүсэлтээр татах"
+        },
+        {
+          "mn": "Хүсэлт бүрийг 2 дахин илгээх"
+        },
+        {
+          "mn": "Кэшийг устгах"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Олон бие даасан хүсэлтийг нэг багц (`IN (...)` эсвэл DataLoader) болгож нэгтгэнэ."
+      },
+      "hint": {
+        "mn": "Олон жижиг хүсэлтийг юу болгож нэгтгэвэл дээр вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,289 @@
+{
+  "id": "m22-l4",
+  "moduleId": "m22-orchestration",
+  "slug": "autoscale",
+  "order": 4,
+  "title": {
+    "mn": "Автомат масштаб (autoscaling)"
+  },
+  "why": {
+    "mn": "Хямдралын үеэр Shop.mn-ий ачаалал огцом нэмэгдэж болно. Autoscaler (HPA) нь CPU ачааллыг хараад replica-ийн тоог автоматаар нэмж/хасдаг — ачаалалтай үед олон, чөлөөтэй үед цөөн, зардлыг хэмнэнэ."
+  },
+  "buildsInProject": "Autoscaler тооцоолол",
+  "difficulty": "advanced",
+  "estimatedMinutes": 20,
+  "skills": [
+    "devops",
+    "javascript"
+  ],
+  "concepts": [
+    "autoscaling",
+    "HPA",
+    "CPU utilization",
+    "min/max clamp"
+  ],
+  "prerequisites": [
+    "m22-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — Orchestration</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — Orchestration</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/orchestrate.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/orchestrate.js",
+        "content": "// desiredReplicas(current, currentCpu, targetCpu, min, max):\n// HPA томьёо: хүссэн = ceil(current * currentCpu / targetCpu), дараа нь [min, max]-д хязгаарла.\n\nfunction desiredReplicas(current, currentCpu, targetCpu, min, max) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Orchestration турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\n// 2 replica, CPU 90%, зорилт 50% → өсгөнө.\nwindow.UP = desiredReplicas(2, 90, 50, 1, 10);\n// 4 replica, CPU 20%, зорилт 50% → багасгана.\nwindow.DOWN = desiredReplicas(4, 20, 50, 1, 10);\n// 5 replica, CPU 200%, зорилт 50% → max-д хязгаарлагдана.\nwindow.CLAMP = desiredReplicas(5, 200, 50, 1, 6);\n\npanel(\"ok\", \"up\", \"Ачаалал өндөр\", [\"desiredReplicas → \" + window.UP]);\npanel(\"ok\", \"down\", \"Ачаалал бага\", [\"desiredReplicas → \" + window.DOWN]);\npanel(\"ok\", \"clamp\", \"max-д хязгаарлагдсан\", [\"desiredReplicas → \" + window.CLAMP]);\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/orchestrate.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/orchestrate.js"
+    ],
+    "activeFile": "src/orchestrate.js"
+  },
+  "tasks": [
+    {
+      "id": "m22-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Автомат масштаб (autoscaling)"
+      },
+      "statement": {
+        "mn": "`desiredReplicas(current, currentCpu, targetCpu, min, max)`-ыг бич. HPA томьёо: `Math.ceil(current * (currentCpu / targetCpu))` — CPU зорилтоос давбал өсгөж, доор бол багасгана. Дараа нь үр дүнг `[min, max]` хооронд хязгаарла (`Math.max`/`Math.min`)."
+      },
+      "requirements": [
+        {
+          "mn": "HPA томьёог хэрэглэнэ"
+        },
+        {
+          "mn": "Дээш бол нэмнэ"
+        },
+        {
+          "mn": "Доош бол хасна"
+        },
+        {
+          "mn": "min/max-д хязгаарлана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "2 replica·90%/50% → 4; 4·20%/50% → 2; 5·200%/50% max 6 → 6 (хязгаарлагдсан)."
+        }
+      },
+      "targetFile": "src/orchestrate.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/orchestrate.js",
+            "kind": "function",
+            "name": "desiredReplicas"
+          },
+          "onFail": {
+            "mn": "`desiredReplicas` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.UP",
+                  "equals": 4
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "2 replica · 90/50 = ceil(3.6) = 4 (өсгөх)."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.DOWN",
+                  "equals": 2
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "4 replica · 20/50 = ceil(1.6) = 2 (багасгах)."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.CLAMP",
+                  "equals": 6
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "5 · 200/50 = 20 боловч max=6 тул 6-д хязгаарлагдана."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Autoscaler зорилтот CPU-г барих гэж оролддог: одоогийн ачаалал зорилтоос ХОЁР дахин их бол replica-г ойролцоогоор хоёр дахин нэмнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Харьцаа `currentCpu / targetCpu`-г одоогийн replica-д үржүүл, дээш нь бүхэлчил (`Math.ceil`). Эцэст нь `min`/`max`-д багтаа."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гүйцээ:"
+          },
+          "code": "const raw = Math.ceil(current * (currentCpu / targetCpu));\nreturn Math.max(min, Math.min(max, raw));"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/orchestrate.js",
+            "content": "function desiredReplicas(current, currentCpu, targetCpu, min, max) {\n  const raw = Math.ceil(current * (currentCpu / targetCpu));\n  return Math.max(min, Math.min(max, raw));\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Kubernetes-ийн HorizontalPodAutoscaler (HPA) яг энэ томьёог ашигладаг: хэмжигдэхүүн (CPU) зорилтоос давбал replica нэмж, доор бол хасна. `min`/`max` хязгаар нь зардлыг хязгаарлаж (max), доод үйлчилгээг баталгаажуулдаг (min) — ачаалалд дасан зохицсон, зардал хэмнэсэн систем болгодог."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Autoscaler (HPA) replica-ийн тоог юун дээр үндэслэн өөрчилдөг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хэмжигдэхүүн (жишээ нь CPU ачаалал) зорилтот түвшнээс хэр зөрснөөр"
+        },
+        {
+          "mn": "Гарагаар"
+        },
+        {
+          "mn": "Кодын мөрийн тоогоор"
+        },
+        {
+          "mn": "Санамсаргүйгээр"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "HPA нь CPU зэрэг хэмжигдэхүүнийг зорилттой харьцуулж replica-ийн тоог нэмж/хасдаг."
+      },
+      "hint": {
+        "mn": "Ачаалал ихсэхэд юу хэмжиж, юуг нэмэх вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`min`/`max` хязгаар autoscaling-д яагаад хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Өнгө сонгох гэж"
+        },
+        {
+          "mn": "Зардлыг хязгаарлаж (max), доод үйлчилгээг баталгаажуулж (min)"
+        },
+        {
+          "mn": "Кодыг богиносгох гэж"
+        },
+        {
+          "mn": "Ямар ч хэрэггүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`max` нь хэт олон replica-гаас (өндөр зардал) сэргийлж, `min` нь үргэлж хамгийн багадаа хэдэн replica ажиллахыг баталгаажуулна."
+      },
+      "hint": {
+        "mn": "Хязгааргүй бол зардал юу болох вэ; 0 replica бол үйлчилгээ юу болох вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

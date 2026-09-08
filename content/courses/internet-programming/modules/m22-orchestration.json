@@ -1,0 +1,18 @@
+{
+  "id": "m22-orchestration",
+  "stageId": "s9",
+  "order": 5,
+  "title": {
+    "mn": "Orchestration: контейнер удирдлага"
+  },
+  "description": {
+    "mn": "Хүссэн төлөв (reconcile), ачаалал хуваарилалт, rolling update, автомат масштаб — олон replica-г удирдах."
+  },
+  "estimatedHours": 2,
+  "lessons": [
+    "m22-l1",
+    "m22-l2",
+    "m22-l3",
+    "m22-l4"
+  ]
+}

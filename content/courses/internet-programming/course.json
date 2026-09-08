@@ -113,7 +113,8 @@
         "m13-deploy",
         "m18-cicd",
         "m19-docker",
-        "m20-monitoring"
+        "m20-monitoring",
+        "m22-orchestration"
       ]
     },
     {
@@ -124,7 +125,8 @@
       },
       "badgeId": "test-writer",
       "moduleIds": [
-        "m14-testing"
+        "m14-testing",
+        "m21-performance"
       ]
     },
     {

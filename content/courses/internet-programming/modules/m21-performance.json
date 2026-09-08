@@ -1,0 +1,18 @@
+{
+  "id": "m21-performance",
+  "stageId": "s10",
+  "order": 2,
+  "title": {
+    "mn": "Performance: хурдны оновчлол"
+  },
+  "description": {
+    "mn": "Memoize, N+1-ийг багцлах, хуудаслалт, виртуал жагсаалт — клиент ба серверийн ачааллыг бууруулах."
+  },
+  "estimatedHours": 2,
+  "lessons": [
+    "m21-l1",
+    "m21-l2",
+    "m21-l3",
+    "m21-l4"
+  ]
+}

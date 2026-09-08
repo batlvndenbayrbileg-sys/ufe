@@ -1,0 +1,288 @@
+{
+  "id": "m21-l4",
+  "moduleId": "m21-performance",
+  "slug": "virtual-list",
+  "order": 4,
+  "title": {
+    "mn": "Виртуал жагсаалт (windowing)"
+  },
+  "why": {
+    "mn": "10,000 мөрийг бүгдийг DOM-д зурвал хөтөч гацна. Виртуал жагсаалт нь ЗӨВХӨН харагдах цонхон дахь мөрүүдийг л зурдаг — скролл хийхэд харагдах мужаа дахин тооцоолно."
+  },
+  "buildsInProject": "Харагдах мужийн тооцоолол",
+  "difficulty": "advanced",
+  "estimatedMinutes": 20,
+  "skills": [
+    "javascript"
+  ],
+  "concepts": [
+    "virtualization",
+    "windowing",
+    "visible range",
+    "DOM cost"
+  ],
+  "prerequisites": [
+    "m21-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — Performance</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — Performance</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/perf.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/perf.js",
+        "content": "// visibleRange(scrollTop, rowHeight, viewportHeight, total):\n// одоо ХАРАГДАЖ буй мөрүүдийн эхлэл ба төгсгөлийн индексийг тооцоол.\n// { start, end } буцаа (end нь total-ээс хэтрэхгүй).\n\nfunction visibleRange(scrollTop, rowHeight, viewportHeight, total) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Performance турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\n// Дээд хэсэг: 200px скролл, мөр 40px, цонх 400px, нийт 1000 мөр.\nwindow.RANGE = visibleRange(200, 40, 400, 1000);\n// Хамгийн доод хэсэг: end нь нийтээс хэтрэхгүй.\nwindow.RANGE_END = visibleRange(39600, 40, 400, 1000);\n\npanel(\"ok\", \"top\", \"Харагдах муж (дээр)\", [JSON.stringify(window.RANGE)]);\npanel(\"ok\", \"bot\", \"Харагдах муж (доор — хязгаарлагдсан)\", [JSON.stringify(window.RANGE_END)]);\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/perf.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/perf.js"
+    ],
+    "activeFile": "src/perf.js"
+  },
+  "tasks": [
+    {
+      "id": "m21-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Виртуал жагсаалт (windowing)"
+      },
+      "statement": {
+        "mn": "`visibleRange(scrollTop, rowHeight, viewportHeight, total)`-ыг бич. 1) `start` = `Math.floor(scrollTop / rowHeight)` (хэдэн мөр дээрээс скролл хийсэн). 2) харагдах мөрийн тоо = `Math.ceil(viewportHeight / rowHeight)`. 3) `end` = `start + count`, гэхдээ `total - 1`-ээс ХЭТРЭХГҮЙ (`Math.min`). `{ start, end }` буцаа."
+      },
+      "requirements": [
+        {
+          "mn": "start-ыг scrollTop-оос тооцно"
+        },
+        {
+          "mn": "Харагдах мөрийн тоог гаргана"
+        },
+        {
+          "mn": "end нь total-д хязгаарлагдана"
+        },
+        {
+          "mn": "`{ start, end }` буцаана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "scrollTop 200, мөр 40, цонх 400 → start 5, end 15; доод хэсэгт end нь 999-д хязгаарлагдана."
+        }
+      },
+      "targetFile": "src/perf.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/perf.js",
+            "kind": "function",
+            "name": "visibleRange"
+          },
+          "onFail": {
+            "mn": "`visibleRange` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RANGE.start",
+                  "equals": 5
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "200 / 40 = 5 мөрийг алгассан тул `start` = 5."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RANGE.end",
+                  "equals": 15
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "5 + ceil(400/40)=10 → `end` = 15."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RANGE_END.end",
+                  "equals": 999
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`end` нь `total - 1` (999)-ээс хэтрэх ёсгүй."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Хэрэглэгч нэг удаад цонхонд багтах хэдхэн мөрийг л хардаг. 10,000 мөрийг бүгдийг зурах шаардлагагүй — зөвхөн харагдахыг нь."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`scrollTop / rowHeight` нь хэдэн мөр дээрээс эхэлснийг өгнө. Цонхны өндөр / мөрийн өндөр нь хэдэн мөр багтахыг өгнө. Төгсгөлийг `total`-д хязгаарла."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гүйцээ:"
+          },
+          "code": "const start = Math.floor(scrollTop / rowHeight);\nconst count = Math.ceil(viewportHeight / rowHeight);\nconst end = Math.min(total - 1, start + count);\nreturn { start, end };"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/perf.js",
+            "content": "function visibleRange(scrollTop, rowHeight, viewportHeight, total) {\n  const start = Math.floor(scrollTop / rowHeight);\n  const count = Math.ceil(viewportHeight / rowHeight);\n  const end = Math.min(total - 1, start + count);\n  return { start: start, end: end };\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Виртуалчлал (windowing) нь урт жагсаалтын хамгийн үр дүнтэй оновчлол: DOM-д зөвхөн ~15 мөр байнга байх тул 10,000 мөр ч гэсэн жигд скролл хийнэ. `react-window`, `react-virtualized` зэрэг сан нь яг энэ харагдах мужийн тооцоолол дээр суурилдаг."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "javascript"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Виртуал жагсаалт (windowing) юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Бүх 10,000 мөрийг DOM-д зурна"
+        },
+        {
+          "mn": "Зөвхөн харагдах цонхон дахь хэдхэн мөрийг л DOM-д зурна"
+        },
+        {
+          "mn": "Мөрүүдийг устгана"
+        },
+        {
+          "mn": "Өнгө өөрчилнө"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Зөвхөн харагдах мужийн мөрүүдийг зурснаар DOM жижиг үлдэж, урт жагсаалт ч жигд ажиллана."
+      },
+      "hint": {
+        "mn": "Хэрэглэгч нэг дор бүх мөрийг харж чадах уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Виртуал жагсаалтыг яагаад ашигладаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "10,000 DOM элемент хөтчийг гацаадаг тул зөвхөн харагдахыг зурж хурдтай байлгах"
+        },
+        {
+          "mn": "Өгөгдлийг эрэмбэлэх гэж"
+        },
+        {
+          "mn": "Сервер шаарддаг тул"
+        },
+        {
+          "mn": "CSS хэрэггүй болгох гэж"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Олон мянган DOM элемент удаашрал үүсгэдэг; харагдахыг нь л зурснаар жигд гүйдэлтэй болно."
+      },
+      "hint": {
+        "mn": "Мянга мянган DOM зангилаа хөтөчид ямар нөлөөтэй вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,309 @@
+{
+  "id": "m22-l3",
+  "moduleId": "m22-orchestration",
+  "slug": "rolling-update",
+  "order": 3,
+  "title": {
+    "mn": "Rolling update"
+  },
+  "why": {
+    "mn": "Шинэ хувилбар гаргахдаа бүх replica-г зэрэг унтраавал сайт бүтэн доош ордог. Rolling update нь тэдгээрийг ЖИЖИГ багцаар (batch) ээлжлэн шинэчилдэг тул зарим нь үргэлж ажиллаж, downtime гарахгүй."
+  },
+  "buildsInProject": "Rolling update багцлагч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "devops",
+    "javascript"
+  ],
+  "concepts": [
+    "rolling update",
+    "zero downtime",
+    "batch (maxUnavailable)",
+    "deployment"
+  ],
+  "prerequisites": [
+    "m22-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — Orchestration</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — Orchestration</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/orchestrate.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/orchestrate.js",
+        "content": "// rollingBatches(pods, batchSize): pod-уудыг ЖИЖИГ БАГЦААР шинэчлэх төлөвлөгөө.\n// Нэг дор batchSize-аас илүүг унтраахгүй. Багцуудын жагсаалт (жагсаалтын жагсаалт) буцаа.\n\nfunction rollingBatches(pods, batchSize) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Orchestration турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\nconst pods = [\"pod-1\", \"pod-2\", \"pod-3\", \"pod-4\", \"pod-5\"];\nwindow.BATCHES = rollingBatches(pods, 2);\n\npanel(\"ok\", \"batches\", \"Rolling багцууд (2-оор)\", [JSON.stringify(window.BATCHES)]);\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/orchestrate.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/orchestrate.js"
+    ],
+    "activeFile": "src/orchestrate.js"
+  },
+  "tasks": [
+    {
+      "id": "m22-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Rolling update"
+      },
+      "statement": {
+        "mn": "`rollingBatches(pods, batchSize)`-ыг бич. `pods`-ыг дараалсан, тус бүр хамгийн ихдээ `batchSize` элементтэй БАГЦУУДАД хуваа. Багцуудын жагсаалт (массивуудын массив) буцаа. Ингэснээр нэг дор `batchSize`-аас илүү pod унтрахгүй."
+      },
+      "requirements": [
+        {
+          "mn": "Дараалсан багцад хуваана"
+        },
+        {
+          "mn": "Багц бүр ≤ batchSize"
+        },
+        {
+          "mn": "Сүүлчийн багц бага байж болно"
+        },
+        {
+          "mn": "Массивуудын массив буцаана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "5 pod-ыг 2-оор багцлахад: [[pod-1,pod-2],[pod-3,pod-4],[pod-5]] — 3 багц."
+        }
+      },
+      "targetFile": "src/orchestrate.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/orchestrate.js",
+            "kind": "function",
+            "name": "rollingBatches"
+          },
+          "onFail": {
+            "mn": "`rollingBatches` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.BATCHES.length",
+                  "equals": 3
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "5 pod-ыг 2-оор багцлахад 3 багц гарна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.BATCHES[0].length",
+                  "equals": 2
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Эхний багц 2 pod-той байх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.BATCHES[2].length",
+                  "equals": 1
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Сүүлчийн багц үлдсэн 1 pod-той."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(window.BATCHES[0])",
+                  "equals": "[\"pod-1\",\"pod-2\"]"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Багцууд pod-уудыг дараалан агуулах ёстой."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Бүх replica-г зэрэг шинэчилвэл сайт доош ордог. Жижиг багцаар шинэчилбэл зарим нь үргэлж ажиллаж, хэрэглэгч тасалдал мэдрэхгүй."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`batchSize`-ийн алхамтайгаар давтаж, `slice`-ээр зүсмүүд авна. Сүүлчийнх нь дутуу байж болно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гүйцээ:"
+          },
+          "code": "for (let i = 0; i < pods.length; i += batchSize) {\n  batches.push(pods.slice(i, i + batchSize));\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/orchestrate.js",
+            "content": "function rollingBatches(pods, batchSize) {\n  const batches = [];\n  for (let i = 0; i < pods.length; i += batchSize) {\n    batches.push(pods.slice(i, i + batchSize));\n  }\n  return batches;\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Rolling update нь «zero-downtime deploy»-ийн үндэс: replica-уудыг багц багцаар шинэчилж, шинэ багц эрүүл болсны дараа дараагийнх руу шилждэг. `maxUnavailable` тохиргоо нь нэг дор хэдэн replica унаж болохыг хязгаарладаг — үүнийг чи багцын хэмжээгээр загварчиллаа."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Rolling update нь бүх replica-г зэрэг унтраахын оронд юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Жижиг багцаар ээлжлэн шинэчилж, зарим нь үргэлж ажиллана"
+        },
+        {
+          "mn": "Бүгдийг устгана"
+        },
+        {
+          "mn": "Нэг ч replica-г шинэчлэхгүй"
+        },
+        {
+          "mn": "Өгөгдлийг устгана"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Багцаар шинэчилснээр хэсэг нь үргэлж ажиллаж, downtime-гүй deploy болно."
+      },
+      "hint": {
+        "mn": "Бүгдийг зэрэг унтраах уу, хэсэгчлэх үү?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Rolling update-ийн гол давуу тал юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Кодыг богиносгодог"
+        },
+        {
+          "mn": "Downtime-гүйгээр (тасалдалгүй) шинэ хувилбар гаргах"
+        },
+        {
+          "mn": "Нууц үг хамгаалах"
+        },
+        {
+          "mn": "Өнгө нэмэх"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хэсэг replica үргэлж ажилласаар байдаг тул хэрэглэгч тасалдал мэдэрдэггүй — zero downtime."
+      },
+      "hint": {
+        "mn": "Deploy хийх үед сайт унтарвал хэрэглэгчид ямар байх вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}
