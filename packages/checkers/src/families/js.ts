@@ -28,7 +28,15 @@ function stringify(v: unknown): string {
 
 // ── js.evaluate ──────────────────────────────────────────────────────────────
 registerChecker("js.evaluate", (args, ctx) => {
-  const result = evalInPage(ctx, args.setup as string | undefined, String(args.expr));
+  // A throwing expression means the student's code isn't there yet (or errors) —
+  // that is a normal failing answer, not a system fault. Report it as a clean
+  // fail rather than letting it bubble up as an "infra" error.
+  let result: unknown;
+  try {
+    result = evalInPage(ctx, args.setup as string | undefined, String(args.expr));
+  } catch (e) {
+    return fail(e instanceof Error ? `${e.name}: ${e.message}` : String(e), stringify(args.equals ?? "утга"));
+  }
   if ("equals" in args) {
     const eq = stringify(result) === stringify(args.equals);
     return eq ? pass({ actual: stringify(result) }) : fail(stringify(result), stringify(args.equals));

@@ -114,7 +114,9 @@ registerChecker("css.contrast", (args, ctx) => {
   const fg = parseColor(style.getPropertyValue("color"));
   const bg = effectiveBackground(ctx, el);
   const min = typeof args.min === "number" ? args.min : 4.5;
-  if (!fg) return { passed: false, errorKind: "infra", raw: "could not parse the text colour" };
+  // No readable text colour yet (e.g. the student hasn't set one) is a normal
+  // failing answer, not a system fault — report it cleanly.
+  if (!fg) return fail(style.getPropertyValue("color").trim() || "(тохируулаагүй)", "унших боломжтой текстийн өнгө");
   const ratio = contrast(fg, bg);
   return ratio >= min ? pass({ actual: `${ratio.toFixed(2)}:1` }) : fail(`${ratio.toFixed(2)}:1`, `≥ ${min}:1`);
 });
