@@ -16,18 +16,19 @@ import { useEffect, useRef, useState } from "react";
  *  3. The weight is one filled copy of the word underneath, faded in as the
  *     stroke finishes — a single path so counters (the hole in an `e`) read.
  *
- * The bundled font is Latin-only (Shadows Into Light), so pass Latin text
- * (e.g. "Shop.mn"). If the library or font fails to load, it degrades to a
- * plain <span>. Colour comes from `currentColor`.
+ * The bundled font is Caveat, which covers Latin AND Cyrillic — including the
+ * Mongolian-specific letters Ө/ө and Ү/ү — so both "Shop.mn" and Монгол text
+ * write correctly. If the library or font fails to load, it degrades to a plain
+ * <span>. Colour comes from `currentColor`.
  */
 
 const OPENTYPE_SRC = "/vendor/opentype.min.js";
-const DEFAULT_FONT_URL = "/fonts/handwriting.ttf";
+const DEFAULT_FONT_URL = "/fonts/caveat.ttf";
 
 export interface HandwritingTextProps {
-  /** A single phrase to write. Ignored when `words` is given. Latin only. */
+  /** A single phrase to write. Ignored when `words` is given. Latin or Cyrillic. */
   text?: string;
-  /** Cycle through these, rewriting on each change. Latin only. */
+  /** Cycle through these, rewriting on each change. Latin or Cyrillic. */
   words?: string[];
   /** Milliseconds each word is held before the next one starts. */
   interval?: number;
@@ -168,7 +169,16 @@ export function HandwritingText({
     const id = requestAnimationFrame(() =>
       requestAnimationFrame(() => setDrawn(true)),
     );
-    return () => cancelAnimationFrame(id);
+    // Fallback: requestAnimationFrame is paused entirely in a hidden/background
+    // tab, so without this the letters would sit as un-inked outlines until the
+    // tab is focused. Timers are only throttled (not paused) when hidden, so this
+    // guarantees the ink-in still runs; the CSS transition itself plays in the
+    // background. When the tab is visible the rAF above wins and this is a no-op.
+    const timer = window.setTimeout(() => setDrawn(true), 150);
+    return () => {
+      cancelAnimationFrame(id);
+      clearTimeout(timer);
+    };
   }, [geom]);
 
   // Before the font resolves — and if it never does — the text is still readable.

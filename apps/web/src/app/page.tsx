@@ -55,13 +55,13 @@ export default async function HomePage() {
           <div className={s.heroText}>
             <p className={s.eyebrow}>{t("eyebrow")}</p>
             <h1 className={s.title}>{t("title")}</h1>
-            {/* A hand-signed accent — the store you build. The bundled font is
-                Latin-only, so this stays "Shop.mn". */}
+            {/* A hand-signed accent, in Mongolian Cyrillic — Caveat covers Ө/Ү,
+                so this writes correctly. */}
             <HandwritingText
-              text="Shop.mn"
+              text="Өөрийн дэлгүүр"
               className={s.heroInk}
               height="1.5em"
-              duration={1.9}
+              duration={2.2}
               strokeWidth={2}
             />
             <p className={s.lede}>{t("lede")}</p>
