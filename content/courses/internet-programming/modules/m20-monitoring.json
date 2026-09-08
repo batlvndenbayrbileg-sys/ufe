@@ -1,0 +1,18 @@
+{
+  "id": "m20-monitoring",
+  "stageId": "s9",
+  "order": 4,
+  "title": {
+    "mn": "Monitoring: ажиглалт"
+  },
+  "description": {
+    "mn": "Бүтэцтэй лог, алдааны хувь (metrics), эрүүл мэндийн нэгтгэл, тогтвортой нөхцөлт сэрэмжлүүлэг."
+  },
+  "estimatedHours": 2,
+  "lessons": [
+    "m20-l1",
+    "m20-l2",
+    "m20-l3",
+    "m20-l4"
+  ]
+}

@@ -1,0 +1,269 @@
+{
+  "id": "m20-l2",
+  "moduleId": "m20-monitoring",
+  "slug": "error-rate",
+  "order": 2,
+  "title": {
+    "mn": "Алдааны хувь"
+  },
+  "why": {
+    "mn": "Сервер «асаалттай» байхаас илүү «зөв ажиллаж байгаа эсэх» чухал. Хүсэлтийн хэдэн хувь нь 5xx алдаа буцааж байгааг (error rate) хэмжвэл асуудлыг хэрэглэгч гомдохоос өмнө анзаарна."
+  },
+  "buildsInProject": "Алдааны хувь тооцоологч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "devops",
+    "javascript"
+  ],
+  "concepts": [
+    "metrics",
+    "error rate",
+    "5xx",
+    "SLO"
+  ],
+  "prerequisites": [
+    "m20-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — Monitoring</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — Monitoring</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/monitor.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/monitor.js",
+        "content": "// Хүсэлтүүдийн алдааны хувийг (error rate) тооцоол.\n// responses: [{ status }]. status >= 500 бол алдаа.\n// Хувь = алдаатай / нийт. Хоосон бол 0.\n\nfunction errorRate(responses) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Monitoring турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\nconst responses = [\n  { status: 200 }, { status: 200 }, { status: 500 }, { status: 200 }, { status: 503 },\n  { status: 200 }, { status: 200 }, { status: 200 }, { status: 200 }, { status: 200 },\n];\n\nwindow.RATE = null;\nwindow.RATE_EMPTY = null;\ntry {\n  window.RATE = errorRate(responses);\n  window.RATE_EMPTY = errorRate([]);\n  panel(window.RATE < 0.5 ? \"ok\" : \"bad\", \"rate\", \"Алдааны хувь\", [\"errorRate → \" + window.RATE, \"хоосон → \" + window.RATE_EMPTY]);\n} catch (problem) {\n  panel(\"bad\", \"error\", \"Алдаа\", [problem.message]);\n}\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/monitor.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/monitor.js"
+    ],
+    "activeFile": "src/monitor.js"
+  },
+  "tasks": [
+    {
+      "id": "m20-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Алдааны хувь"
+      },
+      "statement": {
+        "mn": "`errorRate(responses)`-ыг бич. `responses` нь `{ status }` жагсаалт. `status >= 500`-ыг алдаа гэж үз. Алдаатай хүсэлтийн ЭЗЛЭХ ХУВИЙГ (алдаатай / нийт) буцаа. Жагсаалт хоосон бол `0` буцаа (0-д хуваахаас сэргийл)."
+      },
+      "requirements": [
+        {
+          "mn": "5xx-ийг алдаа гэж тооцно"
+        },
+        {
+          "mn": "алдаатай / нийт хувь"
+        },
+        {
+          "mn": "Хоосон бол 0"
+        },
+        {
+          "mn": "0-д хуваахгүй"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "10 хүсэлтээс 2 нь 5xx тул error rate = 0.2; хоосон жагсаалт 0."
+        }
+      },
+      "targetFile": "src/monitor.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/monitor.js",
+            "kind": "function",
+            "name": "errorRate"
+          },
+          "onFail": {
+            "mn": "`errorRate` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RATE",
+                  "equals": 0.2
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "10 хүсэлтээс 2 нь 5xx тул error rate 0.2 байх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RATE_EMPTY",
+                  "equals": 0
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хоосон жагсаалтад error rate 0 байх ёстой (0-д хуваахгүй)."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "«Асаалттай юу?» гэдэг хангалтгүй. Хэдэн хувь нь амжилтгүй байгааг хэмжвэл жинхэнэ эрүүл мэндийг харна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`filter`-ээр 5xx-ийг тоол, нийтэд нь хуваа. Хоосон жагсаалтыг ЭХЭНД шалгаж 0 буцаа — эс бол 0/0 = NaN."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гүйцээ:"
+          },
+          "code": "if (responses.length === 0) return 0;\nconst errors = responses.filter((r) => r.status >= 500).length;\nreturn errors / responses.length;"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/monitor.js",
+            "content": "function errorRate(responses) {\n  if (responses.length === 0) return 0;\n  const errors = responses.filter((r) => r.status >= 500).length;\n  return errors / responses.length;\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Error rate бол monitoring-ийн гол хэмжүүр (metric). Багууд «сарын 99.9% амжилттай байх» гэсэн зорилт (SLO) тавьж, error rate босго давбал сэрэмжлүүлдэг. Хоосон тохиолдлыг эхэнд барих нь 0-д хуваах алдаанаас сэргийлнэ."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Сервер «асаалттай» гэдгээс илүү юуг хэмжих нь эрүүл мэндийг илүү сайн харуулах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хүсэлтийн хэдэн хувь амжилтгүй (error rate) байгааг"
+        },
+        {
+          "mn": "Кодын мөрийн тоог"
+        },
+        {
+          "mn": "Файлын хэмжээг"
+        },
+        {
+          "mn": "Хэрэглэгчийн нэрийг"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Сервер асаалттай ч хүсэлтүүд унаж болно — error rate нь жинхэнэ ажиллагааг харуулна."
+      },
+      "hint": {
+        "mn": "«Асаалттай» ба «зөв ажиллаж байгаа» хоёрын аль нь хэрэглэгчид чухал вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "HTTP статусын аль нь серверийн алдаа (error rate-д тооцогдох) вэ?"
+      },
+      "options": [
+        {
+          "mn": "2xx (амжилт)"
+        },
+        {
+          "mn": "3xx (чиглүүлэлт)"
+        },
+        {
+          "mn": "5xx (серверийн алдаа)"
+        },
+        {
+          "mn": "1xx (мэдээлэл)"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "`5xx` нь серверийн талын алдаа — эдгээрийн эзлэх хувь нь error rate."
+      },
+      "hint": {
+        "mn": "Аль зуутын бүлэг нь «серверийн алдаа» гэсэн утгатай вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

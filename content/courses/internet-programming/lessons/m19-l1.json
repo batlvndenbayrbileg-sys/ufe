@@ -1,0 +1,289 @@
+{
+  "id": "m19-l1",
+  "moduleId": "m19-docker",
+  "slug": "dockerfile",
+  "order": 1,
+  "title": {
+    "mn": "Dockerfile ба давхаргууд"
+  },
+  "why": {
+    "mn": "Shop.mn чиний компьютер дээр ажилладаг ч серверт ажиллахгүй байж болно — Node хувилбар, санууд өөр. Docker нь апп + бүх орчныг нэг image болгож савладаг тул хаана ч ижилхэн ажиллана. Image нь заавруудаас ДАВХАРГА болж угсрагдана."
+  },
+  "buildsInProject": "Docker image угсрагч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "devops",
+    "javascript"
+  ],
+  "concepts": [
+    "Dockerfile",
+    "image",
+    "layer",
+    "FROM/CMD"
+  ],
+  "prerequisites": [
+    "m13-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — Docker</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — Docker</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/docker.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/docker.js",
+        "content": "// Dockerfile-ыг image болгон «угсар».\n// dockerfile: [{ instruction, arg }] — FROM, COPY, RUN, CMD.\n// FROM → суурь image, CMD → ажиллуулах команд, бусад нь ДАВХАРГА (layer).\n\nfunction buildImage(dockerfile) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Docker турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\nconst dockerfile = [\n  { instruction: \"FROM\", arg: \"node:20\" },\n  { instruction: \"COPY\", arg: \". /app\" },\n  { instruction: \"RUN\", arg: \"npm install\" },\n  { instruction: \"CMD\", arg: \"npm start\" },\n];\n\nwindow.IMAGE = null;\ntry {\n  window.IMAGE = buildImage(dockerfile);\n  panel(\"ok\", \"image\", \"Угсарсан image\", [JSON.stringify(window.IMAGE, null, 2)]);\n} catch (problem) {\n  panel(\"bad\", \"error\", \"Алдаа\", [problem.message]);\n}\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/docker.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/docker.js"
+    ],
+    "activeFile": "src/docker.js"
+  },
+  "tasks": [
+    {
+      "id": "m19-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Dockerfile ба давхаргууд"
+      },
+      "statement": {
+        "mn": "`buildImage(dockerfile)`-ыг бич. `dockerfile` нь `{ instruction, arg }` жагсаалт. 1) `FROM`-ын `arg` нь `base`. 2) `CMD`-ын `arg` нь `cmd`. 3) Бусад заавар бүр (`COPY`, `RUN`) нэг ДАВХАРГА болж `layers`-д орно. `{ base, layers, cmd }` буцаа."
+      },
+      "requirements": [
+        {
+          "mn": "`FROM` → base"
+        },
+        {
+          "mn": "`CMD` → cmd"
+        },
+        {
+          "mn": "Бусад заавар → layers"
+        },
+        {
+          "mn": "`{ base, layers, cmd }` буцаана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "base=`node:20`, 2 давхарга (COPY, RUN), cmd=`npm start` бүхий image гарна."
+        }
+      },
+      "targetFile": "src/docker.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/docker.js",
+            "kind": "function",
+            "name": "buildImage"
+          },
+          "onFail": {
+            "mn": "`buildImage` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.IMAGE.base",
+                  "equals": "node:20"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`FROM`-ын утга `base` болох ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.IMAGE.layers.length",
+                  "equals": 2
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`COPY` ба `RUN` хоёр давхарга болох ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.IMAGE.cmd",
+                  "equals": "npm start"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`CMD`-ын утга `cmd` болох ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Docker image нь Dockerfile-ын заавруудаас дараалсан ДАВХАРГА болж угсрагддаг. `FROM` нь суурь, `CMD` нь эцэст ажиллуулах команд — эдгээр нь давхарга биш."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Заавар бүрийг төрлөөр нь ялга: `FROM`/`CMD` тусгай, бусад нь `layers`-д нэмэгдэнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Циклээ гүйцээ:"
+          },
+          "code": "for (const step of dockerfile) {\n  if (step.instruction === \"FROM\") base = step.arg;\n  else if (step.instruction === \"CMD\") cmd = step.arg;\n  else layers.push({ instruction: step.instruction, arg: step.arg });\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/docker.js",
+            "content": "function buildImage(dockerfile) {\n  let base = null;\n  let cmd = null;\n  const layers = [];\n\n  for (const step of dockerfile) {\n    if (step.instruction === \"FROM\") base = step.arg;\n    else if (step.instruction === \"CMD\") cmd = step.arg;\n    else layers.push({ instruction: step.instruction, arg: step.arg });\n  }\n\n  return { base: base, layers: layers, cmd: cmd };\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Docker image нь «апп + түүний бүх орчин»-ыг нэг багц болгодог тул «миний компьютер дээр ажиллаж байсан» асуудлыг арилгана. Image нь давхаргаас бүрддэг: доод давхаргууд (суурь OS, санууд) ховор өөрчлөгддөг тул дахин ашиглагдана."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Docker image юуг шийддэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Апп + бүх орчныг (Node хувилбар, санууд) нэг багцад савлаж, хаана ч ижил ажиллуулах"
+        },
+        {
+          "mn": "Кодыг хурдан бичих"
+        },
+        {
+          "mn": "CSS-ийг багасгах"
+        },
+        {
+          "mn": "Хэрэглэгчийн нууц үг хадгалах"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Image нь апп болон түүний орчныг хамт савладаг тул «миний машин дээр ажиллаж байсан» гэдэг ялгаа арилдаг."
+      },
+      "hint": {
+        "mn": "«Миний компьютер дээр ажилладаг» асуудлыг юу шийддэг вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Dockerfile дэх `FROM node:20` мөр юуг заадаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хэрэглэгчийн нэрийг"
+        },
+        {
+          "mn": "Хуудасны өнгийг"
+        },
+        {
+          "mn": "Аль суурь image дээр угсрахыг"
+        },
+        {
+          "mn": "Портын дугаарыг"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "`FROM` нь суурь image-ыг заадаг — бусад давхаргууд түүн дээр нэмэгдэнэ."
+      },
+      "hint": {
+        "mn": "«From» = хаанаас эхлэх вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

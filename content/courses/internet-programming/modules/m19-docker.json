@@ -1,0 +1,18 @@
+{
+  "id": "m19-docker",
+  "stageId": "s9",
+  "order": 3,
+  "title": {
+    "mn": "Docker: контейнержуулах"
+  },
+  "description": {
+    "mn": "Апп + орчныг image болгож савлах, давхаргын кэш, container ажиллуулах, docker-compose-оор олон үйлчилгээ."
+  },
+  "estimatedHours": 2,
+  "lessons": [
+    "m19-l1",
+    "m19-l2",
+    "m19-l3",
+    "m19-l4"
+  ]
+}

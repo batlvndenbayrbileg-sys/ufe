@@ -1,0 +1,309 @@
+{
+  "id": "m19-l2",
+  "moduleId": "m19-docker",
+  "slug": "layer-cache",
+  "order": 2,
+  "title": {
+    "mn": "Давхаргын кэш"
+  },
+  "why": {
+    "mn": "Image дахин угсрахад Docker өөрчлөгдөөгүй давхаргуудыг ДАХИН АШИГЛАДАГ (cache). Гэхдээ нэг давхарга өөрчлөгдвөл түүнээс ХОЙШХИ бүх давхарга дахин угсрагдана. Тиймээс ховор өөрчлөгддөг алхмыг (санг суулгах) эхэнд тавих нь угсралтыг олон дахин хурдасгана."
+  },
+  "buildsInProject": "Кэшийн төлөвлөгч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "devops",
+    "javascript"
+  ],
+  "concepts": [
+    "layer caching",
+    "cache invalidation",
+    "build order",
+    "cascade"
+  ],
+  "prerequisites": [
+    "m19-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — Docker</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — Docker</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/docker.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/docker.js",
+        "content": "// Дахин угсрах төлөвлөгөө: өмнөхтэй ижил давхаргууд \"cached\",\n// эхний ЗӨРҮҮ давхаргаас хойшхи бүгд \"rebuilt\" (кэш хүчингүй болно).\n// prev, next: заавруудын мөрүүдийн жагсаалт (ижил дараалалтай).\n\nfunction planRebuild(prev, next) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Docker турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\nconst prev = [\"FROM node:20\", \"COPY package.json .\", \"RUN npm install\", \"COPY . .\", \"CMD npm start\"];\n// Зөвхөн эх код өөрчлөгдсөн (COPY . .) — 4 дэх алхам.\nconst next = [\"FROM node:20\", \"COPY package.json .\", \"RUN npm install\", \"COPY src .\", \"CMD npm start\"];\n\nwindow.PLAN = null;\ntry {\n  window.PLAN = planRebuild(prev, next);\n  panel(\"ok\", \"plan\", \"Дахин угсрах төлөвлөгөө\", [JSON.stringify(window.PLAN, null, 2)]);\n} catch (problem) {\n  panel(\"bad\", \"error\", \"Алдаа\", [problem.message]);\n}\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/docker.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/docker.js"
+    ],
+    "activeFile": "src/docker.js"
+  },
+  "tasks": [
+    {
+      "id": "m19-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Давхаргын кэш"
+      },
+      "statement": {
+        "mn": "`planRebuild(prev, next)`-ыг бич. Хоёр жагсаалтыг индекс индексээр харьцуул. Өмнөхтэй ижил давхарга бүрийг `\"cached\"` гэж тэмдэглэ — гэхдээ ЭХНИЙ зөрүү гарсны дараа кэш хүчингүй болох тул түүнээс хойшхи БҮХ давхаргыг `\"rebuilt\"` гэж тэмдэглэ. `{ step, status }` жагсаалт буцаа."
+      },
+      "requirements": [
+        {
+          "mn": "Ижил давхарга → cached"
+        },
+        {
+          "mn": "Эхний зөрүүнээс хойш → rebuilt"
+        },
+        {
+          "mn": "Зөрүү нь дараагийнхыг ч rebuilt болгоно (cascade)"
+        },
+        {
+          "mn": "`{ step, status }` жагсаалт"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Эхний 3 давхарга cached, өөрчлөгдсөн COPY ба түүний хойшхи CMD rebuilt."
+        }
+      },
+      "targetFile": "src/docker.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/docker.js",
+            "kind": "function",
+            "name": "planRebuild"
+          },
+          "onFail": {
+            "mn": "`planRebuild` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.PLAN[0].status",
+                  "equals": "cached"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Өөрчлөгдөөгүй эхний давхарга `cached` байх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.PLAN[2].status",
+                  "equals": "cached"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`RUN npm install` (өөрчлөгдөөгүй) `cached` байх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.PLAN[3].status",
+                  "equals": "rebuilt"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Өөрчлөгдсөн давхарга `rebuilt` байх ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.PLAN[4].status",
+                  "equals": "rebuilt"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Өөрчлөгдсөн давхаргын дараах бүгд `rebuilt` (кэш хүчингүй)."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Docker давхаргуудыг дараалан кэшилдэг. Нэг давхарга өөрчлөгдвөл түүнээс хойшхи бүгд дахин угсрагдана — учир нь тэд өмнөх давхарга дээр тулгуурладаг."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Нэг л «өөрчлөгдсөн үү» туг барь. Түүнийг `true` болгосны дараа үлдсэн бүгд `rebuilt`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Циклээ гүйцээ:"
+          },
+          "code": "let changed = false;\nfor (let i = 0; i < next.length; i++) {\n  if (!changed && prev[i] === next[i]) out.push({ step: next[i], status: \"cached\" });\n  else { changed = true; out.push({ step: next[i], status: \"rebuilt\" }); }\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/docker.js",
+            "content": "function planRebuild(prev, next) {\n  const out = [];\n  let changed = false;\n\n  for (let i = 0; i < next.length; i++) {\n    if (!changed && prev[i] === next[i]) {\n      out.push({ step: next[i], status: \"cached\" });\n    } else {\n      changed = true;\n      out.push({ step: next[i], status: \"rebuilt\" });\n    }\n  }\n\n  return out;\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Кэш нь зөвхөн эхний зөрүү хүртэл хүчинтэй тул давхаргын ДАРААЛАЛ чухал. `package.json` хуулж `npm install` хийхийг эх кодоо хуулахаас ӨМНӨ тавьвал — код өөрчлөгдөх бүрд `npm install` дахин ажиллахгүй, угсралт олон дахин хурдан болно."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Dockerfile-ын дунд байрлах нэг давхарга өөрчлөгдвөл юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн тэр давхарга дахин угсрагдана"
+        },
+        {
+          "mn": "Тэр давхарга БА түүнээс хойшхи бүх давхарга дахин угсрагдана"
+        },
+        {
+          "mn": "Юу ч өөрчлөгдөхгүй"
+        },
+        {
+          "mn": "Эхний давхарга устана"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Кэш эхний зөрүү хүртэл хүчинтэй — өөрчлөгдсөн давхаргаас хойшхи бүгд дахин угсрагдана."
+      },
+      "hint": {
+        "mn": "Давхаргууд өмнөхөө түшдэг — нэг нь өөрчлөгдвөл дараагийнхад нь юу болох вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Яагаад `COPY package.json` + `RUN npm install`-ыг эх кодоо хуулахаас ӨМНӨ тавьдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Код өөрчлөгдөх бүрд `npm install` дахин ажиллахгүй, кэш ашиглагдана"
+        },
+        {
+          "mn": "Файлын нэр богино учраас"
+        },
+        {
+          "mn": "Docker шаарддаг учраас"
+        },
+        {
+          "mn": "Ямар ч ялгаагүй"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Ховор өөрчлөгддөг алхмыг эхэнд тавьбал кэш удаан хүчинтэй үлдэж, угсралт хурдан болно."
+      },
+      "hint": {
+        "mn": "Аль нь ховор өөрчлөгддөг вэ — санууд уу, эх код уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,269 @@
+{
+  "id": "m20-l4",
+  "moduleId": "m20-monitoring",
+  "slug": "alerting",
+  "order": 4,
+  "title": {
+    "mn": "Сэрэмжлүүлэг (alert)"
+  },
+  "why": {
+    "mn": "Нэг агшны үсрэлт болгонд дуудлага өгвөл хүмүүс сэрэмжлүүлгийг үл тоомсорлож эхэлдэг (alert fatigue). Тиймээс УДААН ХУГАЦААНД (хэд хэдэн дараалсан хэмжилт) босго давсан үед л сэрэмжлүүлэх нь зөв — түр зуурын үсрэлтийг шүүнэ."
+  },
+  "buildsInProject": "Сэрэмжлүүлгийн дүрэм",
+  "difficulty": "advanced",
+  "estimatedMinutes": 20,
+  "skills": [
+    "devops",
+    "javascript"
+  ],
+  "concepts": [
+    "alerting",
+    "threshold",
+    "flapping",
+    "sustained condition"
+  ],
+  "prerequisites": [
+    "m20-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — Monitoring</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — Monitoring</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/monitor.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/monitor.js",
+        "content": "// Сэрэмжлүүлэг: зөвхөн УДААН хугацаанд босго давсан үед л дуугар.\n// samples: сүүлийн хэмжилтүүд (тоонууд). threshold: босго. needed: хэдэн\n// ДАРААЛСАН хэмжилт босго давбал сэрэмжлүүлэх вэ.\n// Сүүлийн needed хэмжилт БҮГД босго давсан бол л true.\n\nfunction shouldAlert(samples, threshold, needed) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Monitoring турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\n// Нэг агшны үсрэлт — сэрэмжлүүлэх ёсгүй.\nconst spike = [10, 12, 95, 11, 13];\n// Тогтвортой өндөр — сэрэмжлүүлэх ёстой.\nconst sustained = [12, 85, 90, 93, 91];\n\nwindow.ALERT_SPIKE = null;\nwindow.ALERT_SUSTAINED = null;\ntry {\n  window.ALERT_SPIKE = shouldAlert(spike, 80, 3);\n  window.ALERT_SUSTAINED = shouldAlert(sustained, 80, 3);\n  panel(!window.ALERT_SPIKE ? \"ok\" : \"bad\", \"spike\", \"Нэг агшны үсрэлт\", [\"shouldAlert → \" + window.ALERT_SPIKE]);\n  panel(window.ALERT_SUSTAINED ? \"ok\" : \"bad\", \"sustained\", \"Тогтвортой өндөр\", [\"shouldAlert → \" + window.ALERT_SUSTAINED]);\n} catch (problem) {\n  panel(\"bad\", \"error\", \"Алдаа\", [problem.message]);\n}\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/monitor.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/monitor.js"
+    ],
+    "activeFile": "src/monitor.js"
+  },
+  "tasks": [
+    {
+      "id": "m20-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Сэрэмжлүүлэг (alert)"
+      },
+      "statement": {
+        "mn": "`shouldAlert(samples, threshold, needed)`-ыг бич. `samples` нь сүүлийн хэмжилтүүд. Сүүлийн `needed` хэмжилт БҮГД `threshold`-оос ИХ байвал л `true` буцаа (тогтвортой өндөр). Хэмжилт `needed`-ээс цөөн бол `false`. Ингэснээр нэг агшны үсрэлтэд дуугарахгүй."
+      },
+      "requirements": [
+        {
+          "mn": "Сүүлийн `needed` хэмжилтийг хардаг"
+        },
+        {
+          "mn": "Бүгд босго давбал true"
+        },
+        {
+          "mn": "Нэг агшны үсрэлт → false"
+        },
+        {
+          "mn": "Хэмжилт цөөн бол false"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Нэг агшны үсрэлт (95) сэрэмжлүүлэхгүй; тогтвортой өндөр (85,90,93) сэрэмжлүүлнэ."
+        }
+      },
+      "targetFile": "src/monitor.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/monitor.js",
+            "kind": "function",
+            "name": "shouldAlert"
+          },
+          "onFail": {
+            "mn": "`shouldAlert` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.ALERT_SPIKE",
+                  "equals": false
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Нэг агшны үсрэлтэд сэрэмжлүүлэх ёсгүй."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.ALERT_SUSTAINED",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Тогтвортой босго давсан үед сэрэмжлүүлэх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Нэг агшны үсрэлт бүрд дуудлага өгвөл хүмүүс сэрэмжлүүлгийг үл тоомсорлоно (alert fatigue). Тогтвортой асуудалд л дуугар."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Зөвхөн СҮҮЛИЙН `needed` хэмжилтийг хар (`slice(-needed)`). Тэдгээр БҮГД босго давсан бол л сэрэмжлүүл (`every`)."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гүйцээ:"
+          },
+          "code": "if (samples.length < needed) return false;\nconst recent = samples.slice(-needed);\nreturn recent.every((v) => v > threshold);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/monitor.js",
+            "content": "function shouldAlert(samples, threshold, needed) {\n  if (samples.length < needed) return false;\n  const recent = samples.slice(-needed);\n  return recent.every((v) => v > threshold);\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "«Flapping» (байнга асаж унтрах) сэрэмжлүүлэг нь хамгийн муу — хүмүүс тэдгээрийг унтраадаг тул жинхэнэ асуудал алдагддаг. Хэд хэдэн дараалсан хэмжилт босго давсан («sustained») үед л сэрэмжлүүлснээр түр зуурын шуугианыг шүүж, зөвхөн жинхэнэ доголдолд л дуудлага өгнө."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Яагаад нэг агшны хэмжилт босго давсан болгонд шууд сэрэмжлүүлэхгүй байх нь зөв бэ?"
+      },
+      "options": [
+        {
+          "mn": "Түр зуурын үсрэлт олон байдаг тул худал дуудлага (alert fatigue) үүсгэдэг"
+        },
+        {
+          "mn": "Сэрэмжлүүлэг үнэтэй учраас"
+        },
+        {
+          "mn": "Тоо том учраас"
+        },
+        {
+          "mn": "Ямар ч учиргүй"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Түр зуурын үсрэлтэд байнга дуудвал хүмүүс сэрэмжлүүлгийг үл тоомсорлож, жинхэнэ асуудал алдагдана."
+      },
+      "hint": {
+        "mn": "Байнга худал дуудлага өгвөл хүмүүс юу хийж эхлэх вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "«Flapping» (байнга асаж унтардаг) сэрэмжлүүлгийн гол асуудал юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хэт удаан ажилладаг"
+        },
+        {
+          "mn": "Хүмүүс дассандаа үл тоомсорлож, жинхэнэ доголдлыг алддаг"
+        },
+        {
+          "mn": "Санах ой их иддэг"
+        },
+        {
+          "mn": "Өнгө буруу"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Найдваргүй сэрэмжлүүлгийг хүмүүс унтраадаг тул чухал үед хэн ч хариу өгөхгүй болдог."
+      },
+      "hint": {
+        "mn": "Байнга дуугардаг сэрэмжлүүлэгт хүн эцэст нь юу хийдэг вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

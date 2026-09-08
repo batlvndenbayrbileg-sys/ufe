@@ -111,7 +111,9 @@
       "badgeId": "shipper",
       "moduleIds": [
         "m13-deploy",
-        "m18-cicd"
+        "m18-cicd",
+        "m19-docker",
+        "m20-monitoring"
       ]
     },
     {

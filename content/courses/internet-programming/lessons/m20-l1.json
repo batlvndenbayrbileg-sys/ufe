@@ -1,0 +1,288 @@
+{
+  "id": "m20-l1",
+  "moduleId": "m20-monitoring",
+  "slug": "structured-logs",
+  "order": 1,
+  "title": {
+    "mn": "Бүтэцтэй лог"
+  },
+  "why": {
+    "mn": "«Алдаа гарлаа» гэсэн задгай текст логоос хайх, шүүх боломжгүй. Бүтэцтэй лог (JSON) нь түвшин, мессеж, нэмэлт талбар (хэрэглэгч, захиалга)-тай тул сүүлд «энэ хэрэглэгчийн бүх алдаа»-г хормын дотор шүүж олно."
+  },
+  "buildsInProject": "Бүтэцтэй логлогч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "devops",
+    "javascript"
+  ],
+  "concepts": [
+    "structured logging",
+    "log levels",
+    "searchable logs"
+  ],
+  "prerequisites": [
+    "m13-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — Monitoring</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — Monitoring</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/monitor.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/monitor.js",
+        "content": "// Бүтэцтэй лог үүсгэ: түвшин, мессеж, нэмэлт талбарууд бүхий ОБЪЕКТ.\n// formatLog(level, message, fields) → { level, message, ...fields }.\n\nfunction formatLog(level, message, fields) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Monitoring турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\nwindow.LOG = null;\ntry {\n  window.LOG = formatLog(\"error\", \"Төлбөр амжилтгүй\", { userId: 42, orderId: 1007 });\n  panel(\"ok\", \"log\", \"Бүтэцтэй лог\", [JSON.stringify(window.LOG, null, 2)]);\n} catch (problem) {\n  panel(\"bad\", \"error\", \"Алдаа\", [problem.message]);\n}\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/monitor.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/monitor.js"
+    ],
+    "activeFile": "src/monitor.js"
+  },
+  "tasks": [
+    {
+      "id": "m20-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Бүтэцтэй лог"
+      },
+      "statement": {
+        "mn": "`formatLog(level, message, fields)`-ыг бич. `level` (жишээ нь `\"error\"`), `message`, болон нэмэлт `fields` объектыг нэгтгэж `{ level, message, ...fields }` бүтэцтэй объект буцаа. Ингэснээр лог нь машинд уншигдах, шүүгдэх боломжтой болно."
+      },
+      "requirements": [
+        {
+          "mn": "`level` талбартай"
+        },
+        {
+          "mn": "`message` талбартай"
+        },
+        {
+          "mn": "`fields`-ийг нэгтгэнэ (spread)"
+        },
+        {
+          "mn": "Объект буцаана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "`{ level: \"error\", message: ..., userId: 42, orderId: 1007 }` бүтэцтэй лог гарна."
+        }
+      },
+      "targetFile": "src/monitor.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/monitor.js",
+            "kind": "function",
+            "name": "formatLog"
+          },
+          "onFail": {
+            "mn": "`formatLog` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.LOG.level",
+                  "equals": "error"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Лог нь `level` талбартай байх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.LOG.message",
+                  "equals": "Төлбөр амжилтгүй"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Лог нь `message` талбартай байх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.LOG.orderId",
+                  "equals": 1007
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Нэмэлт талбарууд (`fields`) логт нэгдэх ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Задгай текст лог («Алдаа гарлаа») хайхад хэцүү. Бүтэцтэй лог (объект/JSON) нь талбар бүрээр шүүх боломж өгдөг."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`fields` объектыг spread (`...fields`)-ээр үндсэн талбаруудтай нэгтгэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Нэг мөр:"
+          },
+          "code": "return { level: level, message: message, ...fields };"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/monitor.js",
+            "content": "function formatLog(level, message, fields) {\n  return { level: level, message: message, ...fields };\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Бүтэцтэй лог нь monitoring-ийн үндэс: түвшин (`info`/`warn`/`error`), мессеж, контекст талбарууд бүхий JSON. Ингэснээр «сүүлийн цагийн бүх `error`», «энэ захиалгын бүх лог» зэргийг хормын дотор шүүнэ — задгай текстээс энэ боломжгүй."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Задгай текст логоос бүтэцтэй (JSON) лог юугаараа давуу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Талбар бүрээр шүүж, хайж, дүн шинжилгээ хийх боломжтой"
+        },
+        {
+          "mn": "Илүү өнгөтэй"
+        },
+        {
+          "mn": "Богино байдаг"
+        },
+        {
+          "mn": "Ямар ч ялгаагүй"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Бүтэцтэй лог нь машинд уншигдах тул түвшин, хэрэглэгч зэрэг талбараар шүүх/хайх боломж өгдөг."
+      },
+      "hint": {
+        "mn": "«Энэ хэрэглэгчийн бүх алдаа»-г аль төрлийн логоос хялбар олох вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Лог дахь `level` талбар (info/warn/error) юунд хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Өнгө сонгох"
+        },
+        {
+          "mn": "Логийн ач холбогдлоор нь шүүх, зөвхөн `error`-ыг харах"
+        },
+        {
+          "mn": "Файл нэрлэх"
+        },
+        {
+          "mn": "Хугацаа хэмжих"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Түвшин нь логийг ач холбогдлоор нь ялгаж, чухлыг (error) шуугианаас салгаж харах боломж өгдөг."
+      },
+      "hint": {
+        "mn": "Бүх логийн дундаас зөвхөн ноцтойг нь хэрхэн ялгах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}
