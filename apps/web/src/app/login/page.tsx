@@ -5,14 +5,14 @@ import { LoginForm } from "./LoginForm";
 import { DemoAdminButton } from "./DemoAdminButton";
 import s from "../authForm.module.css";
 
-export const metadata = { title: "Нэвтрэх · Хийе" };
+export const metadata = { title: "Нэвтрэх · Botxon" };
 
 export default function LoginPage() {
   return (
     <AuthShell
       brand={
         <span className={s.brandLockup}>
-          <BrandMark size={24} /> Хийе
+          <BrandMark size={24} /> Botxon
         </span>
       }
       title="Тавтай морил"

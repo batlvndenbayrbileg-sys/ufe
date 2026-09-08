@@ -8,7 +8,7 @@ import { inter, jetbrainsMono } from "./fonts";
 import { Providers } from "./Providers";
 
 export const metadata: Metadata = {
-  title: "Хийе",
+  title: "Botxon",
   description:
     "Interactive, Mongolian-language programming education. Build a real e-commerce app, yourself.",
 };
