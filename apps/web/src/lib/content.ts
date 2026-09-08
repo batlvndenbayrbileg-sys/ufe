@@ -131,6 +131,8 @@ export interface QuizQuestionPublic {
   id: string;
   question: { mn: string; en?: string };
   options: Array<{ mn: string; en?: string }>;
+  /** A pre-answer nudge (no answer key). Absent if the question defines none. */
+  hint?: { mn: string; en?: string };
 }
 
 export interface LessonPublic {
@@ -172,7 +174,12 @@ export function getLessonPublic(lessonId: string): LessonPublic | null {
     completion: lesson.completion,
     mobileFriendly: lesson.mobileFriendly,
     tasks: [...lesson.tasks].sort((a, b) => a.order - b.order).map(redactTask),
-    quiz: lesson.quiz.map((q) => ({ id: q.id, question: q.question, options: q.options })),
+    quiz: lesson.quiz.map((q) => ({
+      id: q.id,
+      question: q.question,
+      options: q.options,
+      ...(q.hint ? { hint: q.hint } : {}),
+    })),
   };
 }
 

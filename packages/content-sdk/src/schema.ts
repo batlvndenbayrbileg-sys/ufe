@@ -123,6 +123,9 @@ export const QuizQuestionSchema = z
     /** Index into `options` of the correct answer. */
     correct: z.number().int().nonnegative(),
     explanation: LocalizedSchema,
+    /** An optional nudge the student can reveal before answering. Safe to send
+        to the client — it points toward the idea without giving the answer. */
+    hint: LocalizedSchema.optional(),
   })
   .refine((q) => q.correct < q.options.length, {
     message: "`correct` must index into `options`",

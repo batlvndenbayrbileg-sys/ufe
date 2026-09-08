@@ -867,6 +867,92 @@
   border-left-color: var(--danger);
 }
 
+/* ── quiz: progress, hints, celebration ──────────────────────────────────── */
+.quizProgress {
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--bg-muted);
+  overflow: hidden;
+}
+.quizProgressFill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, var(--success)));
+  transition: width var(--dur) var(--ease-out);
+}
+.quizHintBtn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--xp, #d97706);
+  background: none;
+  border: none;
+  padding: 2px 0;
+  cursor: pointer;
+}
+.quizHintBtn:hover {
+  text-decoration: underline;
+}
+.quizHint {
+  display: flex;
+  gap: 8px;
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--xp, #d97706);
+  background: color-mix(in srgb, var(--xp, #d97706) 8%, var(--surface));
+  color: var(--text-muted);
+  animation: riseIn 0.25s var(--ease-out) both;
+}
+.quizHintIcon {
+  flex: none;
+  color: var(--xp, #d97706);
+  margin-top: 1px;
+}
+.quizCelebrate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  padding: var(--space-4);
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, var(--success) 40%, var(--border));
+  background: var(--success-subtle);
+  animation: quizPop 0.4s var(--ease-out) both;
+}
+.quizCelebrateIcon {
+  color: var(--success);
+  animation: quizPop 0.5s var(--ease-out) both;
+}
+.quizCelebrateTitle {
+  font-weight: 800;
+  font-size: var(--text-md);
+  color: var(--success);
+}
+.quizCelebrateBody {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+@keyframes quizPop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* ── editor: anti-cheat paste hint ───────────────────────────────────────── */
 .editorWrap {
   position: relative;

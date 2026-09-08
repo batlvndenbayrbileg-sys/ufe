@@ -1,22 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { Check, X, Circle, CircleDot, ListChecks } from "lucide-react";
+import { Check, X, Circle, CircleDot, ListChecks, Lightbulb, PartyPopper } from "lucide-react";
 import type { QuizQuestionPublic, QuizResult } from "@/lib/content";
 import s from "./learn.module.css";
 
 /**
  * The concept check shown once a lesson's coding tasks are done. Options are
  * graded on the server (the answer key is never sent to the browser); on submit
- * each question shows the right answer and its explanation.
+ * each question shows the right answer and its explanation. Before answering, a
+ * question can offer a hint the student reveals themselves; a full score is met
+ * with a small celebration.
  */
 export function QuizPanel({ lessonId, quiz }: { lessonId: string; quiz: QuizQuestionPublic[] }) {
   const [answers, setAnswers] = useState<number[]>(() => quiz.map(() => -1));
   const [results, setResults] = useState<QuizResult[] | null>(null);
   const [score, setScore] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [hintsShown, setHintsShown] = useState<Record<number, boolean>>({});
 
-  const allAnswered = answers.every((a) => a >= 0);
+  const answeredCount = answers.filter((a) => a >= 0).length;
+  const allAnswered = answeredCount === quiz.length;
+  // Before submit the bar tracks how many are answered; after, the score.
+  const progressPct = results
+    ? (score / quiz.length) * 100
+    : (answeredCount / quiz.length) * 100;
+  const perfect = results != null && score === quiz.length;
 
   const submit = async () => {
     setBusy(true);
@@ -39,6 +48,7 @@ export function QuizPanel({ lessonId, quiz }: { lessonId: string; quiz: QuizQues
     setResults(null);
     setScore(0);
     setAnswers(quiz.map(() => -1));
+    setHintsShown({});
   };
 
   return (
@@ -51,16 +61,43 @@ export function QuizPanel({ lessonId, quiz }: { lessonId: string; quiz: QuizQues
           <span className={score === quiz.length ? s.quizScoreFull : s.quizScore}>
             {score}/{quiz.length}
           </span>
-        ) : null}
+        ) : (
+          <span className={s.quizScore}>
+            {answeredCount}/{quiz.length}
+          </span>
+        )}
+      </div>
+
+      <div className={s.quizProgress} aria-hidden>
+        <div className={s.quizProgressFill} style={{ width: `${progressPct}%` }} />
       </div>
 
       {quiz.map((q, qi) => {
         const r = results?.[qi];
+        const hintOpen = hintsShown[qi];
         return (
           <div key={q.id} className={s.quizQ}>
             <p className={s.quizQuestion}>
               {qi + 1}. {q.question.mn}
             </p>
+
+            {/* A hint the student chooses to reveal, only before grading. */}
+            {q.hint && !results ? (
+              hintOpen ? (
+                <p className={s.quizHint}>
+                  <Lightbulb size={15} strokeWidth={2.2} className={s.quizHintIcon} aria-hidden />
+                  <span>{q.hint.mn}</span>
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  className={s.quizHintBtn}
+                  onClick={() => setHintsShown((h) => ({ ...h, [qi]: true }))}
+                >
+                  <Lightbulb size={15} strokeWidth={2.2} /> Санамж харах
+                </button>
+              )
+            ) : null}
             <div className={s.quizOptions} role="radiogroup" aria-label={q.question.mn}>
               {q.options.map((opt, oi) => {
                 const chosen = answers[qi] === oi;
@@ -105,6 +142,14 @@ export function QuizPanel({ lessonId, quiz }: { lessonId: string; quiz: QuizQues
           </div>
         );
       })}
+
+      {perfect ? (
+        <div className={s.quizCelebrate} role="status">
+          <PartyPopper size={30} strokeWidth={1.8} className={s.quizCelebrateIcon} aria-hidden />
+          <span className={s.quizCelebrateTitle}>Бүгд зөв! 🎉</span>
+          <span className={s.quizCelebrateBody}>Энэ хичээлийн ойлголтыг бүрэн эзэмшлээ.</span>
+        </div>
+      ) : null}
 
       {results ? (
         <button type="button" className={s.ghostBtn} onClick={reset}>
