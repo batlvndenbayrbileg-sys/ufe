@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import dynamic from "next/dynamic";
 import {
   Check,
@@ -54,6 +54,29 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
   const [startedAt] = useState<number[]>(() => tasks.map(() => Date.now()));
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [checking, setChecking] = useState(false);
+
+  // Reading comfort: the student can scale the instruction text up or down; the
+  // choice is remembered across lessons.
+  const [zaawarScale, setZaawarScale] = useState(1);
+  useEffect(() => {
+    try {
+      const v = parseFloat(localStorage.getItem("khiye:zaawar-scale") ?? "1");
+      if (v >= 0.9 && v <= 1.8) setZaawarScale(v);
+    } catch {
+      /* storage blocked — keep the default */
+    }
+  }, []);
+  const changeScale = useCallback((delta: number) => {
+    setZaawarScale((s) => {
+      const next = Math.min(1.8, Math.max(0.9, Math.round((s + delta) * 100) / 100));
+      try {
+        localStorage.setItem("khiye:zaawar-scale", String(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }, []);
   const [logs, setLogs] = useState<ConsoleEntry[]>([]);
   const [pasteHint, setPasteHint] = useState(false);
   const pasteHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -187,7 +210,33 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
       header={header}
       collapsedRail={<span style={{ writingMode: "vertical-rl", fontSize: 12, color: "var(--text-muted)" }}>Заавар</span>}
       instructions={
-        <div className={s.pane}>
+        <div className={s.pane} style={{ "--zaawar-scale": zaawarScale } as CSSProperties}>
+          {/* Reading-comfort control: scale the guide text up or down. */}
+          <div className={s.zoomBar}>
+            <span className={s.zoomLabel}>Бичвэрийн хэмжээ</span>
+            <div className={s.zoomBtns}>
+              <button
+                type="button"
+                className={s.zoomBtn}
+                onClick={() => changeScale(-0.1)}
+                disabled={zaawarScale <= 0.9}
+                aria-label="Бичвэр багасгах"
+              >
+                <span style={{ fontSize: 12, fontWeight: 700 }}>A</span>
+              </button>
+              <span className={s.zoomPct}>{Math.round(zaawarScale * 100)}%</span>
+              <button
+                type="button"
+                className={s.zoomBtn}
+                onClick={() => changeScale(0.1)}
+                disabled={zaawarScale >= 1.8}
+                aria-label="Бичвэр томосгох"
+              >
+                <span style={{ fontSize: 18, fontWeight: 700 }}>A</span>
+              </button>
+            </div>
+          </div>
+
           {/* Lesson framing: what you're building here, and why it matters. */}
           <div className={s.lessonIntro}>
             <span className={s.lessonIntroIcon} aria-hidden>

@@ -77,7 +77,61 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
-  max-width: 62ch;
+  max-width: 66ch;
+}
+
+/* Reading-comfort control: A− / % / A+ that scales the guide text. */
+.zoomBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 6px 6px 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+}
+.zoomLabel {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+.zoomBtns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.zoomBtn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  line-height: 1;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+.zoomBtn:hover:not(:disabled) {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+}
+.zoomBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.zoomPct {
+  min-width: 3.2ch;
+  text-align: center;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
 }
 .taskHead {
   display: grid;
@@ -108,7 +162,7 @@
   font-weight: 600;
 }
 .taskTitle {
-  font-size: var(--text-xl);
+  font-size: calc(var(--text-xl) * var(--zaawar-scale, 1));
   font-weight: 700;
   letter-spacing: -0.015em;
   margin: 0;
@@ -117,6 +171,7 @@
 }
 .statement {
   margin: 0;
+  font-size: calc(var(--text-md) * var(--zaawar-scale, 1));
   line-height: var(--leading-prose);
   color: var(--text);
 }
@@ -146,7 +201,7 @@
   display: flex;
   gap: var(--space-2);
   align-items: flex-start;
-  font-size: var(--text-base);
+  font-size: calc(var(--text-base) * var(--zaawar-scale, 1));
   line-height: 1.5;
   color: var(--text);
 }
@@ -210,7 +265,7 @@
   color: var(--accent-text);
 }
 .lessonIntroBuild {
-  font-size: var(--text-md);
+  font-size: calc(var(--text-md) * var(--zaawar-scale, 1));
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text);
@@ -218,7 +273,7 @@
 }
 .lessonIntroWhy {
   margin: 2px 0 0;
-  font-size: var(--text-sm);
+  font-size: calc(var(--text-sm) * var(--zaawar-scale, 1));
   line-height: var(--leading-prose);
   color: var(--text-muted);
 }
@@ -435,7 +490,7 @@
   color: var(--accent-text);
 }
 .expectedText {
-  font-size: var(--text-base);
+  font-size: calc(var(--text-base) * var(--zaawar-scale, 1));
   line-height: 1.55;
   color: var(--text);
 }
