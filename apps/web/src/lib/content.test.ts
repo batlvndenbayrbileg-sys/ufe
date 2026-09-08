@@ -59,29 +59,36 @@ describe("getLessonPublic", () => {
 });
 
 describe("gradeQuiz", () => {
-  it("scores a checkpoint quiz and returns the key and explanations", () => {
-    const graded = gradeQuiz("m1-l6", [1, 1]);
-    expect(graded).not.toBeNull();
-    expect(graded!.total).toBe(2);
-    expect(graded!.score).toBe(2);
-    expect(graded!.results.every((r) => r.correct)).toBe(true);
-    expect(graded!.results[0]!.explanation.mn.length).toBeGreaterThan(0);
+  it("scores a full-correct run and returns the key and explanations", () => {
+    // Derive the answer key from the graded output itself, so the test does not
+    // hardcode content that lesson authors may change.
+    const probe = gradeQuiz("m1-l6", [0, 0])!;
+    expect(probe).not.toBeNull();
+    expect(probe.total).toBe(2);
+
+    const key = probe.results.map((r) => r.correctIndex);
+    const perfect = gradeQuiz("m1-l6", key)!;
+    expect(perfect.score).toBe(perfect.total);
+    expect(perfect.results.every((r) => r.correct)).toBe(true);
+    expect(perfect.results[0]!.explanation.mn.length).toBeGreaterThan(0);
   });
 
-  it("marks wrong answers and still names the correct index", () => {
-    const graded = gradeQuiz("m1-l6", [0, 1])!;
+  it("marks a wrong answer and still names the correct index", () => {
+    const key = gradeQuiz("m1-l6", [0, 0])!.results.map((r) => r.correctIndex);
+    const wrongForQ1 = key[0] === 0 ? 1 : 0; // any index that is not the answer
+    const graded = gradeQuiz("m1-l6", [wrongForQ1, key[1]!])!;
     expect(graded.score).toBe(1);
     expect(graded.results[0]!.correct).toBe(false);
-    expect(graded.results[0]!.correctIndex).toBe(1);
+    expect(graded.results[0]!.correctIndex).toBe(key[0]);
   });
 
   it("is null for an unknown lesson", () => {
     expect(gradeQuiz("nope", [])).toBeNull();
   });
 
-  it("treats a lesson without a quiz as an empty quiz", () => {
-    const graded = gradeQuiz("m1-l1", [])!;
-    expect(graded.total).toBe(0);
-    expect(graded.score).toBe(0);
+  it("ships a concept-check quiz on every lesson", () => {
+    // Every lesson now carries a quiz; a lesson that previously had none does too.
+    const graded = gradeQuiz("m1-l1", [0, 0])!;
+    expect(graded.total).toBeGreaterThanOrEqual(1);
   });
 });

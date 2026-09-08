@@ -188,6 +188,62 @@
       ]
     }
   ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "React component-ийн нэр ямар байх ёстой вэ?"
+      },
+      "options": [
+        {
+          "mn": "Заавал жижиг үсгээр эхэлнэ"
+        },
+        {
+          "mn": "ЗААВАЛ том үсгээр эхэлнэ (жишээ нь `App`)"
+        },
+        {
+          "mn": "Заавал `Component` гэж төгсөнө"
+        },
+        {
+          "mn": "Тоогоор эхэлж болно"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "React component-ийн нэр заавал том үсгээр эхэлдэг. Жижиг үсгээр эхэлбэл React түүнийг энгийн HTML tag гэж андуурдаг."
+      },
+      "hint": {
+        "mn": "`<App />` ба `<main>` хоёрын эхний үсгийг харьцуул. React аль нь component, аль нь HTML tag гэдгийг юугаар нь ялгадаг вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`createRoot(document.getElementById(\"root\")).render(<App />)` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`App` component-ийг `#root` элемент дотор зурна"
+        },
+        {
+          "mn": "`App`-ийг өөр файлаас импортлоно"
+        },
+        {
+          "mn": "`#root` элементийг хуудаснаас устгана"
+        },
+        {
+          "mn": "Шинэ HTML файл үүсгэнэ"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "`createRoot(...).render(...)` нь «энэ component-ийг энэ элемент дотор зур» гэсэн үг. Ингэж л React-ийн JSX хуудсанд харагддаг."
+      },
+      "hint": {
+        "mn": "`getElementById(\"root\")` аль элементийг зааж байна, `render(<App />)` тэнд юуг тавьж байна вэ?"
+      }
+    }
+  ],
   "completion": {
     "xp": 25
   },
