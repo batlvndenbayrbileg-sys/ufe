@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e11d48"/>
+      <stop offset="1" stop-color="#db2777"/>
+    </linearGradient>
+    <radialGradient id="v" cx="0.5" cy="0.4" r="0.85">
+      <stop offset="0.45" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.32"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#g)"/>
+  <g opacity="0.10" fill="#ffffff"><g transform="translate(470 120)">
+        <ellipse cx="0" cy="0" rx="120" ry="34"/>
+        <path d="M-120 0 v150 a120 34 0 0 0 240 0 v-150" fill-opacity="0.6"/>
+      </g></g>
+  
+  <g transform="translate(170 74)">
+    <rect width="300" height="212" rx="16" fill="#ffffff" fill-opacity="0.13"/>
+    <rect x="0.5" y="0.5" width="299" height="211" rx="15.5" fill="none" stroke="#ffffff" stroke-opacity="0.30"/>
+    <circle cx="20" cy="18" r="5" fill="#ffffff" fill-opacity="0.6"/>
+    <circle cx="38" cy="18" r="5" fill="#ffffff" fill-opacity="0.42"/>
+    <circle cx="56" cy="18" r="5" fill="#ffffff" fill-opacity="0.42"/>
+    <line x1="0" y1="40" x2="300" y2="40" stroke="#ffffff" stroke-opacity="0.18"/>
+    <g transform="translate(20 58)">
+      <g>
+        <rect x="0" y="8" width="120" height="30" rx="7" fill="#ffffff" fill-opacity="0.28"/>
+        <rect x="0" y="46" width="120" height="30" rx="7" fill="#ffffff" fill-opacity="0.22"/>
+        <rect x="0" y="84" width="120" height="30" rx="7" fill="#ffffff" fill-opacity="0.18"/>
+        <circle cx="16" cy="23" r="5" fill="#34d399"/>
+        <circle cx="16" cy="61" r="5" fill="#34d399"/>
+        <circle cx="16" cy="99" r="5" fill="#ffffff" fill-opacity="0.6"/>
+      </g>
+      <path d="M120 61 h44" stroke="#ffffff" stroke-opacity="0.6" stroke-width="3" stroke-dasharray="6 6"/>
+      <g transform="translate(200 30)" fill="#ffffff" fill-opacity="0.85">
+        <ellipse cx="30" cy="0" rx="30" ry="10"/>
+        <path d="M0 0 v56 a30 10 0 0 0 60 0 v-56" fill-opacity="0.5"/>
+        <ellipse cx="30" cy="0" rx="30" ry="10"/>
+        <ellipse cx="30" cy="28" rx="30" ry="10" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="2"/>
+      </g></g>
+  </g>
+  <rect width="640" height="360" fill="url(#v)"/>
+</svg>

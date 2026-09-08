@@ -12,8 +12,16 @@ import s from "./squeeze.module.css";
 
 export type ShowcaseSlide = { tag: string; title: string; desc: string };
 
-/** One gradient per panel. Colour text is white over a dark scrim, so these read
-    the same in light and dark themes. */
+/** One illustration per panel — self-hosted SVG scenes (gradient + a tech motif
+    for that stage). The gradient below is a fallback if an image ever fails. */
+const IMAGES = [
+  "/img/showcase/1-html.svg",
+  "/img/showcase/2-css.svg",
+  "/img/showcase/3-js.svg",
+  "/img/showcase/4-react.svg",
+  "/img/showcase/5-backend.svg",
+  "/img/showcase/6-deploy.svg",
+];
 const BACKGROUNDS = [
   "linear-gradient(135deg, #4f46e5, #7c3aed)",
   "linear-gradient(135deg, #0284c7, #2563eb)",
@@ -39,6 +47,8 @@ export function LandingShowcase({
     title: d.title,
     description: d.desc,
     overlay: <span className={s.mark}>{d.tag}</span>,
+    image: IMAGES[i % IMAGES.length],
+    imageAlt: "",
     background: BACKGROUNDS[i % BACKGROUNDS.length],
     action: actionLabel,
     href: courseHref,
