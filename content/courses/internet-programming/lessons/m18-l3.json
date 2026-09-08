@@ -1,0 +1,288 @@
+{
+  "id": "m18-l3",
+  "moduleId": "m18-cicd",
+  "slug": "conditional-deploy",
+  "order": 3,
+  "title": {
+    "mn": "Deploy зөвхөн ногоон дээр"
+  },
+  "why": {
+    "mn": "Deploy бол хамгийн эрсдэлтэй алхам. Түүнийг зөвхөн `main` салбар дээр, CI амжилттай (ногоон) үед л ажиллуулна. Feature салбар эсвэл унасан build хэзээ ч production-д хүрэхгүй."
+  },
+  "buildsInProject": "Deploy нөхцөлийн шалгалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "devops",
+    "javascript"
+  ],
+  "concepts": [
+    "conditional job",
+    "deploy on main",
+    "CI gating"
+  ],
+  "prerequisites": [
+    "m18-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — CI/CD</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — CI/CD</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/pipeline.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/pipeline.js",
+        "content": "// Deploy job нь ЗӨВХӨН main салбар дээр, CI амжилттай үед ажиллана.\n// context: { branch, ci } — ci нь \"success\" эсвэл \"failure\".\n// main + success бол л true буцаа.\n\nfunction shouldDeploy(context) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Deploy турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\nwindow.DEPLOY_MAIN = null;\nwindow.DEPLOY_PR = null;\nwindow.DEPLOY_FAIL = null;\n\ntry {\n  window.DEPLOY_MAIN = shouldDeploy({ branch: \"main\", ci: \"success\" });\n  window.DEPLOY_PR = shouldDeploy({ branch: \"feature/search\", ci: \"success\" });\n  window.DEPLOY_FAIL = shouldDeploy({ branch: \"main\", ci: \"failure\" });\n  panel(window.DEPLOY_MAIN ? \"ok\" : \"bad\", \"main\", \"main + ногоон CI\", [\"shouldDeploy → \" + String(window.DEPLOY_MAIN)]);\n  panel(!window.DEPLOY_PR ? \"ok\" : \"bad\", \"pr\", \"feature салбар\", [\"shouldDeploy → \" + String(window.DEPLOY_PR)]);\n  panel(!window.DEPLOY_FAIL ? \"ok\" : \"bad\", \"fail\", \"main + унасан CI\", [\"shouldDeploy → \" + String(window.DEPLOY_FAIL)]);\n} catch (problem) {\n  panel(\"bad\", \"error\", \"Алдаа\", [problem.message]);\n}\n\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/pipeline.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/pipeline.js"
+    ],
+    "activeFile": "src/pipeline.js"
+  },
+  "tasks": [
+    {
+      "id": "m18-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Deploy зөвхөн ногоон дээр"
+      },
+      "statement": {
+        "mn": "`shouldDeploy(context)`-ыг бич. `context` нь `{ branch, ci }` — `ci` нь `\"success\"` эсвэл `\"failure\"`. Салбар нь `\"main\"` БА `ci` нь `\"success\"` байвал л `true` буцаа. Feature салбар (main биш) эсвэл унасан CI бол `false`."
+      },
+      "requirements": [
+        {
+          "mn": "main + success → true"
+        },
+        {
+          "mn": "feature салбар → false"
+        },
+        {
+          "mn": "унасан CI → false"
+        },
+        {
+          "mn": "Хоёр нөхцөлийг БОТЬ шалгана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "main дээр ногоон CI-тэй бол deploy зөвшөөрнө; өөр салбар эсвэл улаан CI бол үгүй."
+        }
+      },
+      "targetFile": "src/pipeline.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/pipeline.js",
+            "kind": "function",
+            "name": "shouldDeploy"
+          },
+          "onFail": {
+            "mn": "`shouldDeploy` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.DEPLOY_MAIN",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "main дээр ногоон CI-тэй үед deploy зөвшөөрөх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.DEPLOY_PR",
+                  "equals": false
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Feature салбар дээр deploy хийх ёсгүй."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.DEPLOY_FAIL",
+                  "equals": false
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "CI унасан үед (main дээр ч гэсэн) deploy хийх ёсгүй."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Deploy бол буцаахад хэцүү алхам. Тиймээс хоёр болзол ЗЭРЭГ хангагдсан үед л зөвшөөрнө: зөв салбар (main) БА ногоон CI."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Хоёр нөхцөлийг `&&`-аар холбо. Аль нэг нь худал бол бүхэлдээ худал — deploy хийхгүй."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Нэг мөр:"
+          },
+          "code": "return context.branch === \"main\" && context.ci === \"success\";"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/pipeline.js",
+            "content": "// Deploy нь зөвхөн main дээр, CI ногоон үед л ажиллана.\n\nfunction shouldDeploy(context) {\n  return context.branch === \"main\" && context.ci === \"success\";\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "GitHub Actions дээр job-д `if:` нөхцөл тавьж, deploy-г зөвхөн `github.ref == 'refs/heads/main'` үед ажиллуулдаг. Мөн CI ногоон байх нь суурь болзол — эвдэрхий код production-д хүрэхээс сэргийлнэ. Эдгээр хоёр хаалт хамтдаа deploy-г найдвартай болгодог."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Deploy job-ыг ихэвчлэн ямар нөхцөлд ажиллуулдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Салбар бүр дээр, CI-ийн статусаас үл хамааран"
+        },
+        {
+          "mn": "Зөвхөн `main` салбар дээр, CI амжилттай (ногоон) үед"
+        },
+        {
+          "mn": "Зөвхөн шөнө"
+        },
+        {
+          "mn": "Хэзээ ч автоматаар биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Deploy эрсдэлтэй тул зөвхөн `main` дээр CI ногоон байх үед л ажиллуулж, эвдэрхий/туршилтын кодыг production-оос хол байлгадаг."
+      },
+      "hint": {
+        "mn": "Аль салбар нь «жинхэнэ» вэ, ямар CI статус аюулгүй вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Feature салбар дээрх push CI-г ногоон дүнтэй дуусгав. Энэ push-ыг production-д deploy хийх үү?"
+      },
+      "options": [
+        {
+          "mn": "Тийм, ногоон бол шууд"
+        },
+        {
+          "mn": "Зөвхөн баасан гарагт"
+        },
+        {
+          "mn": "Тийм, гэхдээ 2 цагийн дараа"
+        },
+        {
+          "mn": "Үгүй — deploy нь ихэвчлэн зөвхөн main дээр л ажилладаг"
+        }
+      ],
+      "correct": 3,
+      "explanation": {
+        "mn": "CI ногоон байх нь хангалттай биш — deploy нь `main` дээр л ажилладаг тул feature салбарын push production-д хүрэхгүй."
+      },
+      "hint": {
+        "mn": "Deploy болзол нь зөвхөн CI-гээс гадна юуг шалгадаг байсан бэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

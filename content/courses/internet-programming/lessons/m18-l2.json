@@ -1,0 +1,288 @@
+{
+  "id": "m18-l2",
+  "moduleId": "m18-cicd",
+  "slug": "required-checks",
+  "order": 2,
+  "title": {
+    "mn": "Merge-ийг ногооноор хаах"
+  },
+  "why": {
+    "mn": "GitHub дээр salbar (branch)-ыг хамгаалж, CI ногоон болтол merge хийхийг хориглодог. Ингэснээр эвдэрхий код `main`-д хэзээ ч ороогүй байна — багийн бүх хүн ногоон суурин дээр ажиллана."
+  },
+  "buildsInProject": "Merge зөвшөөрлийн шалгалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "devops",
+    "javascript"
+  ],
+  "concepts": [
+    "branch protection",
+    "required status checks",
+    "merge gate"
+  ],
+  "prerequisites": [
+    "m18-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — CI/CD</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — CI/CD</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/pipeline.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/pipeline.js",
+        "content": "// Branch protection — merge хийхийн өмнө ШААРДЛАГАТАЙ шалгалтууд ногоон байх ёстой.\n// checks: [{ name, status }], required: [\"test\", \"build\"] шиг нэрсийн жагсаалт.\n// Бүх шаардлагатай шалгалт \"passed\" бол л true буцаа.\n\nfunction canMerge(checks, required) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Merge турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\nconst required = [\"test\", \"build\"];\n\nconst green = [\n  { name: \"lint\", status: \"passed\" },\n  { name: \"test\", status: \"passed\" },\n  { name: \"build\", status: \"passed\" },\n];\n\nconst redf = [\n  { name: \"lint\", status: \"passed\" },\n  { name: \"test\", status: \"failed\" },\n  { name: \"build\", status: \"passed\" },\n];\n\n// build хараахан ажиллаагүй (жагсаалтад алга) — merge-г хаах ёстой.\nconst missing = [\n  { name: \"lint\", status: \"passed\" },\n  { name: \"test\", status: \"passed\" },\n];\n\nwindow.MERGE_GREEN = null;\nwindow.MERGE_RED = null;\nwindow.MERGE_MISSING = null;\n\ntry {\n  window.MERGE_GREEN = canMerge(green, required);\n  window.MERGE_RED = canMerge(redf, required);\n  window.MERGE_MISSING = canMerge(missing, required);\n  panel(window.MERGE_GREEN ? \"ok\" : \"bad\", \"green\", \"Бүх шаардлагатай шалгалт ногоон\", [\"canMerge → \" + String(window.MERGE_GREEN)]);\n  panel(!window.MERGE_RED ? \"ok\" : \"bad\", \"red\", \"test унасан\", [\"canMerge → \" + String(window.MERGE_RED)]);\n  panel(!window.MERGE_MISSING ? \"ok\" : \"bad\", \"missing\", \"build хараахан ажиллаагүй\", [\"canMerge → \" + String(window.MERGE_MISSING)]);\n} catch (problem) {\n  panel(\"bad\", \"error\", \"Алдаа\", [problem.message]);\n}\n\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/pipeline.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/pipeline.js"
+    ],
+    "activeFile": "src/pipeline.js"
+  },
+  "tasks": [
+    {
+      "id": "m18-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Merge-ийг ногооноор хаах"
+      },
+      "statement": {
+        "mn": "`canMerge(checks, required)`-ыг бич. `checks` нь `{ name, status }` жагсаалт, `required` нь заавал ногоон байх ёстой шалгалтын нэрсийн жагсаалт (жишээ нь `[\"test\", \"build\"]`). Шаардлагатай шалгалт БҮР `\"passed\"` статустай байвал л `true` буцаа. Шаардлагатай нэг шалгалт унасан ЭСВЭЛ хараахан ажиллаагүй (жагсаалтад алга) бол `false`."
+      },
+      "requirements": [
+        {
+          "mn": "Шаардлагатай шалгалтуудыг шалгана"
+        },
+        {
+          "mn": "Бүгд passed бол true"
+        },
+        {
+          "mn": "Нэг нь унавал false"
+        },
+        {
+          "mn": "Байхгүй (ажиллаагүй) бол false"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Бүх шаардлагатай шалгалт ногоон бол merge зөвшөөрнө; test унасан эсвэл build ажиллаагүй бол хаана."
+        }
+      },
+      "targetFile": "src/pipeline.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/pipeline.js",
+            "kind": "function",
+            "name": "canMerge"
+          },
+          "onFail": {
+            "mn": "`canMerge` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.MERGE_GREEN",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Бүх шаардлагатай шалгалт ногоон бол merge зөвшөөрөх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.MERGE_RED",
+                  "equals": false
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Шаардлагатай шалгалт унасан бол merge хаах ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.MERGE_MISSING",
+                  "equals": false
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Шаардлагатай шалгалт хараахан ажиллаагүй бол merge хаах ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "«Protected branch» нь тодорхой шалгалтуудыг ногоон болохыг ШААРДдаг. Заримыг л шаардаж болно — жагсаалтад байгаа нэрсийг л шалга."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`Array.every` нь бүх элемент нөхцөлд нийцвэл л `true` буцаана — «бүх шаардлагатай шалгалт давсан уу?»-д яг тохирно. Байхгүй шалгалтыг `undefined` гэж бод."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гүйцээ:"
+          },
+          "code": "return required.every((name) => {\n  const check = checks.find((c) => c.name === name);\n  return check !== undefined && check.status === \"passed\";\n});"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/pipeline.js",
+            "content": "// Branch protection — шаардлагатай бүх шалгалт ногоон бол л merge зөвшөөрнө.\n\nfunction canMerge(checks, required) {\n  return required.every((name) => {\n    const check = checks.find((c) => c.name === name);\n    return check !== undefined && check.status === \"passed\";\n  });\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Branch protection нь `main`-ыг эвдэрхий кодоос хамгаалдаг: CI ногоон болтол merge товч идэвхгүй. Зөвхөн шаардлагатай шалгалтуудыг л шалгах нь чухал — заавал бүх шалгалт биш, багийн тохирсон гол шалгалтууд ногоон байвал болно."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "«Protected branch» дээр CI улаан (тест унасан) байхад юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Merge товч идэвхгүй — нэгтгэж болохгүй"
+        },
+        {
+          "mn": "Автоматаар merge хийгдэнэ"
+        },
+        {
+          "mn": "Код устана"
+        },
+        {
+          "mn": "Юу ч өөрчлөгдөхгүй"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Хамгаалагдсан салбар нь шаардлагатай шалгалтууд ногоон болтол merge-ийг хориглодог — эвдэрхий код `main`-д орохгүй."
+      },
+      "hint": {
+        "mn": "«Protected» гэдэг нь main-ыг юунаас хамгаалж байна вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Шаардлагатай шалгалт хараахан ажиллаж дуусаагүй (статус байхгүй) бол merge-ийг зөвшөөрөх үү?"
+      },
+      "options": [
+        {
+          "mn": "Тийм, дараа нь шалгана"
+        },
+        {
+          "mn": "Үгүй — ногоон болж баталгаажаагүй тул хаана"
+        },
+        {
+          "mn": "Зөвхөн шөнө бол зөвшөөрнө"
+        },
+        {
+          "mn": "Санамсаргүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "«Тодорхойгүй» нь «ногоон» биш. Шаардлагатай шалгалт бүр `passed` болж баталгаажтал merge-ийг хаана."
+      },
+      "hint": {
+        "mn": "Баталгаажаагүй шалгалтыг «давсан» гэж үзэж болох уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

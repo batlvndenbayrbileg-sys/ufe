@@ -110,7 +110,8 @@
       },
       "badgeId": "shipper",
       "moduleIds": [
-        "m13-deploy"
+        "m13-deploy",
+        "m18-cicd"
       ]
     },
     {

@@ -1,0 +1,19 @@
+{
+  "id": "m18-cicd",
+  "stageId": "s9",
+  "order": 2,
+  "title": {
+    "mn": "CI/CD: GitHub Actions"
+  },
+  "description": {
+    "mn": "Автомат pipeline — push бүрд тест, merge-ийг ногооноор хаах, зөвхөн ногоон дээр deploy, нууцыг орчноос, workflow бүтэц."
+  },
+  "estimatedHours": 2,
+  "lessons": [
+    "m18-l1",
+    "m18-l2",
+    "m18-l3",
+    "m18-l4",
+    "m18-l5"
+  ]
+}

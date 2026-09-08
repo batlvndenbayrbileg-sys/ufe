@@ -1,0 +1,309 @@
+{
+  "id": "m18-l4",
+  "moduleId": "m18-cicd",
+  "slug": "ci-secrets",
+  "order": 4,
+  "title": {
+    "mn": "CI дахь нууц утга"
+  },
+  "why": {
+    "mn": "Deploy хийхэд token хэрэгтэй. Түүнийг кодон дотор бичвэл git-д мөнхөрч, репог хармагц хэн ч хулгайлна. Нууцыг CI-ийн secrets (орчны хувьсагч)-аас уншиж, лог руу задгайгаар гаргахгүй байх ёстой."
+  },
+  "buildsInProject": "Нууц утга ашигладаг deploy",
+  "difficulty": "advanced",
+  "estimatedMinutes": 20,
+  "skills": [
+    "devops",
+    "javascript"
+  ],
+  "concepts": [
+    "CI secrets",
+    "environment variables",
+    "never hardcode secrets",
+    "masking"
+  ],
+  "prerequisites": [
+    "m18-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — CI/CD</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — CI/CD</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/pipeline.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/pipeline.js",
+        "content": "// Deploy token-ыг КОД дотор биш, орчны нууцаас (env) унших ёстой.\n// env.DEPLOY_TOKEN байхгүй бол алдаа шид.\n// Лог/хариунд token-ыг ЗАДГАЙГААР бүү гарга — сүүлийн 4 оронг л үлдээж далда.\n\nfunction deploy(env) {\n  // энд бичнэ үү\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Deploy турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\nconst output = document.getElementById(\"output\");\nfunction panel(cls, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"call \" + cls;\n  box.dataset.testid = testid;\n  const h = document.createElement(\"h2\");\n  h.textContent = title;\n  box.append(h);\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n  output.append(box);\n  return box;\n}\n\nwindow.DEPLOY_OK = null;\nwindow.DEPLOY_ERROR = null;\nwindow.DEPLOY_BOOT_ERROR = null;\n\ntry {\n  window.DEPLOY_OK = deploy({ DEPLOY_TOKEN: \"ghp_live_SECRET_ABCD1234\" });\n  panel(\"ok\", \"ok\", \"Нууц утгатай deploy\", [JSON.stringify(window.DEPLOY_OK, null, 2)]);\n} catch (problem) {\n  window.DEPLOY_BOOT_ERROR = problem.message;\n  panel(\"bad\", \"boot\", \"deploy алдаа\", [problem.message]);\n}\n\ntry {\n  deploy({});\n  panel(\"bad\", \"missed\", \"Дутуу нууц илрээгүй\", [\"deploy нь дутуу DEPLOY_TOKEN-ыг анзаарсангүй\"]);\n} catch (problem) {\n  window.DEPLOY_ERROR = problem.message;\n  panel(\"ok\", \"err\", \"Дутуу нууц зөв илэрлээ\", [problem.message]);\n}\n\ndocument.body.dataset.ready = \"1\";\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/pipeline.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/pipeline.js"
+    ],
+    "activeFile": "src/pipeline.js"
+  },
+  "tasks": [
+    {
+      "id": "m18-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "CI дахь нууц утга"
+      },
+      "statement": {
+        "mn": "`deploy(env)`-ыг бич: 1) Token-ыг `env.DEPLOY_TOKEN`-оос ав (кодон дотор бичихгүй). 2) Байхгүй бол `Error` шид. 3) Байвал `{ deployed: true, target: \"production\", token }` буцаа — гэхдээ `token`-ыг ДАЛДАЛ: эхэнд нь `••••` (дөрвөн цэг) тавиад сүүлийн 4 оронг нэм (`token.slice(-4)`). Задгай нууц хариунд бүү гарга."
+      },
+      "requirements": [
+        {
+          "mn": "Token-ыг env-ээс уншина"
+        },
+        {
+          "mn": "Дутуу бол алдаа шиднэ"
+        },
+        {
+          "mn": "Token-ыг далдална (`••••` + сүүл 4)"
+        },
+        {
+          "mn": "Задгай нууц гаргахгүй"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Нууцтай дуудлага `deployed: true`, `token: \"••••1234\"` буцаана; нууцгүй дуудлага алдаа шидэнэ."
+        }
+      },
+      "targetFile": "src/pipeline.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/pipeline.js",
+            "kind": "function",
+            "name": "deploy"
+          },
+          "onFail": {
+            "mn": "`deploy` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.DEPLOY_OK.deployed",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Нууцтай deploy нь `deployed: true` буцаах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.DEPLOY_OK.token",
+                  "equals": "••••1234"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`token`-ыг далдлаж, `••••` + сүүлийн 4 орон байх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "JSON.stringify(window.DEPLOY_OK).includes('SECRET')",
+                  "equals": false
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Задгай нууц (raw token) хариунд ХЭЗЭЭ Ч гарч болохгүй."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "typeof window.DEPLOY_ERROR",
+                  "equals": "string"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`DEPLOY_TOKEN` дутуу бол алдаа шидэх ёстой."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Нууцыг кодод бичвэл git-д үлдэж, репог хармагц хэн ч уншина. GitHub Actions дээр нууцыг `secrets.DEPLOY_TOKEN` (орчны хувьсагч) болгож өгдөг."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Нууцыг лог/хариунд задгайгаар гаргах нь өөр нэг алдаа. Сүүлийн 4 оронг л үлдээж далдлах нь хангалттай — `token.slice(-4)`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Гурван алхам:"
+          },
+          "code": "const token = env.DEPLOY_TOKEN;\nif (!token) throw new Error(\"DEPLOY_TOKEN тохируулаагүй байна\");\nconst masked = \"\\u2022\\u2022\\u2022\\u2022\" + token.slice(-4);\nreturn { deployed: true, target: \"production\", token: masked };"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/pipeline.js",
+            "content": "// Deploy token-ыг орчны нууцаас уншиж, далдалж ашиглана.\n\nfunction deploy(env) {\n  const token = env.DEPLOY_TOKEN;\n  if (!token) {\n    throw new Error(\"DEPLOY_TOKEN тохируулаагүй байна\");\n  }\n  const masked = \"\\u2022\\u2022\\u2022\\u2022\" + token.slice(-4);\n  return { deployed: true, target: \"production\", token: masked };\n}\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Нууц утгыг кодоос ТУСДАА, CI-ийн secrets store-д хадгалдаг: код нь `process.env.DEPLOY_TOKEN`-ыг л уншина, жинхэнэ утга нь репод биш. Мөн нууцыг лог, хариу, алдааны мессежид задгайгаар гаргахгүй далдлах нь чухал — CI-ийн лог олон хүн хардаг."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Deploy token зэрэг нууц утгыг хаана хадгалах нь зөв бэ?"
+      },
+      "options": [
+        {
+          "mn": "Эх код дотор шууд бичих"
+        },
+        {
+          "mn": "CI-ийн secrets / орчны хувьсагчид — репод биш"
+        },
+        {
+          "mn": "README файлд"
+        },
+        {
+          "mn": "Хэрэглэгчийн cookie-д"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Нууцыг кодод бичвэл git-д мөнхөрнө. CI-ийн secrets (орчны хувьсагч)-д хадгалж, код нь зөвхөн нэрээр нь уншина."
+      },
+      "hint": {
+        "mn": "Репог олон хүн хардаг — тэнд нууц үлдэвэл юу болох вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "CI-ийн лог руу нууц token-ыг задгайгаар хэвлэвэл ямар эрсдэлтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Ямар ч эрсдэлгүй"
+        },
+        {
+          "mn": "Лог удаан ачаалагдана"
+        },
+        {
+          "mn": "Логийг харах эрхтэй хэн ч нууцыг олж, ашиглаж болно"
+        },
+        {
+          "mn": "Token богиносно"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "CI-ийн лог олон хүнд харагддаг тул задгай нууц тэнд гарвал алдагдсантай адил — тиймээс далдлах (mask) ёстой."
+      },
+      "hint": {
+        "mn": "Логийг хэн харж болох, тэнд нууц байвал юу болохыг бод."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}
