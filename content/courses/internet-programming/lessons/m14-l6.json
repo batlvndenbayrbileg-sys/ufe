@@ -1,0 +1,323 @@
+{
+  "id": "m14-l6",
+  "moduleId": "m14-testing",
+  "slug": "async-tests",
+  "order": 6,
+  "title": {
+    "mn": "Асинхрон код тестлэх"
+  },
+  "why": {
+    "mn": "Shop.mn агуулахын үлдэгдлийг шалгах нь шууд бус — сервер рүү хандаж хариу ХҮЛЭЭДЭГ тул функц Promise буцаана. Ийм асинхрон кодыг тестлэхэд `await` ашиглах ба амжилттай (`resolves`) болон алдаатай (`rejects`) хоёр замыг заавал шалгах хэрэгтэй."
+  },
+  "buildsInProject": "Агуулахын асинхрон тестүүд",
+  "difficulty": "advanced",
+  "estimatedMinutes": 22,
+  "skills": [
+    "testing",
+    "javascript"
+  ],
+  "concepts": [
+    "async test",
+    "promise",
+    "resolves/rejects",
+    "await"
+  ],
+  "prerequisites": [
+    "m14-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — тестүүд</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — тестүүд</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/shop.js\"></script>\n    <script src=\"src/tests.js\"></script>\n    <script src=\"src/runner.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\nh2 { font-size: 16px; margin: 0 0 8px; }\n\n.suite {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.suite.ok { border-left-color: #0a7a35; }\n.suite.bad { border-left-color: #b91c1c; }\n\n.suite ul {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n}\n\n.suite li {\n  padding: 4px 0;\n  font-size: 14px;\n  border-bottom: 1px solid #f4f4f5;\n}\n\n.suite li:last-child { border-bottom: none; }\n\n.suite li.ok { color: #14532d; }\n.suite li.bad { color: #991b1b; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/shop.js",
+        "content": "// Shop.mn-ий агуулахын АСИНХРОН функц. Энэ файлыг өөрчлөх шаардлагагүй —\n// таны ажил бол энэ функцийг ШАЛГАХ тест бичих.\n//\n// fetchStock(productId) нь агуулахаас барааны үлдэгдлийг Promise хэлбэрээр буцаана:\n//   - бараа олдвол үлдэгдэл тоог resolve хийнэ (0 байж болно),\n//   - бараа олдохгүй бол алдаа reject хийнэ.\n\nfunction fetchStock(productId) {\n  const catalog = { coat: 5, hat: 0 };\n  return new Promise((resolve, reject) => {\n    setTimeout(() => {\n      if (Object.prototype.hasOwnProperty.call(catalog, productId)) {\n        resolve(catalog[productId]);\n      } else {\n        reject(new Error(\"Бараа олдсонгүй: \" + productId));\n      }\n    }, 5);\n  });\n}\n\nwindow.SHOP = { fetchStock };\n"
+      },
+      {
+        "op": "create",
+        "path": "src/tests.js",
+        "content": "// Shop.mn-ий АСИНХРОН тестүүд.\n// it(\"тайлбар\", async () => { await expect(...).resolves.toBe(...); });\n\nfunction tests() {\n  it(\"агуулахад байгаа барааны үлдэгдлийг буцаана\", async () => {\n    await expect(fetchStock(\"coat\")).resolves.toBe(5);\n  });\n\n  // энд бичнэ үү\n}\n\nwindow.tests = tests;\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runner.js",
+        "content": "// Жижиг АСИНХРОН тест ажиллуулагч. Энэ файлыг өөрчлөх шаардлагагүй.\n//\n// Async тестийн ялгаа: тестийн бие `async` бөгөөд `await` ашиглана.\n// Ажиллуулагч тест бүрийг дуустал нь хүлээгээд (`await`) дараагийнхийг эхлүүлнэ.\n//\n// Таны тестийг ХОЁР удаа ажиллуулна:\n//   1) зөв хувилбар дээр — бүгд ДАВАХ ёстой,\n//   2) санаатай эвдэрсэн хувилбар бүр дээр — дор хаяж нэг нь УНАХ ёстой.\n\nconst MUTANTS = {\n  alwaysOne: {\n    label: \"Ямар ч барааны үлдэгдлийг 1 гэж буцаадаг\",\n    fn: \"fetchStock\",\n    impl: (productId) =>\n      new Promise((resolve, reject) => {\n        const catalog = { coat: 5, hat: 0 };\n        setTimeout(() => {\n          if (Object.prototype.hasOwnProperty.call(catalog, productId)) resolve(1);\n          else reject(new Error(\"Бараа олдсонгүй: \" + productId));\n        }, 5);\n      }),\n  },\n  noReject: {\n    label: \"Байхгүй бараанд алдаа шидэхийн оронд 0 буцаадаг\",\n    fn: \"fetchStock\",\n    impl: (productId) =>\n      new Promise((resolve) => {\n        const catalog = { coat: 5, hat: 0 };\n        setTimeout(() => resolve(catalog[productId] !== undefined ? catalog[productId] : 0), 5);\n      }),\n  },\n  zeroTruthy: {\n    label: \"Үлдэгдэл 0 байхыг «байхгүй» гэж андуурдаг\",\n    fn: \"fetchStock\",\n    impl: (productId) =>\n      new Promise((resolve, reject) => {\n        const catalog = { coat: 5, hat: 0 };\n        setTimeout(() => {\n          if (catalog[productId]) resolve(catalog[productId]);\n          else reject(new Error(\"Бараа олдсонгүй: \" + productId));\n        }, 5);\n      }),\n  },\n};\n\nconst output = document.getElementById(\"output\");\n\nlet current = null;\n\nfunction it(name, body) {\n  current.queue.push({ name: name, body: body });\n}\n\nasync function runCase(test) {\n  const result = { name: test.name, passed: true, message: null };\n\n  try {\n    await test.body();\n  } catch (problem) {\n    result.passed = false;\n    result.message = problem.message;\n  }\n\n  current.cases.push(result);\n  if (!result.passed) current.failed += 1;\n  current.total += 1;\n}\n\nfunction expect(actual) {\n  return {\n    toBe(expected) {\n      if (!Object.is(actual, expected)) {\n        throw new Error(\"хүлээсэн \" + JSON.stringify(expected) + \", гарсан \" + JSON.stringify(actual));\n      }\n    },\n    toEqual(expected) {\n      if (JSON.stringify(actual) !== JSON.stringify(expected)) {\n        throw new Error(\"хүлээсэн \" + JSON.stringify(expected) + \", гарсан \" + JSON.stringify(actual));\n      }\n    },\n    get resolves() {\n      return {\n        async toBe(expected) {\n          const value = await actual;\n          if (!Object.is(value, expected)) {\n            throw new Error(\"resolve хүлээсэн \" + JSON.stringify(expected) + \", гарсан \" + JSON.stringify(value));\n          }\n        },\n      };\n    },\n    get rejects() {\n      return {\n        async toThrow(message) {\n          let thrown = null;\n          try {\n            await actual;\n          } catch (problem) {\n            thrown = problem;\n          }\n          if (!thrown) throw new Error(\"reject хийх ёстой байсан ч resolve хийсэн\");\n          if (message !== undefined && !String(thrown.message).includes(message)) {\n            throw new Error(\"алдааны мессежид «\" + message + \"» байх ёстой, гарсан: \" + thrown.message);\n          }\n        },\n      };\n    },\n  };\n}\n\nwindow.it = it;\nwindow.expect = expect;\n\nasync function runSuite(label) {\n  current = { label: label, queue: [], cases: [], failed: 0, total: 0 };\n  try {\n    tests();\n    for (const test of current.queue) {\n      await runCase(test);\n    }\n  } catch (problem) {\n    current.cases.push({ name: \"(тест ажиллуулахад алдаа)\", passed: false, message: problem.message });\n    current.failed += 1;\n    current.total += 1;\n  }\n  return current;\n}\n\nfunction useImplementation(overrides) {\n  window.fetchStock = overrides.fetchStock || SHOP.fetchStock;\n}\n\nfunction panel(title, className, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"suite \" + className;\n\n  const heading = document.createElement(\"h2\");\n  heading.textContent = title;\n  box.append(heading);\n\n  const list = document.createElement(\"ul\");\n  for (const line of lines) {\n    const li = document.createElement(\"li\");\n    li.className = line.ok ? \"ok\" : \"bad\";\n    li.textContent = (line.ok ? \"✓ \" : \"✗ \") + line.text;\n    list.append(li);\n  }\n  box.append(list);\n  output.append(box);\n}\n\n(async function () {\n  window.TEST_REPORT = {};\n\n  // 1. Зөв хувилбар дээр.\n  useImplementation({});\n  const correct = await runSuite(\"correct\");\n  window.TEST_REPORT.correct = { failed: correct.failed, total: correct.total };\n\n  panel(\n    \"Зөв хувилбар — \" + (correct.total - correct.failed) + \"/\" + correct.total,\n    correct.failed === 0 ? \"ok\" : \"bad\",\n    correct.cases.map((c) => ({ ok: c.passed, text: c.name + (c.passed ? \"\" : \" — \" + c.message) })),\n  );\n\n  // 2. Эвдэрсэн хувилбар бүр дээр: тестүүд алдааг барих ёстой.\n  const caught = [];\n  for (const key of Object.keys(MUTANTS)) {\n    const mutant = MUTANTS[key];\n    useImplementation({ [mutant.fn]: mutant.impl });\n    const run = await runSuite(key);\n    window.TEST_REPORT[key] = { failed: run.failed, total: run.total };\n    caught.push({ ok: run.failed > 0, text: mutant.label });\n  }\n\n  panel(\"Эвдэрсэн хувилбаруудыг барьсан эсэх\", caught.every((c) => c.ok) ? \"ok\" : \"bad\", caught);\n\n  useImplementation({});\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/shop.js",
+      "src/tests.js",
+      "src/runner.js"
+    ],
+    "openFiles": [
+      "src/tests.js"
+    ],
+    "activeFile": "src/tests.js"
+  },
+  "tasks": [
+    {
+      "id": "m14-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Асинхрон код тестлэх"
+      },
+      "statement": {
+        "mn": "`fetchStock`-д зориулж дор хаяж ГУРВАН async тест бич: 1) `\"coat\"` → үлдэгдэл `5`-ыг resolve хийнэ. 2) `\"hat\"` → үлдэгдэл `0`-ыг resolve хийнэ (0 бол хүчинтэй утга!). 3) байхгүй бараа → алдаа reject хийнэ. Тест бүрийг `async` болгож, `await expect(...).resolves.toBe(...)` эсвэл `await expect(...).rejects.toThrow(...)` хэлбэрээр бич."
+      },
+      "requirements": [
+        {
+          "mn": "Гурваас доошгүй async тест"
+        },
+        {
+          "mn": "`resolves` шалгасан тест"
+        },
+        {
+          "mn": "`rejects` шалгасан тест"
+        },
+        {
+          "mn": "Гурван эвдрэлийг барина"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Гурав ба түүнээс дээш async тест зөв хувилбар дээр давж, гурван эвдэрсэн хувилбар (буруу утга, алдаа шидэхгүй, 0-ийг байхгүй гэж үзсэн)-ыг барина."
+        }
+      },
+      "targetFile": "src/tests.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.correct.failed",
+                  "equals": 0
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Зөв хувилбар дээр бүх тест давах ёстой — `await` мартсан эсэх, хүлээлт зөв эсэхээ шалгаарай."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.correct.total >= 3",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дор хаяж 3 тест бичих ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.alwaysOne.failed > 0",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Ямар ч барааг 1 гэж буцаадаг» алдааг тест бариагүй байна — тодорхой үлдэгдлийг (`coat` → 5) `resolves.toBe`-ээр шалгаарай."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.noReject.failed > 0",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Байхгүй бараанд алдаа шидэхгүй» гэмтлийг тест бариагүй байна — байхгүй бараанд `rejects.toThrow` тест нэмээрэй."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.zeroTruthy.failed > 0",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«0 үлдэгдлийг байхгүй гэж андуурсан» алдааг тест бариагүй байна — `hat` → 0 гэж `resolves.toBe(0)`-оор шалгаарай."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Асинхрон функц утгаа ШУУД биш, дараа нь буцаадаг. Тиймээс тестийн биеийг `async () => { ... }` болгож, `await` ашиглан хариуг нь хүлээ. `await`-гүй бол тест хариу ирэхээс өмнө дуусна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Хоёр замыг санах: амжилттай бол `await expect(промис).resolves.toBe(утга)`, алдаа бол `await expect(промис).rejects.toThrow(мессеж)`. `\"hat\"`-ийн үлдэгдэл 0 нь хүчинтэй тул алдаа биш — `resolves.toBe(0)` гэж шалгана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "rejects тестээ ингэж нэм:"
+          },
+          "code": "it(\"байхгүй бараа алдаа шиднэ\", async () => {\n  await expect(fetchStock(/* байхгүй id */)).rejects.toThrow(/* мессежийн хэсэг */);\n});"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/tests.js",
+            "content": "// Shop.mn-ий АСИНХРОН тестүүд.\n// it(\"тайлбар\", async () => { await expect(...).resolves.toBe(...); });\n\nfunction tests() {\n  it(\"агуулахад байгаа барааны үлдэгдлийг буцаана\", async () => {\n    await expect(fetchStock(\"coat\")).resolves.toBe(5);\n  });\n\n  it(\"үлдэгдэл тэг байвал 0-ийг буцаана\", async () => {\n    await expect(fetchStock(\"hat\")).resolves.toBe(0);\n  });\n\n  it(\"байхгүй бараа алдаа шиднэ\", async () => {\n    await expect(fetchStock(\"байхгүй\")).rejects.toThrow(\"олдсонгүй\");\n  });\n\n  it(\"await ашиглан үлдэгдлийг шалгана\", async () => {\n    const count = await fetchStock(\"coat\");\n    expect(count).toBe(5);\n  });\n}\n\nwindow.tests = tests;\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Асинхрон код нь тестийн нийтлэг бэрхшээл: `await` мартвал тест промис шийдэгдэхээс өмнө «давсан» мэт дуусч, худал итгэл төрүүлнэ. `resolves`/`rejects` хоёрыг заавал хосоор нь шалгах ёстой — зөвхөн амжилттай замыг шалгавал «алдаа хэзээ ч шидэгддэггүй» гэмтэл нуугдана. `\"hat\"`-ийн 0 үлдэгдлийг тусад нь шалгаснаар `if (catalog[id])` гэж 0-ийг андуурсан нарийн алдааг барина."
+        },
+        "xpPenalty": 27
+      },
+      "xp": 45,
+      "estimatedMinutes": 20,
+      "skills": [
+        "testing"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Асинхрон функцийг тестлэхэд `await` яагаад чухал вэ?"
+      },
+      "options": [
+        {
+          "mn": "`await` кодыг хурдан болгодог"
+        },
+        {
+          "mn": "`await`-гүй бол промис шийдэгдэхээс өмнө тест дуусч, худал давдаг"
+        },
+        {
+          "mn": "`await` нь зөвхөн гоо сайхны шаардлага"
+        },
+        {
+          "mn": "Асинхрон функцийг тестлэх боломжгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`await`-гүй бол тестийн бие промис шийдэгдэхийг хүлээлгүй дуусах тул шалгалт хийгдэхгүй өнгөрч, тест худал давна."
+      },
+      "hint": {
+        "mn": "Хэрэв хариу ирэхийг хүлээхгүй бол `expect` юуг шалгах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Байхгүй бараанд алдаа шидэхийг (`rejects`) заавал тестлэх нь яагаад чухал вэ?"
+      },
+      "options": [
+        {
+          "mn": "`rejects` тест илүү хурдан ажилладаг"
+        },
+        {
+          "mn": "Хэрэглэгч байхгүй бараа их хайдаг учир"
+        },
+        {
+          "mn": "Зөвхөн амжилттай замыг шалгавал «алдаа хэзээ ч шидэгддэггүй» гэмтэл нуугдана"
+        },
+        {
+          "mn": "`rejects`-ийг тестлэх шаардлагагүй"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "Амжилттай (`resolves`) замыг л шалгавал функц алдаа шидэхээ больсныг анзаарахгүй; `rejects` тест л алдааны замыг хамгаална."
+      },
+      "hint": {
+        "mn": "Хэрэв функц байхгүй бараанд ч 0 буцаадаг болчихвол зөвхөн resolves тест үүнийг барих уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

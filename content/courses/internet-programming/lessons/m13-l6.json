@@ -1,0 +1,342 @@
+{
+  "id": "m13-l6",
+  "moduleId": "m13-deploy",
+  "slug": "cache-control",
+  "order": 6,
+  "title": {
+    "mn": "Cache-Control толгойнууд"
+  },
+  "why": {
+    "mn": "Shop.mn-ий лого, JS багц зочин бүрд дахин татагдвал сайт удаашрана — эдгээр файл сарын турш өөрчлөгддөггүй. Харин бүтээгдэхүүний үнэ, үлдэгдэл байнга өөрчлөгддөг: API хариуг кэшэлбэл хэрэглэгч хуучин үнэ хараад алдаа гарна. Тиймээс статик файлыг удаан, API-г огт кэшлэхгүй байх ёстой."
+  },
+  "buildsInProject": "Кэшийн бодлого",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "backend",
+    "devops"
+  ],
+  "concepts": [
+    "Cache-Control",
+    "max-age",
+    "immutable",
+    "static assets"
+  ],
+  "prerequisites": [
+    "m13-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — deploy бэлтгэл</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — deploy бэлтгэл</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/config.js\"></script>\n    <script src=\"src/server.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/config.js",
+        "content": "// Орчны хувьсагчаас тохиргоо унших.\n// Дутуу зүйлийг ХҮСЭЛТИЙН үед биш, ЭХЛЭХЭД нь илрүүлэх нь чухал —\n// эс бол алдаа хэрэглэгчийн өмнө, шөнө дунд гарна.\n\nconst REQUIRED = [\"SITE_NAME\",\"APP_VERSION\",\"SESSION_TTL_HOURS\"];\n\nfunction loadConfig(env) {\n  const missing = REQUIRED.filter((key) => !env[key]);\n\n  if (missing.length > 0) {\n    throw new Error(\"Орчны хувьсагч дутуу байна: \" + missing.join(\", \"));\n  }\n\n  return Object.freeze({\n    siteName: env.SITE_NAME,\n    version: env.APP_VERSION,\n    sessionTtlHours: Number(env.SESSION_TTL_HOURS),\n  });\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/server.js",
+        "content": "// Shop.mn-ий сервер — статик файл ба API-ийн кэшийг зөв удирдах.\n\nconst ONE_YEAR = 31536000; // нэг жил секундээр\n\n// Замын төрлөөс хамааруулж Cache-Control-ийн утгыг буцаана.\nfunction cacheControlFor(path) {\n  // энд бичнэ үү\n}\n\nfunction json(body, path, status) {\n  return new Response(JSON.stringify(body), {\n    status: status || 200,\n    headers: {\n      \"Content-Type\": \"application/json\",\n      \"Cache-Control\": cacheControlFor(path),\n    },\n  });\n}\n\nfunction asset(path) {\n  const file = ASSETS[path];\n  return new Response(file.body, {\n    status: 200,\n    headers: {\n      \"Content-Type\": file.type,\n      \"Cache-Control\": cacheControlFor(path),\n    },\n  });\n}\n\nasync function handleRequest(request) {\n  const path = new URL(request.url).pathname;\n\n  if (ASSETS[path] && request.method === \"GET\") {\n    return asset(path);\n  }\n\n  if (path === \"/api/products\" && request.method === \"GET\") {\n    return json(db.products, path);\n  }\n\n  return json({ error: \"Хаяг олдсонгүй: \" + path }, path, 404);\n}\n\nwindow.handleRequest = handleRequest;\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Deploy турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\n// Жинхэнэ сервер дээр эдгээр утга нь process.env-ээс ирнэ.\n\nconst db = {\n  products: [\n    { id: 1, name: \"Монгол дээл\", price: 129000 },\n    { id: 2, name: \"Малгай\", price: 45000 },\n  ],\n};\n\n// Серверийн код үүнийг глобалаар уншина.\nwindow.db = db;\n\n// Статик файлууд — жинхэнэ сервер дээр эдгээр нь дискнээс уншигдана.\nconst ASSETS = {\n  \"/static/app.js\": { type: \"application/javascript\", body: \"console.log('Shop.mn ачаалагдлаа');\" },\n  \"/static/logo.png\": { type: \"image/png\", body: \"<png-bytes>\" },\n};\nwindow.ASSETS = ASSETS;\n\nconst FULL_ENV = {\n  SITE_NAME: \"Shop.mn\",\n  APP_VERSION: \"1.4.0\",\n  SESSION_TTL_HOURS: \"24\",\n};\n\nconst SCENARIOS = [\n  {\n    \"key\": \"asset\",\n    \"method\": \"GET\",\n    \"path\": \"/static/app.js\"\n  },\n  {\n    \"key\": \"image\",\n    \"method\": \"GET\",\n    \"path\": \"/static/logo.png\"\n  },\n  {\n    \"key\": \"products\",\n    \"method\": \"GET\",\n    \"path\": \"/api/products\"\n  }\n];\n\nconst output = document.getElementById(\"output\");\n\nfunction panel(className, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = className;\n  box.dataset.testid = testid;\n\n  const heading = document.createElement(\"h2\");\n  heading.textContent = title;\n  box.append(heading);\n\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n\n  output.append(box);\n  return box;\n}\n\nwindow.CONFIG_OK = null;\nwindow.CONFIG_BOOT_ERROR = null;\n\ntry {\n  window.CONFIG_OK = loadConfig(FULL_ENV);\n  panel(\"call ok\", \"config-ok\", \"Тохиргоо ачаалагдлаа\", [JSON.stringify(window.CONFIG_OK, null, 2)]);\n} catch (problem) {\n  window.CONFIG_BOOT_ERROR = problem.message;\n  panel(\"call bad\", \"config-boot-error\", \"Тохиргоо ачаалагдсангүй\", [problem.message]);\n}\n\n// Серверийн код энэ тохиргоог глобалаар ашиглана.\nconst config = window.CONFIG_OK;\nwindow.config = config;\n\n(async function () {\n  window.RESULTS = {};\n\n  if (!config || typeof handleRequest !== \"function\") {\n    document.body.dataset.ready = \"1\";\n    return;\n  }\n\n  for (const scenario of SCENARIOS) {\n    const init = { method: scenario.method, headers: {} };\n    if (scenario.body !== undefined) {\n      init.headers[\"Content-Type\"] = \"application/json\";\n      init.body = JSON.stringify(scenario.body);\n    }\n\n    let status = 0;\n    let body = null;\n    let headers = {};\n    let error = null;\n\n    try {\n      const response = await handleRequest(new Request(\"https://shop.mn\" + scenario.path, init));\n\n      if (!(response instanceof Response)) {\n        throw new Error(\"handleRequest нь Response биш зүйл буцаалаа\");\n      }\n\n      status = response.status;\n      headers = {};\n      response.headers.forEach((value, key) => {\n        headers[key.toLowerCase()] = value;\n      });\n\n      const text = await response.text();\n      try {\n        body = text ? JSON.parse(text) : null;\n      } catch (problem) {\n        body = text;\n      }\n    } catch (problem) {\n      error = problem.message;\n    }\n\n    window.RESULTS[scenario.key] = { status, body, headers, error };\n\n    const box = panel(\n      \"call\",\n      \"call-\" + scenario.key,\n      scenario.method + \" \" + scenario.path,\n      [\n        error ? \"АЛДАА: \" + error : JSON.stringify(body, null, 2),\n        Object.keys(headers).length ? \"headers: \" + JSON.stringify(headers, null, 2) : \"headers: —\",\n      ],\n    );\n\n    const badge = document.createElement(\"span\");\n    badge.className = \"status \" + (error ? \"s-err\" : \"s-\" + String(status)[0] + \"xx\");\n    badge.dataset.testid = \"status-\" + scenario.key;\n    badge.textContent = error ? \"алдаа\" : String(status);\n    box.querySelector(\"h2\").prepend(badge, document.createTextNode(\" \"));\n  }\n\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/config.js",
+      "src/server.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/server.js"
+    ],
+    "activeFile": "src/server.js"
+  },
+  "tasks": [
+    {
+      "id": "m13-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Cache-Control толгойнууд"
+      },
+      "statement": {
+        "mn": "`cacheControlFor(path)` функцийг бич: 1) Зам нь `\"/static/\"`-ээр эхэлж байвал `\"public, max-age=\" + ONE_YEAR + \", immutable\"` буцаа (нэг жилийн `immutable` кэш). 2) Бусад тохиолдолд (API) `\"no-store\"` буцаа. Ингэснээр `json()` ба `asset()` хоёул зөв толгой тавина."
+      },
+      "requirements": [
+        {
+          "mn": "`/static/`-ийн файлд урт `max-age`"
+        },
+        {
+          "mn": "`immutable` тэмдэглэгээ"
+        },
+        {
+          "mn": "API хариунд `no-store`"
+        },
+        {
+          "mn": "`ONE_YEAR` тогтмолыг ашиглана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Статик файл нь `public, max-age=31536000, immutable`, API хариу нь `no-store` толгойтой буцна."
+        }
+      },
+      "targetFile": "src/server.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/server.js",
+            "kind": "function",
+            "name": "cacheControlFor"
+          },
+          "onFail": {
+            "mn": "`cacheControlFor` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.asset.status",
+                  "equals": 200
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Статик файл 200 буцаах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.asset.headers[\"cache-control\"]",
+                  "equals": "public, max-age=31536000, immutable"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Статик файлын `Cache-Control` нь `public, max-age=31536000, immutable` байх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.image.headers[\"cache-control\"]",
+                  "equals": "public, max-age=31536000, immutable"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`/static/`-ийн бүх файл ижил урт кэштэй байх ёстой — зөвхөн `.js`-д биш."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.products.status",
+                  "equals": 200
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.products.headers[\"cache-control\"]",
+                  "equals": "no-store"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "API хариу нь `no-store` байх ёстой — эс бол хэрэглэгч хуучин үнэ харна."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.asset.headers[\"content-type\"]",
+                  "equals": "application/javascript"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Статик файл өөрийн `Content-Type`-ийг хадгалж байх ёстой."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Статик файлын нэрэнд ихэвчлэн hash явдаг (жишээ нь `app.9f3a.js`) — агуулга өөрчлөгдвөл НЭР нь өөрчлөгддөг тул хуучин файлыг мөнх кэшлэж болно. API-ийн өгөгдөл харин байнга өөрчлөгддөг тул огт кэшлэж болохгүй."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Замыг `path.startsWith(\"/static/\")`-ээр ялга. Урт кэшийн утга нь `public, max-age=<нэг жил>, immutable`; кэшгүйн утга нь `no-store`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Хоёр салаагаа гүйцээ:"
+          },
+          "code": "function cacheControlFor(path) {\n  if (path.startsWith(\"/static/\")) {\n    return \"public, max-age=\" + ONE_YEAR + \", immutable\";\n  }\n  return /* API-д кэш хийхгүй */;\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/server.js",
+            "content": "// Shop.mn-ий сервер — статик файл ба API-ийн кэшийг зөв удирдах.\n\nconst ONE_YEAR = 31536000; // нэг жил секундээр\n\n// Замын төрлөөс хамааруулж Cache-Control-ийн утгыг буцаана.\nfunction cacheControlFor(path) {\n  // Статик файлын нэрд hash явдаг тул агуулга нь хэзээ ч өөрчлөгдөхгүй → удаан кэшлэнэ.\n  if (path.startsWith(\"/static/\")) {\n    return \"public, max-age=\" + ONE_YEAR + \", immutable\";\n  }\n  // API-ийн өгөгдөл байнга өөрчлөгддөг → огт кэшлэхгүй.\n  return \"no-store\";\n}\n\nfunction json(body, path, status) {\n  return new Response(JSON.stringify(body), {\n    status: status || 200,\n    headers: {\n      \"Content-Type\": \"application/json\",\n      \"Cache-Control\": cacheControlFor(path),\n    },\n  });\n}\n\nfunction asset(path) {\n  const file = ASSETS[path];\n  return new Response(file.body, {\n    status: 200,\n    headers: {\n      \"Content-Type\": file.type,\n      \"Cache-Control\": cacheControlFor(path),\n    },\n  });\n}\n\nasync function handleRequest(request) {\n  const path = new URL(request.url).pathname;\n\n  if (ASSETS[path] && request.method === \"GET\") {\n    return asset(path);\n  }\n\n  if (path === \"/api/products\" && request.method === \"GET\") {\n    return json(db.products, path);\n  }\n\n  return json({ error: \"Хаяг олдсонгүй: \" + path }, path, 404);\n}\n\nwindow.handleRequest = handleRequest;\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Статик файлыг `immutable`-ээр нэг жил кэшлэснээр давтан зочин файлыг эргэж татахгүй — CDN ба хөтөч хадгалсан хувиа шууд өгнө. Гэхдээ энэ нь зөвхөн файлын нэрэнд hash явдаг үед аюулгүй: агуулга өөрчлөгдвөл нэр өөрчлөгдөж, шинэ URL татагдана. API хариуг `no-store`-оор тэмдэглэснээр хэрэглэгч үргэлж шинэ үнэ, үлдэгдэл харна."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 20,
+      "skills": [
+        "backend",
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Статик файлд (лого, JS багц) `Cache-Control: public, max-age=31536000, immutable` тавихад аюулгүй байх нөхцөл юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Файлын нэрэнд агуулгын hash явдаг тул өөрчлөгдвөл НЭР нь өөрчлөгдөж, шинэ URL татагдана"
+        },
+        {
+          "mn": "Статик файл хэзээ ч алдаа заадаггүй"
+        },
+        {
+          "mn": "Хөтөч `immutable`-ийг үл тоомсорлодог"
+        },
+        {
+          "mn": "Сервер өөрөө кэшийг цэвэрлэдэг"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "`immutable` нь «энэ URL-ийн агуулга хэзээ ч өөрчлөгдөхгүй» гэсэн үг. Файлын нэрэнд hash явдаг тул агуулга өөрчлөгдвөл шинэ нэр (шинэ URL) үүсэж, хуучин мөнх кэш саад болохгүй."
+      },
+      "hint": {
+        "mn": "Агуулга өөрчлөгдвөл файлын НЭР юу болдгийг бод."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "API хариунд (жишээ нь `/api/products`) яагаад `no-store` тавих ёстой вэ?"
+      },
+      "options": [
+        {
+          "mn": "API хариу үргэлж том байдаг тул"
+        },
+        {
+          "mn": "Өгөгдөл (үнэ, үлдэгдэл) байнга өөрчлөгддөг тул хэрэглэгч хуучин утга харах ёсгүй"
+        },
+        {
+          "mn": "`no-store` нь хариуг хурдан болгодог"
+        },
+        {
+          "mn": "API нь зөвхөн `POST`-той ажилладаг тул"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`no-store` нь хөтөч ба завсрын кэшийг хариуг огт хадгалахгүй байхыг шаарддаг. Ингэснээр хэрэглэгч бүр серверээс шинэ өгөгдөл (одоогийн үнэ, үлдэгдэл) авна."
+      },
+      "hint": {
+        "mn": "Хэрэглэгч хуучин үнэ хармагц юу болохыг төсөөл."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

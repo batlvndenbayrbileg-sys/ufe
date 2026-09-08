@@ -1,0 +1,336 @@
+{
+  "id": "m9-l5",
+  "moduleId": "m9-api",
+  "slug": "delete-product",
+  "order": 5,
+  "title": {
+    "mn": "DELETE: барааг серверээс устгах"
+  },
+  "why": {
+    "mn": "Shop.mn-ий админ борлуулахаа больсон барааг жагсаалтаас авах хэрэгтэй. Устгах нь буцаагдашгүй үйлдэл тул `fetch`-д `method: \"DELETE\"` тодорхой зааж, дараа нь серверээс ДАХИН УНШИЖ жагсаалтаа шинэчилнэ. Хүсэлт явж байх зуур товчоо `disabled` болгож давхар дарагдахаас хамгаална."
+  },
+  "buildsInProject": "Барааг устгах товч (DELETE)",
+  "difficulty": "advanced",
+  "estimatedMinutes": 22,
+  "skills": [
+    "react",
+    "javascript"
+  ],
+  "concepts": [
+    "DELETE",
+    "fetch method",
+    "refetch",
+    "disabled state"
+  ],
+  "prerequisites": [
+    "m9-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/api.js\"></script>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 32px; }\nh2 { font-size: 20px; }\n\n.topbar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n}\n\n.cart-count {\n  background-color: #2563eb;\n  color: #ffffff;\n  border-radius: 999px;\n  padding: 2px 10px;\n}\n\n.product-grid {\n  display: grid;\n  grid-template-columns: 1fr;\n  gap: 16px;\n}\n\n@media (min-width: 768px) {\n  .product-grid { grid-template-columns: 1fr 1fr 1fr; }\n}\n\n.product-card {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n}\n\n.btn-add {\n  background-color: #2563eb;\n  color: #ffffff;\n  padding: 10px 16px;\n  border: none;\n  border-radius: 6px;\n  cursor: pointer;\n  font-size: 15px;\n}\n\n.btn-add:disabled,\n.btn-refresh:disabled {\n  background-color: #e4e4e7;\n  color: #71717a;\n  cursor: not-allowed;\n}\n\n.btn-refresh {\n  margin-left: auto;\n  margin-right: 12px;\n  background-color: #ffffff;\n  color: #1d4ed8;\n  border: 1px solid #bfdbfe;\n  border-radius: 6px;\n  padding: 6px 12px;\n  cursor: pointer;\n  font-size: 14px;\n}\n\n.cart {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-top: 24px;\n}\n\n.cart-total {\n  font-size: 20px;\n  font-weight: 700;\n  text-align: right;\n}\n\n.error {\n  background-color: #fef2f2;\n  border: 1px solid #fecaca;\n  border-radius: 10px;\n  padding: 16px;\n  color: #991b1b;\n}\n\n.muted {\n  color: #52525b;\n  font-size: 14px;\n}\n\n.ok {\n  background-color: #ecfdf5;\n  border: 1px solid #a7f3d0;\n  border-radius: 10px;\n  padding: 16px;\n  color: #065f46;\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/api.js",
+        "content": "// Жижиг «дуураймал сервер». Сүлжээ хэрэггүй — window.fetch-ийг орлуулна.\n// Дараагийн шатанд үүнийг ЖИНХЭНЭ сервер солино; таны бичсэн код өөрчлөгдөхгүй.\n\n(function () {\n  const products = [\n    { id: 1, name: \"Монгол дээл\", price: 129000, stock: 4 },\n    { id: 2, name: \"Малгай\", price: 45000, stock: 12 },\n    { id: 3, name: \"Гутал\", price: 89000, stock: 0 },\n  ];\n\n  const orders = [];\n  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\n  function json(body, status) {\n    return new Response(JSON.stringify(body), {\n      status: status || 200,\n      headers: { \"Content-Type\": \"application/json\" },\n    });\n  }\n\n  window.fetch = async function (url, options) {\n    const method = ((options && options.method) || \"GET\").toUpperCase();\n    await wait(60);\n\n    // Алдааны төлөвөө турших унтраалга: console-д window.API_SHOULD_FAIL = true\n    if (window.API_SHOULD_FAIL) {\n      return json({ error: \"Серверт алдаа гарлаа\" }, 500);\n    }\n\n    if (String(url).endsWith(\"/api/products\") && method === \"GET\") {\n      return json(window.API_EMPTY ? [] : products);\n    }\n\n    // Барааг устгах: DELETE /api/products/:id\n    if (method === \"DELETE\" && String(url).includes(\"/api/products/\")) {\n      const id = Number(String(url).split(\"/\").pop());\n      const index = products.findIndex((p) => p.id === id);\n      if (index !== -1) {\n        products.splice(index, 1);\n      }\n      return json({ ok: true });\n    }\n\n    if (String(url).endsWith(\"/api/orders\") && method === \"GET\") {\n      return json(orders);\n    }\n\n    if (String(url).endsWith(\"/api/orders\") && method === \"POST\") {\n      const order = JSON.parse(options.body);\n      if (!order.items || order.items.length === 0) {\n        return json({ error: \"Сагс хоосон байна\" }, 400);\n      }\n      const saved = { id: orders.length + 1, ...order };\n      orders.push(saved);\n      return json(saved, 201);\n    }\n\n    return json({ error: \"Хаяг олдсонгүй\" }, 404);\n  };\n})();\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import React, { useState, useEffect } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction useCart() {\n  const [cart, setCart] = useState([]);\n\n  function addToCart(product) {\n    setCart((prev) => {\n      const existing = prev.find((item) => item.id === product.id);\n      if (existing) {\n        return prev.map((item) =>\n          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item\n        );\n      }\n      return [...prev, { id: product.id, name: product.name, price: product.price, quantity: 1 }];\n    });\n  }\n\n  const count = cart.reduce((sum, item) => sum + item.quantity, 0);\n  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);\n\n  return { cart, addToCart, count, totalPrice };\n}\n\nfunction ProductCard({ product, onAdd, onDelete, deleting }) {\n  return (\n    <article className=\"product-card\">\n      <h3>{product.name}</h3>\n      <p className=\"price\">{formatPrice(product.price)}</p>\n      <button\n        className=\"btn-add\"\n        data-testid=\"add-to-cart\"\n        onClick={() => onAdd(product)}\n        disabled={product.stock === 0}\n      >\n        {product.stock === 0 ? \"Дууссан\" : \"Сагсанд хийх\"}\n      </button>\n      <button\n        className=\"btn-refresh\"\n        data-testid=\"delete\"\n        onClick={() => onDelete(product.id)}\n        disabled={deleting}\n      >\n        {deleting ? \"Устгаж байна…\" : \"Устгах\"}\n      </button>\n    </article>\n  );\n}\n\nfunction App() {\n  const [products, setProducts] = useState([]);\n  const [deletingId, setDeletingId] = useState(null);\n  const { cart, addToCart, count, totalPrice } = useCart();\n\n  async function loadProducts() {\n    const response = await fetch(\"/api/products\");\n    setProducts(await response.json());\n  }\n\n  async function removeProduct(id) {\n    // энд бичнэ үү\n  }\n\n  useEffect(() => {\n    loadProducts();\n  }, []);\n\n  return (\n    <main>\n      <header className=\"topbar\">\n        <h1>Shop.mn</h1>\n        <span className=\"cart-count\" data-testid=\"cart-count\">{count}</span>\n      </header>\n\n      <section className=\"product-grid\" data-testid=\"grid\">\n        {products.map((product) => (\n          <ProductCard\n            key={product.id}\n            product={product}\n            onAdd={addToCart}\n            onDelete={removeProduct}\n            deleting={deletingId === product.id}\n          />\n        ))}\n      </section>\n\n      <section className=\"cart\">\n        <h2>Сагс</h2>\n        <p className=\"cart-total\" data-testid=\"cart-total\">{formatPrice(totalPrice)}</p>\n      </section>\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/api.js",
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "m9-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "DELETE: барааг серверээс устгах"
+      },
+      "statement": {
+        "mn": "`removeProduct(id)` функцийг гүйцээ: 1) `setDeletingId(id)`-ээр тухайн товчийг ачаалалтад оруул. 2) `fetch(\"/api/products/\" + id, { method: \"DELETE\" })`-ээр серверээс устга. 3) Дараа нь `await loadProducts()`-ээр жагсаалтаа ДАХИН УНШ (тоог өөрөө хасахгүй). 4) Эцэст нь `setDeletingId(null)` болго. Товч ба өгөгдөл аль хэдийн бэлэн — зөвхөн функцийн бие дутуу."
+      },
+      "requirements": [
+        {
+          "mn": "`fetch`-д `method: \"DELETE\"`"
+        },
+        {
+          "mn": "Устгасны дараа `loadProducts()`-оор дахин унших"
+        },
+        {
+          "mn": "`deletingId`-ээр товчийг `disabled` болгох"
+        },
+        {
+          "mn": "Дуусахад `setDeletingId(null)`"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Устгах» дархад тухайн бараа серверээс устаж, картны тоо 3-аас 2 болж буурна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/App.jsx",
+            "kind": "function",
+            "name": "removeProduct"
+          },
+          "onFail": {
+            "mn": "`removeProduct` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "fetch"
+          },
+          "onFail": {
+            "mn": "`fetch` дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useState"
+          },
+          "onFail": {
+            "mn": "`useState` ашиглаагүй байна — ачаалалтын төлөвөө хадгална."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": ".product-card"
+              },
+              {
+                "expectEval": {
+                  "expr": "document.querySelectorAll('.product-card').length",
+                  "equals": 3
+                }
+              },
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"delete\"]"
+              },
+              {
+                "expectEval": {
+                  "expr": "document.querySelectorAll('.product-card').length",
+                  "equals": 2
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Устгах» дархад картын тоо 3-аас 2 болох ёстой. DELETE хийсний дараа `loadProducts()`-г `await` хийсэн үү?"
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": ".product-card"
+              },
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"delete\"]"
+              },
+              {
+                "expectEval": {
+                  "expr": "document.querySelector('[data-testid=grid]').textContent.includes('Монгол дээл')",
+                  "equals": false
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Эхний барааг («Монгол дээл») устгасны дараа тэр нэр жагсаалтад үлдэх ёсгүй."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": ".product-card"
+              },
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"delete\"]"
+              },
+              {
+                "expectEval": {
+                  "expr": "document.querySelectorAll('.product-card').length",
+                  "equals": 2
+                }
+              },
+              {
+                "click": ".product-card:nth-of-type(1) [data-testid=\"delete\"]"
+              },
+              {
+                "expectEval": {
+                  "expr": "document.querySelectorAll('.product-card').length",
+                  "equals": 1
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хоёр удаа устгасны дараа тоо 1 болох ёстой — устгах бүрд серверээс дахин уншина."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`fetch` анхдагчаар `GET` хийдэг. Устгахын тулд хоёр дахь аргумент болгож `{ method: \"DELETE\" }` дамжуулна. Хаяг нь тухайн барааны id-г агуулна: `\"/api/products/\" + id`."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Устгасны дараа тоог `history - 1` гэж ӨӨРӨӨ бүү бод — сервер л үнэн. `await loadProducts()`-ээр дахин уншвал устсан бараа аяндаа алга болно. `setDeletingId`-ийг эхэнд `id`, эцэст нь `null` болгож товчоо түгжинэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Функцээ гүйцээ:"
+          },
+          "code": "async function removeProduct(id) {\n  setDeletingId(id);\n  try {\n    await fetch(\"/api/products/\" + id, { method: \"DELETE\" });\n    await loadProducts();\n  } finally {\n    setDeletingId(null);\n  }\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import React, { useState, useEffect } from \"react\";\nimport { createRoot } from \"react-dom/client\";\n\nfunction formatPrice(value) {\n  return \"₮ \" + value.toLocaleString(\"en-US\");\n}\n\nfunction useCart() {\n  const [cart, setCart] = useState([]);\n\n  function addToCart(product) {\n    setCart((prev) => {\n      const existing = prev.find((item) => item.id === product.id);\n      if (existing) {\n        return prev.map((item) =>\n          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item\n        );\n      }\n      return [...prev, { id: product.id, name: product.name, price: product.price, quantity: 1 }];\n    });\n  }\n\n  const count = cart.reduce((sum, item) => sum + item.quantity, 0);\n  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);\n\n  return { cart, addToCart, count, totalPrice };\n}\n\nfunction ProductCard({ product, onAdd, onDelete, deleting }) {\n  return (\n    <article className=\"product-card\">\n      <h3>{product.name}</h3>\n      <p className=\"price\">{formatPrice(product.price)}</p>\n      <button\n        className=\"btn-add\"\n        data-testid=\"add-to-cart\"\n        onClick={() => onAdd(product)}\n        disabled={product.stock === 0}\n      >\n        {product.stock === 0 ? \"Дууссан\" : \"Сагсанд хийх\"}\n      </button>\n      <button\n        className=\"btn-refresh\"\n        data-testid=\"delete\"\n        onClick={() => onDelete(product.id)}\n        disabled={deleting}\n      >\n        {deleting ? \"Устгаж байна…\" : \"Устгах\"}\n      </button>\n    </article>\n  );\n}\n\nfunction App() {\n  const [products, setProducts] = useState([]);\n  const [deletingId, setDeletingId] = useState(null);\n  const { cart, addToCart, count, totalPrice } = useCart();\n\n  async function loadProducts() {\n    const response = await fetch(\"/api/products\");\n    setProducts(await response.json());\n  }\n\n  async function removeProduct(id) {\n    setDeletingId(id);\n\n    try {\n      await fetch(\"/api/products/\" + id, { method: \"DELETE\" });\n      await loadProducts();\n    } finally {\n      setDeletingId(null);\n    }\n  }\n\n  useEffect(() => {\n    loadProducts();\n  }, []);\n\n  return (\n    <main>\n      <header className=\"topbar\">\n        <h1>Shop.mn</h1>\n        <span className=\"cart-count\" data-testid=\"cart-count\">{count}</span>\n      </header>\n\n      <section className=\"product-grid\" data-testid=\"grid\">\n        {products.map((product) => (\n          <ProductCard\n            key={product.id}\n            product={product}\n            onAdd={addToCart}\n            onDelete={removeProduct}\n            deleting={deletingId === product.id}\n          />\n        ))}\n      </section>\n\n      <section className=\"cart\">\n        <h2>Сагс</h2>\n        <p className=\"cart-total\" data-testid=\"cart-total\">{formatPrice(totalPrice)}</p>\n      </section>\n    </main>\n  );\n}\n\ncreateRoot(document.getElementById(\"root\")).render(<App />);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`method: \"DELETE\"` нь серверт «энэ мөрийг устга» гэж хэлдэг. Устгасны дараа UI-г гараар засахын оронд `loadProducts()`-ээр дахин уншвал дэлгэц үргэлж серверийн бодит төлөвтэй нийцнэ. `disabled` төлөв нь хүсэлт явж байх зуур давхар дарж хоёр удаа устгахаас сэргийлнэ."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 20,
+      "skills": [
+        "react",
+        "javascript"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Барааг серверээс устгахын тулд `fetch`-ийг хэрхэн дуудах вэ?"
+      },
+      "options": [
+        {
+          "mn": "fetch(url, { method: \"DELETE\" })"
+        },
+        {
+          "mn": "fetch(url, { type: \"DELETE\" })"
+        },
+        {
+          "mn": "fetch(url + \"/delete\")"
+        },
+        {
+          "mn": "fetch(url, { method: \"GET\", delete: true })"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "HTTP-ийн устгах үйлдэл нь `DELETE` арга. `fetch`-ийн хоёр дахь аргумент дахь `method: \"DELETE\"` талбар л зөв — бусад нь байхгүй сонголтууд."
+      },
+      "hint": {
+        "mn": "Хүсэлтийн аргыг `fetch`-ийн хоёр дахь аргумент дахь аль талбар зааж өгдөг вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Устгах хүсэлт явж байх хугацаанд товчийг яагаад `disabled` болгодог вэ?"
+      },
+      "options": [
+        {
+          "mn": "Товчийг илүү үзэсгэлэнтэй харуулахын тулд"
+        },
+        {
+          "mn": "Хүсэлт явж дуустал дахин дарж давхар (хоёр дахь) устгах хүсэлт явуулахаас сэргийлэхийн тулд"
+        },
+        {
+          "mn": "DELETE хүсэлтийг хурдан болгохын тулд"
+        },
+        {
+          "mn": "Серверийг унтраахын тулд"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Сүлжээний хүсэлт хормын зуур үргэлжилдэг. Товчийг түгжихгүй бол хэрэглэгч олон удаа дарж, ижил хүсэлтийг давхардуулан илгээж болзошгүй. `disabled` нь үүнээс сэргийлж, ачаалал явж байгааг ч харуулна."
+      },
+      "hint": {
+        "mn": "Хэрэглэгч тэвчээргүй болж товчоо дахин дарвал юу тохиолдох вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

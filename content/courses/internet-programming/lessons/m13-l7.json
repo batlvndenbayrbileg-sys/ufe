@@ -1,0 +1,336 @@
+{
+  "id": "m13-l7",
+  "moduleId": "m13-deploy",
+  "slug": "readiness-probe",
+  "order": 7,
+  "title": {
+    "mn": "Readiness шалгалт"
+  },
+  "why": {
+    "mn": "Shop.mn-г олон replica-аар масштаблахад ачаалал хуваарилагч шинэ replica руу хэзээ урсгал явуулахаа мэдэх ёстой. Процесс асаад ч өгөгдлийн санд холбогдоогүй бол хүсэлт бүр алдаа өгнө. `/health` (liveness) нь «процесс амьд уу?», `/ready` (readiness) нь «урсгал хүлээж авахад бэлэн үү?» гэсэн ӨӨР асуулт — эдгээрийг хольвол бэлэн бус replica руу урсгал орж хэрэглэгч алдаа харна."
+  },
+  "buildsInProject": "Readiness шалгагч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 20,
+  "skills": [
+    "backend",
+    "devops"
+  ],
+  "concepts": [
+    "readiness probe",
+    "liveness vs readiness",
+    "503",
+    "dependency check"
+  ],
+  "prerequisites": [
+    "m13-l6"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — deploy бэлтгэл</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — deploy бэлтгэл</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/config.js\"></script>\n    <script src=\"src/server.js\"></script>\n    <script src=\"src/runtime.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\n\nh2 {\n  font-size: 15px;\n  font-family: ui-monospace, \"Cascadia Mono\", monospace;\n  margin: 0 0 8px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n\n.call {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.call.ok { border-left-color: #0a7a35; }\n.call.bad { border-left-color: #b91c1c; }\n\n.status {\n  display: inline-block;\n  min-width: 40px;\n  text-align: center;\n  border-radius: 999px;\n  padding: 1px 8px;\n  font-size: 13px;\n  font-weight: 700;\n  color: #ffffff;\n  background-color: #71717a;\n}\n\n.s-2xx { background-color: #0a7a35; }\n.s-4xx { background-color: #b45309; }\n.s-5xx { background-color: #b91c1c; }\n.s-err { background-color: #b91c1c; }\n\npre {\n  background-color: #f4f4f5;\n  border-radius: 8px;\n  padding: 10px 12px;\n  margin: 0 0 8px;\n  overflow-x: auto;\n  font-size: 13px;\n  white-space: pre-wrap;\n}\n\npre:last-child { margin-bottom: 0; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/config.js",
+        "content": "// Орчны хувьсагчаас тохиргоо унших.\n// Дутуу зүйлийг ХҮСЭЛТИЙН үед биш, ЭХЛЭХЭД нь илрүүлэх нь чухал —\n// эс бол алдаа хэрэглэгчийн өмнө, шөнө дунд гарна.\n\nconst REQUIRED = [\"SITE_NAME\",\"APP_VERSION\",\"SESSION_TTL_HOURS\"];\n\nfunction loadConfig(env) {\n  const missing = REQUIRED.filter((key) => !env[key]);\n\n  if (missing.length > 0) {\n    throw new Error(\"Орчны хувьсагч дутуу байна: \" + missing.join(\", \"));\n  }\n\n  return Object.freeze({\n    siteName: env.SITE_NAME,\n    version: env.APP_VERSION,\n    sessionTtlHours: Number(env.SESSION_TTL_HOURS),\n  });\n}\n"
+      },
+      {
+        "op": "create",
+        "path": "src/server.js",
+        "content": "// Shop.mn-ий сервер — liveness ба readiness-ийг ялгах.\n\nfunction json(body, status) {\n  return new Response(JSON.stringify(body), {\n    status: status || 200,\n    headers: { \"Content-Type\": \"application/json\" },\n  });\n}\n\n// Хамаарал (өгөгдлийн сан) бэлэн эсэхийг шалгаж,\n// энэ replica урсгал хүлээж авахад бэлэн эсэхийг шийднэ.\nfunction checkReady() {\n  // энд бичнэ үү\n}\n\nasync function handleRequest(request) {\n  const path = new URL(request.url).pathname;\n\n  // Liveness: процесс амьд эсэх. Хамаарлаас үл хамааран амьд бол 200.\n  if (path === \"/health\" && request.method === \"GET\") {\n    return json({ status: \"ok\", version: config.version });\n  }\n\n  // Readiness: урсгал хүлээж авахад бэлэн эсэх.\n  if (path === \"/ready\" && request.method === \"GET\") {\n    return checkReady();\n  }\n\n  if (path === \"/api/products\" && request.method === \"GET\") {\n    return json(db.products);\n  }\n\n  return json({ error: \"Хаяг олдсонгүй: \" + path }, 404);\n}\n\nwindow.handleRequest = handleRequest;\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runtime.js",
+        "content": "// «Deploy турших самбар». Энэ файлыг өөрчлөх шаардлагагүй.\n// Жинхэнэ сервер дээр эдгээр утга нь process.env-ээс ирнэ.\n\nconst db = {\n  products: [\n    { id: 1, name: \"Монгол дээл\", price: 129000 },\n    { id: 2, name: \"Малгай\", price: 45000 },\n  ],\n};\n\n// Серверийн код үүнийг глобалаар уншина.\nwindow.db = db;\n\n// Симуляц хийсэн хамаарал: өгөгдлийн сангийн холболт бэлэн эсэх.\n// Жинхэнэ сервер дээр энэ нь идэвхтэй холболт шалгасны үр дүн байна.\nconst deps = { dbReady: true };\nwindow.deps = deps;\n\nconst FULL_ENV = {\n  SITE_NAME: \"Shop.mn\",\n  APP_VERSION: \"1.4.0\",\n  SESSION_TTL_HOURS: \"24\",\n};\n\nconst SCENARIOS = [\n  {\n    \"key\": \"ready_up\",\n    \"method\": \"GET\",\n    \"path\": \"/ready\",\n    \"dbReady\": true\n  },\n  {\n    \"key\": \"ready_down\",\n    \"method\": \"GET\",\n    \"path\": \"/ready\",\n    \"dbReady\": false\n  },\n  {\n    \"key\": \"health\",\n    \"method\": \"GET\",\n    \"path\": \"/health\"\n  }\n];\n\nconst output = document.getElementById(\"output\");\n\nfunction panel(className, testid, title, lines) {\n  const box = document.createElement(\"section\");\n  box.className = className;\n  box.dataset.testid = testid;\n\n  const heading = document.createElement(\"h2\");\n  heading.textContent = title;\n  box.append(heading);\n\n  for (const line of lines) {\n    const p = document.createElement(\"pre\");\n    p.textContent = line;\n    box.append(p);\n  }\n\n  output.append(box);\n  return box;\n}\n\nwindow.CONFIG_OK = null;\nwindow.CONFIG_BOOT_ERROR = null;\n\ntry {\n  window.CONFIG_OK = loadConfig(FULL_ENV);\n  panel(\"call ok\", \"config-ok\", \"Тохиргоо ачаалагдлаа\", [JSON.stringify(window.CONFIG_OK, null, 2)]);\n} catch (problem) {\n  window.CONFIG_BOOT_ERROR = problem.message;\n  panel(\"call bad\", \"config-boot-error\", \"Тохиргоо ачаалагдсангүй\", [problem.message]);\n}\n\n// Серверийн код энэ тохиргоог глобалаар ашиглана.\nconst config = window.CONFIG_OK;\nwindow.config = config;\n\n(async function () {\n  window.RESULTS = {};\n\n  if (!config || typeof handleRequest !== \"function\") {\n    document.body.dataset.ready = \"1\";\n    return;\n  }\n\n  for (const scenario of SCENARIOS) {\n    if (scenario.dbReady !== undefined) {\n      deps.dbReady = scenario.dbReady;\n    }\n\n    const init = { method: scenario.method, headers: {} };\n    if (scenario.body !== undefined) {\n      init.headers[\"Content-Type\"] = \"application/json\";\n      init.body = JSON.stringify(scenario.body);\n    }\n\n    let status = 0;\n    let body = null;\n    let headers = {};\n    let error = null;\n\n    try {\n      const response = await handleRequest(new Request(\"https://shop.mn\" + scenario.path, init));\n\n      if (!(response instanceof Response)) {\n        throw new Error(\"handleRequest нь Response биш зүйл буцаалаа\");\n      }\n\n      status = response.status;\n      headers = {};\n      response.headers.forEach((value, key) => {\n        headers[key.toLowerCase()] = value;\n      });\n\n      const text = await response.text();\n      try {\n        body = text ? JSON.parse(text) : null;\n      } catch (problem) {\n        body = text;\n      }\n    } catch (problem) {\n      error = problem.message;\n    }\n\n    window.RESULTS[scenario.key] = { status, body, headers, error };\n\n    const box = panel(\n      \"call\",\n      \"call-\" + scenario.key,\n      scenario.method + \" \" + scenario.path,\n      [\n        error ? \"АЛДАА: \" + error : JSON.stringify(body, null, 2),\n        Object.keys(headers).length ? \"headers: \" + JSON.stringify(headers, null, 2) : \"headers: —\",\n      ],\n    );\n\n    const badge = document.createElement(\"span\");\n    badge.className = \"status \" + (error ? \"s-err\" : \"s-\" + String(status)[0] + \"xx\");\n    badge.dataset.testid = \"status-\" + scenario.key;\n    badge.textContent = error ? \"алдаа\" : String(status);\n    box.querySelector(\"h2\").prepend(badge, document.createTextNode(\" \"));\n  }\n\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/config.js",
+      "src/server.js",
+      "src/runtime.js"
+    ],
+    "openFiles": [
+      "src/server.js"
+    ],
+    "activeFile": "src/server.js"
+  },
+  "tasks": [
+    {
+      "id": "m13-l7-t1",
+      "order": 1,
+      "title": {
+        "mn": "Readiness шалгалт"
+      },
+      "statement": {
+        "mn": "`checkReady()` функцийг бич: 1) `deps.dbReady` үнэн бол `{ status: \"ready\" }`-г **200**-аар буцаа. 2) Эс бол `{ status: \"not ready\" }`-г **503**-аар буцаа. Ингэснээр `/ready` нь хамаарал бэлэн үед л амжилттай хариулна. `/health` (liveness) аль ч тохиолдолд 200 хэвээр байх ёстой."
+      },
+      "requirements": [
+        {
+          "mn": "Бэлэн үед `200` `{ status: \"ready\" }`"
+        },
+        {
+          "mn": "Бэлэн бус үед `503` `{ status: \"not ready\" }`"
+        },
+        {
+          "mn": "`deps.dbReady`-г шалгана"
+        },
+        {
+          "mn": "`/health` нь бэлэн бус үед ч 200 хэвээр"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "`/ready` нь хамаарал бэлэн үед 200, унтарсан үед 503 буцаана; `/health` нь аль ч тохиолдолд 200 хэвээр."
+        }
+      },
+      "targetFile": "src/server.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/server.js",
+            "kind": "function",
+            "name": "checkReady"
+          },
+          "onFail": {
+            "mn": "`checkReady` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.ready_up.status",
+                  "equals": 200
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хамаарал бэлэн үед `/ready` нь 200 буцаах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.ready_up.body.status",
+                  "equals": "ready"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Бэлэн үед хариуны `status` нь `\"ready\"` байх ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.ready_down.status",
+                  "equals": 503
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хамаарал унтарсан үед `/ready` нь 503 буцаах ёстой — 200 биш."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.ready_down.body.status",
+                  "equals": "not ready"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Бэлэн бус үед хариуны `status` нь `\"not ready\"` байх ёстой."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.RESULTS.health.status",
+                  "equals": 200
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`/health` (liveness) нь хамаарал унтарсан ч 200 хэвээр байх ёстой — readiness-тэй хольж болохгүй."
+          }
+        },
+        {
+          "id": "c7",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Liveness ба readiness хоёр ӨӨР асуулт: liveness = «процесс амьд уу? (амьд бол дахин асаах хэрэггүй)», readiness = «урсгал хүлээж авахад бэлэн үү? (бэлэн бол л урсгал явуул)». Хамаарал (өгөгдлийн сан) унтарсан бол процесс амьд ч урсгал хүлээж авахад бэлэн БИШ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`deps.dbReady`-г шалга. Бэлэн бол 200, эс бол 503 (Service Unavailable) буцаа — ачаалал хуваарилагч 503-ыг хараад тэр replica руу урсгал явуулахаа түр зогсооно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Хоёр салаагаа гүйцээ:"
+          },
+          "code": "function checkReady() {\n  if (deps.dbReady) {\n    return json({ status: \"ready\" }, 200);\n  }\n  return /* 503-аар \"not ready\" */;\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/server.js",
+            "content": "// Shop.mn-ий сервер — liveness ба readiness-ийг ялгах.\n\nfunction json(body, status) {\n  return new Response(JSON.stringify(body), {\n    status: status || 200,\n    headers: { \"Content-Type\": \"application/json\" },\n  });\n}\n\n// Хамаарал (өгөгдлийн сан) бэлэн эсэхийг шалгаж,\n// энэ replica урсгал хүлээж авахад бэлэн эсэхийг шийднэ.\nfunction checkReady() {\n  if (deps.dbReady) {\n    return json({ status: \"ready\" }, 200);\n  }\n  return json({ status: \"not ready\" }, 503);\n}\n\nasync function handleRequest(request) {\n  const path = new URL(request.url).pathname;\n\n  // Liveness: процесс амьд эсэх. Хамаарлаас үл хамааран амьд бол 200.\n  if (path === \"/health\" && request.method === \"GET\") {\n    return json({ status: \"ok\", version: config.version });\n  }\n\n  // Readiness: урсгал хүлээж авахад бэлэн эсэх.\n  if (path === \"/ready\" && request.method === \"GET\") {\n    return checkReady();\n  }\n\n  if (path === \"/api/products\" && request.method === \"GET\") {\n    return json(db.products);\n  }\n\n  return json({ error: \"Хаяг олдсонгүй: \" + path }, 404);\n}\n\nwindow.handleRequest = handleRequest;\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Liveness ба readiness-ийг ялгах нь орчин үеийн deploy-ийн үндэс: liveness унтарвал оркестратор процессыг ДАХИН АСААНА, readiness унтарвал зөвхөн урсгалыг ТҮР ЗОГСООНО (процессыг унтраахгүй). Хэрэв readiness-г liveness-тэй хольвол өгөгдлийн сан түр саатах бүрд эрүүл процессуудыг дэмий дахин асааж, доголдлыг улам гүнзгийрүүлнэ."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 20,
+      "skills": [
+        "backend",
+        "devops"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`/health` (liveness) ба `/ready` (readiness) хоёрын гол ялгаа юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Liveness = «процесс амьд уу?», readiness = «урсгал хүлээж авахад (хамаарал бэлэн) байна уу?»"
+        },
+        {
+          "mn": "Тэд ижил зүйл, зөвхөн нэр нь өөр"
+        },
+        {
+          "mn": "Liveness нь зөвхөн `POST`, readiness нь зөвхөн `GET`"
+        },
+        {
+          "mn": "Readiness нь үргэлж 500 буцаадаг"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Liveness нь процесс амьд эсэхийг (үгүй бол дахин асаана), readiness нь урсгал хүлээж авахад бэлэн эсэхийг (хамаарал бэлэн үү?) шалгана. Процесс амьд ч өгөгдлийн санд холбогдоогүй бол readiness бус."
+      },
+      "hint": {
+        "mn": "Аль нь «дахин асаа», аль нь «түр урсгал явуулахгүй» гэсэн үйлдэл өдөөдгийг бод."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Readiness шалгалт амжилтгүй (хамаарал бэлэн бус) үед ямар статус буцаах нь зохимжтой вэ?"
+      },
+      "options": [
+        {
+          "mn": "200 — бэлэн мэт дүр эсгэх"
+        },
+        {
+          "mn": "404 — зам олдсонгүй"
+        },
+        {
+          "mn": "503 — Service Unavailable, урсгалыг түр зогсооно"
+        },
+        {
+          "mn": "301 — өөр хаяг руу шилжүүлэх"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "`503 Service Unavailable` нь «одоогоор урсгал хүлээж авахад бэлэн бус» гэдгийг илэрхийлнэ. Ачаалал хуваарилагч үүнийг хараад тухайн replica руу урсгал явуулахаа түр зогсоож, бэлэн болмогц эргүүлж оруулна."
+      },
+      "hint": {
+        "mn": "«Түр боломжгүй» гэсэн стандарт статус кодыг сана."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

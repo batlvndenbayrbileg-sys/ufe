@@ -1,0 +1,323 @@
+{
+  "id": "m14-l5",
+  "moduleId": "m14-testing",
+  "slug": "catch-a-bug",
+  "order": 5,
+  "title": {
+    "mn": "Жинхэнэ алдаа барих тест"
+  },
+  "why": {
+    "mn": "Shop.mn-д хүргэлт үнэгүй болох босго нь 100000 төгрөг. Ийм босго дээр «>» эсвэл «>=» гэдгийг андуурах нь маш түгээмэл алдаа — яг босго дээрх захиалагч л хохирно. Ийм нэг мөрийн алдааг зөвхөн хилийн утгыг тусад нь шалгасан тест барина."
+  },
+  "buildsInProject": "Хүргэлтийн хураамжийн тестүүд",
+  "difficulty": "advanced",
+  "estimatedMinutes": 20,
+  "skills": [
+    "testing",
+    "javascript"
+  ],
+  "concepts": [
+    "boundary value",
+    "off-by-one",
+    "free shipping threshold",
+    "assertion coverage"
+  ],
+  "prerequisites": [
+    "m14-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn — тестүүд</title>\n    <link rel=\"stylesheet\" href=\"styles/main.css\">\n  </head>\n  <body>\n    <h1>Shop.mn — тестүүд</h1>\n    <div id=\"output\"></div>\n\n    <script src=\"src/shop.js\"></script>\n    <script src=\"src/tests.js\"></script>\n    <script src=\"src/runner.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "styles/main.css",
+        "content": "body {\n  background-color: #f5f6f8;\n  color: #18181b;\n  font-family: system-ui, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  padding: 16px;\n}\n\nh1 { font-size: 26px; }\nh2 { font-size: 16px; margin: 0 0 8px; }\n\n.suite {\n  background-color: #ffffff;\n  padding: 16px;\n  border-radius: 10px;\n  margin-bottom: 12px;\n  border-left: 4px solid #e4e4e7;\n}\n\n.suite.ok { border-left-color: #0a7a35; }\n.suite.bad { border-left-color: #b91c1c; }\n\n.suite ul {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n}\n\n.suite li {\n  padding: 4px 0;\n  font-size: 14px;\n  border-bottom: 1px solid #f4f4f5;\n}\n\n.suite li:last-child { border-bottom: none; }\n\n.suite li.ok { color: #14532d; }\n.suite li.bad { color: #991b1b; }\n"
+      },
+      {
+        "op": "create",
+        "path": "src/shop.js",
+        "content": "// Shop.mn-ий хүргэлтийн хураамжийн функц. Энэ файлыг өөрчлөх шаардлагагүй —\n// таны ажил бол энэ функцийг ШАЛГАХ тест бичих.\n//\n// shippingFee(total) — сагсны нийт дүнгээс хамааран хүргэлтийн хураамжийг буцаана:\n//   - хоосон сагс (0 ба түүнээс бага) → 0,\n//   - 100000 төгрөг ба түүнээс ДЭЭШ → 0 (үнэгүй хүргэлт),\n//   - бусад тохиолдолд → 5000.\n\nfunction shippingFee(total) {\n  if (total <= 0) return 0;\n  if (total >= 100000) return 0;\n  return 5000;\n}\n\nwindow.SHOP = { shippingFee };\n"
+      },
+      {
+        "op": "create",
+        "path": "src/tests.js",
+        "content": "// Shop.mn-ий тестүүд.\n// it(\"тайлбар\", () => { expect(...).toBe(...); });\n\nfunction tests() {\n  it(\"энгийн захиалгад хүргэлтийн хураамж 5000 төгрөг\", () => {\n    expect(shippingFee(50000)).toBe(5000);\n  });\n\n  // энд бичнэ үү\n}\n\nwindow.tests = tests;\n"
+      },
+      {
+        "op": "create",
+        "path": "src/runner.js",
+        "content": "// Жижиг тест ажиллуулагч. Энэ файлыг өөрчлөх шаардлагагүй.\n//\n// Таны тестийг ХОЁР удаа ажиллуулна:\n//   1) зөв хувилбар дээр — бүгд ДАВАХ ёстой,\n//   2) санаатай эвдэрсэн хувилбар бүр дээр — дор хаяж нэг нь УНАХ ёстой.\n// Унахгүй бол тэр тест алдааг барьж чадахгүй гэсэн үг.\n\nconst MUTANTS = {\n  flatFree: {\n    label: \"Бүх захиалгыг үнэгүй хүргэдэг болсон\",\n    fn: \"shippingFee\",\n    impl: (total) => 0,\n  },\n  strictThreshold: {\n    label: \"Яг 100000 төгрөгт хураамж авдаг (> ба >= андуурсан)\",\n    fn: \"shippingFee\",\n    impl: (total) => (total <= 0 ? 0 : total > 100000 ? 0 : 5000),\n  },\n  chargeEmpty: {\n    label: \"Хоосон сагсанд хүргэлтийн хураамж нэмдэг\",\n    fn: \"shippingFee\",\n    impl: (total) => (total >= 100000 ? 0 : 5000),\n  },\n};\n\nconst output = document.getElementById(\"output\");\n\nlet current = null;\n\nfunction it(name, body) {\n  const result = { name: name, passed: true, message: null };\n\n  try {\n    body();\n  } catch (problem) {\n    result.passed = false;\n    result.message = problem.message;\n  }\n\n  current.cases.push(result);\n  if (!result.passed) current.failed += 1;\n  current.total += 1;\n}\n\nfunction expect(actual) {\n  return {\n    toBe(expected) {\n      if (!Object.is(actual, expected)) {\n        throw new Error(\"хүлээсэн \" + JSON.stringify(expected) + \", гарсан \" + JSON.stringify(actual));\n      }\n    },\n    toEqual(expected) {\n      if (JSON.stringify(actual) !== JSON.stringify(expected)) {\n        throw new Error(\"хүлээсэн \" + JSON.stringify(expected) + \", гарсан \" + JSON.stringify(actual));\n      }\n    },\n  };\n}\n\nwindow.it = it;\nwindow.expect = expect;\n\nfunction runSuite(label) {\n  current = { label: label, cases: [], failed: 0, total: 0 };\n  try {\n    tests();\n  } catch (problem) {\n    current.cases.push({ name: \"(тест ажиллуулахад алдаа)\", passed: false, message: problem.message });\n    current.failed += 1;\n    current.total += 1;\n  }\n  return current;\n}\n\nfunction useImplementation(overrides) {\n  window.shippingFee = overrides.shippingFee || SHOP.shippingFee;\n}\n\nfunction panel(title, className, lines) {\n  const box = document.createElement(\"section\");\n  box.className = \"suite \" + className;\n\n  const heading = document.createElement(\"h2\");\n  heading.textContent = title;\n  box.append(heading);\n\n  const list = document.createElement(\"ul\");\n  for (const line of lines) {\n    const li = document.createElement(\"li\");\n    li.className = line.ok ? \"ok\" : \"bad\";\n    li.textContent = (line.ok ? \"✓ \" : \"✗ \") + line.text;\n    list.append(li);\n  }\n  box.append(list);\n  output.append(box);\n}\n\n(function () {\n  window.TEST_REPORT = {};\n\n  // 1. Зөв хувилбар дээр.\n  useImplementation({});\n  const correct = runSuite(\"correct\");\n  window.TEST_REPORT.correct = { failed: correct.failed, total: correct.total };\n\n  panel(\n    \"Зөв хувилбар — \" + (correct.total - correct.failed) + \"/\" + correct.total,\n    correct.failed === 0 ? \"ok\" : \"bad\",\n    correct.cases.map((c) => ({ ok: c.passed, text: c.name + (c.passed ? \"\" : \" — \" + c.message) })),\n  );\n\n  // 2. Эвдэрсэн хувилбар бүр дээр: тестүүд алдааг барих ёстой.\n  const caught = [];\n  for (const key of Object.keys(MUTANTS)) {\n    const mutant = MUTANTS[key];\n    useImplementation({ [mutant.fn]: mutant.impl });\n    const run = runSuite(key);\n    window.TEST_REPORT[key] = { failed: run.failed, total: run.total };\n    caught.push({ ok: run.failed > 0, text: mutant.label });\n  }\n\n  panel(\"Эвдэрсэн хувилбаруудыг барьсан эсэх\", caught.every((c) => c.ok) ? \"ok\" : \"bad\", caught);\n\n  useImplementation({});\n  document.body.dataset.ready = \"1\";\n})();\n"
+      }
+    ],
+    "visibleFiles": [
+      "index.html",
+      "styles/main.css",
+      "src/shop.js",
+      "src/tests.js",
+      "src/runner.js"
+    ],
+    "openFiles": [
+      "src/tests.js"
+    ],
+    "activeFile": "src/tests.js"
+  },
+  "tasks": [
+    {
+      "id": "m14-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Жинхэнэ алдаа барих тест"
+      },
+      "statement": {
+        "mn": "`shippingFee`-д зориулж дор хаяж ДӨРВӨН тест бич: 1) энгийн захиалга (жишээ нь 50000) → 5000. 2) ЯГ 100000 төгрөг → 0 (үнэгүй хүргэлт эхэлдэг босго). 3) 100000-аас дээш (жишээ нь 150000) → 0. 4) хоосон сагс (0) → 0. Яг 100000-гийн тест л «> ба >= андуурсан» нэг мөрийн алдааг барина."
+      },
+      "requirements": [
+        {
+          "mn": "Дөрвөөс доошгүй тест"
+        },
+        {
+          "mn": "Яг 100000 төгрөгийн (босго) тест"
+        },
+        {
+          "mn": "Хоосон/тэг сагсны тест"
+        },
+        {
+          "mn": "Гурван эвдрэлийг барина"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Дөрвөн тест зөв хувилбар дээр давж, гурван эвдэрсэн хувилбар (бүх зүйл үнэгүй, босго андуурсан, хоосонд хураамжтай)-ыг барина."
+        }
+      },
+      "targetFile": "src/tests.js",
+      "marker": "// энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.correct.failed",
+                  "equals": 0
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Зөв хувилбар дээр бүх тест давах ёстой — эхлээд өөрийн хүлээлт зөв эсэхээ шалгаарай."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.correct.total >= 4",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дор хаяж 4 тест бичих ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.strictThreshold.failed > 0",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Яг 100000 төгрөгт хураамж авдаг» алдааг тест бариагүй байна — ЯГ 100000 дээр 0 гарахыг шалгаарай (50000, 150000 хангалтгүй)."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.chargeEmpty.failed > 0",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Хоосон сагсанд хураамж нэмдэг» алдааг тест бариагүй байна — `shippingFee(0)`-ийг шалгаарай."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "body[data-ready]"
+              },
+              {
+                "expectEval": {
+                  "expr": "window.TEST_REPORT.flatFree.failed > 0",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Бүх захиалга үнэгүй болсон» алдааг тест бариагүй байна — хураамжтай (5000) байх ёстой энгийн тохиолдлыг шалгаарай."
+          }
+        },
+        {
+          "id": "c6",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа байна."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Босготой холбоотой функц хармагцаа өөрөөсөө асуу: босгоноос ДООШ, ЯГ босго дээр, босгоноос ДЭЭШ гурван цэгийг тусад нь шалгасан уу? Алдаа бараг үргэлж яг босго дээр нуугддаг."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "50000 ба 150000 хоёр тест хэзээ ч «> vs >=» алдааг барихгүй — учир нь тэр хоёр утга босгоноос хол. Зөвхөн ЯГ 100000 дээр хоёр хувилбар өөр хариу өгнө."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Босгоны тестээ ингэж нэм:"
+          },
+          "code": "it(\"яг 100000 төгрөгт үнэгүй хүргэлт\", () => {\n  expect(shippingFee(/* яг босго */)).toBe(/* үнэгүй бол хэд вэ? */);\n});"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/tests.js",
+            "content": "// Shop.mn-ий тестүүд.\n// it(\"тайлбар\", () => { expect(...).toBe(...); });\n\nfunction tests() {\n  it(\"энгийн захиалгад хүргэлтийн хураамж 5000 төгрөг\", () => {\n    expect(shippingFee(50000)).toBe(5000);\n  });\n\n  it(\"яг 100000 төгрөгт үнэгүй хүргэлт\", () => {\n    expect(shippingFee(100000)).toBe(0);\n  });\n\n  it(\"100000-аас дээш үнэгүй хүргэлт\", () => {\n    expect(shippingFee(150000)).toBe(0);\n  });\n\n  it(\"хоосон сагсанд хүргэлтийн хураамжгүй\", () => {\n    expect(shippingFee(0)).toBe(0);\n  });\n}\n\nwindow.tests = tests;\n"
+          }
+        ],
+        "explanation": {
+          "mn": "«Off-by-one» буюу нэг зөрөх алдаа — `>` ба `>=`, `<` ба `<=` андуурах — бол програмчлалын хамгийн түгээмэл алдаануудын нэг. Ийм алдаа зөвхөн ЯГ хилийн утга дээр илэрдэг тул хилийн утгыг тусад нь шалгасан тест л түүнийг барина. Тест бүрийг эвдэрсэн хувилбар дээр ажиллуулж, үнэхээр алдаа барьж чадахыг нь баталгаажуулж байгаа нь энэ хичээлийн гол санаа."
+        },
+        "xpPenalty": 24
+      },
+      "xp": 40,
+      "estimatedMinutes": 18,
+      "skills": [
+        "testing"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Яг 100000 төгрөгийн захиалгыг тусад нь тестлэх нь яагаад чухал вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хилийн (босго) утга дээр `>` ба `>=` андуурах алдаа нуугддаг тул"
+        },
+        {
+          "mn": "100000 бол дугуй тоо учир"
+        },
+        {
+          "mn": "Тест олон байх тусам үргэлж сайн"
+        },
+        {
+          "mn": "Босго дээрх захиалга хамгийн үнэтэй учир"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "«> vs >=» төрлийн нэг зөрөх алдаа зөвхөн ЯГ босго дээр өөр хариу өгдөг тул тэр цэгийг шалгасан тест л түүнийг барина."
+      },
+      "hint": {
+        "mn": "50000 ба 150000 хоёулаа зөв гарлаа гэхэд яг 100000 буруу гарч болох уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Хоосон сагс (`shippingFee(0)`) ямар үр дүн буцаах ёстой вэ?"
+      },
+      "options": [
+        {
+          "mn": "5000 — стандарт хүргэлтийн хураамж"
+        },
+        {
+          "mn": "Алдаа шидэх"
+        },
+        {
+          "mn": "100000"
+        },
+        {
+          "mn": "0 — юу ч аваагүй бол хүргэлтийн хураамжгүй"
+        }
+      ],
+      "correct": 3,
+      "explanation": {
+        "mn": "Хоосон сагсанд хүргэх юм байхгүй тул хүргэлтийн хураамж 0 байх ёстой — эс бол хэрэглэгч сагс хоосон атал 5000 төгрөг харна."
+      },
+      "hint": {
+        "mn": "Юу ч захиалаагүй хүн хүргэлтийн төлбөр төлөх үү?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}
