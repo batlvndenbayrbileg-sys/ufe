@@ -44,6 +44,9 @@ export interface HandwritingTextProps {
   fill?: boolean;
   /** CSS height of the rendered word; width follows the glyphs. */
   height?: string;
+  /** Drop the img role/label (and hide the fallback) so an ancestor — e.g. an
+      <h1> with its own aria-label — owns the accessible name instead. */
+  decorative?: boolean;
   className?: string;
 }
 
@@ -112,6 +115,7 @@ export function HandwritingText({
   strokeWidth = 1.6,
   fill = true,
   height = "1.15em",
+  decorative = false,
   className,
 }: HandwritingTextProps) {
   const cycle = Boolean(words && words.length > 0);
@@ -183,7 +187,11 @@ export function HandwritingText({
 
   // Before the font resolves — and if it never does — the text is still readable.
   if (!geom) {
-    return <span className={className}>{current}</span>;
+    return (
+      <span className={className} aria-hidden={decorative || undefined}>
+        {current}
+      </span>
+    );
   }
 
   const count = Math.max(1, geom.contours.length);
@@ -192,8 +200,9 @@ export function HandwritingText({
     <svg
       key={current}
       viewBox={`${geom.x} ${geom.y} ${geom.w} ${geom.h}`}
-      role="img"
-      aria-label={current}
+      role={decorative ? undefined : "img"}
+      aria-label={decorative ? undefined : current}
+      aria-hidden={decorative || undefined}
       className={className}
       style={{
         display: "inline-block",

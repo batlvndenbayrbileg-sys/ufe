@@ -68,18 +68,24 @@
   font-weight: 700;
   margin: 0;
 }
+/* The title is now written by hand (HandwritingText), one line per clause. */
 .title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.04em;
+  margin: 0;
+  max-width: 100%;
+  color: var(--text);
+}
+/* Each handwritten line. The SVG sizes itself from its `height` prop; the font
+   properties here only dress the plain-text fallback shown before Caveat loads. */
+.titleLine {
+  display: block;
   font-size: clamp(2.1rem, 5vw, 3.2rem);
   line-height: 1.05;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   font-weight: 800;
-  margin: 0;
-  max-width: 16ch;
-  text-wrap: balance;
-}
-.heroInk {
-  color: var(--accent-text);
-  margin: calc(-1 * var(--space-1)) 0 var(--space-1);
 }
 .lede {
   font-size: var(--text-lg);
@@ -477,6 +483,9 @@
     padding: var(--space-8) var(--space-5);
   }
   .heroText {
+    align-items: center;
+  }
+  .title {
     align-items: center;
   }
   .ctaRow {

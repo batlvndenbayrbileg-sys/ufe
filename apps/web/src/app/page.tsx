@@ -54,16 +54,27 @@ export default async function HomePage() {
         <section className={s.hero}>
           <div className={s.heroText}>
             <p className={s.eyebrow}>{t("eyebrow")}</p>
-            <h1 className={s.title}>{t("title")}</h1>
-            {/* A hand-signed accent, in Mongolian Cyrillic — Caveat covers Ө/Ү,
-                so this writes correctly. */}
-            <HandwritingText
-              text="Өөрийн дэлгүүр"
-              className={s.heroInk}
-              height="1.5em"
-              duration={2.2}
-              strokeWidth={2}
-            />
+            {/* The title writes itself, then inks in. Split on sentence breaks so
+                each clause is its own line (locale-safe: works for mn and en);
+                Caveat covers the Mongolian Ө/Ү. The real accessible name lives on
+                the <h1>, so the lines are decorative. */}
+            <h1 className={s.title} aria-label={t("title")}>
+              {t("title")
+                .split(/(?<=[.!?])\s+/)
+                .filter(Boolean)
+                .map((line, i) => (
+                  <HandwritingText
+                    key={line}
+                    decorative
+                    text={line}
+                    className={s.titleLine}
+                    height="clamp(2.6rem, 6.4vw, 4rem)"
+                    duration={1.7}
+                    delay={0.1 + i * 1.4}
+                    strokeWidth={1.8}
+                  />
+                ))}
+            </h1>
             <p className={s.lede}>{t("lede")}</p>
             <div className={s.ctaRow}>
               <a href="/app" className={s.ctaPrimary}>
