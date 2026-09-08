@@ -48,9 +48,14 @@ export function POST(req: NextRequest, { params }: { params: Promise<{ taskId: s
       runOptionsFor(lesson.execution),
     );
 
-    const relevant = results.filter((r) => r.errorKind !== "infra");
-    const infra = results.some((r) => r.errorKind === "infra");
+    // A timeout is not a wrong answer — the check simply didn't finish in time
+    // (a slow/loaded runtime). Like an infra error, it must not count against
+    // the student; otherwise correct code intermittently reads as failing.
+    const isSystem = (kind?: string) => kind === "infra" || kind === "timeout";
+    const relevant = results.filter((r) => !isSystem(r.errorKind));
+    const systemIssue = results.some((r) => isSystem(r.errorKind));
     const passed = relevant.length > 0 && relevant.every((r) => r.passed);
+    const realFail = relevant.some((r) => !r.passed);
 
     const checks = results.map((r) => {
       const def = task.checks.find((c) => c.id === r.id);
@@ -59,7 +64,7 @@ export function POST(req: NextRequest, { params }: { params: Promise<{ taskId: s
         passed: r.passed,
         actual: r.actual,
         expected: r.expected,
-        onFail: !r.passed && r.errorKind !== "infra" ? def?.onFail.mn : undefined,
+        onFail: !r.passed && !isSystem(r.errorKind) ? def?.onFail.mn : undefined,
         errorKind: r.errorKind,
       };
     });
@@ -102,9 +107,11 @@ export function POST(req: NextRequest, { params }: { params: Promise<{ taskId: s
     // makes the second one worth nothing.
     const feedback = passed
       ? { headline: "🎉 Маш сайн!", body: undefined as string | undefined }
-      : infra
-        ? { headline: "Систем дээр алдаа гарлаа. Таны буруу биш — дахин оролдоно уу." }
-        : { headline: "Одоохондоо болоогүй байна." };
+      : realFail
+        ? { headline: "Одоохондоо болоогүй байна." }
+        : systemIssue
+          ? { headline: "Систем удаашралтай байна. Таны буруу биш — дахин Шалгах товчийг дарна уу." }
+          : { headline: "Одоохондоо болоогүй байна." };
 
     return ok({ passed, attemptNo, checks, feedback, xpAwarded, unlocked });
   });

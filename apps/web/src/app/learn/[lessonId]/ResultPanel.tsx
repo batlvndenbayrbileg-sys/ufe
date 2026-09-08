@@ -24,13 +24,19 @@ export function ResultPanel({
   onDismiss,
   onNext,
   isLastTask,
+  nextLessonHref,
+  nextLessonTitle,
 }: {
   result: SubmitResult;
   onDismiss: () => void;
   onNext: () => void;
   isLastTask: boolean;
+  /** Where "next lesson" goes once the last task passes; null on the final lesson. */
+  nextLessonHref?: string | null;
+  nextLessonTitle?: string;
 }) {
-  const firstFailIdx = result.checks.findIndex((c) => !c.passed && c.errorKind !== "infra");
+  const isSystem = (k?: string) => k === "infra" || k === "timeout";
+  const firstFailIdx = result.checks.findIndex((c) => !c.passed && !isSystem(c.errorKind));
   const passedCount = result.checks.filter((c) => c.passed).length;
 
   return (
@@ -78,21 +84,27 @@ export function ResultPanel({
         })}
       </ul>
 
-      {/* On the last task the completion card is already on screen with the
-          real next step; a second forward button here would only compete. */}
-      {result.passed && isLastTask ? null : (
-        <div className={s.resultActions}>
-          {result.passed ? (
+      <div className={s.resultActions}>
+        {result.passed ? (
+          isLastTask ? (
+            nextLessonHref ? (
+              <a href={nextLessonHref} className={s.primaryBtn}>
+                Дараагийн хичээл{nextLessonTitle ? `: ${nextLessonTitle}` : ""} →
+              </a>
+            ) : (
+              <span className={s.resultDone}>Курсын сүүлчийн хичээл дууслаа 🏆</span>
+            )
+          ) : (
             <button type="button" className={s.primaryBtn} onClick={onNext}>
               Дараагийн даалгавар →
             </button>
-          ) : (
-            <button type="button" className={s.ghostBtn} onClick={onDismiss}>
-              Дахин оролдох
-            </button>
-          )}
-        </div>
-      )}
+          )
+        ) : (
+          <button type="button" className={s.ghostBtn} onClick={onDismiss}>
+            Дахин оролдох
+          </button>
+        )}
+      </div>
     </div>
   );
 }

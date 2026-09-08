@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import {
   Check,
   PartyPopper,
-  Trophy,
   Circle,
   CircleCheckBig,
   Eye,
@@ -220,6 +219,8 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
                 onDismiss={() => setResult(null)}
                 onNext={nextTask}
                 isLastTask={taskIndex === tasks.length - 1}
+                nextLessonHref={next ? `/learn/${next.id}` : null}
+                nextLessonTitle={next?.title.mn}
               />
             </div>
           ) : null}
@@ -234,15 +235,8 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
                 <PartyPopper size={18} strokeWidth={2.2} /> Хичээл дууслаа!
               </span>
               {lesson.completion.badge ? <Badge tone="success" size="md">{badgeLabel(lesson.completion.badge)}</Badge> : null}
-              {next ? (
-                <a href={`/learn/${next.id}`} className={s.completionNext}>
-                  Дараагийн хичээл: {next.title.mn} →
-                </a>
-              ) : (
-                <span className={s.completionDone}>
-                  <Trophy size={16} strokeWidth={2.2} /> Энэ курсын сүүлчийн хичээл байлаа. Баяр хүргэе!
-                </span>
-              )}
+              {/* The forward step (next lesson / course-finished) lives in the
+                  result panel above, right where the student just clicked. */}
               <a href="/app/course/internet-programming" className={s.back}>
                 Бүх хичээл
               </a>
