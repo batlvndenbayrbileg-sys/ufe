@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { AuthShell } from "@khiye/ui";
 import { BrandMark } from "../BrandMark";
 import { LoginForm } from "./LoginForm";
-import { DemoAdminButton } from "./DemoAdminButton";
 import s from "../authForm.module.css";
 
 export const metadata = { title: "Нэвтрэх · Botxon" };
@@ -26,11 +25,6 @@ export default function LoginPage() {
       <Suspense>
         <LoginForm />
       </Suspense>
-      <div className={s.demoRow}>
-        <span className={s.orDivider}>эсвэл</span>
-        <DemoAdminButton />
-        <span className={s.hint}>Өгөгдлийн сан холбогдоогүй демо орчинд бүх хичээлийг үзэх.</span>
-      </div>
     </AuthShell>
   );
 }
