@@ -8,6 +8,16 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 // serverless function on Vercel includes the pnpm-hoisted node_modules.
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
+// Native/generated runtime files that Next's tracer cannot infer from static
+// require() analysis. Paths are relative to this app dir and resolve into the
+// FLAT hoisted repo-root node_modules (see node-linker=hoisted in .npmrc).
+const PRISMA_RUNTIME_FILES = [
+  "../../node_modules/.prisma/client/**/*",
+  "../../node_modules/@prisma/client/**/*",
+  "../../node_modules/@node-rs/argon2/**/*",
+  "../../node_modules/@node-rs/argon2-*/**/*",
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -16,16 +26,17 @@ const nextConfig = {
   // which live in the pnpm virtual store two levels up → "Cannot find module
   // '@prisma/client'" at runtime.
   outputFileTracingRoot: repoRoot,
-  // Belt-and-suspenders: force the generated Prisma client + engine and the
-  // argon2 native binding into every API route's trace (globs are relative to
-  // this app dir; the pnpm store folder name is version-suffixed, hence the *).
+  // Belt-and-suspenders: force the generated Prisma client + query engine and
+  // the argon2 native binding into every API route's trace. With
+  // `node-linker=hoisted` (.npmrc) the packages live FLAT at the repo-root
+  // node_modules — NOT under the version-suffixed .pnpm store — so the globs
+  // must point there. Two keys cover single- and multi-segment API routes
+  // (e.g. /api/health and /api/auth/register) since picomatch `**/*` needs a
+  // slash. Without the correct paths nft traces nothing and the function fails
+  // at runtime with "Cannot find module '@prisma/client'".
   outputFileTracingIncludes: {
-    "/api/**/*": [
-      "../../node_modules/.pnpm/@prisma+client@*/node_modules/.prisma/client/**/*",
-      "../../node_modules/.pnpm/@prisma+client@*/node_modules/@prisma/client/**/*",
-      "../../node_modules/.pnpm/prisma@*/node_modules/.prisma/client/**/*",
-      "../../node_modules/.pnpm/@node-rs+argon2@*/node_modules/@node-rs/**/*",
-    ],
+    "/api/**": PRISMA_RUNTIME_FILES,
+    "/api/**/*": PRISMA_RUNTIME_FILES,
   },
   // Workspace packages ship as TypeScript source and are transpiled by Next.
   transpilePackages: [
