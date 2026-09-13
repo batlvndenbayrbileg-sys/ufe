@@ -3,6 +3,7 @@
   "ui": "stream",
   "globalEnv": ["NODE_ENV"],
   "globalPassThroughEnv": ["DATABASE_URL", "REDIS_URL", "NEXT_PUBLIC_APP_URL"],
+  "globalDependencies": [".npmrc", "pnpm-lock.yaml"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
