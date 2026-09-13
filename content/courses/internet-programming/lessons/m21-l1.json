@@ -198,7 +198,7 @@
           "text": {
             "mn": "Гүйцээ:"
           },
-          "code": "const cache = new Map();\nreturn function (arg) {\n  if (cache.has(arg)) return cache.get(arg);\n  const result = fn(arg);\n  cache.set(arg, result);\n  return result;\n};"
+          "code": "function memoize(fn) {\n  const cache = new Map();\n  return function (arg) {\n    // 1) cache дотор arg байвал хадгалсан үр дүнг буцаа\n    // 2) үгүй бол fn(arg)-г бодож, cache-д хадгалаад буцаа\n  };\n}"
         }
       ],
       "solution": {

@@ -199,7 +199,7 @@
           "text": {
             "mn": "Гүйцээ:"
           },
-          "code": "for (const key of (config.required || [])) {\n  if (!(key in config.env)) throw new Error(\"Орчны хувьсагч дутуу: \" + key);\n}\nreturn { image, env: config.env, ports: config.ports, status: \"running\" };"
+          "code": "const required = config.required || [];\nfor (const key of required) {\n  // key нь config.env дотор БАЙХГҮЙ бол\n  // throw new Error(...) хийж алдаа өг\n}\n// Бүх шалгалт өнгөрвөл контейнерийн мэдээллийг буцаа:\n// return { image, env: config.env, ports: config.ports, status: \"running\" };"
         }
       ],
       "solution": {
