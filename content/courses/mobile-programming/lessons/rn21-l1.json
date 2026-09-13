@@ -1,0 +1,242 @@
+{
+  "id": "rn21-l1",
+  "moduleId": "rn21-modal-device",
+  "slug": "modal",
+  "order": 1,
+  "title": {
+    "mn": "Modal — дэлгэц бүрхэх цонх"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн барааны хурдан үзлэг (quick view) дэлгэцийг бүрхэж гарч ирдэг. `Modal` нь бусад бүхний дээр гарах цонх нээнэ."
+  },
+  "buildsInProject": "Барааны хурдан үзлэгийн Modal",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Modal",
+    "useState",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn20-l6"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, Modal, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [open, setOpen] = useState(false);\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"open\" style={styles.b} onPress={() => setOpen(true)}><Text style={styles.t}>Хурдан үзэх</Text></Pressable>\n      {/* энд бичнэ үү: Modal — visible={open}, дотор нь Хаах товч */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  sheet: { margin: 40, backgroundColor: \"#fff\", padding: 24, borderRadius: 16, gap: 12 },\n  x: { backgroundColor: \"#e2e8f0\", padding: 10, borderRadius: 8, alignItems: \"center\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn21-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Modal — дэлгэц бүрхэх цонх"
+      },
+      "statement": {
+        "mn": "`<Modal visible={open} transparent>` нэм. Дотор нь барааны нэр (`nativeID=\"title\"`) болон `nativeID=\"close\"` бүхий «Хаах» товч тавь. «Хурдан үзэх» нээж, «Хаах» хаана."
+      },
+      "requirements": [
+        {
+          "mn": "`react-native`-аас `Modal` импортолсон"
+        },
+        {
+          "mn": "`visible={open}`"
+        },
+        {
+          "mn": "«Хаах» дархад Modal хаагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Хурдан үзэх» дархад цонх гарч, «Хаах» дархад алга болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.imports",
+          "args": {
+            "file": "src/App.jsx",
+            "from": "react-native",
+            "named": "Modal"
+          },
+          "onFail": {
+            "mn": "`react-native`-аас `Modal`-г импортлоогүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#open"
+              },
+              {
+                "waitFor": "[data-rn=\"modal\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "#title",
+                  "contains": "Нарны шил"
+                }
+              },
+              {
+                "click": "#close"
+              },
+              {
+                "waitFor": "#open"
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Modal нээгдэж/хаагдахгүй байна. `visible` төлөвөө шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`<Modal visible={...}>` нь `visible` үнэн үед л агуулгаа харуулна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Нээхэд `setOpen(true)`, хаахад `setOpen(false)`. `transparent` нь ард талыг бүдэг харуулна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Modal:"
+          },
+          "code": "<Modal visible={open} transparent>\n  <View style={styles.sheet}>\n    ...\n    <Pressable nativeID=\"close\" onPress={() => setOpen(false)}><Text>Хаах</Text></Pressable>\n  </View>\n</Modal>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, Modal, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [open, setOpen] = useState(false);\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"open\" style={styles.b} onPress={() => setOpen(true)}><Text style={styles.t}>Хурдан үзэх</Text></Pressable>\n      <Modal visible={open} transparent onRequestClose={() => setOpen(false)}>\n        <View style={styles.sheet}>\n          <Text nativeID=\"title\" style={{ fontSize: 18, fontWeight: \"bold\" }}>Нарны шил — 89,000₮</Text>\n          <Pressable nativeID=\"close\" style={styles.x} onPress={() => setOpen(false)}><Text>Хаах</Text></Pressable>\n        </View>\n      </Modal>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  sheet: { margin: 40, backgroundColor: \"#fff\", padding: 24, borderRadius: 16, gap: 12 },\n  x: { backgroundColor: \"#e2e8f0\", padding: 10, borderRadius: 8, alignItems: \"center\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`Modal` нь бусад бүх зүйлийн ДЭЭР гарч ирдэг тусдаа давхарга. `visible` prop-оор нээх/хаахыг удирдана — quick view, диалог, доод хуудас зэрэгт ашиглана."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`Modal` хэзээ агуулгаа харуулах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Үргэлж"
+        },
+        {
+          "mn": "`visible` prop үнэн (true) үед"
+        },
+        {
+          "mn": "Дархад автоматаар"
+        },
+        {
+          "mn": "Хэзээ ч"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Modal нь visible={true} үед л харагдана — ихэвчлэн төлөвөөр удирдана."
+      },
+      "hint": {
+        "mn": "Аль prop нь нээх/хаахыг шийддэг вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`transparent` prop юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Modal-г нууна"
+        },
+        {
+          "mn": "Ард талын дэлгэцийг бүдэг/харагдах байдлаар үлдээнэ"
+        },
+        {
+          "mn": "Хурдан болгоно"
+        },
+        {
+          "mn": "Өнгө өгнө"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "transparent нь Modal-ын ард талыг бүрэн бус, бүдэг харуулж, доод хуудас маягийн харагдац өгнө."
+      },
+      "hint": {
+        "mn": "«transparent» = тунгалаг. Ард нь юу харагдах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

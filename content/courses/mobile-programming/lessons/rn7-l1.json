@@ -1,0 +1,222 @@
+{
+  "id": "rn7-l1",
+  "moduleId": "rn7-layout",
+  "slug": "flex-grow",
+  "order": 1,
+  "title": {
+    "mn": "flexGrow — үлдсэн зайг дүүргэх"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн хайлтын мөрөнд input нь бүх зайг эзэлж, товч нь яг багтах ёстой. `flexGrow`-оор нэг элементэд үлдсэн зайг бүхэлд нь өгнө."
+  },
+  "buildsInProject": "Хайлтын мөр — input сунаж, товч багтана",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "flexbox",
+    "flexDirection",
+    "flexGrow"
+  ],
+  "prerequisites": [
+    "rn6-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.row}>\n      <View nativeID=\"field\" style={styles.field}><Text>Хайх...</Text></View>\n      <View style={styles.btn}><Text style={styles.btnText}>Хайх</Text></View>\n      {/* энд бичнэ үү: field-г үлдсэн зайг дүүргэ */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  row: { flexDirection: \"row\", gap: 8, padding: 16, alignItems: \"center\" },\n  field: { backgroundColor: \"#f1f5f9\", padding: 14, borderRadius: 10 },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 10 },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn7-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "flexGrow — үлдсэн зайг дүүргэх"
+      },
+      "statement": {
+        "mn": "`field` загварт `flexGrow: 1` нэмж, хайлтын талбарыг үлдсэн бүх зайг дүүргэдэг болго. Товч нь зөвхөн өөрийн хэмжээгээр багтана."
+      },
+      "requirements": [
+        {
+          "mn": "`field`-т `flexGrow: 1` нэмсэн"
+        },
+        {
+          "mn": "Мөр `flexDirection: \"row\"` хэвээр"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Хайх талбар өргөн сунаж, «Хайх» товч баруун захад багтана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.numeric",
+          "args": {
+            "selector": "#field",
+            "prop": "flex-grow",
+            "min": 1
+          },
+          "onFail": {
+            "mn": "`field`-т `flexGrow: 1` алга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "css.computed",
+          "args": {
+            "selector": "#field",
+            "prop": "background-color",
+            "equals": "#f1f5f9"
+          },
+          "onFail": {
+            "mn": "Хайлтын талбар алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`flexGrow` нь элемент үлдсэн сул зайнаас хэдийг авахыг заана. 1 бол «бүх сул зайг ав»."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Товч flexGrow-гүй тул зөвхөн агуулгынхаа хэмжээтэй үлдэнэ. `field`-д л `flexGrow: 1` өг."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "field загварт нэм:"
+          },
+          "code": "field: {\n  flexGrow: 1, // үлдсэн зайг дүүргэ\n  // ...\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.row}>\n      <View nativeID=\"field\" style={styles.field}><Text>Хайх...</Text></View>\n      <View style={styles.btn}><Text style={styles.btnText}>Хайх</Text></View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  row: { flexDirection: \"row\", gap: 8, padding: 16, alignItems: \"center\" },\n  field: { flexGrow: 1, backgroundColor: \"#f1f5f9\", padding: 14, borderRadius: 10 },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 10 },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`flexGrow: 1` нь элементэд мөрийн үлдсэн сул зайг бүхэлд нь өгдөг. `flex: 1` гэж бичсэн ч ойролцоо утгатай. Ингэж «сунадаг» талбар үүсгэдэг."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`flexGrow: 1` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Элементийг нууна"
+        },
+        {
+          "mn": "Мөрийн үлдсэн сул зайг тэр элементэд өгнө"
+        },
+        {
+          "mn": "Фонтыг томруулна"
+        },
+        {
+          "mn": "Өнгө өөрчилнө"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`flexGrow` нь сул зайг хэрхэн хуваарилахыг заана. 1 бол бүх сул зайг авна."
+      },
+      "hint": {
+        "mn": "«grow» = ургах. Юу руу ургах вэ — сул зай уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Хоёр элемент хоёулаа `flexGrow: 1` бол юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Нэг нь алга болно"
+        },
+        {
+          "mn": "Сул зайг тэнцүү хуваана"
+        },
+        {
+          "mn": "Алдаа гарна"
+        },
+        {
+          "mn": "Эхнийх нь бүгдийг авна"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хэд хэдэн элемент flexGrow-тэй бол сул зайг харьцангуйгаар нь хуваана — тэнцүү бол тал талдаа."
+      },
+      "hint": {
+        "mn": "Хоёулаа адил эрхтэй бол зайг яаж хуваах бол?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

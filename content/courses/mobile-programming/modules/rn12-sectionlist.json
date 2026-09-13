@@ -1,0 +1,20 @@
+{
+  "id": "rn12-sectionlist",
+  "stageId": "s8",
+  "order": 2,
+  "title": {
+    "mn": "SectionList"
+  },
+  "description": {
+    "mn": "Барааг ангиллаар нь бүлэглэж, гарчигтай хэсгүүдэд харуул."
+  },
+  "estimatedHours": 6,
+  "lessons": [
+    "rn12-l1",
+    "rn12-l2",
+    "rn12-l3",
+    "rn12-l4",
+    "rn12-l5",
+    "rn12-l6"
+  ]
+}

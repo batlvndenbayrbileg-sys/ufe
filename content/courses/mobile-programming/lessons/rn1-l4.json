@@ -1,0 +1,235 @@
+{
+  "id": "rn1-l4",
+  "moduleId": "rn1-basics",
+  "slug": "product-card",
+  "order": 4,
+  "title": {
+    "mn": "Бүтээгдэхүүний карт угсрах"
+  },
+  "why": {
+    "mn": "Одоо сурсан бүхнээ нэгтгэж, жинхэнэ бүтээгдэхүүний карт бүтээе: нэр, тайлбар, үнэ, үнэлгээ — бүгд нэг цэвэрхэн View дотор. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Бүрэн бүтээгдэхүүний карт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 16,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "View",
+    "Text",
+    "StyleSheet",
+    "flexbox"
+  ],
+  "prerequisites": [
+    "rn1-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"card\" style={styles.card}>\n        {/* энд бичнэ үү: нэр, тайлбар, үнэ, үнэлгээ */}\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, backgroundColor: \"#f5f6f8\" },\n  card: { backgroundColor: \"#ffffff\", padding: 16, borderRadius: 16, gap: 6 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn1-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Бүтээгдэхүүний карт угсрах"
+      },
+      "statement": {
+        "mn": "`card` дотор бүтээгдэхүүний нэр, тайлбар, доор нь нэг мөрөнд (`row`) үнэ ба үнэлгээ (★) харуул. Нийт дор хаяж 4 `<Text>` байна. Үнэ ба үнэлгээг `flexDirection: \"row\"`, `justifyContent: \"space-between\"`-ээр хоёр захад тавь."
+      },
+      "requirements": [
+        {
+          "mn": "`card` дотор дор хаяж 4 `<Text>`"
+        },
+        {
+          "mn": "Нэрд `Ухаалаг цаг` орсон"
+        },
+        {
+          "mn": "Үнэ ба үнэлгээ нэг мөрөнд (`row`) хоёр захад"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Бодит дэлгүүрийн шиг цэвэрхэн бүтээгдэхүүний карт: нэр, тайлбар, доор нь үнэ зүүн, үнэлгээ баруун талд."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.text",
+          "args": {
+            "selector": "#card",
+            "contains": "Ухаалаг цаг"
+          },
+          "onFail": {
+            "mn": "Картад бүтээгдэхүүний нэр (`Ухаалаг цаг ...`) алга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.count",
+          "args": {
+            "selector": "#card [data-rn=\"text\"]",
+            "min": 4
+          },
+          "onFail": {
+            "mn": "Картад дор хаяж 4 `<Text>` (нэр, тайлбар, үнэ, үнэлгээ) байх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#card [data-rn=\"view\"]"
+          },
+          "onFail": {
+            "mn": "Үнэ ба үнэлгээг багтаах дотоод `<View>` (мөр) алга."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Картын бүтэц: нэр (Text), тайлбар (Text), дараа нь үнэ ба үнэлгээг агуулсан нэг `<View>` мөр."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Үнэ ба үнэлгээний мөрийг `flexDirection: \"row\"` + `justifyContent: \"space-between\"`-ээр хийвэл үнэ зүүн, үнэлгээ баруун талд наалдана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Дотор мөр ийм харагдана:"
+          },
+          "code": "<View style={styles.row}>\n  <Text style={styles.price}>249,000₮</Text>\n  <Text style={styles.rating}>★ 4.8</Text>\n</View>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"card\" style={styles.card}>\n        <Text style={styles.name}>Ухаалаг цаг X100</Text>\n        <Text style={styles.desc}>Зүрхний цохилт хэмжигчтэй, усны хамгаалалттай.</Text>\n        <View style={styles.row}>\n          <Text style={styles.price}>249,000₮</Text>\n          <Text style={styles.rating}>★ 4.8</Text>\n        </View>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, backgroundColor: \"#f5f6f8\" },\n  card: { backgroundColor: \"#ffffff\", padding: 16, borderRadius: 16, gap: 6 },\n  name: { fontSize: 18, fontWeight: \"bold\", color: \"#18181b\" },\n  desc: { fontSize: 14, color: \"#71717a\" },\n  row: { flexDirection: \"row\", justifyContent: \"space-between\", alignItems: \"center\", marginTop: 8 },\n  price: { fontSize: 18, fontWeight: \"bold\", color: \"#2563eb\" },\n  rating: { fontSize: 14, color: \"#f59e0b\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Жинхэнэ дэлгүүрийн карт бол View-ийн дотор View — гадна нь картын хүрээ, дотор нь үнэ/үнэлгээний мөр. Ийм давхарласан бүтэц (nesting) бол мобайл UI-ийн үндэс."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 14,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Нэг `<View>` дотор өөр `<View>` байрлуулж болох уу?"
+      },
+      "options": [
+        {
+          "mn": "Үгүй, View дотор зөвхөн Text л болно"
+        },
+        {
+          "mn": "Тийм — View-үүдийг хүссэнээрээ давхарлаж (nest) болно"
+        },
+        {
+          "mn": "Зөвхөн 2 түвшин хүртэл"
+        },
+        {
+          "mn": "Зөвхөн FlatList дотор"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "View-үүдийг хязгааргүй давхарлаж болно. Ийм nesting-ээр л нарийн UI бүтдэг."
+      },
+      "hint": {
+        "mn": "Вэбийн `<div>` дотор `<div>` байж болдог. Мобайл дээр яах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Картын үнэ ба үнэлгээг нэг мөрөнд хоёр захад тавихад юу хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "`flexDirection: \"row\"` ба `justifyContent: \"space-between\"`"
+        },
+        {
+          "mn": "`position: absolute`"
+        },
+        {
+          "mn": "Хоёр тусдаа карт"
+        },
+        {
+          "mn": "`fontSize` томруулах"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Мөр болгоод (`row`) хоёр захад түлэхэд (`space-between`) үнэ зүүн, үнэлгээ баруун талд байрлана."
+      },
+      "hint": {
+        "mn": "Өмнөх хичээлийн header-тэй яг адилхан арга."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30,
+    "badge": "rn-starter"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

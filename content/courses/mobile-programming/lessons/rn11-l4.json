@@ -1,0 +1,223 @@
+{
+  "id": "rn11-l4",
+  "moduleId": "rn11-flatlist-adv",
+  "slug": "item-separator",
+  "order": 4,
+  "title": {
+    "mn": "ItemSeparatorComponent — мөр хоорондын зураас"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн барааны мөрүүд хооронд нимгэн зураас байвал жагсаалт цэвэрхэн уншигдана. `ItemSeparatorComponent` нь мөр бүрийн ХООРОНД зурагдана (эхэнд, төгсгөлд биш)."
+  },
+  "buildsInProject": "Мөр хооронд зураастай жагсаалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "FlatList",
+    "renderItem",
+    "ItemSeparatorComponent"
+  ],
+  "prerequisites": [
+    "rn11-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, FlatList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"p1\", name: \"Утасгүй чихэвч\", price: \"159,000₮\" },\n  { id: \"p2\", name: \"Гар цаг X100\", price: \"249,000₮\" },\n  { id: \"p3\", name: \"Нарны шил\", price: \"89,000₮\" },\n  { id: \"p4\", name: \"Арьсан цүнх\", price: \"199,000₮\" },\n];\n\nfunction App() {\n  // энд бичнэ үү: FlatList-д ItemSeparatorComponent нэмж мөр хооронд зураас тавь\n  return (\n    <FlatList\n      style={styles.list}\n      data={PRODUCTS}\n      keyExtractor={(item) => item.id}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text style={styles.name}>{item.name}</Text>\n          <Text style={styles.price}>{item.price}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  list: { flex: 1, backgroundColor: \"#fff\" },\n  sep: { height: 1, backgroundColor: \"#e2e8f0\" },\n  row: { flexDirection: \"row\", justifyContent: \"space-between\", padding: 16 },\n  name: { fontSize: 16 },\n  price: { fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn11-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "ItemSeparatorComponent — мөр хоорондын зураас"
+      },
+      "statement": {
+        "mn": "FlatList-д `ItemSeparatorComponent` prop нэм. Утга нь зураас буцаах функц: `() => <View testID=\"sep\" style={styles.sep} />`. 4 мөр хооронд 3 зураас гарна."
+      },
+      "requirements": [
+        {
+          "mn": "`ItemSeparatorComponent` нэмсэн"
+        },
+        {
+          "mn": "Зураас нь `testID=\"sep\"`-тэй"
+        },
+        {
+          "mn": "4 бараа хэвээр"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Барааны мөрүүд хооронд нимгэн саарал зураас гарна (эхэнд, төгсгөлд биш)."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"sep\"]",
+            "equals": 3
+          },
+          "onFail": {
+            "mn": "Мөр хооронд 3 зураас байх ёстой (`ItemSeparatorComponent`)."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"product\"]",
+            "equals": 4
+          },
+          "onFail": {
+            "mn": "4 бараа харагдах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`ItemSeparatorComponent` нь зөвхөн мөрүүдийн ХООРОНД зурагдана. N мөр байвал N−1 зураас гарна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Утга нь компонент/функц: `ItemSeparatorComponent={() => <View style={styles.sep} />}`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "FlatList-д prop нэм:"
+          },
+          "code": "ItemSeparatorComponent={() => (\n  <View testID=\"sep\" style={styles.sep} />\n)}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, FlatList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"p1\", name: \"Утасгүй чихэвч\", price: \"159,000₮\" },\n  { id: \"p2\", name: \"Гар цаг X100\", price: \"249,000₮\" },\n  { id: \"p3\", name: \"Нарны шил\", price: \"89,000₮\" },\n  { id: \"p4\", name: \"Арьсан цүнх\", price: \"199,000₮\" },\n];\n\nfunction App() {\n  return (\n    <FlatList\n      style={styles.list}\n      data={PRODUCTS}\n      keyExtractor={(item) => item.id}\n      ItemSeparatorComponent={() => <View testID=\"sep\" style={styles.sep} />}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text style={styles.name}>{item.name}</Text>\n          <Text style={styles.price}>{item.price}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  list: { flex: 1, backgroundColor: \"#fff\" },\n  sep: { height: 1, backgroundColor: \"#e2e8f0\" },\n  row: { flexDirection: \"row\", justifyContent: \"space-between\", padding: 16 },\n  name: { fontSize: 16 },\n  price: { fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`ItemSeparatorComponent` нь хоёр гишүүн ХООРОНД зурагддаг тул 4 мөрөнд 3 зураас гарна. Жагсаалтын эхэн ба төгсгөлд зураас нэмэхгүй нь давуу тал."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "5 мөртэй жагсаалтад `ItemSeparatorComponent` хэдэн зураас зурах вэ?"
+      },
+      "options": [
+        {
+          "mn": "5"
+        },
+        {
+          "mn": "4"
+        },
+        {
+          "mn": "6"
+        },
+        {
+          "mn": "1"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Зөвхөн мөр хооронд зурагддаг тул N−1 = 4 зураас."
+      },
+      "hint": {
+        "mn": "5 модны хооронд хэдэн зай байх вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`ItemSeparatorComponent`-д ямар утга өгөх нь тохиромжтой вэ?"
+      },
+      "options": [
+        {
+          "mn": "Тоо"
+        },
+        {
+          "mn": "Зураас буцаах компонент/функц"
+        },
+        {
+          "mn": "Текст мөр"
+        },
+        {
+          "mn": "Өнгөний нэр"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Компонент буюу элемент буцаах функц өгнө."
+      },
+      "hint": {
+        "mn": "Юу зурагдах ёстой вэ — компонент."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

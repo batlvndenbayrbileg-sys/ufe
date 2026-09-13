@@ -1,0 +1,234 @@
+{
+  "id": "rn4-l2",
+  "moduleId": "rn4-lists",
+  "slug": "flatlist-press",
+  "order": 2,
+  "title": {
+    "mn": "Жагсаалтаас сонгох"
+  },
+  "why": {
+    "mn": "Жагсаалтын мөр бүр дарагддаг байх ёстой. FlatList-ийн мөр бүрийг `<Pressable>` болгож, дарсан барааг дээр нь харуулъя. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Дарж болох бүтээгдэхүүний жагсаалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 15,
+  "skills": [
+    "react-native",
+    "mobile-lists",
+    "mobile-state"
+  ],
+  "concepts": [
+    "FlatList",
+    "Pressable",
+    "useState"
+  ],
+  "prerequisites": [
+    "rn4-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, FlatList, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\" },\n  { id: \"2\", name: \"Гар цаг\" },\n  { id: \"3\", name: \"Нарны шил\" },\n  { id: \"4\", name: \"Цүнх\" },\n];\n\nfunction App() {\n  const [selected, setSelected] = useState(\"\");\n\n  return (\n    <View style={styles.screen}>\n      <Text nativeID=\"selected\" style={styles.sel}>\n        {selected ? \"Сонгосон: \" + selected : \"Бараа сонгоно уу\"}\n      </Text>\n      <FlatList\n        data={PRODUCTS}\n        keyExtractor={(item) => item.id}\n        renderItem={({ item }) => (\n          // энд бичнэ үү: дарж болох мөр\n          <Text style={styles.row}>{item.name}</Text>\n        )}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\" },\n  sel: { fontSize: 18, fontWeight: \"bold\", padding: 16 },\n  row: { backgroundColor: \"#ffffff\", padding: 16, margin: 8, borderRadius: 12, fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn4-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Жагсаалтаас сонгох"
+      },
+      "statement": {
+        "mn": "`renderItem` доторх мөрийг `<Pressable testID=\"row\">` болго. `onPress`-д `setSelected(item.name)` дуудаж, дарсан барааны нэрийг дээд `<Text nativeID=\"selected\">`-д харуул."
+      },
+      "requirements": [
+        {
+          "mn": "Мөр бүр `<Pressable testID=\"row\">`"
+        },
+        {
+          "mn": "`onPress`-д `setSelected(item.name)`"
+        },
+        {
+          "mn": "Мөр дархад дээр «Сонгосон: ...» гарна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Аль нэг барааг дархад дээд талд «Сонгосон: [нэр]» гэж харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"row\"]",
+            "equals": 4
+          },
+          "onFail": {
+            "mn": "4 дарж болох мөр байх ёстой."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "[data-testid=\"row\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "#selected",
+                  "contains": "Сонгосон"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Мөр дархад «Сонгосон: ...» гарахгүй байна. `onPress`-оо шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`renderItem` доторх `<Text>`-г `<Pressable>`-ээр ороож, дотор нь `<Text>` үлдээ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`onPress`-д `() => setSelected(item.name)` өгвөл яг тэр мөрийн барааг сонгоно. `item` бол тухайн мөрийн өгөгдөл."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Дарж болох мөр:"
+          },
+          "code": "<Pressable testID=\"row\" style={styles.row} onPress={() => setSelected(item.name)}>\n  <Text style={styles.rowText}>{item.name}</Text>\n</Pressable>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, FlatList, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\" },\n  { id: \"2\", name: \"Гар цаг\" },\n  { id: \"3\", name: \"Нарны шил\" },\n  { id: \"4\", name: \"Цүнх\" },\n];\n\nfunction App() {\n  const [selected, setSelected] = useState(\"\");\n\n  return (\n    <View style={styles.screen}>\n      <Text nativeID=\"selected\" style={styles.sel}>\n        {selected ? \"Сонгосон: \" + selected : \"Бараа сонгоно уу\"}\n      </Text>\n      <FlatList\n        data={PRODUCTS}\n        keyExtractor={(item) => item.id}\n        renderItem={({ item }) => (\n          <Pressable testID=\"row\" style={styles.row} onPress={() => setSelected(item.name)}>\n            <Text style={styles.rowText}>{item.name}</Text>\n          </Pressable>\n        )}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\" },\n  sel: { fontSize: 18, fontWeight: \"bold\", padding: 16 },\n  row: { backgroundColor: \"#ffffff\", padding: 16, margin: 8, borderRadius: 12 },\n  rowText: { fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "FlatList-ийн мөр бүр өөрийн `item`-тэй тул `onPress` дотроос `item.name`-ийг шууд авч төлөвт хадгална. Ингэж жагсаалт «сонгож болдог» интерактив болно."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 13,
+      "skills": [
+        "react-native",
+        "mobile-lists",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`renderItem` доторх `onPress`-д `item`-ийг яаж ашиглах вэ?"
+      },
+      "options": [
+        {
+          "mn": "`item` тэнд байхгүй"
+        },
+        {
+          "mn": "`() => setSelected(item.name)` — тухайн мөрийн өгөгдлийг шууд авна"
+        },
+        {
+          "mn": "Зөвхөн `item.id`"
+        },
+        {
+          "mn": "Гаднаас дахин авах хэрэгтэй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`renderItem={({ item }) => ...}` доторх `item` бол тухайн мөрийн өгөгдөл. `onPress` дотор шууд ашиглаж болно."
+      },
+      "hint": {
+        "mn": "Мөр бүр өөрийн `item`-тэй. `onPress` тэр хүрээнд бичигдэж байгаа тул юуг харах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Жагсаалтын мөрийг дарж болдог болгохын тулд юу хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "`<Text>`-д `onPress`"
+        },
+        {
+          "mn": "Мөрийг `<Pressable>` (эсвэл `<TouchableOpacity>`)-ээр ороох"
+        },
+        {
+          "mn": "`<FlatList>`-д `onPress`"
+        },
+        {
+          "mn": "Юу ч хэрэггүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Мөрийг `<Pressable>`-ээр ороож `onPress` өгснөөр дарж болдог болно."
+      },
+      "hint": {
+        "mn": "Аль component нь дурын зүйлийг товч болгодог байсан бэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

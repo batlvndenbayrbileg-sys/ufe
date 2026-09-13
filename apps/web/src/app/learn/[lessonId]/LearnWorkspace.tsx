@@ -186,7 +186,7 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
   const header = useMemo(
     () => (
       <>
-        <a href={`/app/course/${"internet-programming"}`} className={s.back}>
+        <a href={`/app/course/${lesson.courseSlug}`} className={s.back}>
           ← Хичээлүүд
         </a>
         <span className={s.lessonTitle}>{lesson.title.mn}</span>
@@ -286,7 +286,7 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
               {lesson.completion.badge ? <Badge tone="success" size="md">{badgeLabel(lesson.completion.badge)}</Badge> : null}
               {/* The forward step (next lesson / course-finished) lives in the
                   result panel above, right where the student just clicked. */}
-              <a href="/app/course/internet-programming" className={s.back}>
+              <a href={`/app/course/${lesson.courseSlug}`} className={s.back}>
                 Бүх хичээл
               </a>
             </div>
@@ -415,6 +415,7 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
               entry={lesson.execution.entry}
               sqliteUrl={lesson.execution.runtime === "sqlite" ? "/lib/sqlite.js" : undefined}
               reactRuntimeUrl="/lib/react-runtime.js"
+              reactNativeRuntimeUrl="/lib/rn-runtime.js"
               onConsole={(e) => setLogs((l) => [...l.slice(-40), e])}
             />
           </div>

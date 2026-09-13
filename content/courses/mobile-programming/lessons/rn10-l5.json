@@ -1,0 +1,246 @@
+{
+  "id": "rn10-l5",
+  "moduleId": "rn10-validation",
+  "slug": "count-errors",
+  "order": 5,
+  "title": {
+    "mn": "Бүх талбарыг зэрэг шалгах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн захиалгын форм илгээхийн өмнө хэдэн талбар дутуу байгааг нэг дор шалгаж, алдааны тоог харуулах ёстой."
+  },
+  "buildsInProject": "Хоосон талбаруудын тоог тоолох",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "state",
+    "useState",
+    "filter"
+  ],
+  "prerequisites": [
+    "rn10-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [form, setForm] = useState({ name: \"\", phone: \"\", address: \"\" });\n  // энд бичнэ үү: хоосон талбаруудын тоог filter-ээр тоол\n  const errors = 0;\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"name\" style={styles.input} placeholder=\"Нэр\"\n        value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} />\n      <TextInput nativeID=\"phone\" style={styles.input} placeholder=\"Утас\" keyboardType=\"numeric\"\n        value={form.phone} onChangeText={(v) => setForm({ ...form, phone: v })} />\n      <TextInput nativeID=\"address\" style={styles.input} placeholder=\"Хаяг\"\n        value={form.address} onChangeText={(v) => setForm({ ...form, address: v })} />\n      <Text nativeID=\"count\" style={styles.count}>Дутуу талбар: {errors}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  count: { fontSize: 16, fontWeight: \"600\", color: \"#dc2626\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn10-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Бүх талбарыг зэрэг шалгах"
+      },
+      "statement": {
+        "mn": "Гурван талбарын утгыг массивт хийж, `filter((v) => v.trim() === \"\").length`-ээр хоосон талбаруудын тоог `errors`-т бод. Талбар дүүргэх бүрт тоо буурна."
+      },
+      "requirements": [
+        {
+          "mn": "`filter`-ээр хоосон талбарыг тоолсон"
+        },
+        {
+          "mn": "Эхэндээ дутуу тоо 3"
+        },
+        {
+          "mn": "Талбар бичихэд тоо буурна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Анх «Дутуу талбар: 3», нэг талбар бичихэд «Дутуу талбар: 2» болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "filter"
+          },
+          "onFail": {
+            "mn": "`filter`-ээр хоосон талбарыг тоолоогүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.text",
+          "args": {
+            "selector": "#count",
+            "contains": "3"
+          },
+          "onFail": {
+            "mn": "Эхэндээ дутуу талбарын тоо 3 байх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "#name",
+                  "text": "Бат"
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "#count",
+                  "contains": "2"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Талбар бичихэд дутуу тоо буурахгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Гурван талбарын утгыг нэг массивт `[form.name, form.phone, form.address]` цуглуул."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`filter((v) => v.trim() === \"\")` нь зөвхөн хоосон талбаруудыг үлдээж, `.length` тэдгээрийн тоог өгнө."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "errors тооцоолол:"
+          },
+          "code": "const errors = [form.name, form.phone, form.address]\n  .filter((v) => v.trim() === \"\").length;"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [form, setForm] = useState({ name: \"\", phone: \"\", address: \"\" });\n  const errors = [form.name, form.phone, form.address].filter((v) => v.trim() === \"\").length;\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"name\" style={styles.input} placeholder=\"Нэр\"\n        value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} />\n      <TextInput nativeID=\"phone\" style={styles.input} placeholder=\"Утас\" keyboardType=\"numeric\"\n        value={form.phone} onChangeText={(v) => setForm({ ...form, phone: v })} />\n      <TextInput nativeID=\"address\" style={styles.input} placeholder=\"Хаяг\"\n        value={form.address} onChangeText={(v) => setForm({ ...form, address: v })} />\n      <Text nativeID=\"count\" style={styles.count}>Дутуу талбар: {errors}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  count: { fontSize: 16, fontWeight: \"600\", color: \"#dc2626\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Талбаруудыг массивт цуглуулаад `filter`-ээр хоосныг нь шүүж, `.length`-ээр тоог гаргах нь бүх формыг нэг дор баталгаажуулах цомхон арга."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`filter((v) => v.trim() === \"\")` юу буцаах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Бүх талбар"
+        },
+        {
+          "mn": "Зөвхөн хоосон талбаруудын массив"
+        },
+        {
+          "mn": "Тоо"
+        },
+        {
+          "mn": "Эхний талбар"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "filter нь нөхцөлд нийцсэн (хоосон) элементүүдээс шинэ массив үүсгэнэ."
+      },
+      "hint": {
+        "mn": "filter юуг үлдээдэг вэ — нөхцөл үнэн элементийг үү?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Массивын `.length` юуг өгөх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Нийлбэрийг"
+        },
+        {
+          "mn": "Элементийн тоог"
+        },
+        {
+          "mn": "Эхний элементийг"
+        },
+        {
+          "mn": "Хоосон эсэхийг"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": ".length нь массив дахь элементийн тоог өгнө — энд хоосон талбарын тоо."
+      },
+      "hint": {
+        "mn": "Массивд хэдэн зүйл байна?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

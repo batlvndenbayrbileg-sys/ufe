@@ -1,0 +1,213 @@
+{
+  "id": "rn7-l6",
+  "moduleId": "rn7-layout",
+  "slug": "aspect-ratio",
+  "order": 6,
+  "title": {
+    "mn": "aspectRatio — харьцаа хадгалах"
+  },
+  "why": {
+    "mn": "Барааны зургууд ямар ч өргөнтэй байсан 1:1 квадрат хэвээр байх ёстой. `aspectRatio`-оор өндрийг өргөнтэй нь автоматаар уялдуулна. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Квадрат харьцаатай зургийн нүд",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "aspectRatio",
+    "flexbox",
+    "style"
+  ],
+  "prerequisites": [
+    "rn7-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"tile\" style={styles.tile}>\n        <Text style={styles.label}>1:1</Text>\n      </View>\n      {/* энд бичнэ үү: tile-г квадрат харьцаатай болго */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24 },\n  tile: { width: \"100%\", backgroundColor: \"#a5b4fc\", borderRadius: 16, alignItems: \"center\", justifyContent: \"center\" },\n  label: { color: \"#312e81\", fontSize: 20, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn7-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "aspectRatio — харьцаа хадгалах"
+      },
+      "statement": {
+        "mn": "`tile` загварт `aspectRatio: 1` нэмж, өргөнтэй нь тэнцүү өндөртэй (квадрат) болго. Өндрийг гараар зааж өгөх шаардлагагүй."
+      },
+      "requirements": [
+        {
+          "mn": "`tile`-д `aspectRatio: 1`"
+        },
+        {
+          "mn": "`width: \"100%\"` хэвээр"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Нүд өргөнтэйгээ ижил өндөртэй, төгс квадрат болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.computed",
+          "args": {
+            "selector": "#tile",
+            "prop": "aspect-ratio",
+            "oneOf": [
+              "1",
+              "1 / 1"
+            ]
+          },
+          "onFail": {
+            "mn": "`tile`-д `aspectRatio: 1` алга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`aspectRatio` нь өргөн/өндрийн харьцааг тогтооно. 1 бол квадрат, 16/9 бол өргөн видео хэлбэр."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Зөвхөн нэг хэмжээ (энд `width`)-ийг өгвөл нөгөөг нь `aspectRatio` автоматаар бодно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "tile загварт нэм:"
+          },
+          "code": "tile: {\n  width: \"100%\",\n  aspectRatio: 1, // өндөр = өргөн\n  // ...\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"tile\" style={styles.tile}>\n        <Text style={styles.label}>1:1</Text>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24 },\n  tile: { width: \"100%\", aspectRatio: 1, backgroundColor: \"#a5b4fc\", borderRadius: 16, alignItems: \"center\", justifyContent: \"center\" },\n  label: { color: \"#312e81\", fontSize: 20, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`aspectRatio` нь өргөн ба өндрийн хамаарлыг тогтоодог тул зөвхөн нэгийг нь зааж өгөхөд нөгөө нь автоматаар тохирно. Ямар ч дэлгэцэнд зураг харьцаагаа хадгална."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`aspectRatio: 1` юу гэсэн үг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Өндөр нь өргөнтэй тэнцүү (квадрат)"
+        },
+        {
+          "mn": "Өргөн нь 1 пиксел"
+        },
+        {
+          "mn": "Ил тод байдал 1"
+        },
+        {
+          "mn": "1 элемент"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "aspectRatio нь өргөн:өндөр харьцаа. 1 бол 1:1 = квадрат."
+      },
+      "hint": {
+        "mn": "Харьцаа 1:1 ямар хэлбэр вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`width: \"100%\"` ба `aspectRatio: 16/9` өгвөл юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаа"
+        },
+        {
+          "mn": "Өндөр нь өргөний 9/16 болж, өргөн видео хэлбэртэй болно"
+        },
+        {
+          "mn": "Квадрат"
+        },
+        {
+          "mn": "Өндөргүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "aspectRatio өргөнөөс өндрийг автоматаар бодно — 16:9 бол өргөн тэгш өнцөгт."
+      },
+      "hint": {
+        "mn": "16/9 харьцаа ямар дэлгэцтэй адил вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

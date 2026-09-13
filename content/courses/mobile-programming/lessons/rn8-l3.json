@@ -1,0 +1,207 @@
+{
+  "id": "rn8-l3",
+  "moduleId": "rn8-styling",
+  "slug": "opacity",
+  "order": 3,
+  "title": {
+    "mn": "opacity — дуусаж буй барааг бүдгэрүүлэх"
+  },
+  "why": {
+    "mn": "Shop.mn-д «дууссан» бараа бүдэг харагддаг — байгаа ч авах боломжгүй. `opacity`-оор элементийг ил тод (бүдэг) болгоно."
+  },
+  "buildsInProject": "Дууссан барааны бүдэг карт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "style",
+    "opacity",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn8-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"card\" style={styles.card}>\n        <Text style={styles.name}>Гар цаг X100</Text>\n        <Text style={styles.status}>Дууссан</Text>\n      </View>\n      {/* энд бичнэ үү: дууссан картыг бүдгэрүүл */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, justifyContent: \"center\" },\n  card: { backgroundColor: \"#fff\", padding: 20, borderRadius: 16, gap: 6, elevation: 4 },\n  name: { fontSize: 16, fontWeight: \"600\" },\n  status: { color: \"#dc2626\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn8-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "opacity — дуусаж буй барааг бүдгэрүүлэх"
+      },
+      "statement": {
+        "mn": "`card` загварт `opacity: 0.5` нэмж, дууссан барааны картыг хагас ил тод (бүдэг) болго. Ингэснээр байгаа ч идэвхгүй нь мэдэгдэнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`card`-д `opacity` нэмсэн (1-ээс бага)"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Карт бүхэлдээ хагас тунгалаг, бүдэг харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.numeric",
+          "args": {
+            "selector": "#card",
+            "prop": "opacity",
+            "max": 0.9
+          },
+          "onFail": {
+            "mn": "`card`-д `opacity` (1-ээс бага) нэмээгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`opacity` нь 0 (бүрэн үл үзэгдэх) — 1 (бүрэн харагдах) хооронд. 0.5 бол хагас бүдэг."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`opacity`-г эцэг элемент дээр тавьбал доторх БҮХ зүйл (нэр, статус) хамт бүдгэрнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "card загварт нэм:"
+          },
+          "code": "card: {\n  // ...\n  opacity: 0.5, // хагас бүдэг\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"card\" style={styles.card}>\n        <Text style={styles.name}>Гар цаг X100</Text>\n        <Text style={styles.status}>Дууссан</Text>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, justifyContent: \"center\" },\n  card: { backgroundColor: \"#fff\", padding: 20, borderRadius: 16, gap: 6, elevation: 4, opacity: 0.5 },\n  name: { fontSize: 16, fontWeight: \"600\" },\n  status: { color: \"#dc2626\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`opacity` нь элемент ба доторх бүх зүйлийн ил харагдалтыг удирдана. `display: none`-ээс ялгаатай нь зайг эзэлсээр байх тул layout өөрчлөгдөхгүй."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`opacity: 0` элементэд юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Улаан болно"
+        },
+        {
+          "mn": "Бүрэн үл үзэгдэх болно (гэхдээ зай эзэлсээр)"
+        },
+        {
+          "mn": "Устна"
+        },
+        {
+          "mn": "Томроно"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "opacity 0 бол харагдахгүй ч зайгаа эзэлсээр байна. Устгах бол өөр асуудал."
+      },
+      "hint": {
+        "mn": "0 = огт тунгалаг."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Эцэг дээр `opacity: 0.5` тавибал юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн эцэг бүдгэрнэ"
+        },
+        {
+          "mn": "Эцэг ба доторх бүх хүүхэд хамт бүдгэрнэ"
+        },
+        {
+          "mn": "Юу ч болохгүй"
+        },
+        {
+          "mn": "Хүүхдүүд алга болно"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "opacity өв залгамжлагддаг тул доторх бүх зүйл хамт бүдгэрнэ."
+      },
+      "hint": {
+        "mn": "Тунгалаг шил дундуур доторхи нь ямар харагдах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

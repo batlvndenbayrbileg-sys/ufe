@@ -12,7 +12,9 @@ import { BrandMark } from "../../../BrandMark";
 import s from "./certificate.module.css";
 
 export function CertificateView({ courseId }: { courseId: string }) {
-  const { map } = useCourseMap();
+  // courseId here is the course's internal id (e.g. "ip-101"); the loader
+  // resolves a map by id or slug, so per-course certificates load correctly.
+  const { map } = useCourseMap(courseId);
   const { data: session } = useSession();
   const [progress, setProgress] = useState<Progress | null>(null);
   const [name, setName] = useState("");

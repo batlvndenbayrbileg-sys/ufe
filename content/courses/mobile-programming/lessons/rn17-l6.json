@@ -1,0 +1,239 @@
+{
+  "id": "rn17-l6",
+  "moduleId": "rn17-hooks",
+  "slug": "useeffect-cleanup",
+  "order": 6,
+  "title": {
+    "mn": "useEffect цэвэрлэгээ — эхлүүлснээ цэвэрлэ"
+  },
+  "why": {
+    "mn": "Shop.mn-д хямдрал хэсэг хугацааны дараа эхэлдэг гэж `setTimeout`-оор товлолоо. Хэрэв хэрэглэгч дэлгэцээс эрт гарвал энэ товлолыг ЗААВАЛ цэвэрлэх ёстой — эс бол алга болсон дэлгэцийн төлвийг өөрчлөхийг оролдож алдаа/санах ойн асуудал үүснэ."
+  },
+  "buildsInProject": "Цэвэрлэгээтэй хугацаат мэдэгдэл",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useEffect",
+    "useState"
+  ],
+  "prerequisites": [
+    "rn17-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [ready, setReady] = useState(false);\n  useEffect(() => {\n    const id = setTimeout(() => setReady(true), 100);\n    // энд бичнэ үү: цэвэрлэгээ буцаа (товлолыг цуцла)\n  }, []);\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"msg\" style={styles.c}>{ready ? \"Хямдрал эхэллээ! 🎉\" : \"Хүлээж байна...\"}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" },\n  c: { fontSize: 24, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn17-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "useEffect цэвэрлэгээ — эхлүүлснээ цэвэрлэ"
+      },
+      "statement": {
+        "mn": "`useEffect` дотор `setTimeout`-ийн дараа цэвэрлэгээ функц буцаа: `return () => clearTimeout(id)`. Ингэснээр дэлгэцээс эрт гарвал товлосон мэдэгдэл цуцлагдана."
+      },
+      "requirements": [
+        {
+          "mn": "`useEffect` ашигласан"
+        },
+        {
+          "mn": "`clearTimeout`-оор цэвэрлэгээ буцаасан"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Хэсэг хугацааны дараа «Хямдрал эхэллээ!» гарч ирнэ; дэлгэцээс гарахад товлол цэвэрлэгдэнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useEffect"
+          },
+          "onFail": {
+            "mn": "`useEffect`-ийг ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "clearTimeout"
+          },
+          "onFail": {
+            "mn": "Цэвэрлэгээнд `clearTimeout` дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "#msg"
+              },
+              {
+                "expectText": {
+                  "selector": "#msg",
+                  "contains": "Хямдрал"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хугацааны дараа мэдэгдэл гарч ирэхгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`useEffect`-ийн буцаасан функц нь component арилахад (эсвэл дахин ажиллахын өмнө) ажилладаг — цэвэрлэгээний газар."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`setTimeout` нь id буцаана. Түүнийг `clearTimeout(id)`-ээр цуцална: `return () => clearTimeout(id);`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Цэвэрлэгээ:"
+          },
+          "code": "const id = setTimeout(() => setReady(true), 100);\nreturn () => clearTimeout(id);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [ready, setReady] = useState(false);\n  useEffect(() => {\n    const id = setTimeout(() => setReady(true), 100);\n    return () => clearTimeout(id);\n  }, []);\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"msg\" style={styles.c}>{ready ? \"Хямдрал эхэллээ! 🎉\" : \"Хүлээж байна...\"}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" },\n  c: { fontSize: 24, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`useEffect`-ийн буцаах функц бол цэвэрлэгээ — таймер, сонсогч, холболтыг зогсооно. Хэрэв товлосон `setTimeout`-оо цэвэрлэхгүй бол component арилсан ч ажиллаж, алга болсон дэлгэцийн төлвийг өөрчлөхийг оролдож алдаа гаргадаг."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`useEffect`-ийн буцаасан функц хэзээ ажилладаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хэзээ ч"
+        },
+        {
+          "mn": "Component арилах (эсвэл effect дахин ажиллахын өмнө) үед"
+        },
+        {
+          "mn": "Товч дархад"
+        },
+        {
+          "mn": "Секунд тутам"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Буцаах функц нь цэвэрлэгээ — unmount эсвэл дахин ажиллахаас өмнө дуудагдана."
+      },
+      "hint": {
+        "mn": "Цэвэрлэгээ хэзээ хийгддэг вэ — эхлэхэд үү, дуусахад уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Товлосон `setTimeout`-оо цэвэрлэхгүй бол юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Юу ч болохгүй"
+        },
+        {
+          "mn": "Component арилсан ч ажиллаж, алга болсон дэлгэцийн төлвийг өөрчлөхийг оролдоно"
+        },
+        {
+          "mn": "Апп хурдан болно"
+        },
+        {
+          "mn": "Өнгө өөрчлөгдөнө"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Цэвэрлээгүй товлол арилсан component дээр ажиллаж алдаа/санах ойн асуудал үүсгэнэ."
+      },
+      "hint": {
+        "mn": "Хэрэггүй болсон таймер үргэлжилбэл яах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

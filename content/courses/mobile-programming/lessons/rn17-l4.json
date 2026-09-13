@@ -1,0 +1,232 @@
+{
+  "id": "rn17-l4",
+  "moduleId": "rn17-hooks",
+  "slug": "custom-hook",
+  "order": 4,
+  "title": {
+    "mn": "Custom hook — өөрийн hook бичих"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн сагсны логикийг (тоо, нэмэх) олон дэлгэцэд ашиглана. Логикоо `useCart` гэсэн өөрийн hook болгож задалбал хаана ч дахин ашиглана."
+  },
+  "buildsInProject": "Дахин ашиглагдах useCart hook",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useState",
+    "component"
+  ],
+  "prerequisites": [
+    "rn17-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\n// энд бичнэ үү: useCart custom hook\n\nfunction App() {\n  const cart = { count: 0, add: () => {} };\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"count\" style={styles.c}>Сагс: {cart.count}</Text>\n      <Pressable nativeID=\"add\" style={styles.b} onPress={cart.add}><Text style={styles.t}>Сагслах</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 16, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  c: { fontSize: 24, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn17-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Custom hook — өөрийн hook бичих"
+      },
+      "statement": {
+        "mn": "`useCart` нэртэй функц (custom hook) бич. Дотор нь `useState`-ээр `count`, `add` функц үүсгэж, `{ count, add }` буцаа. `App` дотор `const cart = useCart()` гэж дуудаж ашигла."
+      },
+      "requirements": [
+        {
+          "mn": "`useCart` функц зарласан"
+        },
+        {
+          "mn": "`{ count, add }` буцаадаг"
+        },
+        {
+          "mn": "Товч дархад тоо нэмэгдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Сагслах» дархад сагсны тоо нэмэгдэнэ — логик нь useCart hook дотор."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/App.jsx",
+            "kind": "function",
+            "name": "useCart"
+          },
+          "onFail": {
+            "mn": "`useCart` функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#add"
+              },
+              {
+                "expectText": {
+                  "selector": "#count",
+                  "contains": "1"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Товч дархад тоо нэмэгдэхгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Custom hook бол зүгээр `use`-ээр эхэлсэн нэртэй функц бөгөөд дотроо бусад hook (useState гэх мэт) ашигладаг."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`function useCart() { const [count, setCount] = useState(0); ... return { count, add }; }` — App дотор `useCart()` гэж дуудна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц:"
+          },
+          "code": "function useCart() {\n  const [count, setCount] = useState(0);\n  const add = () => setCount((c) => c + 1);\n  return { count, add };\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction useCart() {\n  const [count, setCount] = useState(0);\n  const add = () => setCount((c) => c + 1);\n  return { count, add };\n}\n\nfunction App() {\n  const cart = useCart();\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"count\" style={styles.c}>Сагс: {cart.count}</Text>\n      <Pressable nativeID=\"add\" style={styles.b} onPress={cart.add}><Text style={styles.t}>Сагслах</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 16, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  c: { fontSize: 24, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Custom hook нь давтагддаг төлөв ба логикийг нэг дор боож, олон component-д дахин ашиглах боломж өгдөг. `use`-ээр эхэлсэн нэр нь React-д «энэ hook» гэдгийг илэрхийлнэ."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Custom hook-ийн нэр яаж эхлэх ёстой вэ?"
+      },
+      "options": [
+        {
+          "mn": "`get`"
+        },
+        {
+          "mn": "`use`"
+        },
+        {
+          "mn": "том үсэг"
+        },
+        {
+          "mn": "`hook`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "React-ийн дүрмээр hook-ийн нэр `use`-ээр эхэлнэ (useCart, useAuth)."
+      },
+      "hint": {
+        "mn": "Бусад hook-ийн нэрийг хар: useState, useEffect..."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Custom hook юунд хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Загвар өгөх"
+        },
+        {
+          "mn": "Давтагддаг төлөв/логикийг дахин ашиглах"
+        },
+        {
+          "mn": "Сервер ажиллуулах"
+        },
+        {
+          "mn": "Зураг татах"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Custom hook нь логикийг задалж, олон газар дахин ашиглах гол арга."
+      },
+      "hint": {
+        "mn": "Ижил логикийг олон дэлгэцэд хэрэглэхэд яах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

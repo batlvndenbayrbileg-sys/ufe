@@ -1,0 +1,248 @@
+{
+  "id": "rn13-l3",
+  "moduleId": "rn13-navigation",
+  "slug": "nav-stack",
+  "order": 3,
+  "title": {
+    "mn": "Буцах stack массив"
+  },
+  "why": {
+    "mn": "Жинхэнэ навигацид «буцах» товч хамгийн сүүлд очсон дэлгэц рүү эргүүлдэг. Shop.mn-д дэлгэцийн түүхийг массив (stack) болгон хадгалж, нэмэхдээ `push`, буцахдаа `pop` хийнэ."
+  },
+  "buildsInProject": "Дэлгэцийн түүх — push / pop",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useState",
+    "state",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn13-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [stack, setStack] = useState([\"Нүүр\"]);\n  const current = stack[stack.length - 1];\n\n  const push = (s) => setStack((prev) => [...prev, s]);\n  const pop = () => {}; // энд бичнэ үү: массиваас сүүлийн дэлгэцийг хас\n\n  return (\n    <View style={styles.screen}>\n      <Text nativeID=\"cur\" style={styles.h}>{current}</Text>\n      <Text nativeID=\"depth\">Гүн: {stack.length}</Text>\n      <Pressable nativeID=\"toCat\" style={styles.btn} onPress={() => push(\"Каталог\")}>\n        <Text style={styles.btnText}>Каталог руу</Text>\n      </Pressable>\n      <Pressable nativeID=\"toItem\" style={styles.btn} onPress={() => push(\"Бараа\")}>\n        <Text style={styles.btnText}>Бараа руу</Text>\n      </Pressable>\n      <Pressable nativeID=\"back\" style={styles.gray} onPress={pop}>\n        <Text style={styles.btnText}>← Буцах</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  h: { fontSize: 26, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  gray: { backgroundColor: \"#64748b\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn13-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Буцах stack массив"
+      },
+      "statement": {
+        "mn": "`pop` функцийг бич: массиваас сүүлийн дэлгэцийг хас (`prev.slice(0, -1)`), гэхдээ ганц дэлгэц үлдвэл битгий хас. `current` нь массивын сүүлийн элемент. push нэмж, pop буцаана."
+      },
+      "requirements": [
+        {
+          "mn": "`pop` нь массиваас сүүлийн элементийг хасна"
+        },
+        {
+          "mn": "Push хийсэн дараалал буцахад эргэж гарна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Каталог → Бараа рүү орсны дараа «Буцах» дархад дахин Каталог руу эргэнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#toCat"
+              },
+              {
+                "expectText": {
+                  "selector": "#cur",
+                  "contains": "Каталог"
+                }
+              },
+              {
+                "click": "#toItem"
+              },
+              {
+                "expectText": {
+                  "selector": "#cur",
+                  "contains": "Бараа"
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "#depth",
+                  "contains": "3"
+                }
+              },
+              {
+                "click": "#back"
+              },
+              {
+                "expectText": {
+                  "selector": "#cur",
+                  "contains": "Каталог"
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "#depth",
+                  "contains": "2"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Буцах ажиллахгүй байна. pop нь prev.slice(0, -1) буцаах ёстой."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Stack бол дараалал: хамгийн сүүлд орсон дэлгэц хамгийн түрүүнд гарна. Буцах = сүүлчийнхийг авч хаях."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`prev.slice(0, -1)` нь сүүлийн элементгүй шинэ массив өгнө. Ганц үлдвэл `prev`-ийг хэвээр буцаа."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "pop функц:"
+          },
+          "code": "const pop = () => setStack((prev) =>\n  prev.length > 1 ? prev.slice(0, -1) : prev\n);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [stack, setStack] = useState([\"Нүүр\"]);\n  const current = stack[stack.length - 1];\n\n  const push = (s) => setStack((prev) => [...prev, s]);\n  const pop = () => setStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev));\n\n  return (\n    <View style={styles.screen}>\n      <Text nativeID=\"cur\" style={styles.h}>{current}</Text>\n      <Text nativeID=\"depth\">Гүн: {stack.length}</Text>\n      <Pressable nativeID=\"toCat\" style={styles.btn} onPress={() => push(\"Каталог\")}>\n        <Text style={styles.btnText}>Каталог руу</Text>\n      </Pressable>\n      <Pressable nativeID=\"toItem\" style={styles.btn} onPress={() => push(\"Бараа\")}>\n        <Text style={styles.btnText}>Бараа руу</Text>\n      </Pressable>\n      <Pressable nativeID=\"back\" style={styles.gray} onPress={pop}>\n        <Text style={styles.btnText}>← Буцах</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  h: { fontSize: 26, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  gray: { backgroundColor: \"#64748b\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Навигацийн stack бол энгийн массив: `push` төгсгөлд нэмнэ, `pop` төгсгөлөөс хасна. Одоогийн дэлгэц үргэлж массивын сүүлчийн элемент. Функциональ `setStack(prev => ...)` нь дараалсан товшилтод найдвартай."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Навигацийн stack-д «одоогийн дэлгэц» аль нь вэ?"
+      },
+      "options": [
+        {
+          "mn": "Массивын эхний элемент"
+        },
+        {
+          "mn": "Массивын сүүлчийн элемент"
+        },
+        {
+          "mn": "Дунд нь"
+        },
+        {
+          "mn": "Урт нь"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хамгийн сүүлд push хийсэн дэлгэц одоогийнх — массивын сүүл."
+      },
+      "hint": {
+        "mn": "Push төгсгөлд нэмдэг. Хаана байх бол?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`prev.slice(0, -1)` юу буцаах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Бүх массив"
+        },
+        {
+          "mn": "Сүүлчийн элементгүй шинэ массив"
+        },
+        {
+          "mn": "Зөвхөн сүүлчийн элемент"
+        },
+        {
+          "mn": "Хоосон массив"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "slice(0, -1) нь сүүлчийг нь орхиж бусдыг нь авна — тэр нь pop."
+      },
+      "hint": {
+        "mn": "-1 гэсэн төгсгөлийн индекс юуг орхих вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

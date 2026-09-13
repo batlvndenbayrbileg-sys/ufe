@@ -1,0 +1,238 @@
+{
+  "id": "rn20-l6",
+  "moduleId": "rn20-animation",
+  "slug": "parallel",
+  "order": 6,
+  "title": {
+    "mn": "parallel — олон анимаци зэрэг"
+  },
+  "why": {
+    "mn": "Мэдэгдэл нэгэн зэрэг тодорч, дээшээ гулсаж, томроход амьд харагдана. `Animated.parallel` нь олон анимацийг зэрэг эхлүүлнэ. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Хэд хэдэн анимаци зэрэг тоглох мэдэгдэл",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Animated",
+    "useRef",
+    "opacity"
+  ],
+  "prerequisites": [
+    "rn20-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const fade = useRef(new Animated.Value(0)).current;\n  const h = useRef(new Animated.Value(0)).current;\n  const show = () => {\n    // энд бичнэ үү: fade ба h-г Animated.parallel-ээр зэрэг эхлүүл\n  };\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"show\" style={styles.b} onPress={show}><Text style={styles.t}>Амжилт</Text></Pressable>\n      <Animated.View nativeID=\"toast\" style={[styles.toast, { opacity: fade, height: h }]}>\n        <Text style={styles.toastText}>Захиалга баталгаажлаа</Text>\n      </Animated.View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#16a34a\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  toast: { overflow: \"hidden\", backgroundColor: \"#16a34a\", borderRadius: 12, justifyContent: \"center\", paddingHorizontal: 16 }, toastText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn20-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "parallel — олон анимаци зэрэг"
+      },
+      "statement": {
+        "mn": "`show` функцэд `Animated.parallel([...]).start()` бич. Дотор нь `fade`-г 1, `h`-г 60 болгох хоёр `Animated.timing`-г массив болгон өг. Хоёр анимаци зэрэг ажиллана."
+      },
+      "requirements": [
+        {
+          "mn": "`Animated.parallel([...]).start()`"
+        },
+        {
+          "mn": "`fade` ба `h` хоёуланг анимацласан"
+        },
+        {
+          "mn": "Дархад мэдэгдэл тодорч, нээгдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Амжилт» дархад мэдэгдэл зэрэг тодорч, өндөр нь нээгдэнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "parallel"
+          },
+          "onFail": {
+            "mn": "`Animated.parallel(...)`-г ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#show"
+              },
+              {
+                "expectEval": {
+                  "expr": "Math.round(Number(getComputedStyle(document.getElementById('toast')).opacity))",
+                  "equals": 1
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "parseInt(getComputedStyle(document.getElementById('toast')).height)",
+                  "equals": 60
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хоёр анимаци зэрэг ажиллахгүй байна. `Animated.parallel`-ээ шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`Animated.parallel([anim1, anim2])` нь массив доторх бүх анимацийг ЗЭРЭГ эхлүүлнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Дотор нь `.start()` бүү дуудаарай — гаднах `parallel(...).start()` дээр л нэг удаа дуудна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "show:"
+          },
+          "code": "Animated.parallel([\n  Animated.timing(fade, { toValue: 1, duration: 300 }),\n  Animated.timing(h, { toValue: 60, duration: 300 }),\n]).start();"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const fade = useRef(new Animated.Value(0)).current;\n  const h = useRef(new Animated.Value(0)).current;\n  const show = () => {\n    Animated.parallel([\n      Animated.timing(fade, { toValue: 1, duration: 300 }),\n      Animated.timing(h, { toValue: 60, duration: 300 }),\n    ]).start();\n  };\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"show\" style={styles.b} onPress={show}><Text style={styles.t}>Амжилт</Text></Pressable>\n      <Animated.View nativeID=\"toast\" style={[styles.toast, { opacity: fade, height: h }]}>\n        <Text style={styles.toastText}>Захиалга баталгаажлаа</Text>\n      </Animated.View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#16a34a\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  toast: { overflow: \"hidden\", backgroundColor: \"#16a34a\", borderRadius: 12, justifyContent: \"center\", paddingHorizontal: 16 }, toastText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`Animated.parallel` нь олон анимацийг цаг хугацааны хувьд зэрэг тоглуулна (`sequence` бол дараалан). Ингэж хэд хэдэн шинжийг нэгэн зэрэг зохицуулан амьд хөдөлгөөн бүтээнэ."
+        },
+        "xpPenalty": 13
+      },
+      "xp": 22,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`Animated.parallel([...])` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Анимацийг дараалан"
+        },
+        {
+          "mn": "Массив доторх бүх анимацийг ЗЭРЭГ"
+        },
+        {
+          "mn": "Зөвхөн эхнийхийг"
+        },
+        {
+          "mn": "Анимацийг зогсооно"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "parallel нь бүх анимацийг нэгэн зэрэг эхлүүлнэ."
+      },
+      "hint": {
+        "mn": "«parallel» = зэрэгцээ."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`Animated.sequence` нь `parallel`-аас юугаараа ялгаатай вэ?"
+      },
+      "options": [
+        {
+          "mn": "Ялгаагүй"
+        },
+        {
+          "mn": "sequence нь анимацуудыг ДАРААЛАН (нэг нь дуусаад нөгөө) тоглуулна"
+        },
+        {
+          "mn": "sequence хурдан"
+        },
+        {
+          "mn": "sequence зөвхөн 2"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "sequence дараалан, parallel зэрэг тоглуулна."
+      },
+      "hint": {
+        "mn": "«sequence» = дараалал."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,246 @@
+{
+  "id": "rn3-l3",
+  "moduleId": "rn3-interaction",
+  "slug": "textinput",
+  "order": 3,
+  "title": {
+    "mn": "TextInput — хайлтын талбар"
+  },
+  "why": {
+    "mn": "Хэрэглэгч бараагаа хайх хэрэгтэй. `<TextInput>` нь гараас бичсэн текстийг авдаг. Бичсэн зүйлийг тэр даруй дэлгэцэнд тусгая. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Хайлтын оролт талбар",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "TextInput",
+    "useState",
+    "onChangeText"
+  ],
+  "prerequisites": [
+    "rn3-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [q, setQ] = useState(\"\");\n\n  return (\n    <View style={styles.screen}>\n      {/* энд бичнэ үү: хайлтын TextInput */}\n      <Text nativeID=\"echo\" style={styles.echo}>Хайлт: {q}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 16 },\n  input: { borderWidth: 1, borderColor: \"#d4d4d8\", borderRadius: 12, padding: 14, fontSize: 16 },\n  echo: { fontSize: 16, color: \"#52525b\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn3-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "TextInput — хайлтын талбар"
+      },
+      "statement": {
+        "mn": "`<TextInput>` нэм (`nativeID=\"search\"`), `value={q}`, `onChangeText={setQ}`, `placeholder=\"Бараа хайх...\"`. Хэрэглэгч бичихэд доорх `<Text>`-д тэр даруй тусгагдана."
+      },
+      "requirements": [
+        {
+          "mn": "`react-native`-аас `TextInput` импортолсон"
+        },
+        {
+          "mn": "`value={q}` холбосон"
+        },
+        {
+          "mn": "`onChangeText={setQ}` холбосон"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Хайлтын талбарт бичихэд «Хайлт: ...» гэсэн текст тэр даруй өөрчлөгдөнө."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.imports",
+          "args": {
+            "file": "src/App.jsx",
+            "from": "react-native",
+            "named": "TextInput"
+          },
+          "onFail": {
+            "mn": "`react-native`-аас `TextInput`-г импортлоогүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#search"
+          },
+          "onFail": {
+            "mn": "`nativeID=\"search\"` бүхий `<TextInput>` алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "#search",
+                  "text": "чихэвч"
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "#echo",
+                  "contains": "чихэвч"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Бичсэн текст доорх `<Text>`-д тусгагдахгүй байна. `value` ба `onChangeText`-оо шалга."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`<TextInput>` бол гараас бичих талбар. Бичсэн текстийг авахын тулд `onChangeText` prop-д функц өгнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`value={q}` нь талбарт харагдах утга, `onChangeText={setQ}` нь бичих бүрт `q`-г шинэчилнэ. Хоёулаа байж «холбогдсон» талбар болно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "TextInput ийм харагдана:"
+          },
+          "code": "<TextInput\n  nativeID=\"search\"\n  style={styles.input}\n  placeholder=\"Бараа хайх...\"\n  value={q}\n  onChangeText={setQ}\n/>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [q, setQ] = useState(\"\");\n\n  return (\n    <View style={styles.screen}>\n      <TextInput\n        nativeID=\"search\"\n        style={styles.input}\n        placeholder=\"Бараа хайх...\"\n        value={q}\n        onChangeText={setQ}\n      />\n      <Text nativeID=\"echo\" style={styles.echo}>Хайлт: {q}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 16 },\n  input: { borderWidth: 1, borderColor: \"#d4d4d8\", borderRadius: 12, padding: 14, fontSize: 16 },\n  echo: { fontSize: 16, color: \"#52525b\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`onChangeText` нь товчлуур дарагдах бүрт шинэ текстийг шууд өгдөг (вэбийн `onChange`-ээс энгийн). `value` + `onChangeText` хоёулаа байвал төлөв ба талбар үргэлж ижил байх «холбогдсон оролт» болно."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 17,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`<TextInput>`-д бичсэн текстийг юугаар авдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`onPress`"
+        },
+        {
+          "mn": "`onChangeText`"
+        },
+        {
+          "mn": "`onSubmit`"
+        },
+        {
+          "mn": "`value`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`onChangeText` нь бичих бүрт шинэ текстийг функцэд дамжуулна."
+      },
+      "hint": {
+        "mn": "Текст ӨӨРЧЛӨГДӨХ бүрт дуудагдах prop аль нь вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`value={q}` ба `onChangeText={setQ}` хоёулаа байх нь юунд хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Огт хэрэггүй"
+        },
+        {
+          "mn": "Талбарын утга ба төлөв үргэлж ижил байх «холбогдсон оролт» болгоход"
+        },
+        {
+          "mn": "Өнгө өгөхөд"
+        },
+        {
+          "mn": "Хэмжээ тогтооход"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`value` талбарт юу харагдахыг, `onChangeText` бичихэд төлөвийг шинэчлэхийг хариуцна. Хоёулаа байвал синк болно."
+      },
+      "hint": {
+        "mn": "Нэг нь харуулна, нөгөө нь шинэчилнэ. Хоёулаа байвал юу болох вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

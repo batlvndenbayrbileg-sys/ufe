@@ -1,0 +1,237 @@
+{
+  "id": "rn9-l6",
+  "moduleId": "rn9-forms",
+  "slug": "form-reset",
+  "order": 6,
+  "title": {
+    "mn": "Форм цэвэрлэх — reset товч"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн формд «Цэвэрлэх» товч бүх талбарыг хоослох ёстой. Төлөвийг эхний хоосон утгад нь буцааж тохируулна."
+  },
+  "buildsInProject": "Бүх талбарыг хоослодог Цэвэрлэх товч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "state",
+    "useState",
+    "onPress",
+    "Pressable"
+  ],
+  "prerequisites": [
+    "rn9-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [form, setForm] = useState({ name: \"\", phone: \"\" });\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"name\" style={styles.input} placeholder=\"Нэр\"\n        value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} />\n      <TextInput nativeID=\"phone\" style={styles.input} placeholder=\"Утас\" keyboardType=\"numeric\"\n        value={form.phone} onChangeText={(v) => setForm({ ...form, phone: v })} />\n      <Pressable nativeID=\"clear\" style={styles.btn}>\n        {/* энд бичнэ үү: дархад бүх талбарыг хоослох onPress нэм */}\n        <Text style={styles.btnText}>Цэвэрлэх</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  btn: { backgroundColor: \"#ef4444\", padding: 14, borderRadius: 10, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn9-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Форм цэвэрлэх — reset товч"
+      },
+      "statement": {
+        "mn": "«Цэвэрлэх» товчны `onPress`-д `setForm({ name: \"\", phone: \"\" })` дуудаж, бүх талбарыг хоосон утгад нь буцааж тохируул."
+      },
+      "requirements": [
+        {
+          "mn": "clear товчид `onPress` нэмсэн"
+        },
+        {
+          "mn": "Дархад бүх талбар хоосорно"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Талбаруудад бичсэний дараа «Цэвэрлэх» дархад бүгд хоосорно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "#name",
+                  "text": "Бат"
+                }
+              },
+              {
+                "type": {
+                  "selector": "#phone",
+                  "text": "99119911"
+                }
+              },
+              {
+                "click": "#clear"
+              },
+              {
+                "expectEval": {
+                  "expr": "document.getElementById('name').value",
+                  "equals": ""
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "document.getElementById('phone').value",
+                  "equals": ""
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Цэвэрлэх» дархад талбарууд хоосорохгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Талбар цэвэрлэх гэдэг нь төлөвийг эхний хоосон утгад нь буцааж тохируулна гэсэн үг."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`onPress={() => setForm({ name: \"\", phone: \"\" })}` гэвэл бүх талбар нэг дор хоосорно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Цэвэрлэх товч:"
+          },
+          "code": "<Pressable onPress={() => setForm({ name: \"\", phone: \"\" })}>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [form, setForm] = useState({ name: \"\", phone: \"\" });\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"name\" style={styles.input} placeholder=\"Нэр\"\n        value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} />\n      <TextInput nativeID=\"phone\" style={styles.input} placeholder=\"Утас\" keyboardType=\"numeric\"\n        value={form.phone} onChangeText={(v) => setForm({ ...form, phone: v })} />\n      <Pressable nativeID=\"clear\" style={styles.btn} onPress={() => setForm({ name: \"\", phone: \"\" })}>\n        <Text style={styles.btnText}>Цэвэрлэх</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  btn: { backgroundColor: \"#ef4444\", padding: 14, borderRadius: 10, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Форм цэвэрлэх нь өөр юм биш — төлөвийг анхны хоосон утгаар нь дахин тохируулах явдал. Талбарууд удирдлагатай тул төлөв хоосрох тэр даруй UI бас хоосорно."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Формыг цэвэрлэхэд юу хийх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Талбар бүрийг устгах"
+        },
+        {
+          "mn": "Төлөвийг хоосон утгад нь дахин тохируулах"
+        },
+        {
+          "mn": "Апп-г дахин ачаалах"
+        },
+        {
+          "mn": "onChangeText-г устгах"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Удирдлагатай талбарын утга төлөвөөс ирдэг тул төлөвийг хоослоход талбар хоосорно."
+      },
+      "hint": {
+        "mn": "Талбар юунаас утгаа авдаг вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Удирдлагатай талбарын утга хаанаас ирдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "DOM-оос"
+        },
+        {
+          "mn": "Төлөвөөс (`value`)"
+        },
+        {
+          "mn": "placeholder-оос"
+        },
+        {
+          "mn": "Санамсаргүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "value нь төлөвөөс ирнэ — тиймээс төлөв хоослоход талбар хоосорно."
+      },
+      "hint": {
+        "mn": "value={form.name} — form хаана байдаг вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

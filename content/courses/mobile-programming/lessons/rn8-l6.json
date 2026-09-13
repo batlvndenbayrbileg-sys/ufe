@@ -1,0 +1,223 @@
+{
+  "id": "rn8-l6",
+  "moduleId": "rn8-styling",
+  "slug": "theme-tokens",
+  "order": 6,
+  "title": {
+    "mn": "Загварын токен — нэг эх сурвалж"
+  },
+  "why": {
+    "mn": "Shop.mn даяар нэг ижил цэнхэр, нэг ижил зай хэрэглэнэ. Өнгө, зайг `theme` объектод нэг удаа тодорхойлж, хаа сайгүй ашиглавал бүхнийг нэг цэгээс өөрчилнө."
+  },
+  "buildsInProject": "Дахин ашиглагдах загварын систем",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "style",
+    "StyleSheet",
+    "backgroundColor"
+  ],
+  "prerequisites": [
+    "rn8-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\n// энд бичнэ үү: theme объект (өнгө, зай)\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"btn\" style={styles.btn}>\n        <Text style={styles.btnText}>Сагслах</Text>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, justifyContent: \"center\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 16, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\", fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn8-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Загварын токен — нэг эх сурвалж"
+      },
+      "statement": {
+        "mn": "`theme` нэртэй объект зарлаж, өнгө (`colors.primary`, `colors.onPrimary`), зай (`spacing.md`), өнцөг (`radius.md`)-г тодорхойл. Дараа нь загварт `\"#2563eb\"` гэж бичихийн оронд `theme.colors.primary` гэж ашигла."
+      },
+      "requirements": [
+        {
+          "mn": "`theme` объект зарласан"
+        },
+        {
+          "mn": "Товч `theme.colors.primary`-г ашигласан"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Товч урьдын адил цэнхэр харагдана — гэхдээ өнгө нь одоо `theme`-ээс ирнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/App.jsx",
+            "kind": "const",
+            "name": "theme"
+          },
+          "onFail": {
+            "mn": "`theme` объект зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "css.computed",
+          "args": {
+            "selector": "#btn",
+            "prop": "background-color",
+            "equals": "#2563eb"
+          },
+          "onFail": {
+            "mn": "Товч `theme.colors.primary`-г ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Дахин давтагдах утгуудыг (өнгө, зай) нэг объектод цуглуулбал нэг л газраас өөрчилдөг болно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`const theme = { colors: { primary: \"#2563eb\" } }` гэж зарлаад загварт `theme.colors.primary` гэж ашигла."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "theme объект:"
+          },
+          "code": "const theme = {\n  colors: { primary: \"#2563eb\", onPrimary: \"#fff\" },\n  spacing: { md: 16 },\n  radius: { md: 12 },\n};"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst theme = {\n  colors: { primary: \"#2563eb\", onPrimary: \"#ffffff\" },\n  spacing: { md: 16 },\n  radius: { md: 12 },\n};\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"btn\" style={styles.btn}>\n        <Text style={styles.btnText}>Сагслах</Text>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: theme.spacing.md, justifyContent: \"center\" },\n  btn: { backgroundColor: theme.colors.primary, padding: theme.spacing.md, borderRadius: theme.radius.md, alignItems: \"center\" },\n  btnText: { color: theme.colors.onPrimary, fontWeight: \"bold\", fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Загварын токен (design token) нь нэг үнэнийг нэг газар хадгална. Цэнхрээ өөрчлөх бол `theme`-ийн нэг мөрийг засахад л апп даяар шинэчлэгдэнэ — засвар, тогтвортой байдлын үндэс."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`theme` объект ашиглах гол давуу тал юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Апп хурдан болно"
+        },
+        {
+          "mn": "Нэг газраас өнгө/зайг өөрчилж, апп даяар мөрдүүлнэ"
+        },
+        {
+          "mn": "Код богино болно гэдэг л"
+        },
+        {
+          "mn": "Заавал биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Токен нь тогтвортой байдал ба амархан засварыг өгнө — нэг эх сурвалж."
+      },
+      "hint": {
+        "mn": "Цэнхрээ өөрчлөхийн тулд хэдэн газар засах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Загварын токен вэб дэх юутай төстэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "HTML таг"
+        },
+        {
+          "mn": "CSS хувьсагч (`var(--primary)`)"
+        },
+        {
+          "mn": "Зураг"
+        },
+        {
+          "mn": "Database"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Design token нь CSS custom properties (`--primary`)-тэй нэг зорилготой — утгыг нэгтгэх."
+      },
+      "hint": {
+        "mn": "CSS-д давтагддаг утгыг юугаар нэгтгэдэг вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30,
+    "badge": "rn-layout"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

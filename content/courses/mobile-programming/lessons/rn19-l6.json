@@ -1,0 +1,261 @@
+{
+  "id": "rn19-l6",
+  "moduleId": "rn19-reducer",
+  "slug": "cart-reducer",
+  "order": 6,
+  "title": {
+    "mn": "Бүрэн сагсны reducer"
+  },
+  "why": {
+    "mn": "Одоо бүх сурсныг нэгтгэж, нэмэх, устгах, цэвэрлэх бүрэн сагсны reducer бүтээе. Энэ бол жинхэнэ Shop.mn сагсны төлөвийн зүрх."
+  },
+  "buildsInProject": "Нэмэх/устгах/цэвэрлэх бүрэн сагс",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "useReducer",
+    "filter",
+    "state"
+  ],
+  "prerequisites": [
+    "rn19-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, FlatList, StyleSheet } from \"react-native\";\nimport { useReducer } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction reducer(state, action) {\n  if (action.type === \"add\") return [...state, action.name];\n  // энд бичнэ үү: \"clear\" action — сагсыг хоослоно\n  return state;\n}\n\nfunction App() {\n  const [items, dispatch] = useReducer(reducer, [\"Чихэвч\", \"Цүнх\"]);\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"count\" style={styles.h}>Сагс ({items.length})</Text>\n      <Pressable nativeID=\"add\" style={styles.b} onPress={() => dispatch({ type: \"add\", name: \"Ном\" })}><Text style={styles.t}>Ном нэмэх</Text></Pressable>\n      <Pressable nativeID=\"clear\" style={styles.b2} onPress={() => dispatch({ type: \"clear\" })}><Text style={styles.t}>Цэвэрлэх</Text></Pressable>\n      <FlatList data={items} keyExtractor={(x, i) => String(i)} renderItem={({ item }) => <Text testID=\"row\" style={styles.row}>{item}</Text>} />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 10, padding: 20 },\n  h: { fontSize: 22, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 12, borderRadius: 10, alignItems: \"center\" },\n  b2: { backgroundColor: \"#dc2626\", padding: 12, borderRadius: 10, alignItems: \"center\" },\n  t: { color: \"#fff\", fontWeight: \"bold\" }, row: { padding: 12, backgroundColor: \"#f1f5f9\", borderRadius: 8 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn19-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Бүрэн сагсны reducer"
+      },
+      "statement": {
+        "mn": "`reducer`-т `\"clear\"` action нэм: хоосон массив `[]` буцааж сагсыг цэвэрлэ. «Ном нэмэх» нэмнэ, «Цэвэрлэх» бүгдийг хоослоно. Гарчиг дахь тоо шинэчлэгдэнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`\"clear\"` action `[]` буцаадаг"
+        },
+        {
+          "mn": "Нэмэх бараа нэмнэ"
+        },
+        {
+          "mn": "Цэвэрлэх бүгдийг хоослоно"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Ном нэмэх» сагсыг өсгөнө; «Цэвэрлэх» бүгдийг устгаж «Сагс (0)» болгоно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useReducer"
+          },
+          "onFail": {
+            "mn": "`useReducer`-ийг ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#add"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 3
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Ном нэмэх» бараа нэмэхгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#clear"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 0
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "#count",
+                  "contains": "0"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Цэвэрлэх» сагсыг хоослохгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "«Цэвэрлэх» бол бүх зүйлийг арилгах — reducer зүгээр хоосон массив буцаана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`if (action.type === \"clear\") return [];`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "clear action:"
+          },
+          "code": "if (action.type === \"clear\") return [];"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, FlatList, StyleSheet } from \"react-native\";\nimport { useReducer } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction reducer(state, action) {\n  if (action.type === \"add\") return [...state, action.name];\n  if (action.type === \"clear\") return [];\n  return state;\n}\n\nfunction App() {\n  const [items, dispatch] = useReducer(reducer, [\"Чихэвч\", \"Цүнх\"]);\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"count\" style={styles.h}>Сагс ({items.length})</Text>\n      <Pressable nativeID=\"add\" style={styles.b} onPress={() => dispatch({ type: \"add\", name: \"Ном\" })}><Text style={styles.t}>Ном нэмэх</Text></Pressable>\n      <Pressable nativeID=\"clear\" style={styles.b2} onPress={() => dispatch({ type: \"clear\" })}><Text style={styles.t}>Цэвэрлэх</Text></Pressable>\n      <FlatList data={items} keyExtractor={(x, i) => String(i)} renderItem={({ item }) => <Text testID=\"row\" style={styles.row}>{item}</Text>} />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 10, padding: 20 },\n  h: { fontSize: 22, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 12, borderRadius: 10, alignItems: \"center\" },\n  b2: { backgroundColor: \"#dc2626\", padding: 12, borderRadius: 10, alignItems: \"center\" },\n  t: { color: \"#fff\", fontWeight: \"bold\" }, row: { padding: 12, backgroundColor: \"#f1f5f9\", borderRadius: 8 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Бүрэн сагсны reducer нь бүх үйлдэл (нэмэх, устгах, цэвэрлэх)-ийг нэг цэвэр, урьдчилан таамаглах боломжтой функцэд төвлөрүүлнэ. Энэ бол Redux зэрэг том системүүдийн үндсэн загвар."
+        },
+        "xpPenalty": 13
+      },
+      "xp": 22,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Сагсыг бүрэн цэвэрлэх reducer-ийн хамгийн энгийн буцаалт юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "`state`"
+        },
+        {
+          "mn": "`[]` (хоосон массив)"
+        },
+        {
+          "mn": "`null`"
+        },
+        {
+          "mn": "`0`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хоосон массив `[]` буцаавал жагсаалт бүрэн хоосорно."
+      },
+      "hint": {
+        "mn": "Хоосон жагсаалт ямар харагдах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "reducer ашиглах гол давуу тал юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Код богино"
+        },
+        {
+          "mn": "Бүх төлөв өөрчлөлт нэг урьдчилан таамаглах боломжтой газар төвлөрдөг"
+        },
+        {
+          "mn": "Хурдан"
+        },
+        {
+          "mn": "Загвартай"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Бүх шилжилт нэг цэвэр функцэд байдаг тул ойлгомжтой, тест хийхэд амар, алдаа багатай."
+      },
+      "hint": {
+        "mn": "Логик тарж бус нэг дор байвал ямар вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 40,
+    "badge": "rn-hooks"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

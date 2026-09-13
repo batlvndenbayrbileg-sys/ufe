@@ -1,0 +1,246 @@
+{
+  "id": "rn14-l5",
+  "moduleId": "rn14-tabs",
+  "slug": "tab-keep-state",
+  "order": 5,
+  "title": {
+    "mn": "Таб төлөв хадгалах"
+  },
+  "why": {
+    "mn": "Профайл табад бичсэн тэмдэглэл өөр таб руу орж эргэж ирэхэд алдагдах ёсгүй. Төлөвийг App түвшинд өргөж хадгалснаар таб солиход ч утга хэвээр үлдэнэ. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Таб солиход тэмдэглэл хадгалагдана",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state",
+    "mobile-data"
+  ],
+  "concepts": [
+    "useState",
+    "state",
+    "TextInput"
+  ],
+  "prerequisites": [
+    "rn14-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [tab, setTab] = useState(\"Профайл\");\n  const [note, setNote] = useState(\"\");\n\n  return (\n    <View style={styles.container}>\n      <View style={styles.bodyWrap}>\n        {tab === \"Сагс\" ? (\n          <Text nativeID=\"sbody\" style={styles.h}>Сагс</Text>\n        ) : (\n          <View style={styles.pad}>\n            <Text style={styles.h}>Профайл</Text>\n            {/* энд бичнэ үү: input-г note төлөвт холбо (value + onChangeText) */}\n            <TextInput nativeID=\"note\" style={styles.input} placeholder=\"Тэмдэглэл\" />\n          </View>\n        )}\n      </View>\n      <View style={styles.tabbar}>\n        {[\"Нүүр\", \"Сагс\", \"Профайл\"].map((t, i) => (\n          <Pressable key={t} nativeID={\"tab\" + i} style={styles.tab} onPress={() => setTab(t)}>\n            <Text style={styles.tabText}>{t}</Text>\n          </Pressable>\n        ))}\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1 },\n  bodyWrap: { flex: 1 },\n  pad: { flex: 1, padding: 24, gap: 14, justifyContent: \"center\" },\n  h: { fontSize: 20, fontWeight: \"bold\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 12 },\n  tabbar: { flexDirection: \"row\", borderTopWidth: 1, borderTopColor: \"#e5e7eb\" },\n  tab: { flexGrow: 1, paddingVertical: 12, alignItems: \"center\" },\n  tabText: { fontWeight: \"600\", color: \"#334155\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn14-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Таб төлөв хадгалах"
+      },
+      "statement": {
+        "mn": "TextInput-г App түвшний `note` төлөвт холбо: `value={note}` ба `onChangeText={setNote}`. Профайлд бичээд, Сагс руу орж эргэж ирэхэд бичсэн тэмдэглэл хэвээр байх ёстой (төлөв App-д хадгалагдсан тул)."
+      },
+      "requirements": [
+        {
+          "mn": "TextInput `value={note}` ба `onChangeText={setNote}`-той"
+        },
+        {
+          "mn": "Таб солиод эргэж ирэхэд утга хадгалагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Тэмдэглэл бичээд Сагс руу орж, Профайл руу буцахад бичсэн текст хэвээр байна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useState"
+          },
+          "onFail": {
+            "mn": "useState ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "#note",
+                  "text": "Захиалга их"
+                }
+              },
+              {
+                "click": "#tab1"
+              },
+              {
+                "waitFor": "#sbody"
+              },
+              {
+                "click": "#tab2"
+              },
+              {
+                "waitFor": "#note"
+              },
+              {
+                "expectEval": {
+                  "expr": "document.getElementById('note').value.length > 0",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Таб солиход тэмдэглэл алдагдаж байна. value/onChangeText-ээр note төлөвт холбосон эсэхээ шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Таб солиход тэр табын JSX unmount болж, дотоод (uncontrolled) утга алга болдог. Хадгалахын тулд төлөвийг App-д өргөнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`value={note}` ба `onChangeText={setNote}` нь input-г App-ийн `note` төлөвтэй холбоно. Дараа нь дахин зурагдахад утга сэргэнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "TextInput-г холбо:"
+          },
+          "code": "<TextInput nativeID=\"note\"\n  value={note}\n  onChangeText={setNote}\n  placeholder=\"Тэмдэглэл\" />"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [tab, setTab] = useState(\"Профайл\");\n  const [note, setNote] = useState(\"\");\n\n  return (\n    <View style={styles.container}>\n      <View style={styles.bodyWrap}>\n        {tab === \"Сагс\" ? (\n          <Text nativeID=\"sbody\" style={styles.h}>Сагс</Text>\n        ) : (\n          <View style={styles.pad}>\n            <Text style={styles.h}>Профайл</Text>\n            <TextInput nativeID=\"note\" style={styles.input} placeholder=\"Тэмдэглэл\"\n              value={note} onChangeText={setNote} />\n          </View>\n        )}\n      </View>\n      <View style={styles.tabbar}>\n        {[\"Нүүр\", \"Сагс\", \"Профайл\"].map((t, i) => (\n          <Pressable key={t} nativeID={\"tab\" + i} style={styles.tab} onPress={() => setTab(t)}>\n            <Text style={styles.tabText}>{t}</Text>\n          </Pressable>\n        ))}\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1 },\n  bodyWrap: { flex: 1 },\n  pad: { flex: 1, padding: 24, gap: 14, justifyContent: \"center\" },\n  h: { fontSize: 20, fontWeight: \"bold\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 12 },\n  tabbar: { flexDirection: \"row\", borderTopWidth: 1, borderTopColor: \"#e5e7eb\" },\n  tab: { flexGrow: 1, paddingVertical: 12, alignItems: \"center\" },\n  tabText: { fontWeight: \"600\", color: \"#334155\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Таб солиход идэвхгүй табын агуулга unmount болно. Хэрэв утга зөвхөн тэр компонент дотор байвал алга болно. Төлөвийг эцэг (App) руу өргөж хадгалснаар дахин зурагдахад утга сэргэж, таб хооронд төлөв хадгалагдана."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state",
+        "mobile-data"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Таб солиход дотоод input утга яагаад алга болдог вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаа гардаг"
+        },
+        {
+          "mn": "Идэвхгүй табын JSX unmount болдог тул"
+        },
+        {
+          "mn": "Утга нь буруу"
+        },
+        {
+          "mn": "Алга болдоггүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Нөхцөлт зурагт идэвхгүй хэсгийг унмаунт хийж, дотоод төлвийг устгана."
+      },
+      "hint": {
+        "mn": "Идэвхгүй таб дэлгэц дээр байсаар байна уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Таб хооронд төлөв хадгалах гол арга юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Илүү таб нэмэх"
+        },
+        {
+          "mn": "Төлөвийг эцэг (App) руу өргөж хадгалах (lifting state up)"
+        },
+        {
+          "mn": "AsyncStorage заавал"
+        },
+        {
+          "mn": "Боломжгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Төлөвийг дээд түвшинд байлгавал хүүхэд unmount болсон ч утга үлдэнэ."
+      },
+      "hint": {
+        "mn": "Утгыг хаана байлгавал unmount-д өртөхгүй вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

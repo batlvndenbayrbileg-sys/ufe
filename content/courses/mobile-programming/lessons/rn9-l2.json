@@ -1,0 +1,231 @@
+{
+  "id": "rn9-l2",
+  "moduleId": "rn9-forms",
+  "slug": "multiline-input",
+  "order": 2,
+  "title": {
+    "mn": "multiline TextInput — сэтгэгдэл бичих"
+  },
+  "why": {
+    "mn": "Shop.mn-д хэрэглэгч барааны сэтгэгдлээ хэдэн мөрөөр бичих ёстой. `multiline` нь TextInput-г нэг мөрөөс олон мөрт талбар болгоно."
+  },
+  "buildsInProject": "Барааны сэтгэгдлийн олон мөрт талбар",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "TextInput",
+    "onChangeText",
+    "useState"
+  ],
+  "prerequisites": [
+    "rn9-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [text, setText] = useState(\"\");\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.label}>Таны сэтгэгдэл (Чихэвч)</Text>\n      <TextInput nativeID=\"review\" style={styles.box} placeholder=\"Барааны талаар бичнэ үү...\"\n        value={text} onChangeText={setText} />\n      {/* энд бичнэ үү: review-г multiline болго */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 10 },\n  label: { fontSize: 16, fontWeight: \"600\" },\n  box: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 12, padding: 14, height: 120 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn9-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "multiline TextInput — сэтгэгдэл бичих"
+      },
+      "statement": {
+        "mn": "`review` талбарт `multiline` (болон `numberOfLines={5}`) нэмж, сэтгэгдлийг хэдэн ч мөрөөр бичиж болдог олон мөрт талбар болго."
+      },
+      "requirements": [
+        {
+          "mn": "review талбарт `multiline` нэмсэн"
+        },
+        {
+          "mn": "Сэтгэгдэл олон мөрт талбарт бичигдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Сэтгэгдлийн талбар олон мөрийг багтаадаг том хайрцаг болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.exists",
+          "args": {
+            "selector": "textarea#review"
+          },
+          "onFail": {
+            "mn": "review талбар `multiline` биш байна (textarea болоогүй)."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "#review",
+                  "text": "Дуу чанар маш сайхан байна.\nБаярлалаа!"
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "document.getElementById('review').value.length > 10",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Сэтгэгдлийн текст талбарт бичигдэхгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`multiline` нэмбэл TextInput нэг мөрийн `input`-аас олон мөрт талбар (`textarea`) болно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`numberOfLines`-оор эхний өндрийг хэдэн мөр байхыг зөвлөнө. `multiline`-гүйгээр энэ ажиллахгүй."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "review талбарт нэм:"
+          },
+          "code": "<TextInput ... multiline numberOfLines={5} ... />"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [text, setText] = useState(\"\");\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.label}>Таны сэтгэгдэл (Чихэвч)</Text>\n      <TextInput nativeID=\"review\" style={styles.box} placeholder=\"Барааны талаар бичнэ үү...\"\n        multiline numberOfLines={5} value={text} onChangeText={setText} />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 10 },\n  label: { fontSize: 16, fontWeight: \"600\" },\n  box: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 12, padding: 14, height: 120 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`multiline` нь TextInput-г олон мөрт болгож, урт сэтгэгдэл, тайлбар зэрэгт тохирно. RN дотор энэ нь платформын жинхэнэ олон мөрт талбар болж хувирна."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`multiline` нэмбэл TextInput юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Түгжигдэнэ"
+        },
+        {
+          "mn": "Нэг мөрөөс олон мөрт талбар болно"
+        },
+        {
+          "mn": "Нууц үг болно"
+        },
+        {
+          "mn": "Алга болно"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "multiline нь оролтыг олон мөр багтаах талбар болгоно."
+      },
+      "hint": {
+        "mn": "«multi» = олон. Юу олон вэ — мөр үү?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`numberOfLines` юунд хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Тэмдэгтийн тоог хязгаарлана"
+        },
+        {
+          "mn": "Эхэлж харагдах мөрийн өндрийг зөвлөнө"
+        },
+        {
+          "mn": "Өнгө өгнө"
+        },
+        {
+          "mn": "Гарыг сольно"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "numberOfLines нь multiline талбарын анхны өндрийг хэдэн мөр байхыг заана."
+      },
+      "hint": {
+        "mn": "«lines» = мөр. Хэдэн мөр өндөр вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

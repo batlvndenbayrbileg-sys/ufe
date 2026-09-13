@@ -67,7 +67,16 @@ export type DiagramKind =
   | "format"
   | "ternary"
   | "form-validation"
-  | "usestate";
+  | "usestate"
+  // React Native (mobile course)
+  | "rn-view-text"
+  | "rn-flex"
+  | "flatlist"
+  | "press"
+  | "scroll"
+  | "rn-image"
+  | "async-storage"
+  | "rn-mount";
 
 export function ConceptDiagram({ kind }: { kind: string }) {
   const body = render(kind as DiagramKind);
@@ -1729,6 +1738,184 @@ function render(kind: DiagramKind): React.ReactNode {
             <marker id="aruss" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
               <path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" />
             </marker>
+          </defs>
+        </>
+      );
+
+    // ── React Native (mobile course) ─────────────────────────────────────────
+    case "rn-view-text":
+      return (
+        <>
+          {/* code side: <View> wrapping two <Text> */}
+          <Box x={8} y={16} width={128} height={94} fill="none" stroke={BOR} rx={6} />
+          <text x={16} y={13} fill={MUT} style={{ ...t, fontSize: 8 }}>чиний код</text>
+          <Box x={18} y={24} width={108} height={78} fill={SUB} stroke={ACC} rx={5} />
+          <text x={26} y={38} fill="var(--accent-text)" style={{ ...t, fontSize: 9 }}>{"<View>"}</text>
+          <Box x={30} y={44} width={84} height={20} fill={SURF} stroke={ACC} rx={3} />
+          <text x={72} y={57} fill={TXT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>{"<Text>Shop.mn"}</text>
+          <Box x={30} y={70} width={84} height={20} fill={SURF} stroke={ACC} rx={3} />
+          <text x={72} y={83} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>{"<Text>уриа"}</text>
+          {/* arrow */}
+          <line x1={138} y1={62} x2={168} y2={62} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arvt)" />
+          <text x={153} y={54} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>зурна</text>
+          {/* phone */}
+          <Box x={176} y={10} width={96} height={104} fill={SURF} stroke={BOR} strokeWidth={2} rx={14} />
+          <line x1={212} y1={16} x2={236} y2={16} stroke={BOR} strokeWidth={2} />
+          <text x={224} y={58} fill={TXT} textAnchor="middle" style={{ ...t, fontSize: 12, fontWeight: 700 }}>Shop.mn</text>
+          <text x={224} y={74} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>уриа үг</text>
+          <text x={140} y={126} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>View = хайрцаг · Text = бичвэр → төрөлх дэлгэц</text>
+          <defs>
+            <marker id="arvt" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill={ACC} /></marker>
+          </defs>
+        </>
+      );
+
+    case "rn-flex":
+      return (
+        <>
+          {/* column (default) */}
+          <text x={70} y={14} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>column (default) ↓</text>
+          <Box x={30} y={20} width={80} height={92} fill="none" stroke={BOR} rx={6} />
+          {[0, 1, 2].map((i) => (
+            <Box key={`c${i}`} x={42} y={28 + i * 27} width={56} height={20} fill={SUB} stroke={ACC} rx={3} />
+          ))}
+          {/* row */}
+          <text x={210} y={14} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>row →</text>
+          <Box x={150} y={20} width={112} height={92} fill="none" stroke={BOR} rx={6} />
+          {[0, 1, 2].map((i) => (
+            <Box key={`r${i}`} x={158 + i * 34} y={52} width={28} height={28} fill={ACC} rx={3} />
+          ))}
+          <text x={140} y={126} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>flexDirection нь өрөлтийн чиглэлийг сонгоно</text>
+        </>
+      );
+
+    case "flatlist":
+      return (
+        <>
+          {/* data array */}
+          <text x={44} y={13} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>data (100+ бараа)</text>
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Box key={i} x={16} y={20 + i * 18} width={56} height={14} fill={SUB} stroke={ACC} rx={2} />
+          ))}
+          <line x1={80} y1={60} x2={110} y2={60} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arfl)" />
+          <text x={95} y={52} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>renderItem</text>
+          {/* phone showing only visible rows */}
+          <Box x={120} y={10} width={92} height={108} fill={SURF} stroke={BOR} strokeWidth={2} rx={12} />
+          {[0, 1, 2].map((i) => (
+            <Box key={`v${i}`} x={130} y={22 + i * 26} width={72} height={20} fill={SUB} stroke={ACC} rx={3} />
+          ))}
+          <text x={166} y={114} fill={ACC} textAnchor="middle" style={{ ...t, fontSize: 7 }}>харагдахыг нь л зурна</text>
+          {/* off-screen hint */}
+          <text x={244} y={64} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 20 }}>⋮</text>
+          <text x={244} y={82} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>үлдсэн нь</text>
+          <text x={244} y={92} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>хүлээнэ</text>
+          <defs>
+            <marker id="arfl" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill={ACC} /></marker>
+          </defs>
+        </>
+      );
+
+    case "press":
+      return (
+        <>
+          <text x={140} y={14} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 9 }}>дарах → onPress() ажиллана</text>
+          {/* button */}
+          <Box x={40} y={40} width={104} height={40} fill={ACC} rx={10} />
+          <text x={92} y={64} fill="var(--on-accent)" textAnchor="middle" style={{ ...t, fontSize: 11, fontWeight: 700 }}>Сагслах</text>
+          {/* tap glyph */}
+          <circle cx={128} cy={72} r={12} fill="none" stroke="var(--success)" strokeWidth={2} />
+          <path d="M122 72 L122 58 A4 4 0 0 1 130 58 L130 72" fill="none" stroke="var(--success)" strokeWidth={2} />
+          <line x1={150} y1={60} x2={182} y2={60} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#arpr)" />
+          {/* handler */}
+          <Box x={188} y={44} width={84} height={32} fill={SUB} stroke={ACC} rx={5} />
+          <text x={230} y={60} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>onPress()</text>
+          <text x={230} y={70} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>таны функц</text>
+          <text x={140} y={104} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>Pressable нь юуг ч дарж болдог товч болгоно</text>
+          <defs>
+            <marker id="arpr" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" /></marker>
+          </defs>
+        </>
+      );
+
+    case "scroll":
+      return (
+        <>
+          {/* phone viewport clipping tall content */}
+          <Box x={96} y={10} width={88} height={104} fill={SURF} stroke={BOR} strokeWidth={2} rx={12} />
+          <clipPath id="scrClip"><rect x={100} y={14} width={80} height={96} rx={8} /></clipPath>
+          <g clipPath="url(#scrClip)">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <Box key={i} x={106} y={20 + i * 22} width={68} height={16} fill={i < 3 ? SUB : SURF} stroke={ACC} rx={3} />
+            ))}
+          </g>
+          {/* scroll arrows */}
+          <text x={190} y={40} fill={ACC} style={{ ...t, fontSize: 14 }}>↑</text>
+          <text x={190} y={96} fill={ACC} style={{ ...t, fontSize: 14 }}>↓</text>
+          <text x={60} y={62} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>урт</text>
+          <text x={60} y={74} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>контент</text>
+          <text x={140} y={126} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>ScrollView: багтахгүй хэсгийг гүйлгэж үзнэ</text>
+        </>
+      );
+
+    case "rn-image":
+      return (
+        <>
+          <Box x={12} y={40} width={96} height={30} fill={SUB} stroke={ACC} rx={5} />
+          <text x={60} y={58} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>{'source={{uri}}'}</text>
+          <line x1={112} y1={55} x2={140} y2={55} stroke={ACC} strokeWidth={1.5} markerEnd="url(#arim)" />
+          <text x={126} y={47} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>татна</text>
+          {/* image frame with mountain glyph */}
+          <Box x={148} y={26} width={92} height={72} fill={SURF} stroke={BOR} strokeWidth={2} rx={6} />
+          <circle cx={170} cy={46} r={7} fill="var(--warning)" />
+          <path d="M152 92 L182 60 L206 92 Z" fill={ACC} opacity={0.7} />
+          <path d="M188 92 L214 66 L236 92 Z" fill={ACC} />
+          <text x={140} y={116} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>Image нь интернэт зургийг {'{uri}'}-аар татаж харуулна</text>
+        </>
+      );
+
+    case "async-storage":
+      return (
+        <>
+          {/* app writes */}
+          <Box x={14} y={30} width={70} height={30} fill={SUB} stroke={ACC} rx={5} />
+          <text x={49} y={48} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 8 }}>апп</text>
+          <line x1={86} y1={45} x2={112} y2={45} stroke={ACC} strokeWidth={1.5} markerEnd="url(#aras)" />
+          <text x={99} y={38} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>setItem</text>
+          {/* phone disk */}
+          <Box x={116} y={22} width={48} height={80} fill="none" stroke={BOR} strokeWidth={2} rx={8} />
+          <text x={140} y={16} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>утасны сан</text>
+          <Box x={124} y={54} width={32} height={20} fill="var(--success)" rx={3} />
+          <text x={140} y={68} fill="var(--on-accent)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>3</text>
+          <text x={140} y={96} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>💾 үлдэнэ</text>
+          {/* reopen reads */}
+          <line x1={168} y1={64} x2={196} y2={64} stroke="var(--success)" strokeWidth={1.5} markerEnd="url(#arass)" />
+          <text x={182} y={57} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>getItem</text>
+          <Box x={200} y={48} width={72} height={32} fill={SURF} stroke={BOR} rx={5} />
+          <text x={236} y={62} fill={TXT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>дахин нээхэд</text>
+          <text x={236} y={73} fill={TXT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>сагс = 3</text>
+          <text x={140} y={120} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>AsyncStorage: апп хаагдсан ч өгөгдөл үлдэнэ</text>
+          <defs>
+            <marker id="aras" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill={ACC} /></marker>
+            <marker id="arass" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--success)" /></marker>
+          </defs>
+        </>
+      );
+
+    case "rn-mount":
+      return (
+        <>
+          <Box x={14} y={40} width={96} height={40} fill={SUB} stroke={ACC} rx={5} />
+          <text x={62} y={58} fill="var(--accent-text)" textAnchor="middle" style={{ ...t, fontSize: 9 }}>function App()</text>
+          <text x={62} y={70} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>таны дэлгэц</text>
+          <line x1={114} y1={60} x2={150} y2={60} stroke={ACC} strokeWidth={1.5} markerEnd="url(#armt)" />
+          <text x={132} y={52} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 7 }}>registerRootComponent</text>
+          {/* phone */}
+          <Box x={188} y={12} width={84} height={104} fill={SURF} stroke={BOR} strokeWidth={2} rx={14} />
+          <line x1={218} y1={18} x2={242} y2={18} stroke={BOR} strokeWidth={2} />
+          <text x={230} y={62} fill={TXT} textAnchor="middle" style={{ ...t, fontSize: 11, fontWeight: 700 }}>App</text>
+          <text x={140} y={126} fill={MUT} textAnchor="middle" style={{ ...t, fontSize: 8 }}>registerRootComponent нь апп-ыг дэлгэцэнд эхлүүлнэ</text>
+          <defs>
+            <marker id="armt" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill={ACC} /></marker>
           </defs>
         </>
       );

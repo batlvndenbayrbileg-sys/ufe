@@ -1,0 +1,232 @@
+{
+  "id": "rn20-l5",
+  "moduleId": "rn20-animation",
+  "slug": "interpolate",
+  "order": 5,
+  "title": {
+    "mn": "interpolate — нэг утга, олон үр дүн"
+  },
+  "why": {
+    "mn": "Нэг анимацлагдах утгаас өнгө, өргөн, өнцөг зэрэг олон зүйлийг гаргаж болно. `interpolate` нь 0→1 утгыг дурын мужид буулгана. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Үнэлгээний оддын дүүргэлт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Animated",
+    "useRef",
+    "style"
+  ],
+  "prerequisites": [
+    "rn20-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const rate = useRef(new Animated.Value(0)).current;\n  // энд бичнэ үү: width-г rate-аас interpolate хий (0→1 → 0→240)\n  const width = 0;\n  const fill = () => Animated.timing(rate, { toValue: 1, duration: 500 }).start();\n  return (\n    <View style={styles.s}>\n      <View style={styles.track}>\n        <Animated.View nativeID=\"stars\" style={[styles.fill, { width }]} />\n      </View>\n      <Pressable nativeID=\"rate\" style={styles.b} onPress={fill}><Text style={styles.t}>Үнэлэх</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  track: { width: 240, height: 20, backgroundColor: \"#f1f5f9\", borderRadius: 8, overflow: \"hidden\" },\n  fill: { height: 20, backgroundColor: \"#f59e0b\" },\n  b: { backgroundColor: \"#2563eb\", padding: 12, borderRadius: 10 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn20-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "interpolate — нэг утга, олон үр дүн"
+      },
+      "statement": {
+        "mn": "`width`-г `rate.interpolate({ inputRange: [0, 1], outputRange: [0, 240] })`-ээр тодорхойл. `rate` 0→1 болоход өргөн 0→240 руу буугдаж, оддын мөр дүүрнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`rate.interpolate(...)` ашигласан"
+        },
+        {
+          "mn": "`outputRange: [0, 240]`"
+        },
+        {
+          "mn": "Дархад мөр дүүрнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Үнэлэх» дархад шар оддын мөр 0-ээс дүүртлээ сунана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "interpolate"
+          },
+          "onFail": {
+            "mn": "`interpolate`-г ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#rate"
+              },
+              {
+                "expectEval": {
+                  "expr": "parseInt(getComputedStyle(document.getElementById('stars')).width)",
+                  "equals": 240
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дархад мөр дүүрэхгүй байна. `interpolate`-ийн outputRange-ээ шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`interpolate` нь нэг анимацлагдах утгыг өөр нэгжийн мужид (жишээ 0→1-ийг 0→240 px) буулгана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`rate.interpolate({ inputRange: [0, 1], outputRange: [0, 240] })` — үр дүн нь өргөнд шууд орно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "width:"
+          },
+          "code": "const width = rate.interpolate({ inputRange: [0, 1], outputRange: [0, 240] });"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const rate = useRef(new Animated.Value(0)).current;\n  const width = rate.interpolate({ inputRange: [0, 1], outputRange: [0, 240] });\n  const fill = () => Animated.timing(rate, { toValue: 1, duration: 500 }).start();\n  return (\n    <View style={styles.s}>\n      <View style={styles.track}>\n        <Animated.View nativeID=\"stars\" style={[styles.fill, { width }]} />\n      </View>\n      <Pressable nativeID=\"rate\" style={styles.b} onPress={fill}><Text style={styles.t}>Үнэлэх</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  track: { width: 240, height: 20, backgroundColor: \"#f1f5f9\", borderRadius: 8, overflow: \"hidden\" },\n  fill: { height: 20, backgroundColor: \"#f59e0b\" },\n  b: { backgroundColor: \"#2563eb\", padding: 12, borderRadius: 10 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`interpolate` нь нэг 0→1 явцаас өнгө, өргөн, өнцөг, тунгалаг зэрэг олон утгыг зэрэг гаргах хүчирхэг хэрэгсэл. Нэг анимацийг олон дүрслэлд хуваарилах гол арга."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`interpolate` юунд хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Утга хадгалахад"
+        },
+        {
+          "mn": "Нэг анимацлагдах утгыг өөр муж/нэгж рүү буулгахад"
+        },
+        {
+          "mn": "Сервер дуудахад"
+        },
+        {
+          "mn": "Загвар өгөхөд"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "interpolate нь 0→1 явцыг дурын мужид (px, өнгө, өнцөг) шугаман буулгана."
+      },
+      "hint": {
+        "mn": "Нэг утгаас олон төрлийн үр дүн гаргах."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`inputRange:[0,1], outputRange:[0,240]` — rate 0.5 үед өргөн хэд болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "0"
+        },
+        {
+          "mn": "120"
+        },
+        {
+          "mn": "240"
+        },
+        {
+          "mn": "0.5"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Шугаман буулгалт: 0.5 нь 0 ба 240-ийн дунд = 120."
+      },
+      "hint": {
+        "mn": "Дунд утга — 0 ба 240-ийн голч."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

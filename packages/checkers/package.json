@@ -8,7 +8,8 @@
     "./browser": "./src/browser.ts",
     "./server": "./src/server.ts",
     "./assemble": "./src/assemble.ts",
-    "./transpile": "./src/transpile.ts"
+    "./transpile": "./src/transpile.ts",
+    "./rn-runtime": "./src/rn-runtime.generated.ts"
   },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -18,7 +19,8 @@
     "lint": "eslint src",
     "test": "vitest run",
     "clean": "rimraf .turbo coverage",
-    "build:react-runtime": "node scripts/build-react-runtime.mjs"
+    "build:react-runtime": "node scripts/build-react-runtime.mjs",
+    "build:rn-runtime": "node scripts/build-rn-runtime.mjs"
   },
   "dependencies": {
     "@babel/parser": "7.26.5",

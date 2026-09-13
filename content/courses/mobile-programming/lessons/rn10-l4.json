@@ -1,0 +1,251 @@
+{
+  "id": "rn10-l4",
+  "moduleId": "rn10-validation",
+  "slug": "disabled-submit",
+  "order": 4,
+  "title": {
+    "mn": "Илгээх товчийг идэвхгүй болгох"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн формд талбар хоосон байхад «Илгээх» товч дарагдах ёсгүй. Товчийг нөхцөлтэйгээр идэвхгүй (disabled) болгож, бүдгэрүүлнэ."
+  },
+  "buildsInProject": "Талбар хоосон бол идэвхгүй Илгээх товч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "state",
+    "useState",
+    "conditional-rendering",
+    "Pressable"
+  ],
+  "prerequisites": [
+    "rn10-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [name, setName] = useState(\"\");\n  const [sent, setSent] = useState(false);\n  const empty = name.trim() === \"\";\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"name\" style={styles.input} placeholder=\"Нэр\"\n        value={name} onChangeText={setName} />\n      <Pressable nativeID=\"submit\" style={styles.btn} onPress={() => setSent(true)}>\n        {/* энд бичнэ үү: empty үед disabled ба бүдэг (styles.dim) болго */}\n        <Text style={styles.btnText}>Илгээх</Text>\n      </Pressable>\n      {sent && <Text nativeID=\"done\" style={styles.done}>Илгээлээ!</Text>}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 10, alignItems: \"center\" },\n  dim: { opacity: 0.4 },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n  done: { color: \"#16a34a\", fontWeight: \"600\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn10-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Илгээх товчийг идэвхгүй болгох"
+      },
+      "statement": {
+        "mn": "«Илгээх» Pressable-д `disabled={empty}` нэмж, `style`-г `[styles.btn, empty && styles.dim]` болго. Нэр хоосон үед товч бүдэг, дарагдахгүй; нэр бичихэд идэвхжинэ."
+      },
+      "requirements": [
+        {
+          "mn": "`disabled={empty}` нэмсэн"
+        },
+        {
+          "mn": "Хоосон үед товч бүдэг (opacity)"
+        },
+        {
+          "mn": "Нэр бичихэд дарж болно"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Нэр хоосон бол товч бүдэг, дарахад юу ч болохгүй. Нэр бичихэд тод болж, дарахад «Илгээлээ!» гарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.numeric",
+          "args": {
+            "selector": "#submit",
+            "prop": "opacity",
+            "max": 0.6
+          },
+          "onFail": {
+            "mn": "Хоосон үед товч бүдэг болохгүй байна (`styles.dim`)."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#submit"
+              },
+              {
+                "expectCount": {
+                  "selector": "#done",
+                  "equals": 0
+                }
+              },
+              {
+                "type": {
+                  "selector": "#name",
+                  "text": "Бат"
+                }
+              },
+              {
+                "click": "#submit"
+              },
+              {
+                "expectText": {
+                  "selector": "#done",
+                  "contains": "Илгээлээ"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Идэвхгүй товч хоосонд дарагдаж, эсвэл дүүрсэн үед ажиллахгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`disabled={empty}` нь Pressable-ийн `onPress`-г хоосон үед идэвхгүй болгоно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Идэвхгүй байдлыг нүдэнд харуулахын тулд `[styles.btn, empty && styles.dim]` гэж бүдэгрүүлнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Pressable-д нэм:"
+          },
+          "code": "disabled={empty} style={[styles.btn, empty && styles.dim]}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [name, setName] = useState(\"\");\n  const [sent, setSent] = useState(false);\n  const empty = name.trim() === \"\";\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"name\" style={styles.input} placeholder=\"Нэр\"\n        value={name} onChangeText={setName} />\n      <Pressable nativeID=\"submit\" disabled={empty} style={[styles.btn, empty && styles.dim]} onPress={() => setSent(true)}>\n        <Text style={styles.btnText}>Илгээх</Text>\n      </Pressable>\n      {sent && <Text nativeID=\"done\" style={styles.done}>Илгээлээ!</Text>}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 10, alignItems: \"center\" },\n  dim: { opacity: 0.4 },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n  done: { color: \"#16a34a\", fontWeight: \"600\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`disabled` нь товчны үйлдлийг зогсоож, нөхцөлт `opacity` нь тэр төлөвийг нүдэнд харуулна. Хэрэглэгч буруу үйлдэл хийхээс сэргийлэх энгийн арга."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`disabled={empty}` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Товчийг устгана"
+        },
+        {
+          "mn": "empty үнэн бол товчны onPress-г идэвхгүй болгоно"
+        },
+        {
+          "mn": "Өнгө өөрчилнө"
+        },
+        {
+          "mn": "Текст нуруна"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "disabled үнэн бол дарахад хариу үйлдэл хийхгүй."
+      },
+      "hint": {
+        "mn": "«disabled» = идэвхгүй."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Идэвхгүй товчийг нүдэнд яаж ялгаруулах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Томруулах"
+        },
+        {
+          "mn": "opacity буулгаж бүдгэрүүлэх"
+        },
+        {
+          "mn": "Улаан болгох"
+        },
+        {
+          "mn": "Нуух"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Бага opacity нь товч идэвхгүй байгааг хэрэглэгчид харуулна."
+      },
+      "hint": {
+        "mn": "Идэвхгүй зүйл ямар харагддаг вэ — тод уу, бүдэг үү?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

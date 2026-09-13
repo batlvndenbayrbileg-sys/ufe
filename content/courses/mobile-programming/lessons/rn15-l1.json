@@ -1,0 +1,243 @@
+{
+  "id": "rn15-l1",
+  "moduleId": "rn15-networking",
+  "slug": "fetch-promise",
+  "order": 1,
+  "title": {
+    "mn": "fakeApi() — Promise-оос өгөгдөл авах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн бараанууд сервер дээр байдаг. Сервер шууд хариу өгдөггүй — Promise буцаадаг. `fakeApi()`-г дуудаж, `.then`-ээр ирсэн өгөгдлийг хүлээж авахыг сурцгаая."
+  },
+  "buildsInProject": "Серверээс барааны тоог татаж харуулах",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-data"
+  ],
+  "concepts": [
+    "useEffect",
+    "useState",
+    "state"
+  ],
+  "prerequisites": [
+    "rn14-l6"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"p1\", name: \"Чихэвч\" }, { id: \"p2\", name: \"Гар цаг\" },\n  { id: \"p3\", name: \"Нарны шил\" }, { id: \"p4\", name: \"Цүнх\" },\n  { id: \"p5\", name: \"Ном\" }, { id: \"p6\", name: \"Гутал\" },\n  { id: \"p7\", name: \"Аяга\" }, { id: \"p8\", name: \"Бэлгийн карт\" },\n];\nconst fakeApi = () => new Promise((res) => setTimeout(() => res(PRODUCTS), 200));\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  // энд бичнэ үү: fakeApi()-г дуудаж, ирсэн барааны тоог count-д хадгал\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"count\" style={styles.c}>Нийт бараа: {count}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\", padding: 24 },\n  c: { fontSize: 22, fontWeight: \"bold\", color: \"#0f172a\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn15-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "fakeApi() — Promise-оос өгөгдөл авах"
+      },
+      "statement": {
+        "mn": "`useEffect(() => { ... }, [])` дотор `fakeApi()`-г дууд. Буцаах Promise дээр `.then((data) => setCount(data.length))` бичиж, ирсэн барааны тоог `count`-д хадга. Апп нээгдэхэд сервер 8 барааг буцаана."
+      },
+      "requirements": [
+        {
+          "mn": "`useEffect` ашигласан"
+        },
+        {
+          "mn": "`fakeApi()`-г дуудсан"
+        },
+        {
+          "mn": "`.then`-д ирсэн өгөгдлийн уртыг count-д хадгалсан"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Апп нээгдэж хэсэг хугацааны дараа «Нийт бараа: 8» гэж харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useEffect"
+          },
+          "onFail": {
+            "mn": "`useEffect` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "fakeApi"
+          },
+          "onFail": {
+            "mn": "`fakeApi()`-г дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "#count"
+              },
+              {
+                "expectText": {
+                  "selector": "#count",
+                  "contains": "8"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Серверээс ирсэн тоо (8) харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Сервер утгаа шууд өгдөггүй — Promise өгнө. `.then(callback)` нь утга бэлэн болмогц callback-ийг дуудна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`useEffect(() => { ... }, [])` — хоосон `[]` нь «зөвхөн нэг удаа, эхэлж ачаалахад ажилла» гэсэн үг."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "useEffect дотор:"
+          },
+          "code": "useEffect(() => {\n  fakeApi().then((data) => setCount(data.length));\n  // энд data бол серверээс ирсэн массив\n}, []);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"p1\", name: \"Чихэвч\" }, { id: \"p2\", name: \"Гар цаг\" },\n  { id: \"p3\", name: \"Нарны шил\" }, { id: \"p4\", name: \"Цүнх\" },\n  { id: \"p5\", name: \"Ном\" }, { id: \"p6\", name: \"Гутал\" },\n  { id: \"p7\", name: \"Аяга\" }, { id: \"p8\", name: \"Бэлгийн карт\" },\n];\nconst fakeApi = () => new Promise((res) => setTimeout(() => res(PRODUCTS), 200));\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    let alive = true;\n    fakeApi().then((data) => { if (alive) setCount(data.length); });\n    return () => { alive = false; };\n  }, []);\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"count\" style={styles.c}>Нийт бараа: {count}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\", padding: 24 },\n  c: { fontSize: 22, fontWeight: \"bold\", color: \"#0f172a\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Сервертэй ажиллах нь цаг хугацаа шаарддаг тул `fakeApi()` нь Promise буцаана. `.then` нь өгөгдөл ирмэгц дуудагдаж, `setCount`-оор төлөвийг шинэчилнэ. `useEffect([])` нь энэ дуудлагыг нэг л удаа хийнэ."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-data"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`fakeApi()` юу буцаадаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Шууд массив"
+        },
+        {
+          "mn": "Promise (дараа нь утга ирнэ)"
+        },
+        {
+          "mn": "Тоо"
+        },
+        {
+          "mn": "undefined"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Сервер шууд хариулдаггүй тул Promise буцаана — утга нь дараа `.then`-д ирнэ."
+      },
+      "hint": {
+        "mn": "Сервер шууд хариулдаг уу, эсвэл хүлээх үү?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`useEffect`-ийн 2 дахь аргумент `[]` юу гэсэн үг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаа"
+        },
+        {
+          "mn": "Хэзээ ч ажиллахгүй"
+        },
+        {
+          "mn": "Зөвхөн эхэлж ачаалахад нэг удаа"
+        },
+        {
+          "mn": "Дахин зурах бүрт"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "Хоосон хамаарлын массив нь эффектийг зөвхөн mount дээр нэг л удаа ажиллуулна."
+      },
+      "hint": {
+        "mn": "Хоосон жагсаалт — юунаас ч хамаарахгүй."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

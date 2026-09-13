@@ -1,0 +1,231 @@
+{
+  "id": "rn10-l1",
+  "moduleId": "rn10-validation",
+  "slug": "empty-check",
+  "order": 1,
+  "title": {
+    "mn": "Хоосон талбар шалгах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн формд нэр хоосон бол анхааруулга гарах ёстой. Талбарын утгыг шалгаж, хоосон үед анхааруулах Text-г нөхцөлтэйгээр харуулна."
+  },
+  "buildsInProject": "Хоосон талбарт гарах анхааруулга",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "state",
+    "useState",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn9-l7"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [name, setName] = useState(\"\");\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"field\" style={styles.input} placeholder=\"Нэрээ бичнэ үү\"\n        value={name} onChangeText={setName} />\n      {/* энд бичнэ үү: name хоосон бол анхааруулга Text харуул (nativeID=\"warn\") */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 10, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  warn: { color: \"#dc2626\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn10-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хоосон талбар шалгах"
+      },
+      "statement": {
+        "mn": "`name.trim() === \"\"` үнэн бол `nativeID=\"warn\"` бүхий анхааруулах Text-г нөхцөлтэйгээр харуул. Талбар анх хоосон тул анхааруулга шууд харагдана."
+      },
+      "requirements": [
+        {
+          "mn": "Хоосон үед `warn` Text харагдана"
+        },
+        {
+          "mn": "Текст бичихэд анхааруулга алга болно"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Талбар хоосон үед улаан анхааруулга гарч, нэр бичихэд алга болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#warn"
+          },
+          "onFail": {
+            "mn": "Хоосон үед анхааруулга (`warn`) харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "#field",
+                  "text": "Бат"
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": "#warn",
+                  "equals": 0
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Нэр бичсэн ч анхааруулга арилахгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`нөхцөл && <Text/>` нь нөхцөл үнэн үед л Text-г харуулна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`name.trim() === \"\"` нь зөвхөн зай агуулсан оролтыг ч хоосонд тооцно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Нөхцөлт анхааруулга:"
+          },
+          "code": "{name.trim() === \"\" && <Text nativeID=\"warn\" style={styles.warn}>Нэрээ заавал бичнэ үү</Text>}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [name, setName] = useState(\"\");\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"field\" style={styles.input} placeholder=\"Нэрээ бичнэ үү\"\n        value={name} onChangeText={setName} />\n      {name.trim() === \"\" && <Text nativeID=\"warn\" style={styles.warn}>Нэрээ заавал бичнэ үү</Text>}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 10, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  warn: { color: \"#dc2626\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Нөхцөлт рендер (`нөхцөл && <JSX/>`) нь хамгийн энгийн баталгаажуулалт — талбар хоосон үед анхааруулж, дүүргэмэгц түүнийг нуудаг."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`нөхцөл && <Text/>` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Үргэлж харуулна"
+        },
+        {
+          "mn": "Нөхцөл үнэн үед л Text-г харуулна"
+        },
+        {
+          "mn": "Text-г устгана"
+        },
+        {
+          "mn": "Алдаа гаргана"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Логик && нь зүүн тал үнэн бол баруун талыг (JSX) буцаана, эс бол харуулахгүй."
+      },
+      "hint": {
+        "mn": "&& зүүн тал худал бол юу буцаах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`name.trim()` яагаад хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хурдан болгодог"
+        },
+        {
+          "mn": "Зөвхөн зайнаас бүрдсэн оролтыг ч хоосонд тооцох"
+        },
+        {
+          "mn": "Том үсэг болгох"
+        },
+        {
+          "mn": "Тоо болгох"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "trim нь захын зайг арилгаж, зөвхөн хоосон зай бичсэнийг хоосон гэж үзнэ."
+      },
+      "hint": {
+        "mn": "«   » (зай) хоосон гэж тооцогдох ёстой юу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -17,6 +17,20 @@ export const BADGE_LABEL: Record<string, string> = {
   "a11y-advocate": "♿ Хүртээмжийн төлөө",
   "type-safe": "🛡️ Type-safe",
   "shop-mn-builder": "👑 Shop.mn бүтээгч",
+  // Mobile (React Native) course.
+  "rn-starter": "📱 Мобайл эхлэл",
+  "rn-visual": "🖼️ Дэлгэцийн зураач",
+  "rn-interactive": "👆 Харилцан үйлдэл",
+  "rn-lists": "📜 Жагсаалтын эзэн",
+  "rn-app": "📲 Мобайл апп бүтээгч",
+  "rn-layout": "📐 Layout мастер",
+  "rn-forms": "📝 Формын эзэн",
+  "rn-lists-pro": "⚡ Жагсаалт про",
+  "rn-nav": "🧭 Навигацийн эзэн",
+  "rn-network": "🌐 Сүлжээ холбогч",
+  "rn-hooks": "🪝 Hooks мастер",
+  "rn-polish": "✨ Анимаци урлаач",
+  "rn-pro": "👑 React Native про",
 };
 
 /** Human label for a badge id, falling back to the id itself if unknown. */

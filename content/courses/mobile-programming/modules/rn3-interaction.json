@@ -1,0 +1,9 @@
+{
+  "id": "rn3-interaction",
+  "stageId": "s3",
+  "order": 1,
+  "title": { "mn": "Дарах ба төлөв" },
+  "description": { "mn": "Pressable, useState, TextInput, Button — хэрэглэгчийн үйлдэлд хариулдаг апп." },
+  "estimatedHours": 1,
+  "lessons": ["rn3-l1", "rn3-l2", "rn3-l3", "rn3-l4"]
+}

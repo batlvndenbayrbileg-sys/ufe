@@ -56,6 +56,8 @@ export interface PreviewHostProps {
   sqliteUrl?: string;
   /** Same-origin URL of React + ReactDOM, fetched only when the workspace has JSX. */
   reactRuntimeUrl?: string;
+  /** Same-origin URL of the React Native shim, fetched only when a file imports "react-native". */
+  reactNativeRuntimeUrl?: string;
   connectSrc?: string;
   cdnBase?: string;
   /** Device viewport; the frame around it is drawn by PreviewFrame. */
@@ -68,7 +70,7 @@ export interface PreviewHostProps {
 }
 
 export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(function PreviewHost(
-  { files, entry, sqliteUrl, reactRuntimeUrl, connectSrc, cdnBase, width = "100%", height = "100%", onConsole, onError, onReady, className },
+  { files, entry, sqliteUrl, reactRuntimeUrl, reactNativeRuntimeUrl, connectSrc, cdnBase, width = "100%", height = "100%", onConsole, onError, onReady, className },
   ref,
 ) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -87,6 +89,7 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
   const storage = useRef<Record<string, string>>({});
   const sqlite = useRef<string | undefined>(undefined);
   const reactRuntime = useRef<string | undefined>(undefined);
+  const reactNativeRuntime = useRef<string | undefined>(undefined);
   const [looping, setLooping] = useState(false);
 
   const post = useCallback((msg: HostMessage) => {
@@ -110,6 +113,7 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
       storage: storage.current,
       sqliteRuntime: sqlite.current,
       reactRuntime: reactRuntime.current,
+      reactNativeRuntime: reactNativeRuntime.current,
     });
     prevFiles.current = snapshot;
   }, [entry, connectSrc, cdnBase]);
@@ -152,6 +156,28 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
       alive = false;
     };
   }, [reactRuntimeUrl, hasJsx, reload]);
+
+  // And the React Native shim, only when a file actually imports "react-native"
+  // (or the Expo/AsyncStorage family). Keeps it off every plain React lesson.
+  const hasRN = Object.values(files).some((f) =>
+    /from\s+["'](react-native|expo|expo-status-bar|@react-native-async-storage\/async-storage)["']/.test(f.content),
+  );
+  useEffect(() => {
+    if (!reactNativeRuntimeUrl || !hasRN || reactNativeRuntime.current) return;
+    let alive = true;
+    fetchRuntime(reactNativeRuntimeUrl)
+      .then((src) => {
+        if (!alive) return;
+        reactNativeRuntime.current = src;
+        reload();
+      })
+      .catch(() => {
+        /* the page will surface the missing runtime itself */
+      });
+    return () => {
+      alive = false;
+    };
+  }, [reactNativeRuntimeUrl, hasRN, reload]);
 
   // Initial render (mount only).
   const didMount = useRef(false);

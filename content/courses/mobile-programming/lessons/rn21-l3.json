@@ -1,0 +1,221 @@
+{
+  "id": "rn21-l3",
+  "moduleId": "rn21-modal-device",
+  "slug": "bottom-sheet",
+  "order": 3,
+  "title": {
+    "mn": "Доод хуудас (bottom sheet)"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн «Сагсанд нэмэх» сонголтууд дэлгэцийн ДООД талаас гарч ирдэг нь гарт ойрхон, тав тухтай. Modal-оор доод хуудас хийе."
+  },
+  "buildsInProject": "Доороос гарах сонголтын хуудас",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Modal",
+    "useState",
+    "flexbox"
+  ],
+  "prerequisites": [
+    "rn21-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, Modal, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [open, setOpen] = useState(false);\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"open\" style={styles.b} onPress={() => setOpen(true)}><Text style={styles.t}>Сонголт</Text></Pressable>\n      <Modal visible={open} transparent>\n        {/* энд бичнэ үү: доод талд наасан хуудас (justifyContent: flex-end) */}\n        <View nativeID=\"backdrop\" style={styles.backdrop}>\n          <View nativeID=\"sheet\" style={styles.sheet}>\n            <Text style={styles.h}>Хэмжээ сонгох</Text>\n            <Pressable nativeID=\"pick\" style={styles.opt} onPress={() => setOpen(false)}><Text>M хэмжээ</Text></Pressable>\n          </View>\n        </View>\n      </Modal>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  backdrop: { flex: 1 },\n  sheet: { backgroundColor: \"#fff\", padding: 24, borderTopLeftRadius: 24, borderTopRightRadius: 24, gap: 12 },\n  h: { fontSize: 18, fontWeight: \"bold\" }, opt: { padding: 14, backgroundColor: \"#f1f5f9\", borderRadius: 10 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn21-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Доод хуудас (bottom sheet)"
+      },
+      "statement": {
+        "mn": "`backdrop` загварт `justifyContent: \"flex-end\"` нэмж, хуудсыг дэлгэцийн ДООД талд түлх. Ингэснээр `sheet` доороос гарч ирнэ. «M хэмжээ» дархад хаагдана."
+      },
+      "requirements": [
+        {
+          "mn": "`backdrop`-д `justifyContent: \"flex-end\"`"
+        },
+        {
+          "mn": "Modal нээгдэж, доод хуудас харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Сонголт» дархад хуудас дэлгэцийн доод талаас гарч ирнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#open"
+              },
+              {
+                "waitFor": "#sheet"
+              },
+              {
+                "expectEval": {
+                  "expr": "getComputedStyle(document.getElementById('backdrop')).justifyContent",
+                  "equals": "flex-end"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хуудас доод талд байрлахгүй байна. `justifyContent: \"flex-end\"`-ээ шалга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Modal дотор бүх дэлгэцийг эзлэх `backdrop` View байна. Түүнийг `flex: 1` + `justifyContent: \"flex-end\"` болговол хүүхэд доод талд наалдана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`sheet` нь доод талд, дугуй дээд өнцөгтэй байвал сонгодог bottom sheet харагдацтай."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "backdrop:"
+          },
+          "code": "backdrop: {\n  flex: 1,\n  justifyContent: \"flex-end\", // доод тийш түлх\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, Modal, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [open, setOpen] = useState(false);\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"open\" style={styles.b} onPress={() => setOpen(true)}><Text style={styles.t}>Сонголт</Text></Pressable>\n      <Modal visible={open} transparent>\n        <View nativeID=\"backdrop\" style={styles.backdrop}>\n          <View nativeID=\"sheet\" style={styles.sheet}>\n            <Text style={styles.h}>Хэмжээ сонгох</Text>\n            <Pressable nativeID=\"pick\" style={styles.opt} onPress={() => setOpen(false)}><Text>M хэмжээ</Text></Pressable>\n          </View>\n        </View>\n      </Modal>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  backdrop: { flex: 1, justifyContent: \"flex-end\" },\n  sheet: { backgroundColor: \"#fff\", padding: 24, borderTopLeftRadius: 24, borderTopRightRadius: 24, gap: 12 },\n  h: { fontSize: 18, fontWeight: \"bold\" }, opt: { padding: 14, backgroundColor: \"#f1f5f9\", borderRadius: 10 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Доод хуудас (bottom sheet) нь гар хүрэхэд ойрхон учир мобайлд маш түгээмэл. `justifyContent: \"flex-end\"`-ээр контентыг доод талд наагаад, дээд өнцгийг дугуйлж бүтээдэг."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Контентыг дэлгэцийн доод талд наахад юу ашиглах вэ?"
+      },
+      "options": [
+        {
+          "mn": "`alignItems: \"flex-end\"`"
+        },
+        {
+          "mn": "`justifyContent: \"flex-end\"` (босоо контейнерт)"
+        },
+        {
+          "mn": "`position: bottom`"
+        },
+        {
+          "mn": "`marginTop`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Босоо (column) контейнерт justifyContent нь гол тэнхлэг (босоо)-ийн байрлалыг заана — flex-end нь доод тал."
+      },
+      "hint": {
+        "mn": "Босоо контейнерт гол тэнхлэг доошоо."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Bottom sheet яагаад мобайлд түгээмэл вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хурдан"
+        },
+        {
+          "mn": "Дэлгэцийн доод хэсэг эрхий хуруунд ойрхон, хүрэхэд амар"
+        },
+        {
+          "mn": "Өнгөтэй"
+        },
+        {
+          "mn": "Бага код"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Гар утсыг барихад эрхий хурууны хүрэлцээ доод хэсэгт хамгийн сайн — тиймээс доод хуудас тав тухтай."
+      },
+      "hint": {
+        "mn": "Утсаа барихад хаашаа хуруу хүрэх вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

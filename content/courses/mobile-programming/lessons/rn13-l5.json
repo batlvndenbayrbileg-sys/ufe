@@ -1,0 +1,226 @@
+{
+  "id": "rn13-l5",
+  "moduleId": "rn13-navigation",
+  "slug": "active-screen",
+  "order": 5,
+  "title": {
+    "mn": "Идэвхтэй дэлгэцийг тодотгох"
+  },
+  "why": {
+    "mn": "Хэрэглэгч аль дэлгэц дээр байгаагаа мэдэх хэрэгтэй. Shop.mn-ийн дээд цэсэнд идэвхтэй дэлгэцийг нөхцөлт загвараар цэнхэрээр тодотгоно."
+  },
+  "buildsInProject": "Идэвхтэй дэлгэцийг тодотгосон цэс",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui",
+    "mobile-state"
+  ],
+  "concepts": [
+    "conditional-rendering",
+    "style",
+    "useState"
+  ],
+  "prerequisites": [
+    "rn13-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst SCREENS = [\"Нүүр\", \"Ангилал\", \"Тухай\"];\n\nfunction App() {\n  const [screen, setScreen] = useState(\"Нүүр\");\n  return (\n    <View style={styles.container}>\n      <View style={styles.segs}>\n        {SCREENS.map((s, i) => (\n          <Pressable key={s} nativeID={\"seg\" + i} onPress={() => setScreen(s)}\n            style={styles.seg}>\n            {/* энд бичнэ үү: идэвхтэй дэлгэц бол styles.active нэм */}\n            <Text style={styles.segText}>{s}</Text>\n          </Pressable>\n        ))}\n      </View>\n      <Text nativeID=\"body\" style={styles.body}>{screen} дэлгэц</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1, padding: 16, gap: 16 },\n  segs: { flexDirection: \"row\", gap: 8 },\n  seg: { flexGrow: 1, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: \"#cbd5e1\", alignItems: \"center\" },\n  active: { backgroundColor: \"#2563eb\", borderColor: \"#2563eb\" },\n  segText: { fontWeight: \"600\" },\n  body: { fontSize: 20, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn13-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Идэвхтэй дэлгэцийг тодотгох"
+      },
+      "statement": {
+        "mn": "Цэсний товчны `style`-г массив болго: `[styles.seg, screen === s && styles.active]`. Идэвхтэй дэлгэцтэй тохирох товч л цэнхэр (`active`) болно. Товч дархад доорх агуулга бас солигдоно."
+      },
+      "requirements": [
+        {
+          "mn": "`style` массив бөгөөд `screen === s && styles.active` нөхцөлтэй"
+        },
+        {
+          "mn": "Идэвхтэй товч цэнхэр болно"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Ангилал» дархад тэр товч цэнхэр болж, доор «Ангилал дэлгэц» гэж бичигдэнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#seg1"
+              },
+              {
+                "expectText": {
+                  "selector": "#body",
+                  "contains": "Ангилал"
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "getComputedStyle(document.getElementById('seg1')).backgroundColor",
+                  "equals": "#2563eb"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Идэвхтэй дэлгэц тодрохгүй байна. style массив ба screen === s нөхцөлөө шалга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "«Идэвхтэй эсэх» гэдэг нь `screen === s` үнэн үү гэсэн асуулт. Үнэн бол нэмэлт загвар өгнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`style={[styles.seg, screen === s && styles.active]}` — нөхцөл үнэн үед л `active` загвар нэмэгдэнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Pressable-ийн style:"
+          },
+          "code": "style={[styles.seg, screen === s && styles.active]}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst SCREENS = [\"Нүүр\", \"Ангилал\", \"Тухай\"];\n\nfunction App() {\n  const [screen, setScreen] = useState(\"Нүүр\");\n  return (\n    <View style={styles.container}>\n      <View style={styles.segs}>\n        {SCREENS.map((s, i) => (\n          <Pressable key={s} nativeID={\"seg\" + i} onPress={() => setScreen(s)}\n            style={[styles.seg, screen === s && styles.active]}>\n            <Text style={styles.segText}>{s}</Text>\n          </Pressable>\n        ))}\n      </View>\n      <Text nativeID=\"body\" style={styles.body}>{screen} дэлгэц</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1, padding: 16, gap: 16 },\n  segs: { flexDirection: \"row\", gap: 8 },\n  seg: { flexGrow: 1, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: \"#cbd5e1\", alignItems: \"center\" },\n  active: { backgroundColor: \"#2563eb\", borderColor: \"#2563eb\" },\n  segText: { fontWeight: \"600\" },\n  body: { fontSize: 20, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Идэвхтэй байдлыг харуулах нь нөхцөлт загварын нэг тохиолдол: одоогийн дэлгэцтэй тохирох элементэд л онцгой загвар нэмнэ. Хэрэглэгч хаана байгаагаа шууд хардаг."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Товч идэвхтэй эсэхийг юугаар шалгах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Санамсаргүй"
+        },
+        {
+          "mn": "`screen === s` — одоогийн дэлгэц тухайн товчны нэртэй тэнцүү үү"
+        },
+        {
+          "mn": "Индексээр нь"
+        },
+        {
+          "mn": "Өнгөөр нь"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Одоогийн дэлгэц тухайн товчны утгатай тэнцвэл идэвхтэй."
+      },
+      "hint": {
+        "mn": "Аль товч одоогийн дэлгэцийг төлөөлж байна?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`screen === s && styles.active` худал үед юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаа"
+        },
+        {
+          "mn": "`false` буцаж, загвар нэмэгдэхгүй"
+        },
+        {
+          "mn": "active загвар нэмэгдэнэ"
+        },
+        {
+          "mn": "Товч алга болно"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Худал бол `false` — загварын массивд алгасагдана."
+      },
+      "hint": {
+        "mn": "&& зүүн тал худал бол юу буцах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

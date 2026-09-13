@@ -1,0 +1,229 @@
+{
+  "id": "rn17-l3",
+  "moduleId": "rn17-hooks",
+  "slug": "usecallback",
+  "order": 3,
+  "title": {
+    "mn": "useCallback — тогтвортой функц"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн жагсаалтын мөр бүрд дамжуулах товшилтын функцийг render болгонд шинээр үүсгэвэл илүүдэл. `useCallback` нь функцийг тогтвортой байлгана."
+  },
+  "buildsInProject": "Дахин үүсдэггүй товшилтын функц",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useCallback",
+    "useState",
+    "onPress"
+  ],
+  "prerequisites": [
+    "rn17-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  // энд бичнэ үү: add-г useCallback-аар тогтворжуул\n  const add = () => setCount((c) => c + 1);\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"count\" style={styles.c}>Сагс: {count}</Text>\n      <Pressable nativeID=\"add\" style={styles.b} onPress={add}><Text style={styles.t}>Нэмэх</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 16, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  c: { fontSize: 24, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn17-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "useCallback — тогтвортой функц"
+      },
+      "statement": {
+        "mn": "`add` функцийг `useCallback(() => setCount((c) => c + 1), [])`-аар боож, render болгонд шинээр үүсэхээс сэргийл. Товч дархад тоо нэмэгдсэн хэвээр байна."
+      },
+      "requirements": [
+        {
+          "mn": "`useCallback` ашигласан"
+        },
+        {
+          "mn": "Товч дархад тоо нэмэгдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Нэмэх» дархад тоо нэмэгдэнэ — гэхдээ `add` функц дахин үүсэхгүй."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useCallback"
+          },
+          "onFail": {
+            "mn": "`useCallback`-ийг ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#add"
+              },
+              {
+                "expectText": {
+                  "selector": "#count",
+                  "contains": "1"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Товч дархад тоо нэмэгдэхгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`useCallback(fn, [хамаарал])` нь функцийг санаж, хамаарал өөрчлөгдтөл ижил функцийг буцаана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`setCount((c) => c + 1)` гэсэн функцийн шинэчлэлт нь хамааралгүй тул `[]` хоосон байж болно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц:"
+          },
+          "code": "const add = useCallback(\n  () => setCount((c) => c + 1),\n  []\n);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState, useCallback } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  const add = useCallback(() => setCount((c) => c + 1), []);\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"count\" style={styles.c}>Сагс: {count}</Text>\n      <Pressable nativeID=\"add\" style={styles.b} onPress={add}><Text style={styles.t}>Нэмэх</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 16, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  c: { fontSize: 24, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`useCallback` нь функцийг render хооронд тогтвортой байлгана. Тогтвортой функцийг `React.memo`-той хүүхдэд дамжуулбал шаардлагагүй дахин зуралтаас сэргийлдэг — гүйцэтгэлийн техник."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`useCallback` юуг тогтвортой болгодог вэ?"
+      },
+      "options": [
+        {
+          "mn": "Төлөвийг"
+        },
+        {
+          "mn": "Функцийг (render хооронд ижил үлдээнэ)"
+        },
+        {
+          "mn": "Загварыг"
+        },
+        {
+          "mn": "Дэлгэцийг"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "useCallback нь функцийн лавлагааг санаж, дахин үүсэхээс сэргийлнэ."
+      },
+      "hint": {
+        "mn": "Нэрэнд нь «callback» = функц."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`useMemo` ба `useCallback` юугаараа ялгаатай вэ?"
+      },
+      "options": [
+        {
+          "mn": "Ялгаагүй"
+        },
+        {
+          "mn": "`useMemo` утга, `useCallback` функц сануулна"
+        },
+        {
+          "mn": "`useCallback` зөвхөн тоонд"
+        },
+        {
+          "mn": "`useMemo` хуучирсан"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "useMemo тооцооллын үр дүнг, useCallback функцийг өөрийг нь санана."
+      },
+      "hint": {
+        "mn": "Аль нь утга, аль нь функц вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

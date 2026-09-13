@@ -1,0 +1,221 @@
+{
+  "id": "rn20-l3",
+  "moduleId": "rn20-animation",
+  "slug": "accordion",
+  "order": 3,
+  "title": {
+    "mn": "Нээгдэх самбар (өндөр анимац)"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн «Дэлгэрэнгүй мэдээлэл» хэсэг дархад доош нээгддэг байвал зайд ээлтэй. Элементийн өндрийг анимацлаж нээнэ."
+  },
+  "buildsInProject": "Дархад нээгддэг дэлгэрэнгүй самбар",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Animated",
+    "useRef",
+    "state"
+  ],
+  "prerequisites": [
+    "rn20-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const h = useRef(new Animated.Value(0)).current;\n  const open = () => {\n    // энд бичнэ үү: h-г 140 болго\n  };\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"open\" style={styles.head} onPress={open}><Text style={styles.headText}>Дэлгэрэнгүй ▾</Text></Pressable>\n      <Animated.View nativeID=\"panel\" style={[styles.panel, { height: h }]}>\n        <Text style={styles.body}>Энэ бараа 24 сарын баталгаатай, үнэгүй хүргэлттэй.</Text>\n      </Animated.View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 24, justifyContent: \"center\" },\n  head: { backgroundColor: \"#2563eb\", padding: 16, borderRadius: 12 }, headText: { color: \"#fff\", fontWeight: \"bold\" },\n  panel: { overflow: \"hidden\", backgroundColor: \"#eff6ff\", borderRadius: 12 }, body: { padding: 16, color: \"#1e3a8a\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn20-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Нээгдэх самбар (өндөр анимац)"
+      },
+      "statement": {
+        "mn": "`open` функцэд `Animated.timing(h, { toValue: 140, duration: 300 }).start()` бич. Самбарын өндөр (`h`) 0-ээс 140 болж, дэлгэрэнгүй мэдээлэл гөлгөр нээгдэнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`Animated.timing(h, ...).start()`"
+        },
+        {
+          "mn": "`toValue: 140`"
+        },
+        {
+          "mn": "Дархад самбар нээгдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Дэлгэрэнгүй» дархад самбар 0-ээс нээгдэж, текст харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#open"
+              },
+              {
+                "expectEval": {
+                  "expr": "parseInt(getComputedStyle(document.getElementById('panel')).height)",
+                  "equals": 140
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дархад самбар нээгдэхгүй байна (өндөр 140 болохгүй)."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Өндрийг (`height`) анимацлаж 0-ээс тодорхой утга руу шилжүүлбэл самбар нээгдэнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`overflow: \"hidden\"` нь өндөр багатай үед доторх текстийг таслаж нуудаг."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "open:"
+          },
+          "code": "Animated.timing(h, { toValue: 140, duration: 300 }).start();"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const h = useRef(new Animated.Value(0)).current;\n  const open = () => {\n    Animated.timing(h, { toValue: 140, duration: 300 }).start();\n  };\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"open\" style={styles.head} onPress={open}><Text style={styles.headText}>Дэлгэрэнгүй ▾</Text></Pressable>\n      <Animated.View nativeID=\"panel\" style={[styles.panel, { height: h }]}>\n        <Text style={styles.body}>Энэ бараа 24 сарын баталгаатай, үнэгүй хүргэлттэй.</Text>\n      </Animated.View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 24, justifyContent: \"center\" },\n  head: { backgroundColor: \"#2563eb\", padding: 16, borderRadius: 12 }, headText: { color: \"#fff\", fontWeight: \"bold\" },\n  panel: { overflow: \"hidden\", backgroundColor: \"#eff6ff\", borderRadius: 12 }, body: { padding: 16, color: \"#1e3a8a\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Өндрийг (`height`) 0-ээс зорилтот утга руу анимацлахад агуулга нээгдэх мэт харагдана. `overflow: \"hidden\"` нь өндөр багатай үед доторхийг нуудаг тул гөлгөр нээлт үүснэ."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Самбар нээгдэх мэдрэмжийг юуг анимацлаж гаргах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Өнгө"
+        },
+        {
+          "mn": "Өндрийг (height) 0-ээс тодорхой утга руу"
+        },
+        {
+          "mn": "Фонт"
+        },
+        {
+          "mn": "Байрлал"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Өндрийг өсгөхөд агуулга нээгдэх мэт харагдана."
+      },
+      "hint": {
+        "mn": "Нээгдэх = том болох. Ямар хэмжээ вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`overflow: \"hidden\"` энд яагаад чухал вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хурдан болгоно"
+        },
+        {
+          "mn": "Өндөр багатай үед доторх текстийг таслаж нуудаг"
+        },
+        {
+          "mn": "Өнгө өгнө"
+        },
+        {
+          "mn": "Шаардлагагүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "hidden байхгүй бол текст самбараас халин харагдаж, нээлт цэвэрхэн харагдахгүй."
+      },
+      "hint": {
+        "mn": "Жижиг хайрцагт багтахгүй текст яах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

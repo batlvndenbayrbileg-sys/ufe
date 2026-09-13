@@ -1,0 +1,232 @@
+{
+  "id": "rn13-l2",
+  "moduleId": "rn13-navigation",
+  "slug": "screen-params",
+  "order": 2,
+  "title": {
+    "mn": "Параметр дамжуулах"
+  },
+  "why": {
+    "mn": "Shop.mn-д хэрэглэгч аль барааг сонгосноор тэр барааны дэлгэрэнгүй нээгдэх ёстой. Сонгосон барааны объектыг `selected` төлөвт хадгалж, дэлгэрэнгүй дэлгэц рүү «дамжуулна»."
+  },
+  "buildsInProject": "Сонгосон барааг дэлгэрэнгүй рүү дамжуулах",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useState",
+    "state",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn13-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: 1, name: \"Утасгүй чихэвч\", price: \"159,000₮\" },\n  { id: 2, name: \"Гар цаг X100\", price: \"249,000₮\" },\n];\n\nfunction App() {\n  const [screen, setScreen] = useState(\"list\");\n  const [selected, setSelected] = useState(null);\n\n  if (screen === \"detail\") {\n    return (\n      <View style={styles.screen}>\n        <Text nativeID=\"dname\" style={styles.h}>{selected ? selected.name : \"\"}</Text>\n        <Text>{selected ? selected.price : \"\"}</Text>\n        <Pressable nativeID=\"back\" style={styles.btn} onPress={() => setScreen(\"list\")}>\n          <Text style={styles.btnText}>← Буцах</Text>\n        </Pressable>\n      </View>\n    );\n  }\n  return (\n    <View style={styles.screen}>\n      {PRODUCTS.map((p) => (\n        <Pressable key={p.id} nativeID={\"p\" + p.id} style={styles.row}\n          onPress={() => { setScreen(\"detail\"); /* энд бичнэ үү: сонгосон барааг хадгал */ }}>\n          <Text style={styles.name}>{p.name}</Text>\n        </Pressable>\n      ))}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  h: { fontSize: 24, fontWeight: \"bold\" },\n  row: { backgroundColor: \"#f1f5f9\", padding: 16, borderRadius: 12 },\n  name: { fontSize: 16, fontWeight: \"600\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn13-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Параметр дамжуулах"
+      },
+      "statement": {
+        "mn": "Барааг дархад `setSelected(p)` дуудаж сонгосон объектыг хадгал, дараа нь `setScreen(\"detail\")` дууд. Дэлгэрэнгүй дэлгэц `selected.name`-ийг харуулна. Ямар бараа дарснаас хамааран өөр нэр гарна."
+      },
+      "requirements": [
+        {
+          "mn": "`setSelected(p)` дуудсан"
+        },
+        {
+          "mn": "Дэлгэрэнгүй дэлгэц сонгосон барааны нэрийг харуулна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Гар цаг X100»-г дархад дэлгэрэнгүй дэлгэц дээр яг тэр нэр гарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "setSelected"
+          },
+          "onFail": {
+            "mn": "`setSelected(...)` дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#p2"
+              },
+              {
+                "waitFor": "#dname"
+              },
+              {
+                "expectText": {
+                  "selector": "#dname",
+                  "contains": "Гар цаг"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Сонгосон бараа дэлгэрэнгүй рүү дамжихгүй байна. onPress-д setSelected(p) дуудсан эсэхээ шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "«Параметр дамжуулах» гэдэг нь тусдаа онцгой зүйл биш — зүгээр л сонгосон утгаа нэг төлөвт (`selected`) хадгална."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`.map`-ийн доторх `p` бол тухайн барааны объект. `onPress`-д `setSelected(p)` дуудаж, дараа нь дэлгэц сольж болно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "onPress дотор:"
+          },
+          "code": "onPress={() => {\n  setSelected(p); // сонгосон барааг хадгал\n  setScreen(\"detail\");\n}}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: 1, name: \"Утасгүй чихэвч\", price: \"159,000₮\" },\n  { id: 2, name: \"Гар цаг X100\", price: \"249,000₮\" },\n];\n\nfunction App() {\n  const [screen, setScreen] = useState(\"list\");\n  const [selected, setSelected] = useState(null);\n\n  if (screen === \"detail\") {\n    return (\n      <View style={styles.screen}>\n        <Text nativeID=\"dname\" style={styles.h}>{selected ? selected.name : \"\"}</Text>\n        <Text>{selected ? selected.price : \"\"}</Text>\n        <Pressable nativeID=\"back\" style={styles.btn} onPress={() => setScreen(\"list\")}>\n          <Text style={styles.btnText}>← Буцах</Text>\n        </Pressable>\n      </View>\n    );\n  }\n  return (\n    <View style={styles.screen}>\n      {PRODUCTS.map((p) => (\n        <Pressable key={p.id} nativeID={\"p\" + p.id} style={styles.row}\n          onPress={() => { setSelected(p); setScreen(\"detail\"); }}>\n          <Text style={styles.name}>{p.name}</Text>\n        </Pressable>\n      ))}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  h: { fontSize: 24, fontWeight: \"bold\" },\n  row: { backgroundColor: \"#f1f5f9\", padding: 16, borderRadius: 12 },\n  name: { fontSize: 16, fontWeight: \"600\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Дэлгэц хооронд өгөгдөл дамжуулах хамгийн энгийн арга бол хуваалцсан төлөв (`selected`). Аль объектыг дарснаа хадгалаад, дэлгэрэнгүй дэлгэц түүнийг уншина."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Дэлгэц хооронд өгөгдлийг яаж дамжуулах вэ (энэ аргаар)?"
+      },
+      "options": [
+        {
+          "mn": "URL-аар"
+        },
+        {
+          "mn": "Сонгосон утгыг хуваалцсан төлөвт хадгалж"
+        },
+        {
+          "mn": "Файлд бичиж"
+        },
+        {
+          "mn": "Дамжуулах боломжгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Сонгосон объектыг App-ийн төлөвт хадгалахад хоёр дэлгэц хоёулаа уншиж чадна."
+      },
+      "hint": {
+        "mn": "Хоёр дэлгэц нэг App дотор. Юуг хоёулаа харж чадах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`onPress={() => { setSelected(p); setScreen(\"detail\"); }}` юу хийх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн дэлгэц солино"
+        },
+        {
+          "mn": "Сонгосон барааг хадгалаад дараа нь дэлгэрэнгүй рүү шилжинэ"
+        },
+        {
+          "mn": "Алдаа гаргана"
+        },
+        {
+          "mn": "Барааг устгана"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Эхлээд сонголтоо хадгалж, дараа нь дэлгэцээ солино."
+      },
+      "hint": {
+        "mn": "Хоёр setState дараалан дуудагдана."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "id": "rn8-l2",
+  "moduleId": "rn8-styling",
+  "slug": "borders",
+  "order": 2,
+  "title": {
+    "mn": "Хүрээ — тодотгох"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн «сонгосон» бараа эсвэл идэвхтэй талбар хүрээгээр тодордог. `borderWidth`, `borderColor`, `borderRadius`-ээр хүрээ зурна."
+  },
+  "buildsInProject": "Тодруулсан хүрээтэй сонголт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "style",
+    "borderRadius",
+    "backgroundColor"
+  ],
+  "prerequisites": [
+    "rn8-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"option\" style={styles.option}>\n        <Text style={styles.text}>Хүргэлттэй авах</Text>\n      </View>\n      {/* энд бичнэ үү: option-д хүрээ нэм */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, justifyContent: \"center\" },\n  option: { padding: 18, borderRadius: 12 },\n  text: { fontSize: 16, fontWeight: \"600\", color: \"#1d4ed8\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn8-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хүрээ — тодотгох"
+      },
+      "statement": {
+        "mn": "`option` загварт `borderWidth: 2` болон `borderColor: \"#2563eb\"` нэмж, сонголтыг цэнхэр хүрээгээр тодотго. `borderRadius` хэвээр байлга."
+      },
+      "requirements": [
+        {
+          "mn": "`borderWidth` нэмсэн"
+        },
+        {
+          "mn": "`borderColor: \"#2563eb\"`"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Сонголт цэнхэр 2px хүрээтэй, дугуй өнцөгтэй болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.numeric",
+          "args": {
+            "selector": "#option",
+            "prop": "border-width",
+            "min": 1
+          },
+          "onFail": {
+            "mn": "`borderWidth` нэмээгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "css.computed",
+          "args": {
+            "selector": "#option",
+            "prop": "border-color",
+            "equals": "#2563eb"
+          },
+          "onFail": {
+            "mn": "`borderColor: \"#2563eb\"` алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Хүрээ нь 3 хэсэгтэй: зузаан (`borderWidth`), өнгө (`borderColor`), өнцөг (`borderRadius`)."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Гурвуулаа өгөх хэрэгтэй — зөвхөн `borderColor` өгвөл зузаан 0 тул харагдахгүй."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "option загварт нэм:"
+          },
+          "code": "option: {\n  // ...\n  borderWidth: 2,\n  borderColor: \"#2563eb\",\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"option\" style={styles.option}>\n        <Text style={styles.text}>Хүргэлттэй авах</Text>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, justifyContent: \"center\" },\n  option: { padding: 18, borderRadius: 12, borderWidth: 2, borderColor: \"#2563eb\" },\n  text: { fontSize: 16, fontWeight: \"600\", color: \"#1d4ed8\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`borderWidth` (зузаан) ба `borderColor` (өнгө) хоёулаа байж хүрээ харагдана. Нэг талыг нь (`borderBottomWidth`) өгч зөвхөн доод шугам зурж болно."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Зөвхөн `borderColor` өгвөл хүрээ харагдах уу?"
+      },
+      "options": [
+        {
+          "mn": "Тийм"
+        },
+        {
+          "mn": "Үгүй — `borderWidth` (зузаан) 0 тул харагдахгүй"
+        },
+        {
+          "mn": "Заримдаа"
+        },
+        {
+          "mn": "Зөвхөн iOS дээр"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Зузаан 0 бол хүрээ огт зурагдахгүй. `borderWidth`-ийг заавал өгнө."
+      },
+      "hint": {
+        "mn": "0 зузаантай зураас харагдах уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Зөвхөн доод хүрээ зурахын тулд юу ашиглах вэ?"
+      },
+      "options": [
+        {
+          "mn": "`borderWidth`"
+        },
+        {
+          "mn": "`borderBottomWidth`"
+        },
+        {
+          "mn": "`borderRadius`"
+        },
+        {
+          "mn": "`underline`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`borderBottomWidth` (+ `borderBottomColor`) нь зөвхөн доод талын шугамыг зурна."
+      },
+      "hint": {
+        "mn": "«Bottom» = доод тал."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "id": "rn7-l4",
+  "moduleId": "rn7-layout",
+  "slug": "absolute",
+  "order": 4,
+  "title": {
+    "mn": "position: absolute — давхарлаж байрлуулах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн барааны зураг дээр «-20%» хямдралын шошго булан дээр наалддаг. `position: \"absolute\"`-оор элементийг эцгийнхээ дурын байрлалд наана."
+  },
+  "buildsInProject": "Барааны зураг дээрх хямдралын шошго",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "position",
+    "absolute",
+    "zIndex"
+  ],
+  "prerequisites": [
+    "rn7-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.card}>\n      <View style={styles.photo}><Text style={styles.photoText}>Зураг</Text></View>\n      <Text nativeID=\"badge\" style={styles.badge}>-20%</Text>\n      {/* энд бичнэ үү: badge-г булан дээр наа */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  card: { margin: 24, width: 200, height: 160, borderRadius: 16, overflow: \"hidden\" },\n  photo: { flex: 1, backgroundColor: \"#cbd5e1\", alignItems: \"center\", justifyContent: \"center\" },\n  photoText: { color: \"#475569\" },\n  badge: { backgroundColor: \"#dc2626\", color: \"#fff\", fontWeight: \"bold\", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn7-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "position: absolute — давхарлаж байрлуулах"
+      },
+      "statement": {
+        "mn": "`badge` загварт `position: \"absolute\"` болон `top: 10`, `left: 10` нэмж, хямдралын шошгыг картын зүүн дээд буланд наа."
+      },
+      "requirements": [
+        {
+          "mn": "`badge`-д `position: \"absolute\"`"
+        },
+        {
+          "mn": "`top` ба `left` тохируулсан"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«-20%» улаан шошго зургийн зүүн дээд буланд хөвж харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.computed",
+          "args": {
+            "selector": "#badge",
+            "prop": "position",
+            "equals": "absolute"
+          },
+          "onFail": {
+            "mn": "`badge`-д `position: \"absolute\"` алга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "css.numeric",
+          "args": {
+            "selector": "#badge",
+            "prop": "top",
+            "min": 0,
+            "max": 40
+          },
+          "onFail": {
+            "mn": "`top` тохируулаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`position: \"absolute\"` элементийг ердийн урсгалаас гаргаж, эцгийнхээ дотор чөлөөтэй байрлуулна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Байрлалыг `top`, `bottom`, `left`, `right` тоогоор заана. Эцэг нь `position: \"relative\"` (View анхдагчаар тийм) байх ёстой."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "badge загварт нэм:"
+          },
+          "code": "badge: {\n  position: \"absolute\",\n  top: 10,\n  left: 10,\n  // ...\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.card}>\n      <View style={styles.photo}><Text style={styles.photoText}>Зураг</Text></View>\n      <Text nativeID=\"badge\" style={styles.badge}>-20%</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  card: { margin: 24, width: 200, height: 160, borderRadius: 16, overflow: \"hidden\" },\n  photo: { flex: 1, backgroundColor: \"#cbd5e1\", alignItems: \"center\", justifyContent: \"center\" },\n  photoText: { color: \"#475569\" },\n  badge: { position: \"absolute\", top: 10, left: 10, backgroundColor: \"#dc2626\", color: \"#fff\", fontWeight: \"bold\", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`absolute` элемент нь ердийн урсгалд орохгүй, харин хамгийн ойрын `relative` эцгийнхээ `top/left`-ээс хэмжигдэж хөвнө. Шошго, badge, overlay зэрэгт төгс."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`position: \"absolute\"` элемент юугаараа онцлог вэ?"
+      },
+      "options": [
+        {
+          "mn": "Илүү том харагдана"
+        },
+        {
+          "mn": "Ердийн урсгалаас гарч, top/left-ээр чөлөөтэй байрлана"
+        },
+        {
+          "mn": "Гүйдэг болно"
+        },
+        {
+          "mn": "Нуугдана"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "absolute элемент бусдын зайг эзлэхгүй, эцгийнхээ дотор координатаар байрлана."
+      },
+      "hint": {
+        "mn": "«absolute» = үнэмлэхүй байрлал. Юугаар байрлуулдаг вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "absolute элемент юунаас хэмжигдэж байрлах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Дэлгэцээс үргэлж"
+        },
+        {
+          "mn": "Хамгийн ойрын байрлалтай (relative/absolute) эцгээсээ"
+        },
+        {
+          "mn": "Текстээс"
+        },
+        {
+          "mn": "Хаанаас ч биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хамгийн ойрын positioned эцэг нь лавлагаа болно. RN-д View анхдагчаар relative."
+      },
+      "hint": {
+        "mn": "top: 10 гэдэг юунаас 10 вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

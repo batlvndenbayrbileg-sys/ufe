@@ -1,0 +1,246 @@
+{
+  "id": "rn1-l1",
+  "moduleId": "rn1-basics",
+  "slug": "first-screen",
+  "order": 1,
+  "title": {
+    "mn": "Анхны дэлгэц: View ба Text"
+  },
+  "why": {
+    "mn": "React Native дээр вэбийн <div>, <p> биш, харин <View>, <Text> ашигладаг. Учир нь эдгээр нь жинхэнэ гар утасны төрөлх (native) элемент болж хувирдаг. Shop.mn-ийг гар утсанд бүтээж эхэлье."
+  },
+  "buildsInProject": "Мобайл Shop.mn-ийн эхний дэлгэц",
+  "difficulty": "beginner",
+  "estimatedMinutes": 12,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "react-native",
+    "component",
+    "View",
+    "Text",
+    "registerRootComponent"
+  ],
+  "prerequisites": [],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\n// энд бичнэ үү\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn1-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Анхны дэлгэц: View ба Text"
+      },
+      "statement": {
+        "mn": "`App` нэртэй component бич. Тэр нь нэг `<View>` дотор хоёр `<Text>` буцаана: нэг нь `Shop.mn` гарчиг, нөгөө нь уриа үг. Дараа нь `registerRootComponent(App)` гэж апп-аа ажиллуул."
+      },
+      "requirements": [
+        {
+          "mn": "`App` component зарлагдсан"
+        },
+        {
+          "mn": "`<View>` дотор 2 `<Text>`"
+        },
+        {
+          "mn": "`registerRootComponent(App)` дуудагдсан"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Утасны дэлгэц дээр Shop.mn гарчиг ба уриа үг харагдана — энэ бол чиний мобайл апп."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/App.jsx",
+            "kind": "function",
+            "name": "App"
+          },
+          "onFail": {
+            "mn": "`App` нэртэй функц зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "registerRootComponent"
+          },
+          "onFail": {
+            "mn": "`registerRootComponent(App)` дуудаагүй байна — апп ажиллахгүй."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.text",
+          "args": {
+            "selector": "#root [data-rn=\"text\"]",
+            "contains": "Shop.mn"
+          },
+          "onFail": {
+            "mn": "Дэлгэц дээр `Shop.mn` бүхий `<Text>` алга."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "dom.count",
+          "args": {
+            "selector": "#root [data-rn=\"text\"]",
+            "equals": 2
+          },
+          "onFail": {
+            "mn": "Яг 2 `<Text>` байх ёстой (гарчиг ба уриа үг)."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "React Native дээр component бол React дээрхтэй адил функц. Гэхдээ `<div>`-ийн оронд `<View>`, текстийг ЗААВАЛ `<Text>` дотор бичнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Олон элемент буцаахдаа нэг `<View>` дотор багтаана. `return ( ... )` гэж хаалтанд бичвэл олон мөр бичихэд амар."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц нь ийм — дотор талыг гүйцээ:"
+          },
+          "code": "function App() {\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.title}>Shop.mn</Text>\n      {/* уриа үгийн Text-ээ энд нэм */}\n    </View>\n  );\n}\n\nregisterRootComponent(App);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.title}>Shop.mn</Text>\n      <Text style={styles.subtitle}>Монголын онлайн дэлгүүр</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, backgroundColor: \"#f5f6f8\" },\n  title: { fontSize: 28, fontWeight: \"bold\", color: \"#18181b\" },\n  subtitle: { fontSize: 16, color: \"#52525b\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`<View>` бол вэбийн `<div>`-ийн мобайл хувилбар — багтаагч хайрцаг. `<Text>` бол текст харуулах цорын ганц зам. `registerRootComponent(App)` нь апп-ийн үндсэн дэлгэцийг зурна."
+        },
+        "xpPenalty": 9
+      },
+      "xp": 15,
+      "estimatedMinutes": 10,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "React Native дээр текстийг юугаар харуулдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`<p>` таг"
+        },
+        {
+          "mn": "`<Text>` component"
+        },
+        {
+          "mn": "`<span>` таг"
+        },
+        {
+          "mn": "Шууд `<View>` дотор бичнэ"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Мобайл дээр бүх текстийг заавал `<Text>` дотор бичнэ. `<View>` дотор шууд текст бичвэл алдаа гарна."
+      },
+      "hint": {
+        "mn": "Вэб дээр `<p>`. Гар утсан дээр аль component текстэд зориулагдсан бэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`<View>` юуны төлөө хэрэглэгддэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн зураг харуулах"
+        },
+        {
+          "mn": "Элементүүдийг багтаах, зохион байгуулах хайрцаг"
+        },
+        {
+          "mn": "Сервер рүү хүсэлт явуулах"
+        },
+        {
+          "mn": "Өгөгдөл хадгалах"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`<View>` бол вэбийн `<div>`-тэй адил багтаагч — доторх элементүүдээ зохион байгуулна."
+      },
+      "hint": {
+        "mn": "Вэбийн `<div>`-тэй зүйрлэвэл юу вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

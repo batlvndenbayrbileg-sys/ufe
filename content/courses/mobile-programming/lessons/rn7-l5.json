@@ -1,0 +1,207 @@
+{
+  "id": "rn7-l5",
+  "moduleId": "rn7-layout",
+  "slug": "zindex",
+  "order": 5,
+  "title": {
+    "mn": "zIndex — аль нь дээр байх вэ"
+  },
+  "why": {
+    "mn": "Хямдралын шошго зургийн ДЭЭР харагдах ёстой, доор нь дарагдах ёсгүй. Давхарласан элементүүдийн дарааллыг `zIndex`-ээр удирдана. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Шошго үргэлж зургийн дээр",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "zIndex",
+    "position",
+    "absolute"
+  ],
+  "prerequisites": [
+    "rn7-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.card}>\n      <Text nativeID=\"badge\" style={styles.badge}>ШИНЭ</Text>\n      <View style={styles.cover} />\n      {/* энд бичнэ үү: badge-г бүрхүүлийн дээр гарга */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  card: { margin: 24, width: 200, height: 160 },\n  badge: { position: \"absolute\", top: 12, left: 12, backgroundColor: \"#16a34a\", color: \"#fff\", fontWeight: \"bold\", padding: 8, borderRadius: 8 },\n  cover: { position: \"absolute\", inset: 0, backgroundColor: \"#334155\", borderRadius: 16 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn7-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "zIndex — аль нь дээр байх вэ"
+      },
+      "statement": {
+        "mn": "`badge` загварт `zIndex: 10` нэмж, шошгыг саарал бүрхүүл (`cover`)-ийн дээр гаргаж ирүүл. `cover` нь badge-ийн дараа зурагддаг тул анхдагчаар түүнийг халхалдаг."
+      },
+      "requirements": [
+        {
+          "mn": "`badge`-д `zIndex` нэмсэн (бүрхүүлээс өндөр)"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«ШИНЭ» ногоон шошго саарал бүрхүүлийн дээр харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.numeric",
+          "args": {
+            "selector": "#badge",
+            "prop": "z-index",
+            "min": 1
+          },
+          "onFail": {
+            "mn": "`badge`-д `zIndex` нэмээгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Хожуу зурагдсан элемент дээр гарч ирдэг. `zIndex`-ээр энэ дарааллыг гараар удирдаж болно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`zIndex` их байх тусам дээр. `cover` zIndex-гүй (0) тул badge-д 10 өгвөл дээр гарна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "badge загварт нэм:"
+          },
+          "code": "badge: {\n  position: \"absolute\",\n  zIndex: 10, // бусдын дээр\n  // ...\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.card}>\n      <Text nativeID=\"badge\" style={styles.badge}>ШИНЭ</Text>\n      <View style={styles.cover} />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  card: { margin: 24, width: 200, height: 160 },\n  badge: { position: \"absolute\", top: 12, left: 12, zIndex: 10, backgroundColor: \"#16a34a\", color: \"#fff\", fontWeight: \"bold\", padding: 8, borderRadius: 8 },\n  cover: { position: \"absolute\", inset: 0, backgroundColor: \"#334155\", borderRadius: 16 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Давхарласан элементүүд эх кодын дарааллаар давхарлагддаг (сүүлийнх дээр). `zIndex` их байх тусам дээр гарч, энэ анхдагч дарааллыг дарна."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Хоёр элемент давхарлахад анхдагчаар аль нь дээр байх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Эхэлж бичсэн нь"
+        },
+        {
+          "mn": "Кодод СҮҮЛД бичсэн нь"
+        },
+        {
+          "mn": "Том нь"
+        },
+        {
+          "mn": "Өнгөтэй нь"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "zIndex байхгүй бол кодод сүүлд зурагдсан элемент дээр гарна."
+      },
+      "hint": {
+        "mn": "Будаг шиг — сүүлд түрхсэн нь дээр."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`zIndex`-ийг өсгөвөл юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Элемент томроно"
+        },
+        {
+          "mn": "Элемент бусдаас дээр гарна"
+        },
+        {
+          "mn": "Элемент нуугдана"
+        },
+        {
+          "mn": "Өнгө өөрчлөгдөнө"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "zIndex их байх тусам давхаргын хувьд дээр байрлана."
+      },
+      "hint": {
+        "mn": "«index» өндөр = давхарга өндөр."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

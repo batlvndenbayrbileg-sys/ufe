@@ -1,0 +1,241 @@
+{
+  "id": "rn17-l1",
+  "moduleId": "rn17-hooks",
+  "slug": "useref",
+  "order": 1,
+  "title": {
+    "mn": "useRef — дэлгэц зураалгүй утга санах"
+  },
+  "why": {
+    "mn": "Shop.mn-д зарим тоог (жишээ хэдэн удаа товч дарсныг) санах хэрэгтэй ч бүр болгонд дэлгэцээ дахин зурах шаардлагагүй. `useRef` нь дахин зуралгүй утга хадгална."
+  },
+  "buildsInProject": "Далд тоолуур — дараад дараа нь харуулна",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useRef",
+    "state",
+    "useState"
+  ],
+  "prerequisites": [
+    "rn16-l6"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useRef, useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  // энд бичнэ үү: taps-ыг useRef-ээр хадгал\n  const [shown, setShown] = useState(0);\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"tap\" style={styles.b} onPress={() => {}}><Text style={styles.t}>Дарах</Text></Pressable>\n      <Pressable nativeID=\"show\" style={styles.b2} onPress={() => setShown(0)}><Text style={styles.t2}>Харах</Text></Pressable>\n      <Text nativeID=\"out\" style={styles.o}>Нийт: {shown}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 14, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 },\n  b2: { backgroundColor: \"#0ea5e9\", padding: 14, borderRadius: 12 },\n  t: { color: \"#fff\", fontWeight: \"bold\" }, t2: { color: \"#fff\", fontWeight: \"bold\" },\n  o: { fontSize: 22, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn17-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "useRef — дэлгэц зураалгүй утга санах"
+      },
+      "statement": {
+        "mn": "`useRef(0)`-оор `taps` үүсгэ. «Дарах» дархад `taps.current`-ийг 1-ээр нэм (дэлгэц зурагдахгүй). «Харах» дархад `setShown(taps.current)`-оор нийт тоог харуул."
+      },
+      "requirements": [
+        {
+          "mn": "`useRef` ашигласан"
+        },
+        {
+          "mn": "«Дарах» taps.current-ийг нэмнэ"
+        },
+        {
+          "mn": "«Харах» нийт тоог харуулна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Дарах»-ыг хэд ч дарж болно (дэлгэц өөрчлөгдөхгүй); «Харах» дарж нийт тоог үзнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useRef"
+          },
+          "onFail": {
+            "mn": "`useRef`-ийг ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#tap"
+              },
+              {
+                "click": "#tap"
+              },
+              {
+                "click": "#tap"
+              },
+              {
+                "click": "#show"
+              },
+              {
+                "expectText": {
+                  "selector": "#out",
+                  "contains": "3"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Дарах» 3 удаа, «Харах» дархад Нийт: 3 болохгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`useRef(0)` нь `{ current: 0 }` объект буцаана. `ref.current`-ийг өөрчилсөн ч React дахин зурдаггүй."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`taps.current = taps.current + 1` гэж шинэчилнэ. Харуулахдаа л `setShown(taps.current)`-оор төлөвт хуулна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц:"
+          },
+          "code": "const taps = useRef(0);\n// onPress: taps.current = taps.current + 1;\n// Харах: setShown(taps.current)"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useRef, useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const taps = useRef(0);\n  const [shown, setShown] = useState(0);\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"tap\" style={styles.b} onPress={() => { taps.current = taps.current + 1; }}><Text style={styles.t}>Дарах</Text></Pressable>\n      <Pressable nativeID=\"show\" style={styles.b2} onPress={() => setShown(taps.current)}><Text style={styles.t2}>Харах</Text></Pressable>\n      <Text nativeID=\"out\" style={styles.o}>Нийт: {shown}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 14, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 },\n  b2: { backgroundColor: \"#0ea5e9\", padding: 14, borderRadius: 12 },\n  t: { color: \"#fff\", fontWeight: \"bold\" }, t2: { color: \"#fff\", fontWeight: \"bold\" },\n  o: { fontSize: 22, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`useRef` нь дахин зуралт өдөөдөггүй хувьсах хайрцаг. `state`-ээс ялгаатай нь `ref.current` өөрчлөгдөхөд дэлгэц шинэчлэгдэхгүй — таймер id, өмнөх утга, эсвэл нууц тоолуур хадгалахад тохиромжтой."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`useRef` ба `useState`-ийн гол ялгаа юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Ялгаагүй"
+        },
+        {
+          "mn": "`ref.current` өөрчлөхөд дэлгэц дахин зурагддаггүй"
+        },
+        {
+          "mn": "`useRef` зөвхөн тоо хадгална"
+        },
+        {
+          "mn": "`useRef` хуучирсан"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Ref-ийн утгыг өөрчилсөн ч re-render болдоггүй. State өөрчлөгдвөл дахин зурна."
+      },
+      "hint": {
+        "mn": "Аль нь дэлгэцийг шинэчилдэг вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`useRef(0)` юу буцаадаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Тоо 0"
+        },
+        {
+          "mn": "`{ current: 0 }` объект"
+        },
+        {
+          "mn": "Функц"
+        },
+        {
+          "mn": "null"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "useRef нь `.current` талбартай объект буцаана. Утгыг `.current`-ээр уншиж/бичнэ."
+      },
+      "hint": {
+        "mn": "Утгыг яаж уншдаг вэ — `ref` уу, `ref.current` уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

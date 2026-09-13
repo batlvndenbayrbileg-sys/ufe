@@ -1,0 +1,20 @@
+{
+  "id": "rn14-tabs",
+  "stageId": "s9",
+  "order": 2,
+  "title": {
+    "mn": "Таб навигаци"
+  },
+  "description": {
+    "mn": "Доод таб бар, таб солих, badge — апп-ийн үндсэн бүтэц."
+  },
+  "estimatedHours": 6,
+  "lessons": [
+    "rn14-l1",
+    "rn14-l2",
+    "rn14-l3",
+    "rn14-l4",
+    "rn14-l5",
+    "rn14-l6"
+  ]
+}

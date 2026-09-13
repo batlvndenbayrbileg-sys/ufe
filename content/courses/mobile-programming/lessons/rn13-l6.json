@@ -1,0 +1,227 @@
+{
+  "id": "rn13-l6",
+  "moduleId": "rn13-navigation",
+  "slug": "deep-flow",
+  "order": 6,
+  "title": {
+    "mn": "Гүн урсгал: жагсаалт → дэлгэрэнгүй → баталгаа"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн худалдан авалт гурван алхмаар явагдана: бараа сонгох → дэлгэрэнгүй үзэх → захиалга баталгаажуулах. Гурван дэлгэцийг дараалан холбож бүрэн урсгал угсарна."
+  },
+  "buildsInProject": "3 дэлгэцтэй худалдан авах урсгал",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useState",
+    "state",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn13-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [screen, setScreen] = useState(\"list\");\n\n  if (screen === \"confirm\") {\n    return (\n      <View style={styles.screen}>\n        <Text nativeID=\"c\" style={styles.h}>Захиалга баталгаажлаа</Text>\n        <Pressable nativeID=\"home\" style={styles.btn} onPress={() => setScreen(\"list\")}>\n          <Text style={styles.btnText}>Нүүр рүү</Text>\n        </Pressable>\n      </View>\n    );\n  }\n  if (screen === \"detail\") {\n    return (\n      <View style={styles.screen}>\n        <Text nativeID=\"d\" style={styles.h}>Утасгүй чихэвч</Text>\n        <Text>159,000₮</Text>\n        <Pressable nativeID=\"buy\" style={styles.btn}>\n          <Text style={styles.btnText}>Худалдан авах</Text>\n        </Pressable>\n        {/* энд бичнэ үү: buy товч дархад confirm дэлгэц рүү шилж */}\n      </View>\n    );\n  }\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.h}>Shop.mn</Text>\n      <Pressable nativeID=\"open\" style={styles.btn} onPress={() => setScreen(\"detail\")}>\n        <Text style={styles.btnText}>Утасгүй чихэвч</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 14, justifyContent: \"center\" },\n  h: { fontSize: 22, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn13-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Гүн урсгал: жагсаалт → дэлгэрэнгүй → баталгаа"
+      },
+      "statement": {
+        "mn": "Дэлгэрэнгүй дэлгэцийн «Худалдан авах» товчинд `onPress={() => setScreen(\"confirm\")}` нэмж, баталгааны дэлгэц рүү шилж. Ингэснээр list → detail → confirm гурван алхмын урсгал бүрэн болно."
+      },
+      "requirements": [
+        {
+          "mn": "«Худалдан авах» дархад confirm дэлгэц гарна"
+        },
+        {
+          "mn": "list → detail → confirm дараалал ажиллана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Бараа → Худалдан авах дархад «Захиалга баталгаажлаа» гэсэн баталгааны дэлгэц гарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#open"
+              },
+              {
+                "waitFor": "#d"
+              },
+              {
+                "click": "#buy"
+              },
+              {
+                "waitFor": "#c"
+              },
+              {
+                "expectText": {
+                  "selector": "#c",
+                  "contains": "баталгаажлаа"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Урсгал дуусахгүй байна. «Худалдан авах» товчинд setScreen(\"confirm\") нэмсэн эсэхээ шалга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Гурван дэлгэц гэдэг нь гурван боломжит `screen` утга: `\"list\"`, `\"detail\"`, `\"confirm\"`. Товч бүр дараагийнх руу шилжүүлнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "«Худалдан авах» товч бол detail → confirm шилжилт. `onPress={() => setScreen(\"confirm\")}` нэм."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "buy товч:"
+          },
+          "code": "<Pressable nativeID=\"buy\" onPress={() => setScreen(\"confirm\")}>\n  <Text>Худалдан авах</Text>\n</Pressable>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [screen, setScreen] = useState(\"list\");\n\n  if (screen === \"confirm\") {\n    return (\n      <View style={styles.screen}>\n        <Text nativeID=\"c\" style={styles.h}>Захиалга баталгаажлаа</Text>\n        <Pressable nativeID=\"home\" style={styles.btn} onPress={() => setScreen(\"list\")}>\n          <Text style={styles.btnText}>Нүүр рүү</Text>\n        </Pressable>\n      </View>\n    );\n  }\n  if (screen === \"detail\") {\n    return (\n      <View style={styles.screen}>\n        <Text nativeID=\"d\" style={styles.h}>Утасгүй чихэвч</Text>\n        <Text>159,000₮</Text>\n        <Pressable nativeID=\"buy\" style={styles.btn} onPress={() => setScreen(\"confirm\")}>\n          <Text style={styles.btnText}>Худалдан авах</Text>\n        </Pressable>\n      </View>\n    );\n  }\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.h}>Shop.mn</Text>\n      <Pressable nativeID=\"open\" style={styles.btn} onPress={() => setScreen(\"detail\")}>\n        <Text style={styles.btnText}>Утасгүй чихэвч</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 14, justifyContent: \"center\" },\n  h: { fontSize: 22, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Гүн урсгал гэдэг нь дэлгэцүүдийг дараалан холбосон гинж. Дэлгэц бүр `setScreen`-ээр дараагийнх руугаа шилжүүлж, олон алхамт үйлдэл (худалдан авалт) угсрагдана."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "3 дэлгэцтэй урсгал хэдэн боломжит `screen` утгатай вэ?"
+      },
+      "options": [
+        {
+          "mn": "1"
+        },
+        {
+          "mn": "3 (жишээ нь list/detail/confirm)"
+        },
+        {
+          "mn": "Хязгааргүй"
+        },
+        {
+          "mn": "2"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Дэлгэц бүрд нэг утга — гурван дэлгэц гурван утга."
+      },
+      "hint": {
+        "mn": "Дэлгэц бүрт нэг нэр."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "detail-с confirm руу яаж шилжих вэ?"
+      },
+      "options": [
+        {
+          "mn": "Автоматаар"
+        },
+        {
+          "mn": "«Худалдан авах» товчинд `setScreen(\"confirm\")` дуудаж"
+        },
+        {
+          "mn": "Хуудас дахин ачаалж"
+        },
+        {
+          "mn": "Боломжгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Товчны onPress-д дараагийн дэлгэцийн нэрээр setScreen дуудна."
+      },
+      "hint": {
+        "mn": "Шилжилт бүр нэг setScreen дуудлага."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

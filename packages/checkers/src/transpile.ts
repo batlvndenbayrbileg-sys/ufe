@@ -7,9 +7,12 @@ import { transform } from "sucrase";
  */
 
 /**
- * Rewrite `import ... from "react" | "react-dom/client"` onto the inlined
- * globals, so students write IDIOMATIC React (`import { useState } from "react"`)
- * even though Tier 1 has no bundler.
+ * Rewrite `import ... from "react" | "react-dom/client"` — and the React Native
+ * family (`react-native`, `expo`, `expo-status-bar`, AsyncStorage) — onto the
+ * inlined globals, so students write IDIOMATIC code (`import { useState } from
+ * "react"`, `import { View } from "react-native"`) even though Tier 1 has no
+ * bundler. The RN specifiers map onto window.ReactNative etc. from the shim
+ * (packages/checkers/scripts/rn-runtime.src.js).
  */
 function shimReactImports(code: string): string {
   const rewrite = (clause: string, globalName: string): string => {
@@ -24,12 +27,21 @@ function shimReactImports(code: string): string {
     if (named && named[1]!.trim()) out.push(`const {${named[1]}} = ${globalName};`);
     return out.join("\n");
   };
-  return code
-    .replace(/import\s+([^;"']+?)\s+from\s+["']react["']\s*;?/g, (_m, c: string) => rewrite(c, "React"))
-    .replace(/import\s+([^;"']+?)\s+from\s+["']react-dom(?:\/client)?["']\s*;?/g, (_m, c: string) =>
-      rewrite(c, "ReactDOM"),
-    )
-    .replace(/^\s*import\s+["']react["']\s*;?$/gm, "");
+  // module specifier → the global the shim exposes. Order matters only in that
+  // each regex pins the specifier with quotes, so "react" never eats
+  // "react-native"/"react-dom".
+  const modules: Array<[RegExp, string]> = [
+    [/import\s+([^;"']+?)\s+from\s+["']react["']\s*;?/g, "React"],
+    [/import\s+([^;"']+?)\s+from\s+["']react-dom(?:\/client)?["']\s*;?/g, "ReactDOM"],
+    [/import\s+([^;"']+?)\s+from\s+["']react-native["']\s*;?/g, "ReactNative"],
+    [/import\s+([^;"']+?)\s+from\s+["']expo-status-bar["']\s*;?/g, "ExpoStatusBar"],
+    [/import\s+([^;"']+?)\s+from\s+["']expo["']\s*;?/g, "Expo"],
+    [/import\s+([^;"']+?)\s+from\s+["']@react-native-async-storage\/async-storage["']\s*;?/g, "RNAsyncStorage"],
+  ];
+  let out = code;
+  for (const [re, global] of modules) out = out.replace(re, (_m, c: string) => rewrite(c, global));
+  // Bare side-effect imports we can simply drop.
+  return out.replace(/^\s*import\s+["'](?:react|react-native|expo|expo-status-bar)["']\s*;?$/gm, "");
 }
 
 /** Transpile JSX/TSX to plain JS using the classic runtime (window.React). */

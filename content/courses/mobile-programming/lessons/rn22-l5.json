@@ -1,0 +1,234 @@
+{
+  "id": "rn22-l5",
+  "moduleId": "rn22-quality",
+  "slug": "capstone",
+  "order": 5,
+  "title": {
+    "mn": "Capstone — Shop.mn мини апп"
+  },
+  "why": {
+    "mn": "Одоо сурсан бүхнээ нэгтгэж, жинхэнэ ажилладаг мини Shop.mn угсарна: бүтээгдэхүүний жагсаалт, сагсанд нэмэх, сагсны тоо. Энэ бол чиний мобайл аппын гол урсгал."
+  },
+  "buildsInProject": "Жагсаалт + сагс бүхий ажиллагаатай апп",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "useState",
+    "FlatList",
+    "Pressable"
+  ],
+  "prerequisites": [
+    "rn22-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, FlatList, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\", price: \"159,000₮\" },\n  { id: \"2\", name: \"Гар цаг\", price: \"249,000₮\" },\n  { id: \"3\", name: \"Цүнх\", price: \"129,000₮\" },\n];\n\nfunction App() {\n  const [cart, setCart] = useState(0);\n  // энд бичнэ үү: addToCart функц (cart-ыг нэмнэ)\n  const addToCart = () => {};\n  return (\n    <View style={styles.s}>\n      <View style={styles.header}>\n        <Text style={styles.brand}>Shop.mn</Text>\n        <Text nativeID=\"cart\" style={styles.badge}>🛒 {cart}</Text>\n      </View>\n      <FlatList\n        data={PRODUCTS}\n        keyExtractor={(item) => item.id}\n        contentContainerStyle={styles.list}\n        renderItem={({ item }) => (\n          <View testID=\"row\" style={styles.card}>\n            <View style={styles.info}>\n              <Text style={styles.name}>{item.name}</Text>\n              <Text style={styles.price}>{item.price}</Text>\n            </View>\n            <Pressable testID=\"add\" style={styles.add} onPress={addToCart}><Text style={styles.addT}>+</Text></Pressable>\n          </View>\n        )}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, backgroundColor: \"#f8fafc\" },\n  header: { flexDirection: \"row\", justifyContent: \"space-between\", alignItems: \"center\", padding: 16, backgroundColor: \"#2563eb\" },\n  brand: { color: \"#fff\", fontSize: 20, fontWeight: \"bold\" }, badge: { color: \"#fff\", fontSize: 16, fontWeight: \"bold\" },\n  list: { padding: 16, gap: 12 },\n  card: { flexDirection: \"row\", alignItems: \"center\", backgroundColor: \"#fff\", padding: 16, borderRadius: 14, elevation: 2 },\n  info: { flexGrow: 1 }, name: { fontSize: 16, fontWeight: \"600\" }, price: { color: \"#2563eb\", fontWeight: \"bold\", marginTop: 4 },\n  add: { backgroundColor: \"#2563eb\", width: 40, height: 40, borderRadius: 20, alignItems: \"center\", justifyContent: \"center\" }, addT: { color: \"#fff\", fontSize: 22, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn22-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Capstone — Shop.mn мини апп"
+      },
+      "statement": {
+        "mn": "`addToCart` функцийг гүйцээ: `setCart((c) => c + 1)`-ээр сагсны тоог нэмнэ. Аль ч барааны «+» дархад толгой дээрх 🛒 тоо нэмэгдэнэ. (Header, жагсаалт, карт бүгд бэлэн.)"
+      },
+      "requirements": [
+        {
+          "mn": "`addToCart` сагсны тоог нэмдэг"
+        },
+        {
+          "mn": "«+» дархад толгойн 🛒 тоо нэмэгдэнэ"
+        },
+        {
+          "mn": "3 бүтээгдэхүүн харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Толгой + бүтээгдэхүүний жагсаалт харагдаж, «+» дархад сагсны тоо өснө — жинхэнэ дэлгүүрийн урсгал."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"row\"]",
+            "equals": 3
+          },
+          "onFail": {
+            "mn": "3 бүтээгдэхүүн харагдах ёстой."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "[data-testid=\"add\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "#cart",
+                  "contains": "1"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«+» дархад сагсны тоо нэмэгдэхгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Бүх бүтэц бэлэн — чамд зөвхөн `addToCart`-ийг гүйцээх л үлдсэн."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`setCart((c) => c + 1)` нь сагсны тоог найдвартай нэмнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "addToCart:"
+          },
+          "code": "const addToCart = () => setCart((c) => c + 1);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, FlatList, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\", price: \"159,000₮\" },\n  { id: \"2\", name: \"Гар цаг\", price: \"249,000₮\" },\n  { id: \"3\", name: \"Цүнх\", price: \"129,000₮\" },\n];\n\nfunction App() {\n  const [cart, setCart] = useState(0);\n  const addToCart = () => setCart((c) => c + 1);\n  return (\n    <View style={styles.s}>\n      <View style={styles.header}>\n        <Text style={styles.brand}>Shop.mn</Text>\n        <Text nativeID=\"cart\" style={styles.badge}>🛒 {cart}</Text>\n      </View>\n      <FlatList\n        data={PRODUCTS}\n        keyExtractor={(item) => item.id}\n        contentContainerStyle={styles.list}\n        renderItem={({ item }) => (\n          <View testID=\"row\" style={styles.card}>\n            <View style={styles.info}>\n              <Text style={styles.name}>{item.name}</Text>\n              <Text style={styles.price}>{item.price}</Text>\n            </View>\n            <Pressable testID=\"add\" style={styles.add} onPress={addToCart}><Text style={styles.addT}>+</Text></Pressable>\n          </View>\n        )}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, backgroundColor: \"#f8fafc\" },\n  header: { flexDirection: \"row\", justifyContent: \"space-between\", alignItems: \"center\", padding: 16, backgroundColor: \"#2563eb\" },\n  brand: { color: \"#fff\", fontSize: 20, fontWeight: \"bold\" }, badge: { color: \"#fff\", fontSize: 16, fontWeight: \"bold\" },\n  list: { padding: 16, gap: 12 },\n  card: { flexDirection: \"row\", alignItems: \"center\", backgroundColor: \"#fff\", padding: 16, borderRadius: 14, elevation: 2 },\n  info: { flexGrow: 1 }, name: { fontSize: 16, fontWeight: \"600\" }, price: { color: \"#2563eb\", fontWeight: \"bold\", marginTop: 4 },\n  add: { backgroundColor: \"#2563eb\", width: 40, height: 40, borderRadius: 20, alignItems: \"center\", justifyContent: \"center\" }, addT: { color: \"#fff\", fontSize: 22, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Энэ бол мобайл дэлгүүрийн зүрх: жагсаалт (FlatList), товшилт (Pressable), төлөв (useState), зохион байгуулалт (Flexbox header). Эдгээрийг чи бүх курсын туршид сурсан — одоо нэг апп болж нийллээ."
+        },
+        "xpPenalty": 14
+      },
+      "xp": 24,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Энэ апп ямар үндсэн ойлголтуудыг нэгтгэж байна вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн загвар"
+        },
+        {
+          "mn": "FlatList (жагсаалт), Pressable (товшилт), useState (төлөв), Flexbox (байрлал)"
+        },
+        {
+          "mn": "Зөвхөн Context"
+        },
+        {
+          "mn": "Зөвхөн анимаци"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Жагсаалт, товшилт, төлөв, байрлал — мобайл аппын үндсэн баганууд бүгд энд."
+      },
+      "hint": {
+        "mn": "Курсын гол сэдвүүдийг эргэн санаарай."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Сагсны тоог хаана хадгалж байна вэ?"
+      },
+      "options": [
+        {
+          "mn": "AsyncStorage-д"
+        },
+        {
+          "mn": "`useState` төлөвт (App component дотор)"
+        },
+        {
+          "mn": "Серверт"
+        },
+        {
+          "mn": "Context-д"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Энэ мини апп-д cart тоог App-ийн useState-д хадгалж байна. Том апп-д Context/reducer-т өргөтгөж болно."
+      },
+      "hint": {
+        "mn": "`const [cart, setCart] = ...` юу вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,243 @@
+{
+  "id": "rn19-l2",
+  "moduleId": "rn19-reducer",
+  "slug": "add-remove",
+  "order": 2,
+  "title": {
+    "mn": "Нэмэх ба хасах action"
+  },
+  "why": {
+    "mn": "Сагсны тоог нэмэхээс гадна бууруулж (буруу нэмсэн бол) болно. Нэг reducer доторх олон action-оор хоёр товчийг удирдана. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Нэмэх/хасах хоёр товч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useReducer",
+    "state"
+  ],
+  "prerequisites": [
+    "rn19-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useReducer } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction reducer(state, action) {\n  if (action.type === \"add\") return state + 1;\n  // энд бичнэ үү: \"remove\" action (0-ээс доош болохгүй)\n  return state;\n}\n\nfunction App() {\n  const [count, dispatch] = useReducer(reducer, 1);\n  return (\n    <View style={styles.row}>\n      <Pressable nativeID=\"minus\" style={styles.b} onPress={() => dispatch({ type: \"remove\" })}><Text style={styles.t}>−</Text></Pressable>\n      <Text nativeID=\"count\" style={styles.c}>{count}</Text>\n      <Pressable nativeID=\"plus\" style={styles.b} onPress={() => dispatch({ type: \"add\" })}><Text style={styles.t}>+</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  row: { flex: 1, flexDirection: \"row\", gap: 20, alignItems: \"center\", justifyContent: \"center\" },\n  c: { fontSize: 28, fontWeight: \"bold\", minWidth: 40, textAlign: \"center\" },\n  b: { backgroundColor: \"#2563eb\", width: 52, height: 52, borderRadius: 26, alignItems: \"center\", justifyContent: \"center\" }, t: { color: \"#fff\", fontSize: 22, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn19-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Нэмэх ба хасах action"
+      },
+      "statement": {
+        "mn": "`reducer`-т `\"remove\"` action нэм: `Math.max(0, state - 1)` буцааж, 0-ээс доош болгохгүй бууруул. «−» товч дархад тоо буурна."
+      },
+      "requirements": [
+        {
+          "mn": "`\"remove\"` action нэмсэн"
+        },
+        {
+          "mn": "0-ээс доош буухгүй"
+        },
+        {
+          "mn": "«−» дархад тоо буурна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«+» тоог нэмж, «−» бууруулна (0-оос доошгүй)."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#minus"
+              },
+              {
+                "expectText": {
+                  "selector": "#count",
+                  "equals": "0"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«−» дархад тоо буурахгүй байна (1→0)."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#minus"
+              },
+              {
+                "click": "#minus"
+              },
+              {
+                "expectText": {
+                  "selector": "#count",
+                  "equals": "0"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Тоо 0-ээс доош буугаад байна. `Math.max(0, ...)`-оо шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Нэг reducer дотор олон `if (action.type === ...)` бичиж олон үйлдлийг ялгана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`Math.max(0, state - 1)` нь хасахдаа 0-ээс доош болгохгүй хамгаална."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "remove action:"
+          },
+          "code": "if (action.type === \"remove\") return Math.max(0, state - 1);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useReducer } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction reducer(state, action) {\n  if (action.type === \"add\") return state + 1;\n  if (action.type === \"remove\") return Math.max(0, state - 1);\n  return state;\n}\n\nfunction App() {\n  const [count, dispatch] = useReducer(reducer, 1);\n  return (\n    <View style={styles.row}>\n      <Pressable nativeID=\"minus\" style={styles.b} onPress={() => dispatch({ type: \"remove\" })}><Text style={styles.t}>−</Text></Pressable>\n      <Text nativeID=\"count\" style={styles.c}>{count}</Text>\n      <Pressable nativeID=\"plus\" style={styles.b} onPress={() => dispatch({ type: \"add\" })}><Text style={styles.t}>+</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  row: { flex: 1, flexDirection: \"row\", gap: 20, alignItems: \"center\", justifyContent: \"center\" },\n  c: { fontSize: 28, fontWeight: \"bold\", minWidth: 40, textAlign: \"center\" },\n  b: { backgroundColor: \"#2563eb\", width: 52, height: 52, borderRadius: 26, alignItems: \"center\", justifyContent: \"center\" }, t: { color: \"#fff\", fontSize: 22, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Нэг reducer олон action төрлийг зохицуулснаар холбоотой логик нэг дор цугларна. `Math.max(0, ...)` нь буруу төлвөөс (сөрөг тоо) хамгаалдаг — reducer дотор дүрмээ мөрдүүлэх сайхан жишээ."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Нэг reducer олон action-ыг яаж зохицуулдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Боломжгүй"
+        },
+        {
+          "mn": "`action.type`-аар салгасан олон `if` (эсвэл switch)-ээр"
+        },
+        {
+          "mn": "Олон reducer хэрэгтэй"
+        },
+        {
+          "mn": "Санамсаргүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "reducer нь action.type бүрд өөр төлөв буцаадаг — олон if эсвэл switch."
+      },
+      "hint": {
+        "mn": "Төрөл бүрийг юугаар ялгах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`Math.max(0, state - 1)` юунаас хамгаалж байна вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хэт их болохоос"
+        },
+        {
+          "mn": "Тоо сөрөг (0-ээс доош) болохоос"
+        },
+        {
+          "mn": "Алдаанаас"
+        },
+        {
+          "mn": "Юунаас ч биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хасах үед 0-ээс доош буухгүй — сагсны тоо сөрөг байж болохгүй."
+      },
+      "hint": {
+        "mn": "Сагсанд −1 бараа байж болох уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

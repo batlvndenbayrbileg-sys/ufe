@@ -1,0 +1,233 @@
+{
+  "id": "rn11-l7",
+  "moduleId": "rn11-flatlist-adv",
+  "slug": "pull-to-refresh",
+  "order": 7,
+  "title": {
+    "mn": "RefreshControl — татаж шинэчлэх"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн жагсаалтыг доош татаж шинэ бараа ачаалдаг («pull-to-refresh»). `refreshControl` prop болон `RefreshControl` компонент энэ зан төлвийг өгнө."
+  },
+  "buildsInProject": "Татаж шинэчилдэг барааны жагсаалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-lists",
+    "mobile-state"
+  ],
+  "concepts": [
+    "FlatList",
+    "RefreshControl",
+    "useState"
+  ],
+  "prerequisites": [
+    "rn11-l6"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, FlatList, RefreshControl, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst BASE = [\n  { id: \"p1\", name: \"Утасгүй чихэвч\", price: \"159,000₮\" },\n  { id: \"p2\", name: \"Гар цаг X100\", price: \"249,000₮\" },\n  { id: \"p3\", name: \"Нарны шил\", price: \"89,000₮\" },\n];\nconst FRESH = { id: \"p0\", name: \"Шинэ: Ухаалаг бугуйвч\", price: \"399,000₮\" };\n\nfunction App() {\n  const [items, setItems] = useState(BASE);\n  const [refreshing, setRefreshing] = useState(false);\n  const onRefresh = () => {\n    setItems([FRESH, ...BASE]);\n  };\n  // энд бичнэ үү: FlatList-д refreshControl={<RefreshControl .../>} нэм\n  return (\n    <FlatList\n      style={styles.list}\n      data={items}\n      keyExtractor={(item) => item.id}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text style={styles.name}>{item.name}</Text>\n          <Text style={styles.price}>{item.price}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  list: { flex: 1, backgroundColor: \"#f8fafc\" },\n  row: { flexDirection: \"row\", justifyContent: \"space-between\", padding: 16, backgroundColor: \"#fff\" },\n  name: { fontSize: 16 },\n  price: { fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn11-l7-t1",
+      "order": 1,
+      "title": {
+        "mn": "RefreshControl — татаж шинэчлэх"
+      },
+      "statement": {
+        "mn": "FlatList-д `refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}` нэм. Шинэчлэх товч дархад `onRefresh` ажиллаж, жагсаалтын дээр шинэ бараа нэмэгдэнэ (3 → 4)."
+      },
+      "requirements": [
+        {
+          "mn": "`refreshControl` нэмсэн"
+        },
+        {
+          "mn": "`RefreshControl`-д `onRefresh` холбосон"
+        },
+        {
+          "mn": "Шинэчлэхэд жагсаалт 4 бараа болно"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«↻ Дахин ачаалах» дархад жагсаалтын дээр «Шинэ: Ухаалаг бугуйвч» нэмэгдэж 4 бараа болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.exists",
+          "args": {
+            "selector": "[data-rn=\"refresh-button\"]"
+          },
+          "onFail": {
+            "mn": "`refreshControl` (`RefreshControl`) нэмээгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "[data-rn=\"refresh-button\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"product\"]",
+                  "equals": 4
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Шинэчлэх дархад жагсаалт шинэчлэгдэхгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`RefreshControl` нь ганцаараа биш, FlatList-ийн `refreshControl` prop-д өгдөг: `refreshControl={<RefreshControl ... />}`."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`RefreshControl`-д хоёр зүйл өгнө: `refreshing` (одоо ачаалж байгаа эсэх) ба `onRefresh` (татах үед дуудагдах функц)."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "FlatList-д prop нэм:"
+          },
+          "code": "refreshControl={\n  <RefreshControl refreshing={refreshing} onRefresh={/* функц */} />\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, FlatList, RefreshControl, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst BASE = [\n  { id: \"p1\", name: \"Утасгүй чихэвч\", price: \"159,000₮\" },\n  { id: \"p2\", name: \"Гар цаг X100\", price: \"249,000₮\" },\n  { id: \"p3\", name: \"Нарны шил\", price: \"89,000₮\" },\n];\nconst FRESH = { id: \"p0\", name: \"Шинэ: Ухаалаг бугуйвч\", price: \"399,000₮\" };\n\nfunction App() {\n  const [items, setItems] = useState(BASE);\n  const [refreshing, setRefreshing] = useState(false);\n  const onRefresh = () => {\n    setItems([FRESH, ...BASE]);\n  };\n  return (\n    <FlatList\n      style={styles.list}\n      data={items}\n      keyExtractor={(item) => item.id}\n      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text style={styles.name}>{item.name}</Text>\n          <Text style={styles.price}>{item.price}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  list: { flex: 1, backgroundColor: \"#f8fafc\" },\n  row: { flexDirection: \"row\", justifyContent: \"space-between\", padding: 16, backgroundColor: \"#fff\" },\n  name: { fontSize: 16 },\n  price: { fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`RefreshControl`-ийг FlatList (эсвэл ScrollView)-ийн `refreshControl` prop-д өгнө. Хэрэглэгч доош татахад `onRefresh` дуудагдаж, шинэ өгөгдөл ачаалдаг — «pull-to-refresh» хэв маяг."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-lists",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`RefreshControl`-ийг хаана өгдөг вэ?"
+      },
+      "options": [
+        {
+          "mn": "renderItem дотор"
+        },
+        {
+          "mn": "FlatList-ийн `refreshControl` prop-д"
+        },
+        {
+          "mn": "keyExtractor-д"
+        },
+        {
+          "mn": "data массивд"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "FlatList/ScrollView-ийн `refreshControl` prop-д элемент болгон өгнө."
+      },
+      "hint": {
+        "mn": "Аль prop нь refresh гэсэн үгтэй вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`onRefresh` хэзээ дуудагдах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Апп нээгдэхэд"
+        },
+        {
+          "mn": "Хэрэглэгч жагсаалтыг доош татаж шинэчлэхэд"
+        },
+        {
+          "mn": "Мөр дархад"
+        },
+        {
+          "mn": "Хэзээ ч үгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хэрэглэгч дээрээс доош татах (pull) үед `onRefresh` дуудагдана."
+      },
+      "hint": {
+        "mn": "«Refresh» = шинэчлэх. Хэн эхлүүлэх вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

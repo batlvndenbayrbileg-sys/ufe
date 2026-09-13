@@ -1,0 +1,105 @@
+{
+  "id": "mp-101",
+  "slug": "mobile-programming",
+  "title": {
+    "mn": "Мобайл программчлал (React Native)",
+    "en": "Mobile Programming (React Native)"
+  },
+  "description": {
+    "mn": "Shop.mn дэлгүүрийг энэ удаа гар утасны апп болгон React Native дээр бүтээ."
+  },
+  "level": "intermediate",
+  "stages": [
+    {
+      "id": "s1",
+      "order": 1,
+      "title": { "mn": "React Native эхлэл" },
+      "badgeId": "rn-starter",
+      "moduleIds": ["rn1-basics"]
+    },
+    {
+      "id": "s2",
+      "order": 2,
+      "title": { "mn": "Дүрс ба гүйлгээ" },
+      "badgeId": "rn-visual",
+      "moduleIds": ["rn2-visual"]
+    },
+    {
+      "id": "s3",
+      "order": 3,
+      "title": { "mn": "Харилцан үйлдэл" },
+      "badgeId": "rn-interactive",
+      "moduleIds": ["rn3-interaction"]
+    },
+    {
+      "id": "s4",
+      "order": 4,
+      "title": { "mn": "Жагсаалт (FlatList)" },
+      "badgeId": "rn-lists",
+      "moduleIds": ["rn4-lists"]
+    },
+    {
+      "id": "s5",
+      "order": 5,
+      "title": { "mn": "Дэлгэц ба өгөгдөл" },
+      "badgeId": "rn-app",
+      "moduleIds": ["rn5-screens", "rn6-data"]
+    },
+    {
+      "id": "s6",
+      "order": 6,
+      "title": { "mn": "Layout ба загвар" },
+      "badgeId": "rn-layout",
+      "moduleIds": ["rn7-layout", "rn8-styling"]
+    },
+    {
+      "id": "s7",
+      "order": 7,
+      "title": { "mn": "Форм ба оролт" },
+      "badgeId": "rn-forms",
+      "moduleIds": ["rn9-forms", "rn10-validation"]
+    },
+    {
+      "id": "s8",
+      "order": 8,
+      "title": { "mn": "Жагсаалтын нарийвчлал" },
+      "badgeId": "rn-lists-pro",
+      "moduleIds": ["rn11-flatlist-adv", "rn12-sectionlist"]
+    },
+    {
+      "id": "s9",
+      "order": 9,
+      "title": { "mn": "Навигаци" },
+      "badgeId": "rn-nav",
+      "moduleIds": ["rn13-navigation", "rn14-tabs"]
+    },
+    {
+      "id": "s10",
+      "order": 10,
+      "title": { "mn": "Сүлжээ ба өгөгдөл" },
+      "badgeId": "rn-network",
+      "moduleIds": ["rn15-networking", "rn16-mutations"]
+    },
+    {
+      "id": "s11",
+      "order": 11,
+      "title": { "mn": "Hooks ба төлөв удирдлага" },
+      "badgeId": "rn-hooks",
+      "moduleIds": ["rn17-hooks", "rn18-context", "rn19-reducer"]
+    },
+    {
+      "id": "s12",
+      "order": 12,
+      "title": { "mn": "Анимаци ба Modal" },
+      "badgeId": "rn-polish",
+      "moduleIds": ["rn20-animation", "rn21-modal-device"]
+    },
+    {
+      "id": "s13",
+      "order": 13,
+      "title": { "mn": "Чанар ба гаргалт" },
+      "badgeId": "rn-pro",
+      "moduleIds": ["rn22-quality"]
+    }
+  ]
+}

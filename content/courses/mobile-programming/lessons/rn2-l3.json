@@ -1,0 +1,251 @@
+{
+  "id": "rn2-l3",
+  "moduleId": "rn2-visual",
+  "slug": "product-list",
+  "order": 3,
+  "title": {
+    "mn": "Бүтээгдэхүүний жагсаалт"
+  },
+  "why": {
+    "mn": "Одоо олон бараагаа нэг дор харуулъя. Массиваа `.map()`-оор эргүүлж, бүтээгдэхүүн бүрд карт үүсгэнэ. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Гүйдэг бүтээгдэхүүний жагсаалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 15,
+  "skills": [
+    "react-native",
+    "mobile-ui",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "ScrollView",
+    "View",
+    "component"
+  ],
+  "prerequisites": [
+    "rn2-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { ScrollView, View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\", price: \"159,000₮\" },\n  { id: \"2\", name: \"Гар цаг\", price: \"249,000₮\" },\n  { id: \"3\", name: \"Нарны шил\", price: \"89,000₮\" },\n  { id: \"4\", name: \"Цүнх\", price: \"129,000₮\" },\n];\n\nfunction App() {\n  return (\n    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>\n      {/* энд бичнэ үү: PRODUCTS-ийг карт болгон харуул */}\n    </ScrollView>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\" },\n  content: { padding: 16, gap: 12 },\n  card: { backgroundColor: \"#ffffff\", padding: 16, borderRadius: 14, flexDirection: \"row\", justifyContent: \"space-between\" },\n  name: { fontSize: 16, fontWeight: \"600\" },\n  price: { fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn2-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Бүтээгдэхүүний жагсаалт"
+      },
+      "statement": {
+        "mn": "`PRODUCTS` массивыг `.map()`-оор эргүүлж, бүтээгдэхүүн бүрд карт (`<View testID=\"product\">`) үүсгэ. Карт бүрд нэр ба үнийг мөр болгон харуул. `key`-д `p.id` өг."
+      },
+      "requirements": [
+        {
+          "mn": "`PRODUCTS.map(...)` ашигласан"
+        },
+        {
+          "mn": "Карт бүр `testID=\"product\"`-тэй"
+        },
+        {
+          "mn": "4 бүтээгдэхүүн бүгд харагдана"
+        },
+        {
+          "mn": "Нэр ба үнэ хоёулаа харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "4 бүтээгдэхүүн карт болон жагсаж, нэр зүүн, үнэ баруун талд харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "map"
+          },
+          "onFail": {
+            "mn": "`PRODUCTS.map(...)` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"product\"]",
+            "equals": 4
+          },
+          "onFail": {
+            "mn": "4 бүтээгдэхүүний карт харагдах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.text",
+          "args": {
+            "selector": "#root",
+            "contains": "Чихэвч"
+          },
+          "onFail": {
+            "mn": "Бүтээгдэхүүний нэр (жишээ нь `Чихэвч`) харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "dom.text",
+          "args": {
+            "selector": "#root",
+            "contains": "159,000₮"
+          },
+          "onFail": {
+            "mn": "Бүтээгдэхүүний үнэ харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Массивын элемент бүрийг картан харуулах = `.map()`. Функц нь бүтээгдэхүүн бүрд нэг `<View>` буцаана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`key` нь массивын элемент тус бүрийн ялгаатай утга байх ёстой — энд `p.id` тохирно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": ".map() бүтэц:"
+          },
+          "code": "{PRODUCTS.map((p) => (\n  <View key={p.id} testID=\"product\" style={styles.card}>\n    <Text style={styles.name}>{p.name}</Text>\n    <Text style={styles.price}>{p.price}</Text>\n  </View>\n))}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { ScrollView, View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\", price: \"159,000₮\" },\n  { id: \"2\", name: \"Гар цаг\", price: \"249,000₮\" },\n  { id: \"3\", name: \"Нарны шил\", price: \"89,000₮\" },\n  { id: \"4\", name: \"Цүнх\", price: \"129,000₮\" },\n];\n\nfunction App() {\n  return (\n    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>\n      {PRODUCTS.map((p) => (\n        <View key={p.id} testID=\"product\" style={styles.card}>\n          <Text style={styles.name}>{p.name}</Text>\n          <Text style={styles.price}>{p.price}</Text>\n        </View>\n      ))}\n    </ScrollView>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\" },\n  content: { padding: 16, gap: 12 },\n  card: { backgroundColor: \"#ffffff\", padding: 16, borderRadius: 14, flexDirection: \"row\", justifyContent: \"space-between\" },\n  name: { fontSize: 16, fontWeight: \"600\" },\n  price: { fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`.map()` нь бүтээгдэхүүний массивыг картын массив болгон хувиргаж, React бүгдийг дараалуулан зурна. Ийм загвар бол жинхэнэ дэлгүүрийн жагсаалтын үндэс — дараагийн шатанд үүнийг `FlatList`-ээр илүү хурдан болгоно."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 13,
+      "skills": [
+        "react-native",
+        "mobile-ui",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Бүтээгдэхүүний массиваас олон карт хэрхэн үүсгэдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Карт бүрийг гараар бичнэ"
+        },
+        {
+          "mn": "`.map()`-оор массивыг эргүүлж, элемент бүрд карт буцаана"
+        },
+        {
+          "mn": "`for` давталтыг JSX дотор шууд бичнэ"
+        },
+        {
+          "mn": "ScrollView өөрөө үүсгэнэ"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`.map()` нь массивын элемент бүрийг JSX элемент болгож, React-д дараалуулан зуруулна."
+      },
+      "hint": {
+        "mn": "Массивыг элементийн массив болгож хувиргадаг арга юу байсан бэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Энэ жагсаалт хэдэн бараа их болоход ямар асуудал гарч болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Огт асуудалгүй"
+        },
+        {
+          "mn": "Бүгдийг нэг дор зурдаг тул олон мянган бараанд удаашрах — тийм үед FlatList хэрэгтэй"
+        },
+        {
+          "mn": "Өнгө алдагдана"
+        },
+        {
+          "mn": "Зураг харагдахгүй болно"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`.map()` + `ScrollView` нь БҮХ элементийг нэг дор зурдаг. Олон мянган бараанд удаан болно — тэр үед зөвхөн харагдахыг нь зурдаг `FlatList` хэрэгтэй."
+      },
+      "hint": {
+        "mn": "10,000 бараа байвал бүгдийг нэг дор зурах нь ухаалаг уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30,
+    "badge": "rn-visual"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

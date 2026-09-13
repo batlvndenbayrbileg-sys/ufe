@@ -1,0 +1,20 @@
+{
+  "id": "rn10-validation",
+  "stageId": "s7",
+  "order": 2,
+  "title": {
+    "mn": "Шалгах ба алдаа"
+  },
+  "description": {
+    "mn": "Талбар шалгаж, алдаа харуулж, зөв үед л илгээдэг найдвартай форм."
+  },
+  "estimatedHours": 6,
+  "lessons": [
+    "rn10-l1",
+    "rn10-l2",
+    "rn10-l3",
+    "rn10-l4",
+    "rn10-l5",
+    "rn10-l6"
+  ]
+}

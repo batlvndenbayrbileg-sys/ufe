@@ -1,0 +1,218 @@
+{
+  "id": "rn18-l4",
+  "moduleId": "rn18-context",
+  "slug": "global-cart",
+  "order": 4,
+  "title": {
+    "mn": "Глобал сагс — Context + төлөв"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн сагс нь нэг газар амьдарч, аль ч дэлгэц нэмж, толгой дээрх badge шинэчлэгдэх ёстой. Context дотор `useState` тавьж глобал сагс болгоно."
+  },
+  "buildsInProject": "Аль ч дэлгэцээс нэмэгддэг глобал сагс",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useContext",
+    "useState",
+    "component"
+  ],
+  "prerequisites": [
+    "rn18-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { createContext, useContext, useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst CartContext = createContext({ count: 0, add: () => {} });\n\nfunction Badge() {\n  const { count } = useContext(CartContext);\n  return <Text nativeID=\"badge\" style={styles.badge}>Сагс: {count}</Text>;\n}\nfunction AddButton() {\n  const { add } = useContext(CartContext);\n  return <Pressable nativeID=\"add\" style={styles.b} onPress={add}><Text style={styles.t}>Сагслах</Text></Pressable>;\n}\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  const add = () => setCount((c) => c + 1);\n  return (\n    // энд бичнэ үү: Provider value={{ count, add }}\n    <View style={styles.s}>\n      <Badge />\n      <AddButton />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 16, alignItems: \"center\", justifyContent: \"center\" },\n  badge: { fontSize: 22, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn18-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Глобал сагс — Context + төлөв"
+      },
+      "statement": {
+        "mn": "`App`-ийн буцаалтыг `<CartContext.Provider value={{ count, add }}>`-оор ороо. Ингэснээр `Badge` тоог, `AddButton` `add` функцийг Context-оос авна. «Сагслах» дархад badge шинэчлэгдэнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`Provider value={{ count, add }}`"
+        },
+        {
+          "mn": "«Сагслах» дархад badge нэмэгдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Тусдаа байрлах товч дархад толгой дээрх сагсны тоо нэмэгдэнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#add"
+              },
+              {
+                "expectText": {
+                  "selector": "#badge",
+                  "contains": "1"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Сагслах» дархад badge шинэчлэгдэхгүй байна. Provider-ийн value-г шалга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Төлөв (`count`) ба түүнийг өөрчлөх функц (`add`)-ийг хоёуланг нь `value`-д хийж түгээ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`value={{ count, add }}` — Badge count-г, AddButton add-г Context-оос салган авна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Provider:"
+          },
+          "code": "<CartContext.Provider value={{ count, add }}>\n  ...\n</CartContext.Provider>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { createContext, useContext, useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst CartContext = createContext({ count: 0, add: () => {} });\n\nfunction Badge() {\n  const { count } = useContext(CartContext);\n  return <Text nativeID=\"badge\" style={styles.badge}>Сагс: {count}</Text>;\n}\nfunction AddButton() {\n  const { add } = useContext(CartContext);\n  return <Pressable nativeID=\"add\" style={styles.b} onPress={add}><Text style={styles.t}>Сагслах</Text></Pressable>;\n}\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  const add = () => setCount((c) => c + 1);\n  return (\n    <CartContext.Provider value={{ count, add }}>\n      <View style={styles.s}>\n        <Badge />\n        <AddButton />\n      </View>\n    </CartContext.Provider>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 16, alignItems: \"center\", justifyContent: \"center\" },\n  badge: { fontSize: 22, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Context дотор `useState` тавьж, `value`-д төлөв ба өөрчлөгч функцийг хамт түгээснээр «глобал төлөв» болно. Аль ч component нэмж, бүгд синхрон шинэчлэгдэнэ."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Глобал сагс болгохын тулд `value`-д юу түгээх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн тоо"
+        },
+        {
+          "mn": "Төлөв БА түүнийг өөрчлөх функцийг хоёуланг нь"
+        },
+        {
+          "mn": "Зөвхөн функц"
+        },
+        {
+          "mn": "Загвар"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "count ба add хоёуланг нь түгээснээр аль ч дэлгэц уншиж, өөрчилж чадна."
+      },
+      "hint": {
+        "mn": "Уншихад тоо, өөрчлөхөд функц — хэдийг нь өгөх вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Badge ба AddButton хоорондоо шууд холбоогүй ч яагаад синхрон ажиллана вэ?"
+      },
+      "options": [
+        {
+          "mn": "Санамсаргүй"
+        },
+        {
+          "mn": "Хоёулаа нэг Context-ийн нэг төлвийг хуваалцдаг тул"
+        },
+        {
+          "mn": "Prop дамжуулсан тул"
+        },
+        {
+          "mn": "Ижил файлд тул"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хоёулаа нэг Provider-ийн count-г уншдаг тул нэг нь өөрчлөхөд нөгөө нь дахин зурагдана."
+      },
+      "hint": {
+        "mn": "Хоёулаа юуг харж байна вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "id": "rn10-l3",
+  "moduleId": "rn10-validation",
+  "slug": "error-below-field",
+  "order": 3,
+  "title": {
+    "mn": "Алдааны мессежийг улаанаар харуулах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн формд алдаа тухайн талбарын доор улаанаар гарч, юуг засахыг тодорхой заана. Алдааны текстэд улаан өнгө өгч анхаарал татна."
+  },
+  "buildsInProject": "Талбарын доорх улаан алдааны мессеж",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "style",
+    "conditional-rendering",
+    "state"
+  ],
+  "prerequisites": [
+    "rn10-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [phone, setPhone] = useState(\"123\");\n  const invalid = phone.length !== 8;\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"phone\" style={styles.input} placeholder=\"Утас (8 орон)\" keyboardType=\"numeric\"\n        value={phone} onChangeText={setPhone} />\n      {invalid && <Text nativeID=\"err\" style={styles.errBase}>Утас 8 оронтой байх ёстой</Text>}\n      {/* энд бичнэ үү: errBase-д улаан өнгө (color: \"#dc2626\") өг */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 8, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  errBase: { fontSize: 13 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn10-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Алдааны мессежийг улаанаар харуулах"
+      },
+      "statement": {
+        "mn": "`errBase` загварт `color: \"#dc2626\"` нэмж, алдааны мессежийг улаанаар харуул. Утас 8 оронтой болтол алдаа талбарын доор улаанаар харагдана."
+      },
+      "requirements": [
+        {
+          "mn": "`errBase`-д `color: \"#dc2626\"`"
+        },
+        {
+          "mn": "Алдаа улаанаар талбарын доор гарна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Утас 8 оронтой байх ёстой» гэсэн улаан бичиг талбарын доор гарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#err"
+          },
+          "onFail": {
+            "mn": "Алдааны мессеж (`err`) харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "css.computed",
+          "args": {
+            "selector": "#err",
+            "prop": "color",
+            "equals": "#dc2626"
+          },
+          "onFail": {
+            "mn": "Алдааны текст улаан (#dc2626) биш байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Алдааны текстийг улаанаар харуулбал хэрэглэгч шууд анзаарна. Улаан = #dc2626."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`errBase` загварт `color` шинжийг нэмнэ. Байрлал нь аль хэдийн талбарын доор."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "errBase загварт нэм:"
+          },
+          "code": "errBase: {\n  fontSize: 13,\n  color: \"#dc2626\", // улаан\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [phone, setPhone] = useState(\"123\");\n  const invalid = phone.length !== 8;\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"phone\" style={styles.input} placeholder=\"Утас (8 орон)\" keyboardType=\"numeric\"\n        value={phone} onChangeText={setPhone} />\n      {invalid && <Text nativeID=\"err\" style={styles.errBase}>Утас 8 оронтой байх ёстой</Text>}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 8, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  errBase: { fontSize: 13, color: \"#dc2626\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Алдааны мессежийг холбогдох талбарынхаа доор, улаанаар байрлуулах нь нийтлэг дадал — хэрэглэгч юуг, хаана засахаа шууд ойлгоно."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Алдааны мессежийг ихэвчлэн ямар өнгөөр харуулдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Ногоон"
+        },
+        {
+          "mn": "Улаан"
+        },
+        {
+          "mn": "Саарал"
+        },
+        {
+          "mn": "Цэнхэр"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Улаан нь анхаарал татах, алдааг илэрхийлэх стандарт өнгө."
+      },
+      "hint": {
+        "mn": "Түгжрэлийн улайх гэрэл юуг зааж байна?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Алдааны мессежийг хаана байрлуулах нь зохимжтой вэ?"
+      },
+      "options": [
+        {
+          "mn": "Дэлгэцийн дээд буланд"
+        },
+        {
+          "mn": "Холбогдох талбарынхаа доор"
+        },
+        {
+          "mn": "Далд"
+        },
+        {
+          "mn": "Товч дотор"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Талбарынхаа доор байрлуулбал аль талбарт хамаарахыг шууд ойлгоно."
+      },
+      "hint": {
+        "mn": "Аль талбарын алдаа болохыг яаж ойлгуулах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

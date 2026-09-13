@@ -1,0 +1,20 @@
+{
+  "id": "rn7-layout",
+  "stageId": "s6",
+  "order": 1,
+  "title": {
+    "mn": "Гүнзгий Flexbox"
+  },
+  "description": {
+    "mn": "flex, alignSelf, wrap, absolute байрлал — ямар ч дэлгэцийг яг хүссэнээр байрлуул."
+  },
+  "estimatedHours": 6,
+  "lessons": [
+    "rn7-l1",
+    "rn7-l2",
+    "rn7-l3",
+    "rn7-l4",
+    "rn7-l5",
+    "rn7-l6"
+  ]
+}

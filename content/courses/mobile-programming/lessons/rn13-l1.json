@@ -1,0 +1,247 @@
+{
+  "id": "rn13-l1",
+  "moduleId": "rn13-navigation",
+  "slug": "screen-state",
+  "order": 1,
+  "title": {
+    "mn": "Төлөвт суурилсан дэлгэц солих"
+  },
+  "why": {
+    "mn": "Shop.mn апп нэг дэлгэцээс нөгөө рүү шилжих ёстой. Номын сан ашиглахгүйгээр `screen` төлөвийг useState-д хадгалж, түүнээс хамааруулж аль дэлгэцийг үзүүлэхээ шийднэ."
+  },
+  "buildsInProject": "Жагсаалт ↔ дэлгэрэнгүй дэлгэц солих",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useState",
+    "state",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn12-l6"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [screen, setScreen] = useState(\"list\");\n  // энд бичнэ үү: screen === \"detail\" бол дэлгэрэнгүй дэлгэцийг буцаа\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.h}>Shop.mn</Text>\n      <Pressable nativeID=\"open\" style={styles.btn}>\n        <Text style={styles.btnText}>Дэлгэрэнгүй үзэх</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 16, justifyContent: \"center\" },\n  h: { fontSize: 24, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn13-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Төлөвт суурилсан дэлгэц солих"
+      },
+      "statement": {
+        "mn": "`screen` төлөвийг ашигла. `screen === \"detail\"` үед дэлгэрэнгүй дэлгэц (nativeID \"detail\") буцааж, буцах товч дархад `setScreen(\"list\")` дуудна. Жагсаалтын дэлгэц дэх «Дэлгэрэнгүй үзэх» товч `setScreen(\"detail\")` дуудна."
+      },
+      "requirements": [
+        {
+          "mn": "`screen` төлвөөс хамааруулж дэлгэц сонгосон"
+        },
+        {
+          "mn": "«Дэлгэрэнгүй үзэх» дархад detail дэлгэц гарна"
+        },
+        {
+          "mn": "«Буцах» дархад list дэлгэц рүү эргэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Товч дархад дэлгэрэнгүй дэлгэц гарч, «Буцах» дархад жагсаалт руу эргэж ирнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useState"
+          },
+          "onFail": {
+            "mn": "useState ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#open"
+              },
+              {
+                "waitFor": "#detail"
+              },
+              {
+                "expectText": {
+                  "selector": "#detail",
+                  "contains": "Дэлгэрэнгүй"
+                }
+              },
+              {
+                "click": "#back"
+              },
+              {
+                "waitFor": "#list"
+              },
+              {
+                "expectText": {
+                  "selector": "#list",
+                  "contains": "Shop"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дэлгэц солигдохгүй байна. screen төлвөөр нөхцөлт зурж, товчнуудад setScreen дуудсан эсэхээ шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Одоогийн дэлгэцийг нэг мөр текст (`\"list\"` / `\"detail\"`) болгон санаж, түүнээс хамааруулж өөр өөр JSX буцаа."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`if (screen === \"detail\") return (...)` — эрт буцаах нь дэлгэц солих хамгийн энгийн арга. Товчны `onPress`-д `setScreen(...)` дууд."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Нөхцөлт дэлгэц:"
+          },
+          "code": "if (screen === \"detail\") {\n  return (\n    <View>\n      <Text nativeID=\"detail\">Дэлгэрэнгүй</Text>\n      <Pressable nativeID=\"back\" onPress={() => setScreen(\"list\")}>...</Pressable>\n    </View>\n  );\n}\n// доор нь list дэлгэц"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [screen, setScreen] = useState(\"list\");\n  if (screen === \"detail\") {\n    return (\n      <View style={styles.screen}>\n        <Text nativeID=\"detail\" style={styles.h}>Дэлгэрэнгүй</Text>\n        <Text>Утасгүй чихэвч — 159,000₮</Text>\n        <Pressable nativeID=\"back\" style={styles.btn} onPress={() => setScreen(\"list\")}>\n          <Text style={styles.btnText}>← Буцах</Text>\n        </Pressable>\n      </View>\n    );\n  }\n  return (\n    <View style={styles.screen}>\n      <Text nativeID=\"list\" style={styles.h}>Shop.mn</Text>\n      <Pressable nativeID=\"open\" style={styles.btn} onPress={() => setScreen(\"detail\")}>\n        <Text style={styles.btnText}>Дэлгэрэнгүй үзэх</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 16, justifyContent: \"center\" },\n  h: { fontSize: 24, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Навигацийн номын сангүйгээр ч болно: одоогийн дэлгэцийг useState-д хадгалж, төлвөөс хамааруулж өөр JSX зурахад л дэлгэц «солигдоно». Энэ бол RN навигацийн үндсэн санаа."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Дэлгэц солих хамгийн энгийн санаа юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хуудас дахин ачаалах"
+        },
+        {
+          "mn": "Одоогийн дэлгэцийг төлөвт хадгалж, түүнээс хамааруулж өөр JSX зурах"
+        },
+        {
+          "mn": "Файл солих"
+        },
+        {
+          "mn": "window.location"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Одоогийн дэлгэцийг useState-д санаж, төлвөөс хамааруулж нөхцөлт зурна."
+      },
+      "hint": {
+        "mn": "React дахин зурахдаа юунаас хамаардаг вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "«Буцах» товч юу хийх ёстой вэ?"
+      },
+      "options": [
+        {
+          "mn": "Аппыг хаах"
+        },
+        {
+          "mn": "`setScreen(\"list\")` дуудаж жагсаалтын төлөв рүү эргүүлэх"
+        },
+        {
+          "mn": "Хуудас дахин ачаалах"
+        },
+        {
+          "mn": "Юу ч биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Буцах гэдэг нь өмнөх дэлгэцийн төлөв рүү setScreen дуудахтай адил."
+      },
+      "hint": {
+        "mn": "Дэлгэц = төлөв. Буцах = төлвийг өмнөх рүү тавих."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

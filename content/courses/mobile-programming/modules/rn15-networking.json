@@ -1,0 +1,21 @@
+{
+  "id": "rn15-networking",
+  "stageId": "s10",
+  "order": 1,
+  "title": {
+    "mn": "Өгөгдөл татах"
+  },
+  "description": {
+    "mn": "fetch, loading/error/empty төлөв, retry, хайлт — сервертэй ажиллах."
+  },
+  "estimatedHours": 7,
+  "lessons": [
+    "rn15-l1",
+    "rn15-l2",
+    "rn15-l3",
+    "rn15-l4",
+    "rn15-l5",
+    "rn15-l6",
+    "rn15-l7"
+  ]
+}

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { motion, type Variants } from "framer-motion";
-import { Check, CircleCheckBig, Lock, LockOpen, Play } from "lucide-react";
+import { Check, CircleCheckBig, Lock, LockOpen, Play, Sparkles, ArrowRight } from "lucide-react";
 import { Alert, AppShell, Badge, Button, Card, ProgressBar, Spinner, ThemeToggle } from "@khiye/ui";
 
 // Cards rise in with a small stagger as the map loads.
@@ -13,6 +14,7 @@ const rise: Variants = {
 };
 import { loadProgress, lessonProgress, type Progress } from "@/lib/progress";
 import { useIsAdmin } from "@/lib/admin";
+import { getIntroDeck, hasSeenIntro } from "@/lib/courseIntro";
 import { flattenLessons, isLessonAccessible } from "../../course-types";
 import { useCourseMap } from "../../useCourseMap";
 import styles from "./courseMap.module.css";
@@ -20,8 +22,12 @@ import styles from "./courseMap.module.css";
 type State = "done" | "current" | "locked";
 
 export function CourseMap() {
-  const { map, error, reload } = useCourseMap();
+  const params = useParams<{ courseId: string }>();
+  const slug = typeof params.courseId === "string" ? params.courseId : "internet-programming";
+  const { map, error, reload } = useCourseMap(slug);
+  const router = useRouter();
   const isAdmin = useIsAdmin();
+  const introDeck = getIntroDeck(slug);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [openStages, setOpenStages] = useState<Set<string> | null>(null);
 
@@ -66,6 +72,15 @@ export function CourseMap() {
     }
     return { byStage, done, total };
   }, [map, states]);
+
+  // First-time visitors (no progress yet) get the code-free intro deck once,
+  // before their first lesson. The deck stamps a "seen" flag so this fires once.
+  useEffect(() => {
+    if (!map || !progress || !introDeck) return;
+    if (counts.total > 0 && counts.done === 0 && !hasSeenIntro(slug)) {
+      router.replace(`/app/course/${slug}/intro`);
+    }
+  }, [map, progress, introDeck, counts.done, counts.total, slug, router]);
 
   const currentStageId = useMemo(() => {
     if (!map) return null;
@@ -147,6 +162,21 @@ export function CourseMap() {
           />
         </Card>
         </motion.div>
+
+        {introDeck ? (
+          <motion.div variants={rise}>
+            <a href={`/app/course/${slug}/intro`} className={styles.introBanner}>
+              <span className={styles.introIcon} aria-hidden>
+                <Sparkles size={20} strokeWidth={2.4} />
+              </span>
+              <span className={styles.introText}>
+                <strong>Курсын танилцуулга</strong>
+                <span>Энэ курс юу заадаг, юунд хэрэгтэй, ямар технологи ашиглахыг эхлэхийн өмнө үзээрэй.</span>
+              </span>
+              <ArrowRight size={18} strokeWidth={2.4} className={styles.introArrow} />
+            </a>
+          </motion.div>
+        ) : null}
 
         {map.stages.map((stage) => {
           const count = counts.byStage.get(stage.id) ?? { done: 0, total: 0 };

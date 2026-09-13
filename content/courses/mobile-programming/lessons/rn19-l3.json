@@ -1,0 +1,228 @@
+{
+  "id": "rn19-l3",
+  "moduleId": "rn19-reducer",
+  "slug": "payload",
+  "order": 3,
+  "title": {
+    "mn": "Action-д өгөгдөл дамжуулах (payload)"
+  },
+  "why": {
+    "mn": "«Ямар барааг» нэмэхийг action мэдэх ёстой. Action-д зөвхөн `type` биш, нэмэлт өгөгдөл (payload) дамжуулж, reducer түүнийг ашиглана. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Тодорхой барааг нэмдэг сагс",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "useReducer",
+    "state"
+  ],
+  "prerequisites": [
+    "rn19-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, FlatList, StyleSheet } from \"react-native\";\nimport { useReducer } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction reducer(state, action) {\n  // энд бичнэ үү: \"add\" action — action.name-ийг жагсаалтад нэм\n  return state;\n}\n\nfunction App() {\n  const [items, dispatch] = useReducer(reducer, []);\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"add\" style={styles.b} onPress={() => dispatch({ type: \"add\", name: \"Гар цаг\" })}><Text style={styles.t}>Гар цаг нэмэх</Text></Pressable>\n      <FlatList data={items} keyExtractor={(x, i) => String(i)} renderItem={({ item }) => <Text testID=\"row\" style={styles.row}>{item}</Text>} />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 12, padding: 24 },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  row: { padding: 12, backgroundColor: \"#f1f5f9\", borderRadius: 8 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn19-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Action-д өгөгдөл дамжуулах (payload)"
+      },
+      "statement": {
+        "mn": "`reducer`-т `\"add\"` action бич: `[...state, action.name]`-ээр action-той хамт ирсэн нэрийг жагсаалтад нэм. «Гар цаг нэмэх» дархад доорх жагсаалтад «Гар цаг» орно."
+      },
+      "requirements": [
+        {
+          "mn": "`action.name`-ийг ашигласан"
+        },
+        {
+          "mn": "`[...state, action.name]` буцаадаг"
+        },
+        {
+          "mn": "Дархад мөр нэмэгдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Гар цаг нэмэх» дархад жагсаалтад «Гар цаг» гарч ирнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#add"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 1
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"row\"]",
+                  "contains": "Гар цаг"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дархад бараа нэмэгдэхгүй байна. `action.name`-ийг ашиглаж байгаа эсэхээ шалга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Action объектод `type`-аас гадна нэмэлт талбар (жишээ `name`) дамжуулж болно. reducer түүнийг уншина."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`[...state, action.name]` нь одоогийн жагсаалтад шинэ нэр нэмнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "add action:"
+          },
+          "code": "if (action.type === \"add\") return [...state, action.name];"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, FlatList, StyleSheet } from \"react-native\";\nimport { useReducer } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction reducer(state, action) {\n  if (action.type === \"add\") return [...state, action.name];\n  return state;\n}\n\nfunction App() {\n  const [items, dispatch] = useReducer(reducer, []);\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"add\" style={styles.b} onPress={() => dispatch({ type: \"add\", name: \"Гар цаг\" })}><Text style={styles.t}>Гар цаг нэмэх</Text></Pressable>\n      <FlatList data={items} keyExtractor={(x, i) => String(i)} renderItem={({ item }) => <Text testID=\"row\" style={styles.row}>{item}</Text>} />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 12, padding: 24 },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  row: { padding: 12, backgroundColor: \"#f1f5f9\", borderRadius: 8 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Action дахь нэмэлт өгөгдлийг «payload» гэдэг. `{ type, name }` гэж дамжуулснаар reducer «ямар» барааг нэмэхийг мэднэ — жинхэнэ апп-ийн action-ууд ингэж өгөгдөл зөөдөг."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Action-д нэмэлт өгөгдлийг (payload) яаж дамжуулдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Боломжгүй"
+        },
+        {
+          "mn": "`{ type, name }` гэж объектод нэмэлт талбар оруулж"
+        },
+        {
+          "mn": "Тусдаа dispatch-оор"
+        },
+        {
+          "mn": "Глобал хувьсагчаар"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Action объектод type-аас гадна өгөгдөл (name, id, ...) нэмж дамжуулна."
+      },
+      "hint": {
+        "mn": "Action бол объект. Объектод юу нэмж болох вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "reducer нэмэлт өгөгдлийг хаанаас авдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "state-ээс"
+        },
+        {
+          "mn": "action объектоос (жишээ action.name)"
+        },
+        {
+          "mn": "Глобалаас"
+        },
+        {
+          "mn": "Prop-оос"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "reducer нь action.name гэх мэтээр action объектоос payload-ыг уншина."
+      },
+      "hint": {
+        "mn": "dispatch({type, name}) — name хаана байна?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

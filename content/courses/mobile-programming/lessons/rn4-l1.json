@@ -1,0 +1,246 @@
+{
+  "id": "rn4-l1",
+  "moduleId": "rn4-lists",
+  "slug": "flatlist",
+  "order": 1,
+  "title": {
+    "mn": "FlatList — хурдан жагсаалт"
+  },
+  "why": {
+    "mn": "`ScrollView` олон мянган бараанд удаан. `<FlatList>` нь зөвхөн дэлгэцэнд харагдахыг нь зурдаг тул хэдэн мянган бараа ч гөлгөр гүйнэ. Жинхэнэ дэлгүүрийн жагсаалт ингэж хийдэг. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Хурдан бүтээгдэхүүний жагсаалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 15,
+  "skills": [
+    "react-native",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "FlatList",
+    "data",
+    "renderItem",
+    "keyExtractor"
+  ],
+  "prerequisites": [
+    "rn3-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, FlatList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\", price: \"159,000₮\" },\n  { id: \"2\", name: \"Гар цаг\", price: \"249,000₮\" },\n  { id: \"3\", name: \"Нарны шил\", price: \"89,000₮\" },\n  { id: \"4\", name: \"Цүнх\", price: \"129,000₮\" },\n];\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      {/* энд бичнэ үү: FlatList-ээр PRODUCTS-ийг харуул */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\" },\n  row: { backgroundColor: \"#ffffff\", padding: 16, margin: 8, borderRadius: 12, flexDirection: \"row\", justifyContent: \"space-between\" },\n  name: { fontSize: 16, fontWeight: \"600\" },\n  price: { fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn4-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "FlatList — хурдан жагсаалт"
+      },
+      "statement": {
+        "mn": "`<FlatList>` ашигла: `data={PRODUCTS}`, `keyExtractor={(item) => item.id}`, `renderItem={({ item }) => ...}` дотор бараа бүрийг мөр (`<View testID=\"row\">`) болгож нэр + үнэ харуул."
+      },
+      "requirements": [
+        {
+          "mn": "`react-native`-аас `FlatList` импортолсон"
+        },
+        {
+          "mn": "`data`, `renderItem`, `keyExtractor` гурвыг өгсөн"
+        },
+        {
+          "mn": "4 бараа мөр болж харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "4 бараа гөлгөр жагсаалт болж харагдана — олон мянган бараа байсан ч адил хурдан."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.imports",
+          "args": {
+            "file": "src/App.jsx",
+            "from": "react-native",
+            "named": "FlatList"
+          },
+          "onFail": {
+            "mn": "`react-native`-аас `FlatList`-г импортлоогүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#root [data-rn=\"flatlist\"]"
+          },
+          "onFail": {
+            "mn": "`<FlatList>` алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"row\"]",
+            "equals": 4
+          },
+          "onFail": {
+            "mn": "4 мөр харагдах ёстой — `data` ба `renderItem`-ээ шалга."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "dom.text",
+          "args": {
+            "selector": "#root",
+            "contains": "Гар цаг"
+          },
+          "onFail": {
+            "mn": "Барааны нэр (`Гар цаг`) харагдахгүй байна — `renderItem` дотор `item.name`-ээ шалга."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`<FlatList>` гурван гол prop авна: `data` (массив), `renderItem` (нэг элементийг яаж зурах), `keyExtractor` (элемент бүрийн ялгах түлхүүр)."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`renderItem` нь `({ item }) => (...)` хэлбэртэй. `item` бол массивын нэг элемент — түүний талбарыг (`item.name`) ашиглана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "FlatList бүтэц:"
+          },
+          "code": "<FlatList\n  data={PRODUCTS}\n  keyExtractor={(item) => item.id}\n  renderItem={({ item }) => (\n    <View testID=\"row\" style={styles.row}>\n      <Text style={styles.name}>{item.name}</Text>\n      <Text style={styles.price}>{item.price}</Text>\n    </View>\n  )}\n/>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, FlatList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\", price: \"159,000₮\" },\n  { id: \"2\", name: \"Гар цаг\", price: \"249,000₮\" },\n  { id: \"3\", name: \"Нарны шил\", price: \"89,000₮\" },\n  { id: \"4\", name: \"Цүнх\", price: \"129,000₮\" },\n];\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <FlatList\n        data={PRODUCTS}\n        keyExtractor={(item) => item.id}\n        renderItem={({ item }) => (\n          <View testID=\"row\" style={styles.row}>\n            <Text style={styles.name}>{item.name}</Text>\n            <Text style={styles.price}>{item.price}</Text>\n          </View>\n        )}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\" },\n  row: { backgroundColor: \"#ffffff\", padding: 16, margin: 8, borderRadius: 12, flexDirection: \"row\", justifyContent: \"space-between\" },\n  name: { fontSize: 16, fontWeight: \"600\" },\n  price: { fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`<FlatList>` нь `.map()`-аас ухаалаг: зөвхөн дэлгэцэнд харагдах мөрүүдийг л зурж, доош гүйлгэхэд шинийг зурна. Тийм учраас хэдэн мянган элемент ч гөлгөр ажилладаг. `keyExtractor` нь React-д мөр бүрийг ялгуулна."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 13,
+      "skills": [
+        "react-native",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`<FlatList>` нь `.map()` + `<ScrollView>`-ээс юугаараа давуу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Илүү өнгөтэй"
+        },
+        {
+          "mn": "Зөвхөн дэлгэцэнд харагдах элементийг зурдаг тул олон мянган элементэд ч хурдан"
+        },
+        {
+          "mn": "Товч дардаг"
+        },
+        {
+          "mn": "Зураг татдаг"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`<FlatList>` нь харагдахгүй элементийг зурдаггүй (virtualization). Тийм учраас том жагсаалтад санах ой хэмнэж, хурдан ажиллана."
+      },
+      "hint": {
+        "mn": "10,000 элементийн зөвхөн 10 нь харагдаж байвал бусдыг нь зурах хэрэгтэй юу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`<FlatList>`-ийн `renderItem` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Бүх жагсаалтыг нэг дор зурна"
+        },
+        {
+          "mn": "Нэг элементийг яаж харуулахыг тодорхойлно"
+        },
+        {
+          "mn": "Өгөгдөл татна"
+        },
+        {
+          "mn": "Жагсаалтыг эрэмбэлнэ"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`renderItem={({ item }) => ...}` нь НЭГ элементийг хэрхэн зурахыг заана. FlatList үүнийг элемент бүрд дуудна."
+      },
+      "hint": {
+        "mn": "`data` бол бүх өгөгдөл. `renderItem` нэг удаад хэдэн элемент зурах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "id": "rn21-l4",
+  "moduleId": "rn21-modal-device",
+  "slug": "dimensions",
+  "order": 4,
+  "title": {
+    "mn": "useWindowDimensions — дэлгэцэд тохирох"
+  },
+  "why": {
+    "mn": "Таблет дээр 2 багана, утсан дээр 1 багана харуулбал зохимжтой. `useWindowDimensions` нь дэлгэцийн өргөнийг өгч, түүнд тааруулна. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Дэлгэцийн өргөнд тохирсон харагдац",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "useWindowDimensions",
+    "conditional-rendering",
+    "flexbox"
+  ],
+  "prerequisites": [
+    "rn21-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, useWindowDimensions, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  // энд бичнэ үү: dwidth-г useWindowDimensions-оос ав\n  const dwidth = 0;\n  const wide = dwidth > 500;\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"mode\" style={styles.mode}>{wide ? \"Өргөн дэлгэц\" : \"Нарийн дэлгэц\"}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({ s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" }, mode: { fontSize: 20, fontWeight: \"bold\" } });\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn21-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "useWindowDimensions — дэлгэцэд тохирох"
+      },
+      "statement": {
+        "mn": "`const { width: dwidth } = useWindowDimensions()` гэж дэлгэцийн өргөнг ав. `dwidth > 500` бол «Өргөн дэлгэц», эс бол «Нарийн дэлгэц» гэж харуул."
+      },
+      "requirements": [
+        {
+          "mn": "`useWindowDimensions` ашигласан"
+        },
+        {
+          "mn": "Өргөнөөс хамааран текст өөрчлөгддөг"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Дэлгэцийн өргөнөөс хамааран «Өргөн» эсвэл «Нарийн дэлгэц» гэж харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "useWindowDimensions"
+          },
+          "onFail": {
+            "mn": "`useWindowDimensions`-ийг ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.text",
+          "args": {
+            "selector": "#mode",
+            "contains": "дэлгэц"
+          },
+          "onFail": {
+            "mn": "Дэлгэцийн горим харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`useWindowDimensions()` нь `{ width, height }` объект буцаана. Дэлгэц эргэхэд автоматаар шинэчлэгдэнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`const { width } = useWindowDimensions();` дараа нь өргөнөөр нөхцөл шалгана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц:"
+          },
+          "code": "const { width: dwidth } = useWindowDimensions();\nconst wide = dwidth > 500;"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, useWindowDimensions, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const { width: dwidth } = useWindowDimensions();\n  const wide = dwidth > 500;\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"mode\" style={styles.mode}>{wide ? \"Өргөн дэлгэц\" : \"Нарийн дэлгэц\"}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({ s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" }, mode: { fontSize: 20, fontWeight: \"bold\" } });\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`useWindowDimensions` нь дэлгэцийн одоогийн хэмжээг өгч, эргэлт/төхөөрөмж өөрчлөгдөхөд шинэчлэгддэг. Утас/таблет, босоо/хэвтээд тохирсон responsive UI бүтээх гол хэрэгсэл."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`useWindowDimensions()` юу буцаадаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн өргөн"
+        },
+        {
+          "mn": "`{ width, height }` объект"
+        },
+        {
+          "mn": "Component"
+        },
+        {
+          "mn": "Пиксел нягтрал"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Дэлгэцийн өргөн ба өндрийг буцаана — эргэлт бүрт шинэчлэгдэнэ."
+      },
+      "hint": {
+        "mn": "Дэлгэц хоёр хэмжээтэй."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Яагаад тогтмол хэмжээ бичихгүй, `useWindowDimensions` хэрэглэдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хурдан"
+        },
+        {
+          "mn": "Төхөөрөмж бүрийн дэлгэц өөр, эргэлтэд ч өөрчлөгддөг тул"
+        },
+        {
+          "mn": "Загвартай"
+        },
+        {
+          "mn": "Заавал биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Дэлгэцийн хэмжээ төхөөрөмж, эргэлтээс хамаарна — динамикаар авах нь responsive хийх зам."
+      },
+      "hint": {
+        "mn": "Бүх утас ижил хэмжээтэй юу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

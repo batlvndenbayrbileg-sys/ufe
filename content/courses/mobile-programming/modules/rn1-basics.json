@@ -1,0 +1,9 @@
+{
+  "id": "rn1-basics",
+  "stageId": "s1",
+  "order": 1,
+  "title": { "mn": "Анхны дэлгэц" },
+  "description": { "mn": "View, Text, StyleSheet, Flexbox — React Native-ийн суурь барилгын материал." },
+  "estimatedHours": 1,
+  "lessons": ["rn1-l1", "rn1-l2", "rn1-l3", "rn1-l4"]
+}

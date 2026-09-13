@@ -1,0 +1,245 @@
+{
+  "id": "rn4-l3",
+  "moduleId": "rn4-lists",
+  "slug": "search-filter",
+  "order": 3,
+  "title": {
+    "mn": "Хайлтаар шүүх"
+  },
+  "why": {
+    "mn": "Одоо TextInput ба FlatList-ээ нэгтгэе: бичсэн үгээр жагсаалтаа шүүж, зөвхөн тохирох барааг харуулна. Жинхэнэ хайлт ингэж ажилладаг. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Ажилладаг барааны хайлт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 16,
+  "skills": [
+    "react-native",
+    "mobile-lists",
+    "mobile-state"
+  ],
+  "concepts": [
+    "FlatList",
+    "TextInput",
+    "useState",
+    "filter"
+  ],
+  "prerequisites": [
+    "rn4-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, FlatList, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\" },\n  { id: \"2\", name: \"Гар цаг\" },\n  { id: \"3\", name: \"Нарны шил\" },\n  { id: \"4\", name: \"Цүнх\" },\n  { id: \"5\", name: \"Гар чийдэн\" },\n];\n\nfunction App() {\n  const [q, setQ] = useState(\"\");\n  // энд бичнэ үү: q-гээр PRODUCTS-ийг шүү\n  const filtered = PRODUCTS;\n\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"search\" style={styles.input} placeholder=\"Хайх...\" value={q} onChangeText={setQ} />\n      <FlatList\n        data={filtered}\n        keyExtractor={(item) => item.id}\n        renderItem={({ item }) => <Text testID=\"row\" style={styles.row}>{item.name}</Text>}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\", padding: 8 },\n  input: { borderWidth: 1, borderColor: \"#d4d4d8\", borderRadius: 12, padding: 12, margin: 8, fontSize: 16, backgroundColor: \"#fff\" },\n  row: { backgroundColor: \"#ffffff\", padding: 16, margin: 8, borderRadius: 12, fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn4-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хайлтаар шүүх"
+      },
+      "statement": {
+        "mn": "`filtered`-г тодорхойл: `PRODUCTS.filter(...)`-ээр зөвхөн нэр нь `q`-г агуулж буй барааг үлдээ (том/жижиг үсэг үл харгалзан — `.toLowerCase()`). `FlatList`-д `data={filtered}` өг."
+      },
+      "requirements": [
+        {
+          "mn": "`PRODUCTS.filter(...)` ашигласан"
+        },
+        {
+          "mn": "`q`-гээр нэрийг шүүсэн"
+        },
+        {
+          "mn": "Хайхад жагсаалт багасдаг"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Нарны» гэж бичихэд зөвхөн «Нарны шил» үлдэнэ. Хоосон бол бүх бараа харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "filter"
+          },
+          "onFail": {
+            "mn": "`PRODUCTS.filter(...)` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "#search",
+                  "text": "Нарны"
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 1
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"row\"]",
+                  "contains": "Нарны шил"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хайхад жагсаалт зөв шүүгдэхгүй байна. `filter` нөхцөлөө шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`.filter()` нь нөхцөл хангасан элементүүдийн шинэ массив буцаана. Нөхцөл: барааны нэр `q`-г агуулж байх."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Том/жижиг үсгийг тэгшитгэхийн тулд хоёр талыг нь `.toLowerCase()` болгож харьцуул: `p.name.toLowerCase().includes(q.toLowerCase())`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Шүүлт ийм байна:"
+          },
+          "code": "const filtered = PRODUCTS.filter((p) =>\n  p.name.toLowerCase().includes(q.toLowerCase())\n);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, FlatList, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\" },\n  { id: \"2\", name: \"Гар цаг\" },\n  { id: \"3\", name: \"Нарны шил\" },\n  { id: \"4\", name: \"Цүнх\" },\n  { id: \"5\", name: \"Гар чийдэн\" },\n];\n\nfunction App() {\n  const [q, setQ] = useState(\"\");\n  const filtered = PRODUCTS.filter((p) =>\n    p.name.toLowerCase().includes(q.toLowerCase())\n  );\n\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"search\" style={styles.input} placeholder=\"Хайх...\" value={q} onChangeText={setQ} />\n      <FlatList\n        data={filtered}\n        keyExtractor={(item) => item.id}\n        renderItem={({ item }) => <Text testID=\"row\" style={styles.row}>{item.name}</Text>}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\", padding: 8 },\n  input: { borderWidth: 1, borderColor: \"#d4d4d8\", borderRadius: 12, padding: 12, margin: 8, fontSize: 16, backgroundColor: \"#fff\" },\n  row: { backgroundColor: \"#ffffff\", padding: 16, margin: 8, borderRadius: 12, fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Хайлт бол шүүлт: `q` өөрчлөгдөх бүрт `filtered` дахин тооцоологдож, `FlatList` шинэ өгөгдлийг харуулна. `.toLowerCase()` нь «Нарны» ба «нарны»-г ижилд тооцно."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 14,
+      "skills": [
+        "react-native",
+        "mobile-lists",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Массиваас тодорхой нөхцөл хангасан элементийг хэрхэн авдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`.map()`"
+        },
+        {
+          "mn": "`.filter()`"
+        },
+        {
+          "mn": "`.forEach()`"
+        },
+        {
+          "mn": "`.push()`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`.filter()` нь нөхцөл хангасан элементүүдийн шинэ массив буцаана — хайлт, шүүлтэд яг тохирно."
+      },
+      "hint": {
+        "mn": "«Шүүх» гэдэг үгтэй ойролцоо нэртэй арга аль нь вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`.toLowerCase()`-ийг хоёр талд яагаад хэрэглэдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хурдан болгохын тулд"
+        },
+        {
+          "mn": "Том/жижиг үсгийн ялгааг арилгаж, «Ном» ба «ном»-ыг ижилд тооцохын тулд"
+        },
+        {
+          "mn": "Өнгө өөрчлөхөд"
+        },
+        {
+          "mn": "Шаардлагагүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хэрэглэгч том эсвэл жижиг үсгээр бичсэн ч хайлт ажиллахын тулд хоёр талыг нь жижиг болгож харьцуулна."
+      },
+      "hint": {
+        "mn": "Хэрэглэгч «НОМ» гэж бичвэл «ном»-ыг олох ёстой юу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30,
+    "badge": "rn-lists"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

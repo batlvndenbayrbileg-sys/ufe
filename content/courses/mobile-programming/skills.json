@@ -1,0 +1,7 @@
+[
+  { "id": "react-native", "title": { "mn": "React Native" }, "order": 1 },
+  { "id": "mobile-ui", "title": { "mn": "Мобайл UI" }, "order": 2 },
+  { "id": "mobile-state", "title": { "mn": "Төлөв ба үйлдэл" }, "order": 3 },
+  { "id": "mobile-lists", "title": { "mn": "Жагсаалт" }, "order": 4 },
+  { "id": "mobile-data", "title": { "mn": "Өгөгдөл ба хадгалалт" }, "order": 5 }
+]

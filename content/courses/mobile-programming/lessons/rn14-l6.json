@@ -1,0 +1,284 @@
+{
+  "id": "rn14-l6",
+  "moduleId": "rn14-tabs",
+  "slug": "full-tab-app",
+  "order": 6,
+  "title": {
+    "mn": "Бүрэн таб апп угсрах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн бүх мэдлэгээ нэгтгэе: 3 таб, идэвхтэй тодотгол, Сагс дээрх badge, таб бүрийн агуулга — бүгдийг нэг таб апп болгон угсарна. Энэ бол навигацийн шатны төгсгөл."
+  },
+  "buildsInProject": "Бүрэн ажиллагаатай таб апп",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "useState",
+    "state",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn14-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst TABS = [\"Нүүр\", \"Сагс\", \"Профайл\"];\n\nfunction App() {\n  const [tab, setTab] = useState(\"Нүүр\");\n  const [cart, setCart] = useState(0);\n\n  function Body() {\n    if (tab === \"Сагс\") return <Text nativeID=\"body\" style={styles.h}>Сагсанд {cart} бараа</Text>;\n    if (tab === \"Профайл\") return <Text nativeID=\"body\" style={styles.h}>Профайл</Text>;\n    return (\n      <View style={styles.pad}>\n        <Text nativeID=\"body\" style={styles.h}>Нүүр</Text>\n        <Pressable nativeID=\"add\" style={styles.btn} onPress={() => setCart((c) => c + 1)}>\n          <Text style={styles.btnText}>Сагслах</Text>\n        </Pressable>\n      </View>\n    );\n  }\n\n  return (\n    <View style={styles.container}>\n      <View style={styles.bodyWrap}><Body /></View>\n      <View style={styles.tabbar}>\n        {TABS.map((t, i) => (\n          <Pressable key={t} nativeID={\"tab\" + i} testID=\"tab\" style={styles.tab}>\n            {/* энд бичнэ үү: onPress-оор таб солиж, идэвхтэйг тодотго */}\n            <Text style={styles.tabText}>{t}</Text>\n            {t === \"Сагс\" && cart > 0 && <Text nativeID=\"badge\" style={styles.badge}>{cart}</Text>}\n          </Pressable>\n        ))}\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1 },\n  bodyWrap: { flex: 1 },\n  pad: { flex: 1, padding: 24, gap: 14, justifyContent: \"center\", alignItems: \"center\" },\n  h: { fontSize: 22, fontWeight: \"bold\", textAlign: \"center\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n  tabbar: { flexDirection: \"row\", borderTopWidth: 1, borderTopColor: \"#e5e7eb\" },\n  tab: { flexGrow: 1, paddingVertical: 12, alignItems: \"center\" },\n  active: { backgroundColor: \"#dbeafe\" },\n  tabText: { fontWeight: \"600\", color: \"#334155\" },\n  badge: { position: \"absolute\", top: 2, right: 20, backgroundColor: \"#dc2626\", color: \"#fff\", fontSize: 12, fontWeight: \"bold\", minWidth: 18, textAlign: \"center\", paddingHorizontal: 5, borderRadius: 999 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn14-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Бүрэн таб апп угсрах"
+      },
+      "statement": {
+        "mn": "Таб бүрд `onPress={() => setTab(t)}` нэмж, `style`-г `[styles.tab, tab === t && styles.active]` болго. Нүүр дээрх «Сагслах» badge-ийг нэмнэ (аль хэдийн бэлэн). Таб солигдож, идэвхтэй нь тодорч, Сагс дээр badge гарна."
+      },
+      "requirements": [
+        {
+          "mn": "3 таб (`testID=\"tab\"`)"
+        },
+        {
+          "mn": "Таб дархад агуулга солигдоно"
+        },
+        {
+          "mn": "Идэвхтэй таб тодорно"
+        },
+        {
+          "mn": "Сагслахад badge гарна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Табууд солигдож, идэвхтэй нь цайвар цэнхэр болж, Сагслах дархад Сагс таб дээр badge гарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"tab\"]",
+            "equals": 3
+          },
+          "onFail": {
+            "mn": "3 таб байх ёстой."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#tab1"
+              },
+              {
+                "waitFor": "#body"
+              },
+              {
+                "expectText": {
+                  "selector": "#body",
+                  "contains": "Сагс"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Таб солигдохгүй байна. onPress-д setTab(t) нэмсэн эсэхээ шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#add"
+              },
+              {
+                "waitFor": "#badge"
+              },
+              {
+                "expectText": {
+                  "selector": "#badge",
+                  "contains": "1"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Сагслах дархад badge гарахгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#tab2"
+              },
+              {
+                "expectEval": {
+                  "expr": "getComputedStyle(document.getElementById('tab2')).backgroundColor",
+                  "equals": "#dbeafe"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Идэвхтэй таб тодрохгүй байна. style массив ба tab === t нөхцөлөө шалга."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Өмнөх хичээлүүдийн бүх хэсэг энд нэгдэнэ: таб солих (`setTab`), идэвхтэй тодотгол (нөхцөлт загвар), badge (нөхцөлт зураг)."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Таб Pressable-д `onPress={() => setTab(t)}` ба `style={[styles.tab, tab === t && styles.active]}` хоёуланг нь нэм."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Таб Pressable:"
+          },
+          "code": "<Pressable nativeID={\"tab\" + i} testID=\"tab\"\n  onPress={() => setTab(t)}\n  style={[styles.tab, tab === t && styles.active]}>\n  <Text>{t}</Text>\n  {t === \"Сагс\" && cart > 0 && <Text nativeID=\"badge\">{cart}</Text>}\n</Pressable>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst TABS = [\"Нүүр\", \"Сагс\", \"Профайл\"];\n\nfunction App() {\n  const [tab, setTab] = useState(\"Нүүр\");\n  const [cart, setCart] = useState(0);\n\n  function Body() {\n    if (tab === \"Сагс\") return <Text nativeID=\"body\" style={styles.h}>Сагсанд {cart} бараа</Text>;\n    if (tab === \"Профайл\") return <Text nativeID=\"body\" style={styles.h}>Профайл</Text>;\n    return (\n      <View style={styles.pad}>\n        <Text nativeID=\"body\" style={styles.h}>Нүүр</Text>\n        <Pressable nativeID=\"add\" style={styles.btn} onPress={() => setCart((c) => c + 1)}>\n          <Text style={styles.btnText}>Сагслах</Text>\n        </Pressable>\n      </View>\n    );\n  }\n\n  return (\n    <View style={styles.container}>\n      <View style={styles.bodyWrap}><Body /></View>\n      <View style={styles.tabbar}>\n        {TABS.map((t, i) => (\n          <Pressable key={t} nativeID={\"tab\" + i} testID=\"tab\" onPress={() => setTab(t)}\n            style={[styles.tab, tab === t && styles.active]}>\n            <Text style={styles.tabText}>{t}</Text>\n            {t === \"Сагс\" && cart > 0 && <Text nativeID=\"badge\" style={styles.badge}>{cart}</Text>}\n          </Pressable>\n        ))}\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1 },\n  bodyWrap: { flex: 1 },\n  pad: { flex: 1, padding: 24, gap: 14, justifyContent: \"center\", alignItems: \"center\" },\n  h: { fontSize: 22, fontWeight: \"bold\", textAlign: \"center\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n  tabbar: { flexDirection: \"row\", borderTopWidth: 1, borderTopColor: \"#e5e7eb\" },\n  tab: { flexGrow: 1, paddingVertical: 12, alignItems: \"center\" },\n  active: { backgroundColor: \"#dbeafe\" },\n  tabText: { fontWeight: \"600\", color: \"#334155\" },\n  badge: { position: \"absolute\", top: 2, right: 20, backgroundColor: \"#dc2626\", color: \"#fff\", fontSize: 12, fontWeight: \"bold\", minWidth: 18, textAlign: \"center\", paddingHorizontal: 5, borderRadius: 999 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Бүрэн таб апп нь цөөн энгийн хэсгээс бүрдэнэ: идэвхтэй табын төлөв, түүнээс хамаарсан агуулга, идэвхтэй тодотгол, ба тусдаа сагсны төлөв дээрх badge. Эдгээрийг нэгтгэснээр жинхэнэ мобайл апп-ын араг яс бүтнэ."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Бүрэн таб апп ямар хэсгүүдээс бүрдэх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн таб бар"
+        },
+        {
+          "mn": "Идэвхтэй табын төлөв, түүнээс хамаарсан агуулга, тодотгол, badge"
+        },
+        {
+          "mn": "Зөвхөн badge"
+        },
+        {
+          "mn": "Ганц дэлгэц"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хэдэн энгийн хэсэг нэгдэж бүрэн систем болно."
+      },
+      "hint": {
+        "mn": "Өмнөх хичээлүүд юу юуг зааж байсан бэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Сагсны badge ба идэвхтэй таб хоёр өөр өөр төлвөөс хамаардаг уу?"
+      },
+      "options": [
+        {
+          "mn": "Ижил төлвөөс"
+        },
+        {
+          "mn": "Тийм — badge нь `cart`-аас, тодотгол нь `tab`-аас"
+        },
+        {
+          "mn": "Хоёулаа cart-аас"
+        },
+        {
+          "mn": "Төлөвгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Тэдгээр нь тусдаа мэдээлэл тул тусдаа төлөвтэй."
+      },
+      "hint": {
+        "mn": "Хэдэн бараа? vs Аль таб идэвхтэй? — өөр асуулт."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30,
+    "badge": "rn-nav"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

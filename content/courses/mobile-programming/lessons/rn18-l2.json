@@ -1,0 +1,222 @@
+{
+  "id": "rn18-l2",
+  "moduleId": "rn18-context",
+  "slug": "provider",
+  "order": 2,
+  "title": {
+    "mn": "Provider — савыг дүүргэх"
+  },
+  "why": {
+    "mn": "Context сав үүсгэсэн ч дотор нь утга хийхгүй бол хоосон. `Provider`-оор апп-аа ороож, доторх бүх дэлгэцэд утга түгээнэ. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Утга түгээгч Provider",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "component",
+    "useContext"
+  ],
+  "prerequisites": [
+    "rn18-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { createContext, useContext } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst CartContext = createContext({ count: 0 });\n\nfunction Badge() {\n  const cart = useContext(CartContext);\n  return <Text nativeID=\"badge\" style={styles.badge}>Сагс: {cart.count}</Text>;\n}\n\nfunction App() {\n  return (\n    // энд бичнэ үү: CartContext.Provider-оор ороо (count: 5)\n    <View style={styles.s}>\n      <Badge />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({ s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" }, badge: { fontSize: 22, fontWeight: \"bold\" } });\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn18-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Provider — савыг дүүргэх"
+      },
+      "statement": {
+        "mn": "`App`-ийн буцаалтыг `<CartContext.Provider value={{ count: 5 }}>...</CartContext.Provider>`-оор ороо. Ингэснээр доторх `Badge` component `useContext`-оор `count: 5`-г авч харуулна."
+      },
+      "requirements": [
+        {
+          "mn": "`CartContext.Provider` ашигласан"
+        },
+        {
+          "mn": "`value={{ count: 5 }}` дамжуулсан"
+        },
+        {
+          "mn": "Badge «Сагс: 5» харуулна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Сагс: 5» харагдана — утга Provider-оос доош дамжсан."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.text",
+          "args": {
+            "selector": "#badge",
+            "contains": "5"
+          },
+          "onFail": {
+            "mn": "Provider-оос `count: 5` дамжаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useContext"
+          },
+          "onFail": {
+            "mn": "`useContext` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`<Context.Provider value={...}>` доторх бүх component тэр утгыг авна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`value` prop-д объект дамжуулна: `value={{ count: 5 }}`. Хоёр хаалт: нэг нь JSX, нэг нь объект."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц:"
+          },
+          "code": "<CartContext.Provider value={{ count: 5 }}>\n  <View>...</View>\n</CartContext.Provider>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { createContext, useContext } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst CartContext = createContext({ count: 0 });\n\nfunction Badge() {\n  const cart = useContext(CartContext);\n  return <Text nativeID=\"badge\" style={styles.badge}>Сагс: {cart.count}</Text>;\n}\n\nfunction App() {\n  return (\n    <CartContext.Provider value={{ count: 5 }}>\n      <View style={styles.s}>\n        <Badge />\n      </View>\n    </CartContext.Provider>\n  );\n}\n\nconst styles = StyleSheet.create({ s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" }, badge: { fontSize: 22, fontWeight: \"bold\" } });\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`Provider` нь Context савыг утгаар дүүргэж, доторх бүх удмын component-д түгээнэ. `value` өөрчлөгдвөл хэрэглэгч бүх component дахин зурагдана."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`Provider`-ийн `value` доторх аль component-д хүрэх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн шууд хүүхдэд"
+        },
+        {
+          "mn": "Доторх БҮХ удмын component-д (хэдэн ч түвшин гүн)"
+        },
+        {
+          "mn": "Зөвхөн App-д"
+        },
+        {
+          "mn": "Хаана ч хүрэхгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Provider доторх ямар ч гүнд байгаа component useContext-оор утгыг авна."
+      },
+      "hint": {
+        "mn": "Context-ийн гол давуу тал юу байсан бэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Provider-гүй бол useContext юу авах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаа"
+        },
+        {
+          "mn": "createContext-д өгсөн анхны (default) утгыг"
+        },
+        {
+          "mn": "null үргэлж"
+        },
+        {
+          "mn": "Хоосон"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Provider олдохгүй бол createContext-ийн default утга буцна."
+      },
+      "hint": {
+        "mn": "Өмнөх хичээлийн default утга санагдаж байна уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

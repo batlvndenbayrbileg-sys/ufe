@@ -1,0 +1,231 @@
+{
+  "id": "rn15-l6",
+  "moduleId": "rn15-networking",
+  "slug": "search",
+  "order": 6,
+  "title": {
+    "mn": "Хайлт — бичсэн үгээр серверээс татах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн хайлтын мөрөнд үг бичих бүрт сервер тухайн үгэнд тохирох барааг буцаах ёстой. Хайлтын утгыг `useEffect`-ийн хамааралд өгч, `fakeApi(query)`-аар үр дүнг татна."
+  },
+  "buildsInProject": "Бичихэд шинэчлэгддэг хайлтын үр дүн",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-data"
+  ],
+  "concepts": [
+    "TextInput",
+    "onChangeText",
+    "useEffect",
+    "filter"
+  ],
+  "prerequisites": [
+    "rn15-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"p1\", name: \"Чихэвч\" }, { id: \"p2\", name: \"Гар цаг\" }, { id: \"p3\", name: \"Нарны шил\" },\n  { id: \"p4\", name: \"Цүнх\" }, { id: \"p5\", name: \"Ном\" }, { id: \"p6\", name: \"Гутал\" },\n];\nconst fakeApi = (query) => new Promise((res) => setTimeout(() => res(\n  PRODUCTS.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))\n), 200));\n\nfunction App() {\n  const [query, setQuery] = useState(\"\");\n  const [results, setResults] = useState(PRODUCTS);\n\n  useEffect(() => {\n    let alive = true;\n    fakeApi(query).then((data) => { if (alive) setResults(data); });\n    return () => { alive = false; };\n  }, []); // энд бичнэ үү: query өөрчлөгдөх бүрт дахин хайхын тулд хамаарлыг нэм\n\n  return (\n    <View style={styles.s}>\n      <TextInput\n        nativeID=\"q\"\n        style={styles.input}\n        placeholder=\"Бараа хайх...\"\n        value={query}\n        onChangeText={setQuery}\n      />\n      {results.map((it) => <Text key={it.id} testID=\"row\" style={styles.row}>{it.name}</Text>)}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 16, gap: 8 },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 12, fontSize: 16 },\n  row: { fontSize: 16, paddingVertical: 10, borderBottomWidth: 1, borderColor: \"#e2e8f0\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn15-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хайлт — бичсэн үгээр серверээс татах"
+      },
+      "statement": {
+        "mn": "`useEffect`-ийн хамаарлыг `[]`-ээс `[query]` болго. Ингэснээр хайлтын мөрөнд бичих бүрт `fakeApi(query)` дахин дуудагдаж, тухайн үгэнд тохирсон барааг серверээс татаж харуулна."
+      },
+      "requirements": [
+        {
+          "mn": "`useEffect`-ийн хамаарал `[query]`"
+        },
+        {
+          "mn": "Бичсэн үгэнд тохирсон бараа шүүгдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«цаг» гэж бичихэд зөвхөн «Гар цаг» үлдэнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"row\"]"
+              },
+              {
+                "type": {
+                  "selector": "#q",
+                  "text": "цаг"
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 1
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"row\"]",
+                  "contains": "цаг"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хайлт бичихэд серверээс шүүж татахгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Хайлтын үг (`query`) өөрчлөгдөх бүрт сервер рүү дахин хандах хэрэгтэй. Одоо хамаарал хоосон тул зөвхөн эхэнд нэг удаа хайж байна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`query`-г хамаарлын жагсаалтад нэм: `}, [query]);`. `fakeApi(query)` нь тухайн үгээр шүүсэн үр дүн буцаана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Хамаарлыг зас:"
+          },
+          "code": "useEffect(() => {\n  fakeApi(query).then((data) => setResults(data));\n}, [query]); // бичих бүрт дахин хай"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"p1\", name: \"Чихэвч\" }, { id: \"p2\", name: \"Гар цаг\" }, { id: \"p3\", name: \"Нарны шил\" },\n  { id: \"p4\", name: \"Цүнх\" }, { id: \"p5\", name: \"Ном\" }, { id: \"p6\", name: \"Гутал\" },\n];\nconst fakeApi = (query) => new Promise((res) => setTimeout(() => res(\n  PRODUCTS.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))\n), 200));\n\nfunction App() {\n  const [query, setQuery] = useState(\"\");\n  const [results, setResults] = useState(PRODUCTS);\n\n  useEffect(() => {\n    let alive = true;\n    fakeApi(query).then((data) => { if (alive) setResults(data); });\n    return () => { alive = false; };\n  }, [query]);\n\n  return (\n    <View style={styles.s}>\n      <TextInput\n        nativeID=\"q\"\n        style={styles.input}\n        placeholder=\"Бараа хайх...\"\n        value={query}\n        onChangeText={setQuery}\n      />\n      {results.map((it) => <Text key={it.id} testID=\"row\" style={styles.row}>{it.name}</Text>)}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 16, gap: 8 },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 12, fontSize: 16 },\n  row: { fontSize: 16, paddingVertical: 10, borderBottomWidth: 1, borderColor: \"#e2e8f0\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Хайлтын үгийг `useEffect`-ийн хамааралд өгснөөр бичих бүрт эффект дахин ажиллаж, серверээс шинэ үр дүн татна. Жинхэнэ апп-д энд debounce нэмж хэт олон дуудлагаас сэргийлдэг."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-data"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Хайлтын үг өөрчлөгдөх бүрт дахин татахын тулд юуг хийх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Товч нэмэх"
+        },
+        {
+          "mn": "`query`-г useEffect-ийн хамаарлын жагсаалтад оруулах"
+        },
+        {
+          "mn": "setTimeout ашиглах"
+        },
+        {
+          "mn": "FlatList солих"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хамаарлын жагсаалтад `query`-г оруулахад бичих бүрт эффект дахин ажиллана."
+      },
+      "hint": {
+        "mn": "Юу өөрчлөгдвөл дахин хайх ёстой вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Хэт олон удаа сервер дуудахаас сэргийлэхийн тулд юу нэмдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Илүү олон useState"
+        },
+        {
+          "mn": "debounce (түр хүлээлт)"
+        },
+        {
+          "mn": "Илүү том FlatList"
+        },
+        {
+          "mn": "console.log"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Debounce нь хэрэглэгч бичиж дуустал түр хүлээж, дуудлагын тоог багасгана."
+      },
+      "hint": {
+        "mn": "Товчлол бүрт биш, бичиж дуусахад хайх."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

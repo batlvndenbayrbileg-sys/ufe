@@ -1,0 +1,221 @@
+{
+  "id": "rn7-l2",
+  "moduleId": "rn7-layout",
+  "slug": "align-self",
+  "order": 2,
+  "title": {
+    "mn": "alignSelf — нэг элементийг онцгойлох"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн мессежийн жагсаалтад миний мессеж баруун, бусдынх зүүн талд байрладаг. `alignSelf`-оор нэг элементийг бусдаас өөрөөр байрлуулна."
+  },
+  "buildsInProject": "Чат бөмбөлөг — өөрийн мессеж баруун талд",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "alignItems",
+    "alignSelf",
+    "flexbox"
+  ],
+  "prerequisites": [
+    "rn7-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View style={styles.them}><Text>Сайн байна уу?</Text></View>\n      <View nativeID=\"mine\" style={styles.mine}><Text style={styles.mineText}>Байна, баярлалаа</Text></View>\n      {/* энд бичнэ үү: mine бөмбөлгийг баруун талд түлх */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 16, gap: 10 },\n  them: { backgroundColor: \"#e5e7eb\", padding: 12, borderRadius: 14, maxWidth: 220 },\n  mine: { backgroundColor: \"#2563eb\", padding: 12, borderRadius: 14, maxWidth: 220 },\n  mineText: { color: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn7-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "alignSelf — нэг элементийг онцгойлох"
+      },
+      "statement": {
+        "mn": "`mine` загварт `alignSelf: \"flex-end\"` нэмж, зөвхөн миний мессежийн бөмбөлгийг баруун талд түлх. Бусад нь зүүн талдаа хэвээр үлдэнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`mine`-д `alignSelf: \"flex-end\"`"
+        },
+        {
+          "mn": "Бусад бөмбөлөг зүүн талдаа хэвээр"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Байна, баярлалаа» цэнхэр бөмбөлөг баруун талд, нөгөө нь зүүн талд харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.computed",
+          "args": {
+            "selector": "#mine",
+            "prop": "align-self",
+            "equals": "flex-end"
+          },
+          "onFail": {
+            "mn": "`mine`-д `alignSelf: \"flex-end\"` алга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.text",
+          "args": {
+            "selector": "#mine",
+            "contains": "Байна"
+          },
+          "onFail": {
+            "mn": "Миний мессежийн бөмбөлөг алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`alignItems` нь ЭЦЭГ дээр бүх хүүхдэд үйлчилдэг. `alignSelf` нь тухайн НЭГ элемент өөрийгөө байрлуулна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Багана (column) дотор `flex-end` нь баруун талыг (хөндлөн тэнхлэгийн төгсгөл) заана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "mine загварт нэм:"
+          },
+          "code": "mine: {\n  alignSelf: \"flex-end\", // өөрийгөө баруун тийш\n  // ...\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View style={styles.them}><Text>Сайн байна уу?</Text></View>\n      <View nativeID=\"mine\" style={styles.mine}><Text style={styles.mineText}>Байна, баярлалаа</Text></View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 16, gap: 10 },\n  them: { backgroundColor: \"#e5e7eb\", padding: 12, borderRadius: 14, maxWidth: 220 },\n  mine: { alignSelf: \"flex-end\", backgroundColor: \"#2563eb\", padding: 12, borderRadius: 14, maxWidth: 220 },\n  mineText: { color: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`alignSelf` нь эцгийнхээ `alignItems`-ийг тухайн элементэд дарж, өөрийгөө хөндлөн тэнхлэгт бие даан байрлуулна. Чат, шошго зэрэгт маш их хэрэглэдэг."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`alignItems` ба `alignSelf`-ийн ялгаа юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Ялгаагүй"
+        },
+        {
+          "mn": "`alignItems` бүх хүүхдэд, `alignSelf` нэг элемент өөртөө"
+        },
+        {
+          "mn": "`alignSelf` зөвхөн текстэд"
+        },
+        {
+          "mn": "`alignItems` хуучирсан"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`alignItems` эцэг дээр бүгдэд, `alignSelf` тухайн элемент дээр өөрт нь үйлчилнэ."
+      },
+      "hint": {
+        "mn": "«self» = өөрөө. Хэн дээр тавьж байна?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Багана (column) дотор `alignSelf: \"flex-end\"` хаашаа түлхэх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Дээш"
+        },
+        {
+          "mn": "Доош"
+        },
+        {
+          "mn": "Баруун тийш (хөндлөн тэнхлэгийн төгсгөл)"
+        },
+        {
+          "mn": "Зүүн тийш"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "Column-ийн гол тэнхлэг босоо тул хөндлөн нь хэвтээ — flex-end баруун тал."
+      },
+      "hint": {
+        "mn": "Column-д гол тэнхлэг доошоо. Хөндлөн нь хаашаа вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

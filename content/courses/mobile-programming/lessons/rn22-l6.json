@@ -1,0 +1,232 @@
+{
+  "id": "rn22-l6",
+  "moduleId": "rn22-quality",
+  "slug": "ship-it",
+  "order": 6,
+  "title": {
+    "mn": "Апп-аа гаргах — Expo тохиргоо"
+  },
+  "why": {
+    "mn": "Апп бэлэн боллоо — одоо дэлгүүрт тавихад бэлдэнэ. Expo нь `app.json` тохиргоогоор апп-ийн нэр, дүрс, хувилбарыг тодорхойлж, `eas build`-ээр жинхэнэ суулгац файл үүсгэдэг. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Апп-ийн гаргалтын тохиргоо",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "registerRootComponent",
+    "component"
+  ],
+  "prerequisites": [
+    "rn22-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst appConfig = {\n  // энд бичнэ үү: name, slug, version талбаруудыг нэм\n};\n\nfunction App() {\n  return (\n    <View style={styles.s}>\n      <Text style={styles.emoji}>🚀</Text>\n      <Text nativeID=\"name\" style={styles.h}>{appConfig.name}</Text>\n      <Text nativeID=\"ver\" style={styles.v}>Хувилбар {appConfig.version}</Text>\n      <Text style={styles.done}>Гаргахад бэлэн!</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 8, alignItems: \"center\", justifyContent: \"center\" },\n  emoji: { fontSize: 56 }, h: { fontSize: 26, fontWeight: \"bold\" }, v: { color: \"#64748b\" }, done: { marginTop: 12, color: \"#16a34a\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn22-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Апп-аа гаргах — Expo тохиргоо"
+      },
+      "statement": {
+        "mn": "`appConfig` объект зарла: `name: \"Shop.mn\"`, `slug: \"shop-mn\"`, `version: \"1.0.0\"`. Энэ нь Expo-гийн `app.json`-той адил — апп-ийн нэр, хаяг, хувилбарыг тодорхойлж, дэлгэц дээр харуулна."
+      },
+      "requirements": [
+        {
+          "mn": "`appConfig` объект зарласан (name, slug, version)"
+        },
+        {
+          "mn": "Апп-ийн нэр ба хувилбар харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Shop.mn», «Хувилбар 1.0.0», «Гаргахад бэлэн!» гэж харагдана — апп гаргахад бэлэн."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.declares",
+          "args": {
+            "file": "src/App.jsx",
+            "kind": "const",
+            "name": "appConfig"
+          },
+          "onFail": {
+            "mn": "`appConfig` объект зарлаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.text",
+          "args": {
+            "selector": "#name",
+            "contains": "Shop.mn"
+          },
+          "onFail": {
+            "mn": "Апп-ийн нэр харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.text",
+          "args": {
+            "selector": "#ver",
+            "contains": "1.0.0"
+          },
+          "onFail": {
+            "mn": "Хувилбар харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Expo апп бүр `app.json`-той — доторх `name`, `slug`, `version` нь дэлгүүрт харагдах мэдээлэл."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`const appConfig = { name: \"Shop.mn\", slug: \"shop-mn\", version: \"1.0.0\" };`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "appConfig:"
+          },
+          "code": "const appConfig = {\n  name: \"Shop.mn\",\n  slug: \"shop-mn\",\n  version: \"1.0.0\",\n};"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst appConfig = {\n  name: \"Shop.mn\",\n  slug: \"shop-mn\",\n  version: \"1.0.0\",\n};\n\nfunction App() {\n  return (\n    <View style={styles.s}>\n      <Text style={styles.emoji}>🚀</Text>\n      <Text nativeID=\"name\" style={styles.h}>{appConfig.name}</Text>\n      <Text nativeID=\"ver\" style={styles.v}>Хувилбар {appConfig.version}</Text>\n      <Text style={styles.done}>Гаргахад бэлэн!</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 8, alignItems: \"center\", justifyContent: \"center\" },\n  emoji: { fontSize: 56 }, h: { fontSize: 26, fontWeight: \"bold\" }, v: { color: \"#64748b\" }, done: { marginTop: 12, color: \"#16a34a\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Жинхэнэ Expo апп-д энэ тохиргоо `app.json`-д байдаг: `name` (дэлгэц дээрх нэр), `slug` (Expo дахь хаяг), `version`, `icon`. `eas build` командаар iOS/Android-д суулгах файл үүсгэж, App Store / Google Play-д тавьдаг. Баяр хүргэе — чи React Native дээр бүрэн апп бүтээж сурлаа! 🎉"
+        },
+        "xpPenalty": 14
+      },
+      "xp": 24,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Expo апп-ийн нэр, дүрс, хувилбарыг хаана тодорхойлдог вэ?"
+      },
+      "options": [
+        {
+          "mn": "App.jsx-д"
+        },
+        {
+          "mn": "`app.json` тохиргоонд"
+        },
+        {
+          "mn": "Серверт"
+        },
+        {
+          "mn": "package.json-д"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "app.json (эсвэл app.config.js) нь апп-ийн нэр, slug, version, icon зэргийг агуулна."
+      },
+      "hint": {
+        "mn": "Тохиргооны JSON файл."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Expo дээр суулгах файл (build) үүсгэх командыг юу гэдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`expo start`"
+        },
+        {
+          "mn": "`eas build`"
+        },
+        {
+          "mn": "`npm install`"
+        },
+        {
+          "mn": "`git push`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`eas build` нь iOS/Android-д зориулсан суулгац файлыг үүлэн дээр угсардаг."
+      },
+      "hint": {
+        "mn": "«build» = угсрах. EAS = Expo Application Services."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 50,
+    "badge": "rn-pro"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

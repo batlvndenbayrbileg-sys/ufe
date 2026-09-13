@@ -103,8 +103,11 @@ jobs:
       # the starter fails at least one, the starter renders without crashing,
       # and the solution runs without console errors. Plus the workspace lint
       # (missing target file, marker not in that file, unknown skill, …).
-      - name: Content
+      - name: Content (web track)
         run: pnpm --filter @khiye/content-sdk content test ../../content/courses/internet-programming
+
+      - name: Content (mobile / React Native track)
+        run: pnpm --filter @khiye/content-sdk content test ../../content/courses/mobile-programming
 
   # The lesson shell is what a student on a Mongolian mobile connection waits
   # for before they can type. 400 KB gz, from 11-system-architecture.md §11.7.

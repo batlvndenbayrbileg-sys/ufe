@@ -1,0 +1,226 @@
+{
+  "id": "rn9-l5",
+  "moduleId": "rn9-forms",
+  "slug": "focus-blur",
+  "order": 5,
+  "title": {
+    "mn": "focus/blur — идэвхтэй талбарыг тодотгох"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн форм дээр хэрэглэгч аль талбарт бичиж байгаа нь тодрох ёстой. `onFocus`/`onBlur` ба төлөвөөр идэвхтэй талбарын хүрээг өнгөөр солино."
+  },
+  "buildsInProject": "Идэвхтэй үедээ хүрээ өнгөө сольдог талбар",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "state",
+    "useState",
+    "conditional-rendering",
+    "style"
+  ],
+  "prerequisites": [
+    "rn9-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [text, setText] = useState(\"\");\n  const [focused, setFocused] = useState(false);\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"field\" style={styles.input} placeholder=\"Хайх бараа...\"\n        value={text} onChangeText={setText} />\n      {/* энд бичнэ үү: onFocus/onBlur нэмж, идэвхтэй үед styles.active-г хэрэглэ */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, justifyContent: \"center\" },\n  input: { borderWidth: 2, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  active: { borderColor: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn9-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "focus/blur — идэвхтэй талбарыг тодотгох"
+      },
+      "statement": {
+        "mn": "Талбарт `onFocus={() => setFocused(true)}`, `onBlur={() => setFocused(false)}` нэмж, `style`-г массив болгож `[styles.input, focused && styles.active]` гэж бич. Идэвхтэй үед хүрээ цэнхэр болно."
+      },
+      "requirements": [
+        {
+          "mn": "`onFocus`/`onBlur` нэмсэн"
+        },
+        {
+          "mn": "`style` нь `[styles.input, focused && styles.active]`"
+        },
+        {
+          "mn": "Фокуслахад хүрээ цэнхэр болно"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Талбарт хүрэхэд хүрээ цэнхэр болж, гарахад буцаад саарал болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useState"
+          },
+          "onFail": {
+            "mn": "`useState` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "setFocused"
+          },
+          "onFail": {
+            "mn": "`onFocus`/`onBlur` дотор `setFocused`-г дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`onFocus` нь талбарт хүрэхэд, `onBlur` нь талбараас гарахад дуудагдана. Хоёулаа төлөв өөрчилнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Идэвхтэй байдлыг `focused` төлөвд хадгалж, `style={[styles.input, focused && styles.active]}` гэж нөхцөлт загвар өг."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Талбарт нэм:"
+          },
+          "code": "onFocus={() => setFocused(true)}\nonBlur={() => setFocused(false)}\n// style={[styles.input, focused && styles.active]}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [text, setText] = useState(\"\");\n  const [focused, setFocused] = useState(false);\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"field\" style={[styles.input, focused && styles.active]} placeholder=\"Хайх бараа...\"\n        value={text} onChangeText={setText}\n        onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, justifyContent: \"center\" },\n  input: { borderWidth: 2, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  active: { borderColor: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`onFocus`/`onBlur` нь талбар идэвхжсэн, идэвхгүй болсныг мэдэгдэнэ. Тэр төлөвийг нөхцөлт загвартай хослуулж, хэрэглэгчид аль талбарт бичиж байгааг тодорхой харуулна."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`onBlur` хэзээ дуудагдах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Талбарт хүрэхэд"
+        },
+        {
+          "mn": "Талбараас фокус гарахад"
+        },
+        {
+          "mn": "Текст бичих бүрт"
+        },
+        {
+          "mn": "Апп нээгдэхэд"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "onBlur нь талбар фокусаа алдахад (гарахад) дуудагдана."
+      },
+      "hint": {
+        "mn": "«blur» = бүдгэрэх/фокус алдах."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Идэвхтэй хүрээг харуулах хамгийн зохимжтой арга юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Шинэ талбар нэмэх"
+        },
+        {
+          "mn": "`focused` төлөв ба нөхцөлт загвар"
+        },
+        {
+          "mn": "borderColor-г App-аас гадуур солих"
+        },
+        {
+          "mn": "Хоёр TextInput"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Фокусын байдлыг төлөвд хадгалж, нөхцөлт загвараар хүрээг сольдог."
+      },
+      "hint": {
+        "mn": "React-д UI төлөвөөс хамаардаг."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

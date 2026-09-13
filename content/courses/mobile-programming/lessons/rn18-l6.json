@@ -1,0 +1,220 @@
+{
+  "id": "rn18-l6",
+  "moduleId": "rn18-context",
+  "slug": "multiple-contexts",
+  "order": 6,
+  "title": {
+    "mn": "Олон Context — theme ба сагс"
+  },
+  "why": {
+    "mn": "Апп нэгээс олон глобал өгөгдөлтэй: хэрэглэгч, тема, сагс. Олон Context-ийг зэрэг хэрэглэж, тус бүрийг зохих газарт нь уншина. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Тема ба сагс — хоёр Context зэрэг",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useContext",
+    "component",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn18-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { createContext, useContext } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst ThemeContext = createContext(\"light\");\nconst CartContext = createContext({ count: 0 });\n\nfunction Bar() {\n  // энд бичнэ үү: хоёр Context-оос уншина\n  const theme = \"light\";\n  const cart = { count: 0 };\n  return <Text nativeID=\"bar\" style={styles.bar}>{theme} · Сагс: {cart.count}</Text>;\n}\n\nfunction App() {\n  return (\n    <ThemeContext.Provider value=\"dark\">\n      <CartContext.Provider value={{ count: 3 }}>\n        <View style={styles.s}><Bar /></View>\n      </CartContext.Provider>\n    </ThemeContext.Provider>\n  );\n}\n\nconst styles = StyleSheet.create({ s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" }, bar: { fontSize: 18, fontWeight: \"600\" } });\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn18-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Олон Context — theme ба сагс"
+      },
+      "statement": {
+        "mn": "`Bar` дотор `useContext(ThemeContext)` болон `useContext(CartContext)` хоёуланг нь дуудаж, тема ба сагсны тоог хамт харуул. App нь хоёр Provider-оор давхарлан ороосон."
+      },
+      "requirements": [
+        {
+          "mn": "Хоёр `useContext` дуудсан"
+        },
+        {
+          "mn": "Тема ба сагсны тоо хоёулаа харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«dark · Сагс: 3» гэж хоёр Context-оос ирсэн утга харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.text",
+          "args": {
+            "selector": "#bar",
+            "contains": "dark"
+          },
+          "onFail": {
+            "mn": "ThemeContext-оос уншаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.text",
+          "args": {
+            "selector": "#bar",
+            "contains": "3"
+          },
+          "onFail": {
+            "mn": "CartContext-оос уншаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Component дотор хэдэн ч `useContext` дуудаж болно — тус бүр өөр саваас уншина."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`const theme = useContext(ThemeContext); const cart = useContext(CartContext);`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Хоёр уншилт:"
+          },
+          "code": "const theme = useContext(ThemeContext);\nconst cart = useContext(CartContext);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { createContext, useContext } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst ThemeContext = createContext(\"light\");\nconst CartContext = createContext({ count: 0 });\n\nfunction Bar() {\n  const theme = useContext(ThemeContext);\n  const cart = useContext(CartContext);\n  return <Text nativeID=\"bar\" style={styles.bar}>{theme} · Сагс: {cart.count}</Text>;\n}\n\nfunction App() {\n  return (\n    <ThemeContext.Provider value=\"dark\">\n      <CartContext.Provider value={{ count: 3 }}>\n        <View style={styles.s}><Bar /></View>\n      </CartContext.Provider>\n    </ThemeContext.Provider>\n  );\n}\n\nconst styles = StyleSheet.create({ s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" }, bar: { fontSize: 18, fontWeight: \"600\" } });\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Олон Context-ийг давхарлан Provider-дэж, component бүр өөрт хэрэгтэйг нь `useContext`-оор уншина. Тема, хэрэглэгч, сагс зэргийг тусад нь салгаж удирдах цэвэр арга."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Нэг component хэдэн `useContext` дуудаж болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн 1"
+        },
+        {
+          "mn": "Хэдийг ч — тус бүр өөр Context-оос"
+        },
+        {
+          "mn": "Хамгийн ихдээ 2"
+        },
+        {
+          "mn": "Provider бүрт 1"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Component дотор хэдэн ч useContext дуудаж, олон саваас зэрэг уншиж болно."
+      },
+      "hint": {
+        "mn": "Хязгаар байх ёстой юу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Олон Provider-ийг яаж хослуулдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зэрэгцүүлж"
+        },
+        {
+          "mn": "Бие бие дотроо давхарлан (nest) ороож"
+        },
+        {
+          "mn": "Нэгтгэж нэг болгож"
+        },
+        {
+          "mn": "Боломжгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Provider-үүдийг үүрлүүлэн (nest) байрлуулж, доторх бүх component бүгдэд нь хандана."
+      },
+      "hint": {
+        "mn": "JSX-д component-ийг яаж давхарладаг вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

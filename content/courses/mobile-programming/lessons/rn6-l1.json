@@ -1,0 +1,235 @@
+{
+  "id": "rn6-l1",
+  "moduleId": "rn6-data",
+  "slug": "useeffect-loading",
+  "order": 1,
+  "title": {
+    "mn": "useEffect — өгөгдөл ачаалах"
+  },
+  "why": {
+    "mn": "Жинхэнэ апп өгөгдлөө серверээс татдаг бөгөөд энэ нь хормын зуур үргэлжилдэг. `useEffect`-ээр өгөгдөл ачаалж, хүлээж байх хугацаанд эргэдэг тэмдэг (spinner) харуулъя. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Ачаалалын төлөвтэй бүтээгдэхүүний жагсаалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 16,
+  "skills": [
+    "react-native",
+    "mobile-data",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "useEffect",
+    "useState",
+    "ActivityIndicator",
+    "FlatList"
+  ],
+  "prerequisites": [
+    "rn5-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, FlatList, ActivityIndicator, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst SERVER_DATA = [\n  { id: \"1\", name: \"Чихэвч\" },\n  { id: \"2\", name: \"Гар цаг\" },\n  { id: \"3\", name: \"Нарны шил\" },\n];\n\nfunction App() {\n  const [loading, setLoading] = useState(true);\n  const [items, setItems] = useState([]);\n\n  // энд бичнэ үү: useEffect дотор өгөгдлөө ачаал\n\n  if (loading) {\n    return (\n      <View style={styles.center}>\n        <ActivityIndicator nativeID=\"spinner\" size=\"large\" color=\"#2563eb\" />\n        <Text style={styles.hint}>Ачаалж байна...</Text>\n      </View>\n    );\n  }\n\n  return (\n    <FlatList\n      style={styles.screen}\n      data={items}\n      keyExtractor={(item) => item.id}\n      renderItem={({ item }) => <Text testID=\"row\" style={styles.row}>{item.name}</Text>}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  center: { flex: 1, justifyContent: \"center\", alignItems: \"center\", gap: 12 },\n  hint: { color: \"#71717a\" },\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\" },\n  row: { backgroundColor: \"#fff\", padding: 16, margin: 8, borderRadius: 12, fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn6-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "useEffect — өгөгдөл ачаалах"
+      },
+      "statement": {
+        "mn": "`useEffect(() => { ... }, [])` дотор `setTimeout`-оор ~300мс дараа `setItems(SERVER_DATA)` ба `setLoading(false)` дуудаж, өгөгдөл «ирснийг» дуурай. Хамаарлын массив `[]` нь энэ нэг л удаа ажиллана гэсэн үг."
+      },
+      "requirements": [
+        {
+          "mn": "`useEffect`-ийг ашигласан"
+        },
+        {
+          "mn": "Хамаарлын массив `[]` (нэг удаа ажиллана)"
+        },
+        {
+          "mn": "Ачаалж дуусахад жагсаалт харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Эхэндээ эргэдэг тэмдэг (spinner) харагдаад, хормын дараа 3 бараатай жагсаалт гарч ирнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useEffect"
+          },
+          "onFail": {
+            "mn": "`useEffect`-ийг ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"row\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 3
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Ачаалж дуусаад 3 бараа харагдахгүй байна. `useEffect` доторх `setItems`/`setLoading`-ээ шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`useEffect(() => { ... }, [])` нь component анх зурагдахад НЭГ удаа ажиллана — өгөгдөл ачаалахад яг тохирно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Серверийн саатлыг `setTimeout(() => { setItems(...); setLoading(false); }, 300)`-оор дуурайлга. Дараа нь `loading` false болоход жагсаалт харагдана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "useEffect ийм харагдана:"
+          },
+          "code": "useEffect(() => {\n  const timer = setTimeout(() => {\n    setItems(SERVER_DATA);\n    setLoading(false);\n  }, 300);\n  return () => clearTimeout(timer);\n}, []);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, FlatList, ActivityIndicator, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst SERVER_DATA = [\n  { id: \"1\", name: \"Чихэвч\" },\n  { id: \"2\", name: \"Гар цаг\" },\n  { id: \"3\", name: \"Нарны шил\" },\n];\n\nfunction App() {\n  const [loading, setLoading] = useState(true);\n  const [items, setItems] = useState([]);\n\n  useEffect(() => {\n    const timer = setTimeout(() => {\n      setItems(SERVER_DATA);\n      setLoading(false);\n    }, 300);\n    return () => clearTimeout(timer);\n  }, []);\n\n  if (loading) {\n    return (\n      <View style={styles.center}>\n        <ActivityIndicator nativeID=\"spinner\" size=\"large\" color=\"#2563eb\" />\n        <Text style={styles.hint}>Ачаалж байна...</Text>\n      </View>\n    );\n  }\n\n  return (\n    <FlatList\n      style={styles.screen}\n      data={items}\n      keyExtractor={(item) => item.id}\n      renderItem={({ item }) => <Text testID=\"row\" style={styles.row}>{item.name}</Text>}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  center: { flex: 1, justifyContent: \"center\", alignItems: \"center\", gap: 12 },\n  hint: { color: \"#71717a\" },\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\" },\n  row: { backgroundColor: \"#fff\", padding: 16, margin: 8, borderRadius: 12, fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`useEffect(fn, [])` нь «дэлгэц гарч ирэхэд нэг удаа хий» гэсэн үг — өгөгдөл ачаалах гол хэрэглээ. Ачаалж дуустал `loading` төлөвөөр spinner харуулж, дуусахад жинхэнэ өгөгдлийг харуулна. `return () => clearTimeout(...)` нь цэвэрлэгээ (cleanup)."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 14,
+      "skills": [
+        "react-native",
+        "mobile-data",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`useEffect(fn, [])`-ийн хоосон `[]` юуг заадаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаа"
+        },
+        {
+          "mn": "Энэ effect component анх зурагдахад НЭГ л удаа ажиллана"
+        },
+        {
+          "mn": "Хэзээ ч ажиллахгүй"
+        },
+        {
+          "mn": "Секунд тутам ажиллана"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хоосон хамаарлын массив `[]` нь effect-ийг зөвхөн эхний рендерт нэг удаа ажиллуулна — өгөгдөл ачаалахад тохиромжтой."
+      },
+      "hint": {
+        "mn": "Хамаарлын жагсаалт хоосон бол дахин ажиллуулах шалтгаан байхгүй. Хэдэн удаа ажиллах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Өгөгдөл ачаалж байх хугацаанд хэрэглэгчид юу харуулах нь зөв бэ?"
+      },
+      "options": [
+        {
+          "mn": "Хоосон цагаан дэлгэц"
+        },
+        {
+          "mn": "Ачаалж буйг илтгэх тэмдэг (ActivityIndicator/spinner)"
+        },
+        {
+          "mn": "Алдааны мэдэгдэл"
+        },
+        {
+          "mn": "Юу ч биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`loading` төлөв үнэн байх хугацаанд `<ActivityIndicator>` харуулснаар хэрэглэгч апп ажиллаж байгааг мэдэрнэ."
+      },
+      "hint": {
+        "mn": "Хэрэглэгч хүлээж байгаагаа мэдэх ёстой. Хоосон дэлгэц үү, эсвэл эргэдэг тэмдэг үү?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

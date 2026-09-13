@@ -1,0 +1,246 @@
+{
+  "id": "rn10-l6",
+  "moduleId": "rn10-validation",
+  "slug": "submit-alert",
+  "order": 6,
+  "title": {
+    "mn": "Зөв бол Alert-аар илгээх"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн захиалга бүх талбар зөв бол баталгаажих ёстой. Шалгалт амжилттай болбол `Alert.alert(\"Амжилттай\", ...)`-аар хэрэглэгчид мэдэгдэнэ."
+  },
+  "buildsInProject": "Баталгаажсан захиалгын Alert мэдэгдэл",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "Alert",
+    "state",
+    "useState",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn10-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, Pressable, Alert, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [form, setForm] = useState({ name: \"\", phone: \"\" });\n  const valid = form.name.trim() !== \"\" && form.phone.trim() !== \"\";\n  function submit() {\n    if (!valid) return;\n    // энд бичнэ үү: Alert.alert(\"Амжилттай\", ...)-аар баталгаажуул\n  }\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"name\" style={styles.input} placeholder=\"Нэр\"\n        value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} />\n      <TextInput nativeID=\"phone\" style={styles.input} placeholder=\"Утас\" keyboardType=\"numeric\"\n        value={form.phone} onChangeText={(v) => setForm({ ...form, phone: v })} />\n      <Pressable nativeID=\"submit\" style={styles.btn} onPress={submit}>\n        <Text style={styles.btnText}>Захиалах</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  btn: { backgroundColor: \"#16a34a\", padding: 14, borderRadius: 10, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn10-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Зөв бол Alert-аар илгээх"
+      },
+      "statement": {
+        "mn": "`submit` функц дотор бүх талбар зөв (`valid`) үед `Alert.alert(\"Амжилттай\", ...)` дуудаж захиалгыг баталгаажуул. Талбарууд дүүрсэн үед л Alert гарна."
+      },
+      "requirements": [
+        {
+          "mn": "`Alert.alert(\"Амжилттай\", ...)` дуудсан"
+        },
+        {
+          "mn": "Талбар дүүрсэн үед Alert гарна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Нэр, утсаа бичээд «Захиалах» дархад «Амжилттай» гэсэн Alert гарч ирнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "alert"
+          },
+          "onFail": {
+            "mn": "`Alert.alert`-г дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "#name",
+                  "text": "Бат"
+                }
+              },
+              {
+                "type": {
+                  "selector": "#phone",
+                  "text": "99119911"
+                }
+              },
+              {
+                "click": "#submit"
+              },
+              {
+                "waitFor": "[data-rn=\"alert\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-rn=\"alert-title\"]",
+                  "contains": "Амжилттай"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Талбар зөв үед «Амжилттай» Alert гарахгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`Alert.alert(гарчиг, мессеж)` нь дэлгэц дээр баталгаажуулах цонх гаргана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Шалгалт зөв (`valid`) болсны дараа л Alert дуудна — `submit` функц дотор бичнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "submit дотор:"
+          },
+          "code": "if (!valid) return;\nAlert.alert(\"Амжилттай\", form.name + \"-ийн захиалга баталгаажлаа\");"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, Pressable, Alert, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [form, setForm] = useState({ name: \"\", phone: \"\" });\n  const valid = form.name.trim() !== \"\" && form.phone.trim() !== \"\";\n  function submit() {\n    if (!valid) return;\n    Alert.alert(\"Амжилттай\", form.name + \"-ийн захиалга баталгаажлаа\");\n  }\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"name\" style={styles.input} placeholder=\"Нэр\"\n        value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} />\n      <TextInput nativeID=\"phone\" style={styles.input} placeholder=\"Утас\" keyboardType=\"numeric\"\n        value={form.phone} onChangeText={(v) => setForm({ ...form, phone: v })} />\n      <Pressable nativeID=\"submit\" style={styles.btn} onPress={submit}>\n        <Text style={styles.btnText}>Захиалах</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14 },\n  btn: { backgroundColor: \"#16a34a\", padding: 14, borderRadius: 10, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Баталгаажуулалт бүрэн давсан үед `Alert.alert` нь хэрэглэгчид тодорхой хариу өгдөг. Шалгалт → үйлдэл → мэдэгдэл гэсэн форм боловсруулах бүрэн мөчлөг үүнээр дуусна."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`Alert.alert(\"Амжилттай\", \"...\")` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Талбар цэвэрлэнэ"
+        },
+        {
+          "mn": "Дэлгэц дээр мэдэгдлийн цонх гаргана"
+        },
+        {
+          "mn": "Форм илгээнэ"
+        },
+        {
+          "mn": "Өнгө сольдог"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Alert.alert нь гарчиг, мессеж бүхий системийн цонх харуулна."
+      },
+      "hint": {
+        "mn": "«alert» = сэрэмжлүүлэг/мэдэгдэл."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Alert-г хэзээ дуудах нь зөв вэ?"
+      },
+      "options": [
+        {
+          "mn": "Апп нээгдмэгц"
+        },
+        {
+          "mn": "Шалгалт бүрэн давсны дараа"
+        },
+        {
+          "mn": "Товч зурагдмагц үргэлж"
+        },
+        {
+          "mn": "Талбар хоосон үед"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Баталгаажуулалт амжилттай болсны дараа л амжилтын мэдэгдэл гаргах нь зөв."
+      },
+      "hint": {
+        "mn": "Амжилтын мэдэгдэл хэзээ утгатай вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30,
+    "badge": "rn-forms"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,248 @@
+{
+  "id": "rn12-l3",
+  "moduleId": "rn12-sectionlist",
+  "slug": "group-into-sections",
+  "order": 3,
+  "title": {
+    "mn": "Түүхий өгөгдлийг бүлэглэх"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн бараа сервэрээс жагсаалтаар (нэг мөр) ирдэг. Түүнийг ангиллаар нь `sections` болгож бүлэглэж байж SectionList-д өгнө. Энэ бол өгөгдөл бэлдэх түгээмэл алхам."
+  },
+  "buildsInProject": "Ангиллаар автоматаар бүлэглэсэн жагсаалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-lists",
+    "mobile-data"
+  ],
+  "concepts": [
+    "SectionList",
+    "sections",
+    "filter",
+    "renderSectionHeader"
+  ],
+  "prerequisites": [
+    "rn12-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, SectionList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { name: \"Чихэвч\", cat: \"Электроник\" },\n  { name: \"Гар цаг\", cat: \"Электроник\" },\n  { name: \"Гутал\", cat: \"Хувцас\" },\n  { name: \"Цүнх\", cat: \"Хувцас\" },\n  { name: \"Нарны шил\", cat: \"Гоёл\" },\n];\n\nfunction App() {\n  // энд бичнэ үү: PRODUCTS-ийг cat-аар бүлэглэж sections бүтээ\n  const sections = [];\n  return (\n    <SectionList\n      style={styles.screen}\n      sections={sections}\n      keyExtractor={(item, i) => item.name + i}\n      renderSectionHeader={({ section }) => (\n        <View testID=\"section-header\" style={styles.header}>\n          <Text style={styles.headerText}>{section.title}</Text>\n        </View>\n      )}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text>{item.name}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  header: { padding: 12, backgroundColor: \"#e0e7ff\" },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn12-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Түүхий өгөгдлийг бүлэглэх"
+      },
+      "statement": {
+        "mn": "`PRODUCTS` жагсаалтыг `cat`-аар нь бүлэглэ. Ялгаатай ангиллуудыг ол, тус бүрд нь `filter`-ээр гишүүдийг цуглуулж `{ title, data }` section-ууд бүтээ. 3 бүлэг, 5 бараа гарна."
+      },
+      "requirements": [
+        {
+          "mn": "`sections`-ийг PRODUCTS-аас бүтээсэн"
+        },
+        {
+          "mn": "`filter` ашигласан"
+        },
+        {
+          "mn": "3 бүлэг, 5 бараа"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Электроник» (2), «Хувцас» (2), «Гоёл» (1) гэсэн 3 бүлэг ангиллаараа гарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "filter"
+          },
+          "onFail": {
+            "mn": "Бүлэглэхдээ `filter` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"section-header\"]",
+            "equals": 3
+          },
+          "onFail": {
+            "mn": "3 ангиллын бүлэг байх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"product\"]",
+            "equals": 5
+          },
+          "onFail": {
+            "mn": "5 бараа бүгд харагдах ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "dom.text",
+          "args": {
+            "selector": "[data-testid=\"section-header\"]",
+            "contains": "Электроник"
+          },
+          "onFail": {
+            "mn": "Эхний бүлэг «Электроник» байх ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Эхлээд ялгаатай ангиллуудыг ол: `[...new Set(PRODUCTS.map((p) => p.cat))]`."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Ангилал бүрд `PRODUCTS.filter((p) => p.cat === cat)`-ээр гишүүдийг цуглуулж `{ title, data }` object болго."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүлэглэх бүтэц:"
+          },
+          "code": "const cats = [...new Set(PRODUCTS.map((p) => p.cat))];\nconst sections = cats.map((cat) => ({\n  title: cat,\n  data: PRODUCTS.filter(/* p.cat === cat */),\n}));"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, SectionList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { name: \"Чихэвч\", cat: \"Электроник\" },\n  { name: \"Гар цаг\", cat: \"Электроник\" },\n  { name: \"Гутал\", cat: \"Хувцас\" },\n  { name: \"Цүнх\", cat: \"Хувцас\" },\n  { name: \"Нарны шил\", cat: \"Гоёл\" },\n];\n\nfunction App() {\n  const cats = [...new Set(PRODUCTS.map((p) => p.cat))];\n  const sections = cats.map((cat) => ({\n    title: cat,\n    data: PRODUCTS.filter((p) => p.cat === cat),\n  }));\n  return (\n    <SectionList\n      style={styles.screen}\n      sections={sections}\n      keyExtractor={(item, i) => item.name + i}\n      renderSectionHeader={({ section }) => (\n        <View testID=\"section-header\" style={styles.header}>\n          <Text style={styles.headerText}>{section.title}</Text>\n        </View>\n      )}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text>{item.name}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  header: { padding: 12, backgroundColor: \"#e0e7ff\" },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Түүхий жагсаалтыг `map` + `filter`-ээр ангилал бүрийн `{ title, data }` болгон хувиргаж SectionList-д өгнө. Ихэнх апп өгөгдлийг ингэж дэлгэцэнд тааруулан бэлддэг."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-lists",
+        "mobile-data"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`[...new Set(PRODUCTS.map((p) => p.cat))]` юу буцаах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Бүх бараа"
+        },
+        {
+          "mn": "Давхардалгүй ангиллын жагсаалт"
+        },
+        {
+          "mn": "Эхний ангилал"
+        },
+        {
+          "mn": "Барааны тоо"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`map` ангиллуудыг гаргаж, `Set` давхардлыг арилгана."
+      },
+      "hint": {
+        "mn": "«Set» дотор давхардал байдаггүй."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`PRODUCTS.filter((p) => p.cat === cat)` юу өгөх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Бүх бараа"
+        },
+        {
+          "mn": "Зөвхөн тухайн ангиллын бараанууд"
+        },
+        {
+          "mn": "Ангиллын нэр"
+        },
+        {
+          "mn": "Нэг бараа"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`filter` нь нөхцөлд тохирсон (тухайн ангиллын) элементүүдийг л буцаана."
+      },
+      "hint": {
+        "mn": "«Filter» = шүүх. Юу үлдэх вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

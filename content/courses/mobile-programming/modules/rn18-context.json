@@ -1,0 +1,20 @@
+{
+  "id": "rn18-context",
+  "stageId": "s11",
+  "order": 2,
+  "title": {
+    "mn": "Context API"
+  },
+  "description": {
+    "mn": "Глобал төлөв — сагсаа бүх дэлгэцэд хуваалцах."
+  },
+  "estimatedHours": 6,
+  "lessons": [
+    "rn18-l1",
+    "rn18-l2",
+    "rn18-l3",
+    "rn18-l4",
+    "rn18-l5",
+    "rn18-l6"
+  ]
+}

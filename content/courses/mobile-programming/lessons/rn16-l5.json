@@ -1,0 +1,239 @@
+{
+  "id": "rn16-l5",
+  "moduleId": "rn16-mutations",
+  "slug": "update-put",
+  "order": 5,
+  "title": {
+    "mn": "PUT — тоо ширхэг засах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн сагсанд барааны тоо ширхгийг өөрчлөхөд сервер рүү PUT илгээж (шинэчлэх), буцсан утгаар тухайн барааг `map`-аар шинэчилнэ."
+  },
+  "buildsInProject": "Тоо ширхэг нэмэгддэг сагс",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-data"
+  ],
+  "concepts": [
+    "state",
+    "Pressable",
+    "onPress",
+    "filter"
+  ],
+  "prerequisites": [
+    "rn16-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst fakeUpdate = (id, qty) => new Promise((res) => setTimeout(() => res({ id: id, qty: qty }), 200));\n\nfunction App() {\n  const [items, setItems] = useState([\n    { id: \"c1\", name: \"Чихэвч\", qty: 1 }, { id: \"c2\", name: \"Ном\", qty: 2 },\n  ]);\n\n  function inc(id, current) {\n    // энд бичнэ үү: fakeUpdate(id, current + 1)-г дуудаж, ирсэн qty-ээр map-аар шинэчил\n  }\n\n  return (\n    <View style={styles.s}>\n      {items.map((it) => (\n        <View key={it.id} style={styles.row}>\n          <Text>{it.name}</Text>\n          <Text nativeID={\"qty-\" + it.id} style={styles.qty}>{it.qty}</Text>\n          <Pressable nativeID={\"inc-\" + it.id} style={styles.btn} onPress={() => inc(it.id, it.qty)}><Text style={styles.btnText}>+</Text></Pressable>\n        </View>\n      ))}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 16, gap: 8 },\n  row: { flexDirection: \"row\", alignItems: \"center\", gap: 14, paddingVertical: 10, borderBottomWidth: 1, borderColor: \"#e2e8f0\" },\n  qty: { fontSize: 18, fontWeight: \"bold\", minWidth: 24, textAlign: \"center\" },\n  btn: { backgroundColor: \"#2563eb\", width: 36, height: 36, borderRadius: 8, alignItems: \"center\", justifyContent: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\", fontSize: 18 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn16-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "PUT — тоо ширхэг засах"
+      },
+      "statement": {
+        "mn": "`inc(id, current)` дотор `fakeUpdate(id, current + 1)`-г дууд. `.then((updated) => ...)`-д `setItems((prev) => prev.map(...))` бичиж, тухайн барааны `qty`-г серверээс ирсэн `updated.qty`-ээр шинэчил."
+      },
+      "requirements": [
+        {
+          "mn": "`fakeUpdate`-г дуудсан"
+        },
+        {
+          "mn": "`map`-аар тухайн барааны qty-г шинэчилсэн"
+        },
+        {
+          "mn": "«+» дархад тоо нэмэгдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Чихэвчний «+» дархад тоо 1-ээс 2 болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "fakeUpdate"
+          },
+          "onFail": {
+            "mn": "`fakeUpdate`-г дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "expectText": {
+                  "selector": "#qty-c1",
+                  "equals": "1"
+                }
+              },
+              {
+                "click": "#inc-c1"
+              },
+              {
+                "expectText": {
+                  "selector": "#qty-c1",
+                  "contains": "2"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«+» дархад тоо ширхэг шинэчлэгдэхгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Одоогийн тоог мэдэж байгаа тул `current + 1`-г серверт илгээнэ. Сервер шинэ утгыг буцаана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`.then((updated) => setItems((prev) => prev.map((x) => x.id === id ? { ...x, qty: updated.qty } : x)))`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "inc функц:"
+          },
+          "code": "function inc(id, current) {\n  fakeUpdate(id, current + 1).then((updated) => {\n    setItems((prev) => prev.map((x) =>\n      x.id === id ? { ...x, qty: updated.qty } : x));\n  });\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst fakeUpdate = (id, qty) => new Promise((res) => setTimeout(() => res({ id: id, qty: qty }), 200));\n\nfunction App() {\n  const [items, setItems] = useState([\n    { id: \"c1\", name: \"Чихэвч\", qty: 1 }, { id: \"c2\", name: \"Ном\", qty: 2 },\n  ]);\n\n  function inc(id, current) {\n    fakeUpdate(id, current + 1).then((updated) => {\n      setItems((prev) => prev.map((x) => (x.id === id ? { ...x, qty: updated.qty } : x)));\n    });\n  }\n\n  return (\n    <View style={styles.s}>\n      {items.map((it) => (\n        <View key={it.id} style={styles.row}>\n          <Text>{it.name}</Text>\n          <Text nativeID={\"qty-\" + it.id} style={styles.qty}>{it.qty}</Text>\n          <Pressable nativeID={\"inc-\" + it.id} style={styles.btn} onPress={() => inc(it.id, it.qty)}><Text style={styles.btnText}>+</Text></Pressable>\n        </View>\n      ))}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 16, gap: 8 },\n  row: { flexDirection: \"row\", alignItems: \"center\", gap: 14, paddingVertical: 10, borderBottomWidth: 1, borderColor: \"#e2e8f0\" },\n  qty: { fontSize: 18, fontWeight: \"bold\", minWidth: 24, textAlign: \"center\" },\n  btn: { backgroundColor: \"#2563eb\", width: 36, height: 36, borderRadius: 8, alignItems: \"center\", justifyContent: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\", fontSize: 18 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "PUT нь байгаа бичлэгийг шинэчилдэг. Одоогийн утга дээр нэмээд серверт илгээж, буцсан утгаар `map`-аар тухайн барааг л шинэчилнэ. Бусад бараа хэвээр үлдэнэ."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-data"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Байгаа бичлэгийг шинэчлэхэд ямар HTTP үйлдэл түгээмэл вэ?"
+      },
+      "options": [
+        {
+          "mn": "GET"
+        },
+        {
+          "mn": "PUT (эсвэл PATCH)"
+        },
+        {
+          "mn": "DELETE"
+        },
+        {
+          "mn": "HEAD"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "PUT/PATCH нь байгаа бичлэгийг шинэчлэхэд ашиглагдана."
+      },
+      "hint": {
+        "mn": "Шинэчлэх = аль үйлдэл?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Зөвхөн нэг барааны qty-г өөрчлөхөд юуг ашиглах вэ?"
+      },
+      "options": [
+        {
+          "mn": "`filter`"
+        },
+        {
+          "mn": "`map` (id таарсныг нь л шинэчилнэ)"
+        },
+        {
+          "mn": "`push`"
+        },
+        {
+          "mn": "`pop`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`map`-аар тааруулсан барааг шинэчилж, бусдыг хэвээр үлдээнэ."
+      },
+      "hint": {
+        "mn": "Нэгийг засаж, бусдыг хэвээр."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

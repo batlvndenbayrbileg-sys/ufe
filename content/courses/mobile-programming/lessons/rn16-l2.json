@@ -1,0 +1,245 @@
+{
+  "id": "rn16-l2",
+  "moduleId": "rn16-mutations",
+  "slug": "form-create",
+  "order": 2,
+  "title": {
+    "mn": "Форм → сервер — оруулсан нэрээр бараа үүсгэх"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн админ талбарт барааны нэр бичээд нэмэхэд тэр нэрээр шинэ бараа сервер дээр үүсэх ёстой. Формын утгыг `fakeCreate`-д дамжуулж бодит бараа үүсгэнэ."
+  },
+  "buildsInProject": "Нэр бичээд бараа нэмдэг форм",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-data"
+  ],
+  "concepts": [
+    "TextInput",
+    "onChangeText",
+    "state",
+    "Pressable"
+  ],
+  "prerequisites": [
+    "rn16-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nlet nextId = 3;\nconst fakeCreate = (product) => new Promise((res) => setTimeout(() => res({ id: \"p\" + nextId++, ...product }), 200));\n\nfunction App() {\n  const [name, setName] = useState(\"\");\n  const [items, setItems] = useState([\n    { id: \"p1\", name: \"Чихэвч\" }, { id: \"p2\", name: \"Гар цаг\" },\n  ]);\n\n  function add() {\n    // энд бичнэ үү: name-ээр fakeCreate дуудаж, ирсэн барааг нэмээд талбарыг цэвэрлэ\n  }\n\n  return (\n    <View style={styles.s}>\n      <TextInput nativeID=\"name\" style={styles.input} placeholder=\"Барааны нэр\" value={name} onChangeText={setName} />\n      <Pressable nativeID=\"add\" style={styles.btn} onPress={add}><Text style={styles.btnText}>Нэмэх</Text></Pressable>\n      {items.map((it) => <Text key={it.id} testID=\"row\" style={styles.row}>{it.name}</Text>)}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 16, gap: 8 },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 12, fontSize: 16 },\n  btn: { backgroundColor: \"#2563eb\", padding: 12, borderRadius: 10, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n  row: { fontSize: 16, paddingVertical: 10, borderBottomWidth: 1, borderColor: \"#e2e8f0\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn16-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Форм → сервер — оруулсан нэрээр бараа үүсгэх"
+      },
+      "statement": {
+        "mn": "`add` дотор `fakeCreate({ name: name })`-г дууд. `.then`-д ирсэн барааг `setItems`-оор нэмээд, `setName(\"\")`-оор талбарыг цэвэрлэ. Хоосон нэрээр үүсгэхээс сэргийл."
+      },
+      "requirements": [
+        {
+          "mn": "`fakeCreate({ name })`-г дуудсан"
+        },
+        {
+          "mn": "Ирсэн барааг жагсаалтад нэмсэн"
+        },
+        {
+          "mn": "Оруулсан нэр жагсаалтад гарч ирнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Түрийвч» бичээд «Нэмэх» дархад «Түрийвч» жагсаалтад нэмэгдэнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "fakeCreate"
+          },
+          "onFail": {
+            "mn": "`fakeCreate`-г дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "#name",
+                  "text": "Түрийвч"
+                }
+              },
+              {
+                "click": "#add"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 3
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "Array.from(document.querySelectorAll('[data-testid=row]')).some(function(e){return e.textContent.indexOf('Түрийвч')>=0;})",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Оруулсан нэрээр шинэ бараа үүсэхгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Талбарын утга `name` төлөвт байна. Түүнийг `fakeCreate`-д объект болгож дамжуул."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`fakeCreate({ name: name }).then((created) => { setItems(...); setName(\"\"); })` — үүсгээд талбарыг цэвэрлэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "add функц:"
+          },
+          "code": "function add() {\n  if (!name) return;\n  fakeCreate({ name: name }).then((created) => {\n    setItems((prev) => [...prev, created]);\n    setName(\"\");\n  });\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nlet nextId = 3;\nconst fakeCreate = (product) => new Promise((res) => setTimeout(() => res({ id: \"p\" + nextId++, ...product }), 200));\n\nfunction App() {\n  const [name, setName] = useState(\"\");\n  const [items, setItems] = useState([\n    { id: \"p1\", name: \"Чихэвч\" }, { id: \"p2\", name: \"Гар цаг\" },\n  ]);\n\n  function add() {\n    if (!name) return;\n    fakeCreate({ name: name }).then((created) => {\n      setItems((prev) => [...prev, created]);\n      setName(\"\");\n    });\n  }\n\n  return (\n    <View style={styles.s}>\n      <TextInput nativeID=\"name\" style={styles.input} placeholder=\"Барааны нэр\" value={name} onChangeText={setName} />\n      <Pressable nativeID=\"add\" style={styles.btn} onPress={add}><Text style={styles.btnText}>Нэмэх</Text></Pressable>\n      {items.map((it) => <Text key={it.id} testID=\"row\" style={styles.row}>{it.name}</Text>)}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 16, gap: 8 },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 12, fontSize: 16 },\n  btn: { backgroundColor: \"#2563eb\", padding: 12, borderRadius: 10, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n  row: { fontSize: 16, paddingVertical: 10, borderBottomWidth: 1, borderColor: \"#e2e8f0\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Формын оролтыг төлөвт хадгалж, серверт илгээх үед ашиглана. Сервер баталгаажуулсны дараа жагсаалтад нэмж, талбарыг цэвэрлэснээр дараагийн оролтод бэлэн болно."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-data"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Формын оруулсан утгыг хаанаас авах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Серверээс"
+        },
+        {
+          "mn": "`onChangeText`-ээр хадгалсан `name` төлөвөөс"
+        },
+        {
+          "mn": "keyExtractor-оос"
+        },
+        {
+          "mn": "styles-аас"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хянагдсан талбарын утга `name` төлөвт хадгалагдана."
+      },
+      "hint": {
+        "mn": "onChangeText юуг шинэчилдэг вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Нэмсний дараа `setName(\"\")` яагаад хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаа гаргахгүйн тулд"
+        },
+        {
+          "mn": "Талбарыг цэвэрлэж дараагийн оруулгад бэлэн болгох"
+        },
+        {
+          "mn": "Серверийг зогсоох"
+        },
+        {
+          "mn": "Заавал биш, хэрэггүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Талбарыг хоослож дараагийн бараа оруулахад бэлэн болгоно."
+      },
+      "hint": {
+        "mn": "Нэмсний дараа талбарт юу үлдэх ёстой вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

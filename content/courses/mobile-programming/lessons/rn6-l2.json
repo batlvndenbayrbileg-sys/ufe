@@ -1,0 +1,257 @@
+{
+  "id": "rn6-l2",
+  "moduleId": "rn6-data",
+  "slug": "asyncstorage-cart",
+  "order": 2,
+  "title": {
+    "mn": "AsyncStorage — сагсаа хадгалах"
+  },
+  "why": {
+    "mn": "Апп хаагдаад дахин нээхэд сагс хоосрох ёсгүй. `AsyncStorage` нь өгөгдлийг утсанд хадгалж, дараагийн удаа буцааж уншдаг. Shop.mn мобайл апп-аа гүйцээе!"
+  },
+  "buildsInProject": "Хадгалагддаг сагс — апп бэлэн боллоо",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 17,
+  "skills": [
+    "react-native",
+    "mobile-data",
+    "mobile-state"
+  ],
+  "concepts": [
+    "AsyncStorage",
+    "useEffect",
+    "useState"
+  ],
+  "prerequisites": [
+    "rn6-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport AsyncStorage from \"@react-native-async-storage/async-storage\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [count, setCount] = useState(0);\n\n  // энд бичнэ үү: эхэнд хадгалсан утгаа уншиж ачаал\n\n  const add = () => {\n    const next = count + 1;\n    setCount(next);\n    // энд бичнэ үү: шинэ утгаа хадгал\n  };\n\n  return (\n    <View style={styles.screen}>\n      <Text nativeID=\"count\" style={styles.count}>Сагс: {count}</Text>\n      <Pressable nativeID=\"add\" style={styles.btn} onPress={add}>\n        <Text style={styles.btnText}>Сагслах</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 16, justifyContent: \"center\", alignItems: \"center\" },\n  count: { fontSize: 24, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", paddingVertical: 14, paddingHorizontal: 28, borderRadius: 12 },\n  btnText: { color: \"#fff\", fontSize: 16, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn6-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "AsyncStorage — сагсаа хадгалах"
+      },
+      "statement": {
+        "mn": "`useEffect`-д `AsyncStorage.getItem(\"cart\")`-ээр хадгалсан утгыг уншиж, байвал `setCount(Number(saved))` хий. `add`-д `setCount`-ийн дараа `AsyncStorage.setItem(\"cart\", String(next))`-ээр шинэ утгыг хадгал."
+      },
+      "requirements": [
+        {
+          "mn": "`AsyncStorage.setItem(...)`-ээр хадгалсан"
+        },
+        {
+          "mn": "`useEffect`-д `AsyncStorage.getItem(...)`-ээр уншсан"
+        },
+        {
+          "mn": "Товч дархад тоо нэмэгддэг"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Сагслах» дарах бүрт тоо нэмэгдэж, AsyncStorage-д хадгалагдана. Апп-аа дахин нээхэд тоо хадгалагдсан хэвээр байна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useEffect"
+          },
+          "onFail": {
+            "mn": "`useEffect`-ийг ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "setItem"
+          },
+          "onFail": {
+            "mn": "`AsyncStorage.setItem(...)`-ээр хадгалаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "getItem"
+          },
+          "onFail": {
+            "mn": "`AsyncStorage.getItem(...)`-ээр уншаагүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#add"
+              },
+              {
+                "expectText": {
+                  "selector": "#count",
+                  "contains": "1"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Товч дархад тоо нэмэгдэхгүй байна."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`AsyncStorage` нь өгөгдлийг утсанд байнга хадгалдаг — апп хаагдсан ч арилахгүй. Бүх үйлдэл нь Promise (async) буцаана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Хадгалах: `AsyncStorage.setItem(\"cart\", String(next))`. Унших: `AsyncStorage.getItem(\"cart\").then((saved) => ...)`. `AsyncStorage` зөвхөн текст хадгалдаг тул тоог `String(...)` болгож хадгалж, `Number(...)` болгож уншина."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Унших ба хадгалах:"
+          },
+          "code": "useEffect(() => {\n  AsyncStorage.getItem(\"cart\").then((saved) => {\n    if (saved !== null) setCount(Number(saved));\n  });\n}, []);\n\nconst add = () => {\n  const next = count + 1;\n  setCount(next);\n  AsyncStorage.setItem(\"cart\", String(next));\n};"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport AsyncStorage from \"@react-native-async-storage/async-storage\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [count, setCount] = useState(0);\n\n  useEffect(() => {\n    AsyncStorage.getItem(\"cart\").then((saved) => {\n      if (saved !== null) setCount(Number(saved));\n    });\n  }, []);\n\n  const add = () => {\n    const next = count + 1;\n    setCount(next);\n    AsyncStorage.setItem(\"cart\", String(next));\n  };\n\n  return (\n    <View style={styles.screen}>\n      <Text nativeID=\"count\" style={styles.count}>Сагс: {count}</Text>\n      <Pressable nativeID=\"add\" style={styles.btn} onPress={add}>\n        <Text style={styles.btnText}>Сагслах</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 16, justifyContent: \"center\", alignItems: \"center\" },\n  count: { fontSize: 24, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", paddingVertical: 14, paddingHorizontal: 28, borderRadius: 12 },\n  btnText: { color: \"#fff\", fontSize: 16, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`AsyncStorage` бол утасны жижиг мэдээллийн сан — түлхүүр/утгаар текст хадгална. `useEffect`-д уншиж эхний утгаа сэргээж, өөрчлөлт бүрт `setItem`-ээр шинэчилнэ. Ингэснээр апп хаагдсан ч сагс хадгалагдана. Shop.mn мобайл апп бэлэн боллоо! 🎉"
+        },
+        "xpPenalty": 13
+      },
+      "xp": 22,
+      "estimatedMinutes": 15,
+      "skills": [
+        "react-native",
+        "mobile-data",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`AsyncStorage` юунд хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Түр зуурын төлөв (useState-тэй адил)"
+        },
+        {
+          "mn": "Апп хаагдсан ч үлддэг өгөгдлийг утсанд хадгалахад"
+        },
+        {
+          "mn": "Зөвхөн зураг татахад"
+        },
+        {
+          "mn": "Сервер ажиллуулахад"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`AsyncStorage` нь өгөгдлийг утсанд БАЙНГА хадгалдаг — `useState` бол зөвхөн апп ажиллаж байх хугацаанд санадаг."
+      },
+      "hint": {
+        "mn": "`useState` апп хаагдахад арилдаг. Байнга үлдээхийн тулд юу хэрэгтэй вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`AsyncStorage.getItem(...)` яагаад `.then()`-тэй хэрэглэдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Заавал биш"
+        },
+        {
+          "mn": "Энэ нь асинхрон (Promise) — өгөгдөл ирэхийг хүлээх ёстой"
+        },
+        {
+          "mn": "Алдаа гаргахын тулд"
+        },
+        {
+          "mn": "Хурдан болгохын тулд"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`AsyncStorage`-ийн бүх үйлдэл асинхрон (Promise буцаана). Тийм учир `.then()` (эсвэл `await`)-оор үр дүнг хүлээж авна."
+      },
+      "hint": {
+        "mn": "Нэр нь «Async» гэж эхэлж байгаа нь юу гэсэн үг вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 40,
+    "badge": "rn-app"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

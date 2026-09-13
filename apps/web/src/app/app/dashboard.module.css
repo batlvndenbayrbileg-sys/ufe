@@ -332,3 +332,58 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Other-courses picker (React Native track, etc.). */
+.otherCourses {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.otherCourse {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 12px);
+  background: var(--surface, #fff);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--dur-fast, 0.15s) ease, transform var(--dur-fast, 0.15s) ease;
+}
+.otherCourse:hover {
+  border-color: var(--accent, #2563eb);
+  transform: translateY(-1px);
+}
+.otherCourseIcon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent, #2563eb) 14%, transparent);
+  color: var(--accent, #2563eb);
+}
+.otherCourseBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+.otherCourseTitle {
+  font-weight: 600;
+  font-size: var(--text-md, 15px);
+}
+.otherCourseMeta {
+  font-size: var(--text-sm, 13px);
+  color: var(--text-muted, #71717a);
+}
+.otherCourseBar {
+  margin-top: 4px;
+}
+.otherCourseArrow {
+  flex: none;
+  color: var(--text-muted, #71717a);
+}

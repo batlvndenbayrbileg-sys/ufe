@@ -1,9 +1,9 @@
-// Copies the two big preview runtimes into public/lib so the browser can fetch
-// them on demand. Neither may be bundled: SQLite is ~1.4 MB and React ~180 KB,
+// Copies the big preview runtimes into public/lib so the browser can fetch
+// them on demand. None may be bundled: SQLite is ~1.4 MB and React ~180 KB,
 // and only a handful of lessons need either. See PreviewHost's fetchRuntime.
 //
 // Run from `dev`, `build` and `start`; each copy is skipped when already current.
-import { copyFileSync, existsSync, mkdirSync, statSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -39,6 +39,27 @@ try {
   }
 } catch (problem) {
   console.error("vendor: React runtime unavailable; React lessons will not preview");
+  console.error(`  ${problem instanceof Error ? problem.message : problem}`);
+  process.exitCode = 1;
+}
+
+// ── React Native → DOM teaching shim ─────────────────────────────────────────
+// The browser copy is derived from the committed constant in checkers so it is
+// always present (even on a fresh CI checkout) and can never drift from the
+// source the server grader inlines. ~10 KB, only React Native lessons fetch it.
+const rnDest = join(libDir, "rn-runtime.js");
+try {
+  const genPath = join(here, "..", "..", "..", "packages", "checkers", "src", "rn-runtime.generated.ts");
+  const gen = readFileSync(genPath, "utf8");
+  const m = gen.match(/RN_RUNTIME_JS: string = ("(?:\\.|[^"\\])*");/);
+  if (!m) throw new Error("could not read RN_RUNTIME_JS from rn-runtime.generated.ts");
+  const code = JSON.parse(m[1]);
+  if (!existsSync(rnDest) || readFileSync(rnDest, "utf8") !== code) {
+    writeFileSync(rnDest, code);
+    console.log(`vendor: ${(Buffer.byteLength(code) / 1024).toFixed(1)} KB → public/lib/rn-runtime.js`);
+  }
+} catch (problem) {
+  console.error("vendor: React Native shim unavailable; RN lessons will not preview");
   console.error(`  ${problem instanceof Error ? problem.message : problem}`);
   process.exitCode = 1;
 }

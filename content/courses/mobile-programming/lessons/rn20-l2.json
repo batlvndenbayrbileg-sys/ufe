@@ -1,0 +1,221 @@
+{
+  "id": "rn20-l2",
+  "moduleId": "rn20-animation",
+  "slug": "slide-fade",
+  "order": 2,
+  "title": {
+    "mn": "Гулсаж гарч ирэх (translate + opacity)"
+  },
+  "why": {
+    "mn": "Илүү амьд харагдуулахын тулд элемент доороос гулсаж, зэрэг тодрох нь сайхан. `translateY` ба `opacity`-г зэрэг анимацлана. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Доороос гулсаж гарах карт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Animated",
+    "useRef",
+    "opacity"
+  ],
+  "prerequisites": [
+    "rn20-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const anim = useRef(new Animated.Value(0)).current;\n  const reveal = () => {\n    // энд бичнэ үү: anim-г 1 болго\n  };\n  const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [30, 0] });\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"go\" style={styles.b} onPress={reveal}><Text style={styles.t}>Үзүүлэх</Text></Pressable>\n      <Animated.View nativeID=\"card\" style={[styles.card, { opacity: anim, transform: [{ translateY }] }]}>\n        <Text style={styles.name}>Нарны шил</Text>\n      </Animated.View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 24, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  card: { backgroundColor: \"#fff\", padding: 20, borderRadius: 16, elevation: 4 }, name: { fontSize: 18, fontWeight: \"600\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn20-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Гулсаж гарч ирэх (translate + opacity)"
+      },
+      "statement": {
+        "mn": "`reveal` функцэд `Animated.timing(anim, { toValue: 1, duration: 350 }).start()` бич. `anim` 0→1 болоход карт нэгэн зэрэг тодорч (`opacity`), дээшээ гулсана (`translateY` 30→0)."
+      },
+      "requirements": [
+        {
+          "mn": "`Animated.timing(anim, ...).start()`"
+        },
+        {
+          "mn": "`toValue: 1`"
+        },
+        {
+          "mn": "Дархад карт гулсаж гарна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Үзүүлэх» дархад карт доороос дээш гулсаж, зэрэг тодорно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#go"
+              },
+              {
+                "expectEval": {
+                  "expr": "Math.round(Number(getComputedStyle(document.getElementById('card')).opacity))",
+                  "equals": 1
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дархад карт тодрохгүй байна. `Animated.timing(...).start()`-ээ шалга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Нэг `Animated.Value`-г хоёр өөр загварт (opacity ба transform) хамт ашиглаж болно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`interpolate` нь 0→1-ийг өөр мужид (30→0 px) хувиргана. `reveal` дотор зөвхөн `.start()`-г нэм."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "reveal:"
+          },
+          "code": "Animated.timing(anim, { toValue: 1, duration: 350 }).start();"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const anim = useRef(new Animated.Value(0)).current;\n  const reveal = () => {\n    Animated.timing(anim, { toValue: 1, duration: 350 }).start();\n  };\n  const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [30, 0] });\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"go\" style={styles.b} onPress={reveal}><Text style={styles.t}>Үзүүлэх</Text></Pressable>\n      <Animated.View nativeID=\"card\" style={[styles.card, { opacity: anim, transform: [{ translateY }] }]}>\n        <Text style={styles.name}>Нарны шил</Text>\n      </Animated.View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 24, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  card: { backgroundColor: \"#fff\", padding: 20, borderRadius: 16, elevation: 4 }, name: { fontSize: 18, fontWeight: \"600\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Нэг анимацлагдах утгыг `opacity`-д шууд, `translateY`-д `interpolate`-ээр холбосноор нэг товшилтоор хоёр анимаци зэрэг явна. Ийм зохицсон хөдөлгөөн мэргэжлийн апп-ийн онцлог."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Нэг Animated.Value-г хэдэн загварт ашиглаж болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн 1"
+        },
+        {
+          "mn": "Хэдэнд ч — opacity, transform г.м. зэрэг"
+        },
+        {
+          "mn": "Зөвхөн opacity"
+        },
+        {
+          "mn": "2 хүртэл"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Нэг утгыг олон загварт (шууд эсвэл interpolate-ээр) холбож, зохицсон анимаци хийнэ."
+      },
+      "hint": {
+        "mn": "Нэг утга олон зүйлийг зэрэг хөдөлгөж чадах уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`interpolate({inputRange:[0,1], outputRange:[30,0]})` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Утгыг 2 дахин нэмэгдүүлнэ"
+        },
+        {
+          "mn": "0→1 утгыг 30→0 муж руу буулгана"
+        },
+        {
+          "mn": "Өнгө өөрчилнө"
+        },
+        {
+          "mn": "Алдаа"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "interpolate нь нэг мужийн утгыг өөр мужид шугаман хувиргана: 0→30, 1→0."
+      },
+      "hint": {
+        "mn": "input ба output муж — нэгээс нөгөө рүү буулгах."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

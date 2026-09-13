@@ -1,0 +1,236 @@
+{
+  "id": "rn15-l2",
+  "moduleId": "rn15-networking",
+  "slug": "load-list",
+  "order": 2,
+  "title": {
+    "mn": "useEffect дотор ачаалж, жагсаалт харуулах"
+  },
+  "why": {
+    "mn": "Shop.mn нээгдэхэд бараануудаа серверээс татаж, FlatList-д харуулах ёстой. Ачааллыг `useEffect`-д хийж, ирсэн массивыг төлөвт хадгалж жагсаана."
+  },
+  "buildsInProject": "Серверээс татсан барааны жагсаалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-data",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "useEffect",
+    "FlatList",
+    "data",
+    "renderItem",
+    "keyExtractor"
+  ],
+  "prerequisites": [
+    "rn15-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, FlatList, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"p1\", name: \"Чихэвч\", price: 159000 },\n  { id: \"p2\", name: \"Гар цаг\", price: 249000 },\n  { id: \"p3\", name: \"Нарны шил\", price: 89000 },\n  { id: \"p4\", name: \"Цүнх\", price: 129000 },\n];\nconst fakeApi = () => new Promise((res) => setTimeout(() => res(PRODUCTS), 200));\n\nfunction App() {\n  const [items, setItems] = useState([]);\n  // энд бичнэ үү: useEffect дотор fakeApi()-г татаж items-д хадгал\n  return (\n    <FlatList\n      nativeID=\"list\"\n      data={items}\n      keyExtractor={(x) => x.id}\n      renderItem={({ item }) => <Text testID=\"row\" style={styles.row}>{item.name}</Text>}\n      style={styles.list}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  list: { flex: 1, padding: 16 },\n  row: { fontSize: 16, paddingVertical: 12, borderBottomWidth: 1, borderColor: \"#e2e8f0\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn15-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "useEffect дотор ачаалж, жагсаалт харуулах"
+      },
+      "statement": {
+        "mn": "`useEffect(() => { ... }, [])` дотор `fakeApi().then((data) => setItems(data))` бичиж, серверээс ирсэн бараануудыг `items` төлөвт хадга. FlatList аль хэдийн `items`-г зурахад бэлэн."
+      },
+      "requirements": [
+        {
+          "mn": "`useEffect` ашигласан"
+        },
+        {
+          "mn": "`.then`-д ирсэн массивыг `setItems`-д өгсөн"
+        },
+        {
+          "mn": "4 бараа жагсаалтад харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Апп нээгдээд серверээс 4 бараа ирж, жагсаалтад бүгд харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useEffect"
+          },
+          "onFail": {
+            "mn": "`useEffect` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"row\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 4
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Серверээс ирсэн 4 бараа жагсаалтад харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Эхэндээ `items` хоосон `[]` тул FlatList юу ч зурахгүй. Ачаалал дуусмагц `setItems`-оор дүүргэнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`useEffect`-д татаж, `.then((data) => setItems(data))` бич. FlatList `data={items}`-г автоматаар дахин зурна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Ачаалах эффект:"
+          },
+          "code": "useEffect(() => {\n  fakeApi().then((data) => setItems(data));\n}, []);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, FlatList, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"p1\", name: \"Чихэвч\", price: 159000 },\n  { id: \"p2\", name: \"Гар цаг\", price: 249000 },\n  { id: \"p3\", name: \"Нарны шил\", price: 89000 },\n  { id: \"p4\", name: \"Цүнх\", price: 129000 },\n];\nconst fakeApi = () => new Promise((res) => setTimeout(() => res(PRODUCTS), 200));\n\nfunction App() {\n  const [items, setItems] = useState([]);\n  useEffect(() => {\n    let alive = true;\n    fakeApi().then((data) => { if (alive) setItems(data); });\n    return () => { alive = false; };\n  }, []);\n  return (\n    <FlatList\n      nativeID=\"list\"\n      data={items}\n      keyExtractor={(x) => x.id}\n      renderItem={({ item }) => <Text testID=\"row\" style={styles.row}>{item.name}</Text>}\n      style={styles.list}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  list: { flex: 1, padding: 16 },\n  row: { fontSize: 16, paddingVertical: 12, borderBottomWidth: 1, borderColor: \"#e2e8f0\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Апп эхэлж ачаалахад `items` хоосон байдаг тул жагсаалт хоосон. `useEffect` серверээс өгөгдөл татаж `setItems`-оор хадгалмагц React FlatList-ийг шинэ өгөгдлөөр дахин зурна."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-data",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`items` эхэндээ яагаад хоосон байдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаатай тул"
+        },
+        {
+          "mn": "Сервер хариу ирэх хүртэл өгөгдөл байхгүй тул"
+        },
+        {
+          "mn": "FlatList эвдэрсэн тул"
+        },
+        {
+          "mn": "keyExtractor дутуу тул"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Ачаалал дуусах хүртэл өгөгдөл ирээгүй тул эхний утга нь хоосон массив байна."
+      },
+      "hint": {
+        "mn": "Сервер хариулахаас өмнө гарт юу байгаа вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`setItems(data)` дуудагдахад юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Юу ч болохгүй"
+        },
+        {
+          "mn": "Аппликейшн унана"
+        },
+        {
+          "mn": "React жагсаалтыг шинэ өгөгдлөөр дахин зурна"
+        },
+        {
+          "mn": "Сервер дахин дуудагдана"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "Төлөв өөрчлөгдөхөд React дахин зурж, FlatList шинэ бараануудыг харуулна."
+      },
+      "hint": {
+        "mn": "Төлөв өөрчлөгдвөл дэлгэц юу болдог вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,255 @@
+{
+  "id": "rn5-l2",
+  "moduleId": "rn5-screens",
+  "slug": "detail-screen",
+  "order": 2,
+  "title": {
+    "mn": "Дэлгэрэнгүй дэлгэц"
+  },
+  "why": {
+    "mn": "Жагсаалтаас бараа сонгоод, түүний дэлгэрэнгүйг тусдаа дэлгэцэд харуулъя. Сонгосон барааны өгөгдлийг төлөвт хадгална. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Барааны дэлгэрэнгүй дэлгэц",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 16,
+  "skills": [
+    "react-native",
+    "mobile-state",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "useState",
+    "FlatList",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn5-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, FlatList, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\", price: \"159,000₮\" },\n  { id: \"2\", name: \"Гар цаг\", price: \"249,000₮\" },\n  { id: \"3\", name: \"Нарны шил\", price: \"89,000₮\" },\n];\n\nfunction App() {\n  const [selected, setSelected] = useState(null);\n\n  // энд бичнэ үү: selected байвал дэлгэрэнгүй дэлгэц харуул\n\n  return (\n    <FlatList\n      style={styles.screen}\n      data={PRODUCTS}\n      keyExtractor={(item) => item.id}\n      renderItem={({ item }) => (\n        <Pressable testID=\"row\" style={styles.row} onPress={() => setSelected(item)}>\n          <Text style={styles.name}>{item.name}</Text>\n        </Pressable>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\" },\n  row: { backgroundColor: \"#fff\", padding: 16, margin: 8, borderRadius: 12 },\n  name: { fontSize: 16, fontWeight: \"600\" },\n  detail: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  dname: { fontSize: 26, fontWeight: \"bold\" },\n  dprice: { fontSize: 20, color: \"#2563eb\", fontWeight: \"bold\" },\n  btn: { marginTop: 12 },\n  btnText: { color: \"#2563eb\", fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn5-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Дэлгэрэнгүй дэлгэц"
+      },
+      "statement": {
+        "mn": "`selected` байвал (null биш) дэлгэрэнгүй дэлгэц харуул: `<Text nativeID=\"dname\">{selected.name}</Text>`, `<Text nativeID=\"dprice\">{selected.price}</Text>`, `nativeID=\"back\"` буцах товч (`setSelected(null)`). Мөр дархад тухайн `item`-ийг сонгоно."
+      },
+      "requirements": [
+        {
+          "mn": "`selected` байвал дэлгэрэнгүй дэлгэц харуулна"
+        },
+        {
+          "mn": "Дэлгэрэнгүйд сонгосон барааны нэр ба үнэ харагдана"
+        },
+        {
+          "mn": "«Буцах» дархад жагсаалт руу буцна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Барааг дархад түүний нэр, үнэ бүхий дэлгэрэнгүй дэлгэц нээгдэнэ; буцах товчоор жагсаалт руу буцна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "[data-testid=\"row\"]"
+              },
+              {
+                "waitFor": "#dname"
+              },
+              {
+                "expectText": {
+                  "selector": "#dname",
+                  "contains": "Чихэвч"
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "#dprice",
+                  "contains": "159,000₮"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Мөр дархад дэлгэрэнгүй нээгдэж, барааны нэр/үнэ харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "[data-testid=\"row\"]"
+              },
+              {
+                "waitFor": "#back"
+              },
+              {
+                "click": "#back"
+              },
+              {
+                "waitFor": "[data-testid=\"row\"]"
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Буцах» товч жагсаалт руу буцаахгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Сонгосон барааг бүтэн объектоор нь `setSelected(item)` гэж хадгал. Дараа нь `selected.name`, `selected.price`-ийг ашиглана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`if (selected) { return (<дэлгэрэнгүй/>); }` — сонгосон бараа байвал дэлгэрэнгүйг эрт буцаа. Буцах товч `setSelected(null)` хийж жагсаалт руу эргүүлнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Дэлгэрэнгүй дэлгэц:"
+          },
+          "code": "if (selected) {\n  return (\n    <View style={styles.detail}>\n      <Text nativeID=\"dname\" style={styles.dname}>{selected.name}</Text>\n      <Text nativeID=\"dprice\" style={styles.dprice}>{selected.price}</Text>\n      <Pressable nativeID=\"back\" onPress={() => setSelected(null)}>\n        <Text style={styles.btnText}>← Жагсаалт руу буцах</Text>\n      </Pressable>\n    </View>\n  );\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, FlatList, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"1\", name: \"Чихэвч\", price: \"159,000₮\" },\n  { id: \"2\", name: \"Гар цаг\", price: \"249,000₮\" },\n  { id: \"3\", name: \"Нарны шил\", price: \"89,000₮\" },\n];\n\nfunction App() {\n  const [selected, setSelected] = useState(null);\n\n  if (selected) {\n    return (\n      <View style={styles.detail}>\n        <Text nativeID=\"dname\" style={styles.dname}>{selected.name}</Text>\n        <Text nativeID=\"dprice\" style={styles.dprice}>{selected.price}</Text>\n        <Pressable nativeID=\"back\" style={styles.btn} onPress={() => setSelected(null)}>\n          <Text style={styles.btnText}>← Жагсаалт руу буцах</Text>\n        </Pressable>\n      </View>\n    );\n  }\n\n  return (\n    <FlatList\n      style={styles.screen}\n      data={PRODUCTS}\n      keyExtractor={(item) => item.id}\n      renderItem={({ item }) => (\n        <Pressable testID=\"row\" style={styles.row} onPress={() => setSelected(item)}>\n          <Text style={styles.name}>{item.name}</Text>\n        </Pressable>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\" },\n  row: { backgroundColor: \"#fff\", padding: 16, margin: 8, borderRadius: 12 },\n  name: { fontSize: 16, fontWeight: \"600\" },\n  detail: { flex: 1, padding: 24, gap: 12, justifyContent: \"center\" },\n  dname: { fontSize: 26, fontWeight: \"bold\" },\n  dprice: { fontSize: 20, color: \"#2563eb\", fontWeight: \"bold\" },\n  btn: { marginTop: 12 },\n  btnText: { color: \"#2563eb\", fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Сонгосон барааны БҮТЭН объектыг төлөвт хадгалснаар дэлгэрэнгүй дэлгэц түүний бүх талбарыг (нэр, үнэ, цаашид зураг, тайлбар) ашиглаж чадна. `null` бол «юу ч сонгоогүй» = жагсаалт харуул гэсэн үг."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 14,
+      "skills": [
+        "react-native",
+        "mobile-state",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Сонгосон барааны өгөгдлийг дэлгэрэнгүй дэлгэцэд дамжуулах хамгийн энгийн арга юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн id-г хадгалж дахин хайх"
+        },
+        {
+          "mn": "Бараа объектыг бүтнээр нь төлөвт хадгалах (`setSelected(item)`)"
+        },
+        {
+          "mn": "Глобал хувьсагч"
+        },
+        {
+          "mn": "Дахин серверээс татах"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Бүтэн объектыг хадгалбал дэлгэрэнгүй дэлгэц түүний бүх талбарыг шууд ашиглана."
+      },
+      "hint": {
+        "mn": "Дэлгэрэнгүйд нэр, үнэ бүгд хэрэгтэй. Юуг хадгалбал бүгд гарт байх вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`selected` төлөв `null` байх нь юуг илэрхийлдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаа гарсан"
+        },
+        {
+          "mn": "Юу ч сонгоогүй — жагсаалтын дэлгэцийг харуулна"
+        },
+        {
+          "mn": "Апп зогссон"
+        },
+        {
+          "mn": "Бүх бараа сонгогдсон"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`null` бол «сонгосон бараа алга» — тэр үед жагсаалт харагдана. Бараа сонгоход объект болж дэлгэрэнгүй нээгдэнэ."
+      },
+      "hint": {
+        "mn": "Эхлээд юу ч сонгоогүй үед аль дэлгэц харагдах ёстой вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

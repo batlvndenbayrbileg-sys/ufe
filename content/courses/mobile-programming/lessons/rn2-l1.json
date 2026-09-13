@@ -1,0 +1,238 @@
+{
+  "id": "rn2-l1",
+  "moduleId": "rn2-visual",
+  "slug": "image",
+  "order": 1,
+  "title": {
+    "mn": "Image — бүтээгдэхүүний зураг"
+  },
+  "why": {
+    "mn": "Зурагтай бараа хамаагүй илүү таатай. `<Image>` component нь интернэтээс зураг татаж харуулдаг. Барааны зургаа нэмье. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Зурагтай бүтээгдэхүүний карт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 13,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Image",
+    "source",
+    "resizeMode"
+  ],
+  "prerequisites": [
+    "rn1-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Image, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.card}>\n      {/* энд бичнэ үү: барааны зураг */}\n      <Text style={styles.name}>Нарны шил</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  card: { flex: 1, padding: 24, gap: 10, alignItems: \"center\", justifyContent: \"center\" },\n  photo: { width: 220, height: 160, borderRadius: 12 },\n  name: { fontSize: 18, fontWeight: \"600\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn2-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Image — бүтээгдэхүүний зураг"
+      },
+      "statement": {
+        "mn": "`<Image>` нэмж бүтээгдэхүүний зураг харуул. `source={{ uri: \"...\" }}`-д зургийн хаяг өг (`https://picsum.photos/seed/shopmn/440/320` ашиглаж болно), `nativeID=\"photo\"`, `resizeMode=\"cover\"` тохируул."
+      },
+      "requirements": [
+        {
+          "mn": "`react-native`-аас `Image` импортолсон"
+        },
+        {
+          "mn": "`<Image>` элемент байгаа"
+        },
+        {
+          "mn": "`source`-д `uri` хаяг өгсөн"
+        },
+        {
+          "mn": "`nativeID=\"photo\"`"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Дэлгэц дээр барааны зураг гарч, доор нь нэр харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.imports",
+          "args": {
+            "file": "src/App.jsx",
+            "from": "react-native",
+            "named": "Image"
+          },
+          "onFail": {
+            "mn": "`react-native`-аас `Image`-г импортлоогүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#root [data-rn=\"image\"]"
+          },
+          "onFail": {
+            "mn": "`<Image>` элемент дэлгэц дээр алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.attr",
+          "args": {
+            "selector": "#photo",
+            "name": "src",
+            "contains": "http"
+          },
+          "onFail": {
+            "mn": "`source={{ uri: \"...\" }}`-д зургийн хаяг өгөөгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`<Image>` нь энгийн текст биш, зураг харуулна. Хаягийг `source` prop-оор өгнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Вэбээс ялгаатай: `src=\"...\"` биш, `source={{ uri: \"...\" }}` гэж бичнэ. Зургийн ХЭМЖЭЭГ (width/height) заавал загварт өгнө, эс бөгөөс харагдахгүй."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Image ийм харагдана:"
+          },
+          "code": "<Image\n  nativeID=\"photo\"\n  style={styles.photo}\n  source={{ uri: \"https://picsum.photos/seed/shopmn/440/320\" }}\n  resizeMode=\"cover\"\n/>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Image, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.card}>\n      <Image\n        nativeID=\"photo\"\n        style={styles.photo}\n        source={{ uri: \"https://picsum.photos/seed/shopmn/440/320\" }}\n        resizeMode=\"cover\"\n      />\n      <Text style={styles.name}>Нарны шил</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  card: { flex: 1, padding: 24, gap: 10, alignItems: \"center\", justifyContent: \"center\" },\n  photo: { width: 220, height: 160, borderRadius: 12 },\n  name: { fontSize: 18, fontWeight: \"600\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`<Image>`-ийн `source` нь `{{ uri: \"...\" }}` объект хүлээж авдаг (вэбийн `src`-ээс ялгаатай). `resizeMode=\"cover\"` нь зургийг хайрцгаа дүүргэж, харьцаагаа хадгална."
+        },
+        "xpPenalty": 9
+      },
+      "xp": 15,
+      "estimatedMinutes": 11,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "React Native-д `<Image>`-ийн зургийн хаягийг хэрхэн өгдөг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`src=\"...\"`"
+        },
+        {
+          "mn": "`source={{ uri: \"...\" }}`"
+        },
+        {
+          "mn": "`href=\"...\"`"
+        },
+        {
+          "mn": "`url=\"...\"`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Мобайл дээр `source` prop-д `{ uri: \"...\" }` объект дамжуулна. Вэбийн `src`-тэй андуурч болохгүй."
+      },
+      "hint": {
+        "mn": "Вэб дээр `src`. Мобайл дээр prop-ийн нэр өөр, бас объект хүлээж авдаг."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`<Image>`-д width/height заавал өгөх хэрэгтэй юу?"
+      },
+      "options": [
+        {
+          "mn": "Үгүй, автоматаар олдоно"
+        },
+        {
+          "mn": "Тийм — хэмжээгүй бол зураг харагдахгүй"
+        },
+        {
+          "mn": "Зөвхөн том зурагт"
+        },
+        {
+          "mn": "Зөвхөн вэб дээр"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Мобайл дээр зургийн хэмжээг өөрөө мэдэхгүй тул `width`/`height`-г заавал загварт зааж өгнө."
+      },
+      "hint": {
+        "mn": "Хэмжээгүй хайрцаг ямар том байх вэ? Зураг хаана багтах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

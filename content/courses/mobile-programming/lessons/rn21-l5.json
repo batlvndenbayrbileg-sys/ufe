@@ -1,0 +1,208 @@
+{
+  "id": "rn21-l5",
+  "moduleId": "rn21-modal-device",
+  "slug": "platform",
+  "order": 5,
+  "title": {
+    "mn": "Platform — iOS ба Android ялгах"
+  },
+  "why": {
+    "mn": "Заримдаа iOS ба Android дээр өөр загвар/зан харуулах хэрэгтэй. `Platform.OS`-оор аль платформ дээр ажиллаж байгааг мэднэ. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Платформд тохирсон мессеж",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Platform",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn21-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Platform, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  // энд бичнэ үү: os-г Platform.OS-оос ав\n  const os = \"\";\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"os\" style={styles.t}>Платформ: {os === \"ios\" ? \"iPhone\" : \"Android\"}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({ s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" }, t: { fontSize: 20, fontWeight: \"bold\" } });\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn21-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Platform — iOS ба Android ялгах"
+      },
+      "statement": {
+        "mn": "`const os = Platform.OS` гэж одоогийн платформыг ав. `os === \"ios\"` бол «iPhone», эс бол «Android» гэж харуул. (Энэ орчинд `Platform.OS` нь `\"ios\"` байна.)"
+      },
+      "requirements": [
+        {
+          "mn": "`Platform.OS`-ийг ашигласан"
+        },
+        {
+          "mn": "Платформын нэр харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Платформ: iPhone» гэж (энэ орчинд iOS) харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.text",
+          "args": {
+            "selector": "#os",
+            "contains": "iPhone"
+          },
+          "onFail": {
+            "mn": "`Platform.OS`-оос платформыг уншаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`Platform.OS` нь `\"ios\"` эсвэл `\"android\"` мөр буцаана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`const os = Platform.OS;` дараа нь нөхцөлөөр шалгана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц:"
+          },
+          "code": "const os = Platform.OS; // \"ios\" | \"android\""
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Platform, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const os = Platform.OS;\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"os\" style={styles.t}>Платформ: {os === \"ios\" ? \"iPhone\" : \"Android\"}</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({ s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" }, t: { fontSize: 20, fontWeight: \"bold\" } });\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`Platform.OS` нь код аль платформ дээр ажиллаж байгааг хэлнэ. `Platform.select({ ios, android })`-оор загвар/утгыг платформоор нь ялган өгч болно."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`Platform.OS` ямар утга буцаадаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "true/false"
+        },
+        {
+          "mn": "`\"ios\"` эсвэл `\"android\"` (гэх мэт) мөр"
+        },
+        {
+          "mn": "Тоо"
+        },
+        {
+          "mn": "Component"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Платформын нэрийг мөрөөр буцаана: ios, android, web..."
+      },
+      "hint": {
+        "mn": "Аль үйлдлийн систем дээр байгааг нэрлэнэ."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "iOS/Android-д өөр УТГА өгөх цэвэр арга юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Олон файл"
+        },
+        {
+          "mn": "`Platform.select({ ios: ..., android: ... })`"
+        },
+        {
+          "mn": "if бичих боломжгүй"
+        },
+        {
+          "mn": "useState"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Platform.select нь платформ бүрд тохирох утгыг сонгож өгдөг цэвэр хэрэгсэл."
+      },
+      "hint": {
+        "mn": "«select» = сонгох. Юуг сонгох вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

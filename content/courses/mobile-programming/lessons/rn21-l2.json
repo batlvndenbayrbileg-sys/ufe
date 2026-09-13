@@ -1,0 +1,250 @@
+{
+  "id": "rn21-l2",
+  "moduleId": "rn21-modal-device",
+  "slug": "confirm-dialog",
+  "order": 2,
+  "title": {
+    "mn": "Баталгаажуулах диалог"
+  },
+  "why": {
+    "mn": "Барааг устгахын өмнө «Итгэлтэй байна уу?» гэж асуух нь алдаанаас сэргийлнэ. Modal-оор баталгаажуулах диалог хийе. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Устгахыг баталгаажуулах диалог",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Modal",
+    "useState",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn21-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, Modal, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [ask, setAsk] = useState(false);\n  const [deleted, setDeleted] = useState(false);\n  const confirm = () => {\n    // энд бичнэ үү: deleted-г true болгож, диалогийг хаа\n  };\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"status\" style={styles.status}>{deleted ? \"Устгагдсан\" : \"Чихэвч\"}</Text>\n      <Pressable nativeID=\"del\" style={styles.b} onPress={() => setAsk(true)}><Text style={styles.t}>Устгах</Text></Pressable>\n      <Modal visible={ask} transparent>\n        <View style={styles.sheet}>\n          <Text style={styles.q}>Устгах уу?</Text>\n          <View style={styles.row}>\n            <Pressable nativeID=\"no\" style={styles.no} onPress={() => setAsk(false)}><Text>Болих</Text></Pressable>\n            <Pressable nativeID=\"yes\" style={styles.yes} onPress={confirm}><Text style={styles.yesT}>Тийм</Text></Pressable>\n          </View>\n        </View>\n      </Modal>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, alignItems: \"center\", justifyContent: \"center\" },\n  status: { fontSize: 22, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#dc2626\", padding: 12, borderRadius: 10 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  sheet: { margin: 40, backgroundColor: \"#fff\", padding: 24, borderRadius: 16, gap: 16 }, q: { fontSize: 18, fontWeight: \"bold\", textAlign: \"center\" },\n  row: { flexDirection: \"row\", gap: 12, justifyContent: \"center\" },\n  no: { backgroundColor: \"#e2e8f0\", padding: 12, borderRadius: 8 }, yes: { backgroundColor: \"#dc2626\", padding: 12, borderRadius: 8 }, yesT: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn21-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Баталгаажуулах диалог"
+      },
+      "statement": {
+        "mn": "`confirm` функцэд `setDeleted(true)` болон `setAsk(false)` дууд. «Устгах» диалог нээж, «Тийм» баталгаажуулж устгана (статус «Устгагдсан» болно), «Болих» зүгээр хаана."
+      },
+      "requirements": [
+        {
+          "mn": "`confirm` deleted-г true болгож диалогийг хаадаг"
+        },
+        {
+          "mn": "«Тийм» дархад статус өөрчлөгдөнө"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Устгах» → диалог; «Тийм» → «Устгагдсан»; «Болих» → өөрчлөлтгүй хаана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#del"
+              },
+              {
+                "waitFor": "#yes"
+              },
+              {
+                "click": "#yes"
+              },
+              {
+                "expectText": {
+                  "selector": "#status",
+                  "contains": "Устгагдсан"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Тийм» дархад устгагдахгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#del"
+              },
+              {
+                "waitFor": "#no"
+              },
+              {
+                "click": "#no"
+              },
+              {
+                "expectText": {
+                  "selector": "#status",
+                  "contains": "Чихэвч"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Болих» дархад диалог хаагдахгүй эсвэл буруу устгаж байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Баталгаажуулах диалог = Modal дотор асуулт + хоёр товч («Тийм»/«Болих»)."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "«Тийм» нь бодит үйлдлийг хийж диалогийг хаана; «Болих» зөвхөн хаана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "confirm:"
+          },
+          "code": "const confirm = () => {\n  setDeleted(true);\n  setAsk(false);\n};"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, Modal, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [ask, setAsk] = useState(false);\n  const [deleted, setDeleted] = useState(false);\n  const confirm = () => {\n    setDeleted(true);\n    setAsk(false);\n  };\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"status\" style={styles.status}>{deleted ? \"Устгагдсан\" : \"Чихэвч\"}</Text>\n      <Pressable nativeID=\"del\" style={styles.b} onPress={() => setAsk(true)}><Text style={styles.t}>Устгах</Text></Pressable>\n      <Modal visible={ask} transparent>\n        <View style={styles.sheet}>\n          <Text style={styles.q}>Устгах уу?</Text>\n          <View style={styles.row}>\n            <Pressable nativeID=\"no\" style={styles.no} onPress={() => setAsk(false)}><Text>Болих</Text></Pressable>\n            <Pressable nativeID=\"yes\" style={styles.yes} onPress={confirm}><Text style={styles.yesT}>Тийм</Text></Pressable>\n          </View>\n        </View>\n      </Modal>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, alignItems: \"center\", justifyContent: \"center\" },\n  status: { fontSize: 22, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#dc2626\", padding: 12, borderRadius: 10 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  sheet: { margin: 40, backgroundColor: \"#fff\", padding: 24, borderRadius: 16, gap: 16 }, q: { fontSize: 18, fontWeight: \"bold\", textAlign: \"center\" },\n  row: { flexDirection: \"row\", gap: 12, justifyContent: \"center\" },\n  no: { backgroundColor: \"#e2e8f0\", padding: 12, borderRadius: 8 }, yes: { backgroundColor: \"#dc2626\", padding: 12, borderRadius: 8 }, yesT: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Баталгаажуулах диалог нь эргэшгүй үйлдлийн (устгах, төлбөр) өмнө хэрэглэгчээс баталгаа авдаг чухал хэв маяг. Modal + хоёр товчоор амархан бүтээнэ."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Баталгаажуулах диалог хэзээ хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Ямар ч товчинд"
+        },
+        {
+          "mn": "Эргэшгүй/аюултай үйлдлийн (устгах, төлөх) өмнө"
+        },
+        {
+          "mn": "Зөвхөн нэвтрэхэд"
+        },
+        {
+          "mn": "Хэзээ ч"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Устгах, төлбөр зэрэг буцаах боломжгүй үйлдэлд алдаанаас сэргийлж баталгаа авна."
+      },
+      "hint": {
+        "mn": "Санамсаргүй устгачихвал яах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "«Тийм» товч юу хийх ёстой вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн хаах"
+        },
+        {
+          "mn": "Бодит үйлдлийг хийж, дараа нь диалогийг хаах"
+        },
+        {
+          "mn": "Юу ч биш"
+        },
+        {
+          "mn": "Дахин асуух"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "«Тийм» нь зорьсон үйлдлээ гүйцэтгээд диалогийг хаана."
+      },
+      "hint": {
+        "mn": "Баталгаажуулсны дараа юу болох ёстой вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

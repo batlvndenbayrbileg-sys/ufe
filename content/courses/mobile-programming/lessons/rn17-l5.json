@@ -1,0 +1,231 @@
+{
+  "id": "rn17-l5",
+  "moduleId": "rn17-hooks",
+  "slug": "usereducer-intro",
+  "order": 5,
+  "title": {
+    "mn": "useReducer — танилцуулга"
+  },
+  "why": {
+    "mn": "Сагс шиг нарийн төлвийг олон `useState`-ээр удирдах нь эмх замбараагүй болдог. `useReducer` нь бүх өөрчлөлтийг нэг газар (reducer) цэгцэлдэг. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Reducer-ээр удирдагдах тоолуур",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useReducer",
+    "state"
+  ],
+  "prerequisites": [
+    "rn17-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  // энд бичнэ үү: useReducer-ээр count удирд\n  const [count, dispatch] = [0, () => {}];\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"count\" style={styles.c}>Тоо: {count}</Text>\n      <Pressable nativeID=\"inc\" style={styles.b} onPress={() => dispatch(\"inc\")}><Text style={styles.t}>+1</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 16, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  c: { fontSize: 24, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn17-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "useReducer — танилцуулга"
+      },
+      "statement": {
+        "mn": "`reducer(state, action)` функц зарла: `action === \"inc\"` бол `state + 1` буцаа, эс бол `state`. Дараа нь `useReducer(reducer, 0)`-оор `[count, dispatch]` авч, товч дархад `dispatch(\"inc\")` дууд."
+      },
+      "requirements": [
+        {
+          "mn": "`useReducer` ашигласан"
+        },
+        {
+          "mn": "`reducer` функц зарласан"
+        },
+        {
+          "mn": "+1 дархад тоо нэмэгдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«+1» дархад тоо нэмэгдэнэ — өөрчлөлт бүр reducer дундуур явна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useReducer"
+          },
+          "onFail": {
+            "mn": "`useReducer`-ийг ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#inc"
+              },
+              {
+                "expectText": {
+                  "selector": "#count",
+                  "contains": "1"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«+1» дархад тоо нэмэгдэхгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`useReducer(reducer, эхлэл)` нь `[төлөв, dispatch]` буцаана. `dispatch(action)` дуудвал reducer шинэ төлөв бодно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`reducer(state, action)` нь одоогийн төлөв ба action-ыг аваад ШИНЭ төлөв буцаана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц:"
+          },
+          "code": "function reducer(state, action) {\n  if (action === \"inc\") return state + 1;\n  return state;\n}\nconst [count, dispatch] = useReducer(reducer, 0);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useReducer } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction reducer(state, action) {\n  if (action === \"inc\") return state + 1;\n  return state;\n}\n\nfunction App() {\n  const [count, dispatch] = useReducer(reducer, 0);\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"count\" style={styles.c}>Тоо: {count}</Text>\n      <Pressable nativeID=\"inc\" style={styles.b} onPress={() => dispatch(\"inc\")}><Text style={styles.t}>+1</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 16, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  c: { fontSize: 24, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`useReducer` нь бүх төлөв өөрчлөлтийг нэг цэвэр функц (reducer) дундуур явуулна. Нарийн, олон төрлийн үйлдэлтэй төлөвт (сагс, форм) `useState`-ээс илүү цэгцтэй."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "reducer функц юу авч, юу буцаадаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн action; юу ч буцаахгүй"
+        },
+        {
+          "mn": "(одоогийн төлөв, action)-ыг авч ШИНЭ төлөв буцаана"
+        },
+        {
+          "mn": "Component буцаана"
+        },
+        {
+          "mn": "Дэлгэц буцаана"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "reducer(state, action) → шинэ state. Цэвэр функц — гаднын юмыг өөрчлөхгүй."
+      },
+      "hint": {
+        "mn": "Нэр нь reduce — оролт хоёр, гаралт нэг."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`dispatch(\"inc\")` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Дэлгэц зурна"
+        },
+        {
+          "mn": "reducer-т action илгээж шинэ төлөв бодуулна"
+        },
+        {
+          "mn": "Сервер рүү илгээнэ"
+        },
+        {
+          "mn": "Юу ч биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "dispatch нь action-ыг reducer руу илгээж, шинэ төлөв тооцуулна."
+      },
+      "hint": {
+        "mn": "«dispatch» = илгээх. Хаашаа илгээх вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

@@ -1,0 +1,241 @@
+{
+  "id": "rn5-l1",
+  "moduleId": "rn5-screens",
+  "slug": "screen-switch",
+  "order": 1,
+  "title": {
+    "mn": "Дэлгэц солих"
+  },
+  "why": {
+    "mn": "Жинхэнэ апп олон дэлгэцтэй. Одоохондоо энгийн аргаар: `useState`-ээр аль дэлгэц идэвхтэйг санаж, товчоор нь сольё. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Жагсаалт ↔ дэлгэрэнгүй шилжилт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 15,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useState",
+    "conditional-rendering",
+    "Pressable"
+  ],
+  "prerequisites": [
+    "rn4-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [screen, setScreen] = useState(\"list\");\n\n  // энд бичнэ үү: screen-ээс хамааран өөр дэлгэц харуул\n\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.h}>Бараанууд</Text>\n      <Pressable nativeID=\"open\" style={styles.btn} onPress={() => setScreen(\"detail\")}>\n        <Text style={styles.btnText}>Дэлгэрэнгүй үзэх</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 16, justifyContent: \"center\" },\n  h: { fontSize: 24, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontSize: 16, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn5-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Дэлгэц солих"
+      },
+      "statement": {
+        "mn": "`screen === \"detail\"` үед дэлгэрэнгүй дэлгэц (`<Text nativeID=\"detailTitle\">Дэлгэрэнгүй</Text>` ба `nativeID=\"back\"` буцах товч) харуул. `back` дархад `setScreen(\"list\")` болгож жагсаалт руу буц."
+      },
+      "requirements": [
+        {
+          "mn": "`screen` төлөвөөс хамааран өөр дэлгэц харуулдаг"
+        },
+        {
+          "mn": "«Дэлгэрэнгүй үзэх» дархад дэлгэрэнгүй нээгдэнэ"
+        },
+        {
+          "mn": "«← Буцах» дархад жагсаалт руу буцна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Дэлгэрэнгүй үзэх» → дэлгэрэнгүй дэлгэц; «← Буцах» → жагсаалт. Нэг апп дотор хоёр дэлгэц солигдоно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useState"
+          },
+          "onFail": {
+            "mn": "`useState`-ийг ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#open"
+              },
+              {
+                "waitFor": "#detailTitle"
+              },
+              {
+                "expectText": {
+                  "selector": "#detailTitle",
+                  "contains": "Дэлгэрэнгүй"
+                }
+              },
+              {
+                "click": "#back"
+              },
+              {
+                "waitFor": "#open"
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дэлгэц хооронд шилжихгүй байна. `screen` төлөв ба нөхцөлт харуулалтаа шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Аль дэлгэц харагдахыг нэг төлөвөөр (`screen`) удирдана. Товч дархад `setScreen(...)`-оор утгыг нь солино."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`if (screen === \"detail\") { return (<...дэлгэрэнгүй.../>); }` гэж эрт буцаавал, тэрнээс доош байгаа код зөвхөн жагсаалтын дэлгэцийг харуулна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Нөхцөлт дэлгэц:"
+          },
+          "code": "if (screen === \"detail\") {\n  return (\n    <View style={styles.screen}>\n      <Text nativeID=\"detailTitle\" style={styles.h}>Дэлгэрэнгүй</Text>\n      <Pressable nativeID=\"back\" onPress={() => setScreen(\"list\")}>\n        <Text style={styles.btnText}>← Буцах</Text>\n      </Pressable>\n    </View>\n  );\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [screen, setScreen] = useState(\"list\");\n\n  if (screen === \"detail\") {\n    return (\n      <View style={styles.screen}>\n        <Text nativeID=\"detailTitle\" style={styles.h}>Дэлгэрэнгүй</Text>\n        <Pressable nativeID=\"back\" style={styles.btn} onPress={() => setScreen(\"list\")}>\n          <Text style={styles.btnText}>← Буцах</Text>\n        </Pressable>\n      </View>\n    );\n  }\n\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.h}>Бараанууд</Text>\n      <Pressable nativeID=\"open\" style={styles.btn} onPress={() => setScreen(\"detail\")}>\n        <Text style={styles.btnText}>Дэлгэрэнгүй үзэх</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 16, justifyContent: \"center\" },\n  h: { fontSize: 24, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontSize: 16, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "«Дэлгэц» гэдэг нь эцэст нь нөхцөлт харуулалт (conditional rendering) — `screen` төлөвөөс хамааран өөр JSX буцаана. Жинхэнэ апп-д React Navigation ашиглах ч, суурь санаа нь энэ."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 13,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Энгийн олон дэлгэцийг юугаар удирдаж болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Тусдаа олон апп"
+        },
+        {
+          "mn": "`useState`-ээр аль дэлгэц идэвхтэйг санаж, нөхцөлөөр өөр JSX буцаах"
+        },
+        {
+          "mn": "Зөвхөн ScrollView"
+        },
+        {
+          "mn": "Боломжгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Аль дэлгэц харагдахыг төлөвөөр санаж, нөхцөлт харуулалтаар (conditional rendering) сольж болно."
+      },
+      "hint": {
+        "mn": "Аль дэлгэц харагдахыг ямар нэг зүйл санаж байх ёстой. Юу нь санадаг вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "«Нөхцөлт харуулалт» (conditional rendering) гэж юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Загварыг өөрчлөх"
+        },
+        {
+          "mn": "Тодорхой нөхцөлөөс хамааран өөр өөр UI зурах"
+        },
+        {
+          "mn": "Өгөгдөл татах"
+        },
+        {
+          "mn": "Товч дарах"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Нөхцөлөөс (жишээ нь `screen === \"detail\"`) хамааран өөр өөр элемент буцаахыг нөхцөлт харуулалт гэнэ."
+      },
+      "hint": {
+        "mn": "`if` нөхцөлөөс хамааран өөр зүйл харуулж байгаа биз дээ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

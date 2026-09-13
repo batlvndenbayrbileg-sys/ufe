@@ -1,0 +1,246 @@
+{
+  "id": "rn3-l1",
+  "moduleId": "rn3-interaction",
+  "slug": "pressable",
+  "order": 1,
+  "title": {
+    "mn": "Pressable — товч дарах"
+  },
+  "why": {
+    "mn": "Апп бол дараад л хариу үйлдэл гардаг байх ёстой. `<Pressable>` нь дурын зүйлийг дарж болдог товч болгодог. «Сагслах» товчоо ажиллуулъя. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Ажилладаг «Сагслах» товч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 13,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "Pressable",
+    "onPress",
+    "Alert"
+  ],
+  "prerequisites": [
+    "rn2-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, Alert, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.name}>Утасгүй чихэвч</Text>\n      {/* энд бичнэ үү: Сагслах товч, дархад мэдэгдэл */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 16, justifyContent: \"center\" },\n  name: { fontSize: 20, fontWeight: \"600\", textAlign: \"center\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 16, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#ffffff\", fontSize: 16, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn3-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Pressable — товч дарах"
+      },
+      "statement": {
+        "mn": "`<Pressable>` товч нэм (`nativeID=\"buy\"`), дотор нь `<Text>Сагслах</Text>`. `onPress`-д `Alert.alert(\"Амжилттай\", \"Бараа сагсанд нэмэгдлээ\")` дуудаж, дархад мэдэгдэл гаргана."
+      },
+      "requirements": [
+        {
+          "mn": "`react-native`-аас `Pressable` импортолсон"
+        },
+        {
+          "mn": "`<Pressable nativeID=\"buy\">` товч байгаа"
+        },
+        {
+          "mn": "`onPress`-д `Alert.alert(...)` дуудсан"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Сагслах» товч дарахад «Амжилттай» гэсэн мэдэгдэл дэлгэц дээр гарч ирнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.imports",
+          "args": {
+            "file": "src/App.jsx",
+            "from": "react-native",
+            "named": "Pressable"
+          },
+          "onFail": {
+            "mn": "`react-native`-аас `Pressable`-г импортлоогүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#buy"
+          },
+          "onFail": {
+            "mn": "`nativeID=\"buy\"` бүхий `<Pressable>` алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#buy"
+              },
+              {
+                "waitFor": "[data-rn=\"alert\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-rn=\"alert-title\"]",
+                  "contains": "Амжилттай"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Товч дархад «Амжилттай» мэдэгдэл гарахгүй байна. `onPress`-оо шалга."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`<Pressable>` бол дурын зүйлийг товч болгодог. Дархад ажиллах кодоо `onPress` prop-д функц болгон өгнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`onPress={() => ...}` гэж СУМАН функц (arrow function) өгнө — тэгэхгүй бол код шууд ажиллачихаад дарахыг хүлээхгүй."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Pressable ийм харагдана:"
+          },
+          "code": "<Pressable nativeID=\"buy\" style={styles.btn} onPress={() => Alert.alert(\"Амжилттай\", \"Бараа сагсанд нэмэгдлээ\")}>\n  <Text style={styles.btnText}>Сагслах</Text>\n</Pressable>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, Alert, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.name}>Утасгүй чихэвч</Text>\n      <Pressable\n        nativeID=\"buy\"\n        style={styles.btn}\n        onPress={() => Alert.alert(\"Амжилттай\", \"Бараа сагсанд нэмэгдлээ\")}\n      >\n        <Text style={styles.btnText}>Сагслах</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 16, justifyContent: \"center\" },\n  name: { fontSize: 20, fontWeight: \"600\", textAlign: \"center\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 16, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#ffffff\", fontSize: 16, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`<Pressable>` дархад `onPress` доторх функц ажиллана. `onPress={fn}` (дуудалт биш, функц ӨӨРийг нь) өгөх нь чухал — `onPress={fn()}` бол буруу, учир нь рендер хийх үед л ажиллачихна."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 11,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`onPress`-д юу өгөх ёстой вэ?"
+      },
+      "options": [
+        {
+          "mn": "Текст мөр"
+        },
+        {
+          "mn": "Дархад ажиллах ФУНКЦ"
+        },
+        {
+          "mn": "Тоо"
+        },
+        {
+          "mn": "Өнгө"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`onPress`-д функц өгнө. Хэрэглэгч дарахад React тэр функцийг дуудна."
+      },
+      "hint": {
+        "mn": "Дарах үед юу ажиллах ёстой вэ — текст үү, эсвэл гүйцэтгэх код уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`onPress={handleBuy()}` ба `onPress={handleBuy}` — аль нь зөв бэ?"
+      },
+      "options": [
+        {
+          "mn": "`onPress={handleBuy()}` — хаалттай"
+        },
+        {
+          "mn": "`onPress={handleBuy}` — хаалтгүй, функцийг өөрийг нь өгнө"
+        },
+        {
+          "mn": "Хоёулаа адилхан"
+        },
+        {
+          "mn": "Аль нь ч ажиллахгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хаалттай бичвэл функц рендер хийх үед л ажиллаад дуусна. Хаалтгүй (эсвэл `() => handleBuy()`) бичиж, дарах хүртэл хүлээлгэнэ."
+      },
+      "hint": {
+        "mn": "Хаалт `()` тавибал функц хэзээ ажиллах вэ — одоо уу, дарахад уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

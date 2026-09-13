@@ -1,0 +1,232 @@
+{
+  "id": "rn20-l1",
+  "moduleId": "rn20-animation",
+  "slug": "fade-in",
+  "order": 1,
+  "title": {
+    "mn": "Animated — гарч ирэх (fade in)"
+  },
+  "why": {
+    "mn": "Shop.mn-д сагсанд нэмэгдсэн мэдэгдэл гэнэт биш, зөөлөн бүдгээс тод болж гарч ирвэл тансаг. `Animated.Value` ба `opacity`-оор эхний анимацаа хийе."
+  },
+  "buildsInProject": "Зөөлөн гарч ирдэг мэдэгдэл",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Animated",
+    "useRef",
+    "opacity"
+  ],
+  "prerequisites": [
+    "rn19-l6"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const fade = useRef(new Animated.Value(0)).current;\n  const show = () => {\n    // энд бичнэ үү: fade-г 1 болгож timing-оор гаргаж ир\n  };\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"show\" style={styles.b} onPress={show}><Text style={styles.t}>Мэдэгдэл</Text></Pressable>\n      <Animated.View nativeID=\"toast\" style={[styles.toast, { opacity: fade }]}>\n        <Text style={styles.toastText}>Сагсанд нэмэгдлээ</Text>\n      </Animated.View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  toast: { backgroundColor: \"#16a34a\", padding: 16, borderRadius: 12 }, toastText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn20-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Animated — гарч ирэх (fade in)"
+      },
+      "statement": {
+        "mn": "`show` функцэд `Animated.timing(fade, { toValue: 1, duration: 300 }).start()` бич. `fade` (Animated.Value) 0-ээс 1 болж, мэдэгдэл бүдгээс тод болж гарч ирнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`Animated.timing(...).start()` дуудсан"
+        },
+        {
+          "mn": "`toValue: 1`"
+        },
+        {
+          "mn": "Товч дархад мэдэгдэл харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Мэдэгдэл» дархад ногоон мэдэгдэл бүдгээс тод болж гарч ирнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "timing"
+          },
+          "onFail": {
+            "mn": "`Animated.timing(...)` дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#show"
+              },
+              {
+                "expectEval": {
+                  "expr": "Math.round(Number(getComputedStyle(document.getElementById('toast')).opacity))",
+                  "equals": 1
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Товч дархад мэдэгдэл харагдахгүй байна (opacity 1 болохгүй)."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`Animated.Value(0)`-г `useRef(...).current`-д хадгалбал render хооронд ижил утга үлдэнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`Animated.timing(value, { toValue, duration }).start()` нь утгыг зөөлөн шилжүүлнэ. `opacity: fade` гэж загварт холбоно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "show функц:"
+          },
+          "code": "Animated.timing(fade, { toValue: 1, duration: 300 }).start();"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const fade = useRef(new Animated.Value(0)).current;\n  const show = () => {\n    Animated.timing(fade, { toValue: 1, duration: 300 }).start();\n  };\n  return (\n    <View style={styles.s}>\n      <Pressable nativeID=\"show\" style={styles.b} onPress={show}><Text style={styles.t}>Мэдэгдэл</Text></Pressable>\n      <Animated.View nativeID=\"toast\" style={[styles.toast, { opacity: fade }]}>\n        <Text style={styles.toastText}>Сагсанд нэмэгдлээ</Text>\n      </Animated.View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n  toast: { backgroundColor: \"#16a34a\", padding: 16, borderRadius: 12 }, toastText: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`Animated.Value` нь анимацлагдах тоо. `Animated.timing(...).start()` нь түүнийг зорилтот утга руу гөлгөр шилжүүлж, `Animated.View`-ийн `opacity`-той холбоотой тул мэдэгдэл аажим гарч ирнэ."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Анимацлагдах утгыг юугаар үүсгэдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "useState"
+        },
+        {
+          "mn": "`new Animated.Value(0)`"
+        },
+        {
+          "mn": "тоо"
+        },
+        {
+          "mn": "useMemo"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Animated.Value нь анимацлагдах тусгай тоо. Ихэвчлэн useRef-д хадгална."
+      },
+      "hint": {
+        "mn": "«Animated» гэдэг үгтэй утга."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`Animated.timing(...)` дараа юу заавал дуудах ёстой вэ?"
+      },
+      "options": [
+        {
+          "mn": "`.stop()`"
+        },
+        {
+          "mn": "`.start()`"
+        },
+        {
+          "mn": "`.run()`"
+        },
+        {
+          "mn": "Юу ч биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "timing нь анимацийг ТОДОРХОЙЛНО; `.start()` дуудаж л ажиллуулна."
+      },
+      "hint": {
+        "mn": "Анимацийг эхлүүлэх үйлдэл."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

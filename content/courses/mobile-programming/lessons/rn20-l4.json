@@ -1,0 +1,221 @@
+{
+  "id": "rn20-l4",
+  "moduleId": "rn20-animation",
+  "slug": "progress",
+  "order": 4,
+  "title": {
+    "mn": "Ахицын мөр (өргөн анимац)"
+  },
+  "why": {
+    "mn": "Захиалгын явцыг (ачаалж байгаа хувь) харуулах мөр гөлгөр дүүрвэл ойлгомжтой. Өргөнг 0-ээс дүүрэн болгож анимацлана. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Дүүрдэг ахицын мөр",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Animated",
+    "useRef",
+    "style"
+  ],
+  "prerequisites": [
+    "rn20-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const w = useRef(new Animated.Value(0)).current;\n  const load = () => {\n    // энд бичнэ үү: w-г 220 болго\n  };\n  return (\n    <View style={styles.s}>\n      <View style={styles.track}>\n        <Animated.View nativeID=\"bar\" style={[styles.fill, { width: w }]} />\n      </View>\n      <Pressable nativeID=\"load\" style={styles.b} onPress={load}><Text style={styles.t}>Ачаалах</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  track: { width: 220, height: 16, backgroundColor: \"#e2e8f0\", borderRadius: 999, overflow: \"hidden\" },\n  fill: { height: 16, backgroundColor: \"#16a34a\", borderRadius: 999 },\n  b: { backgroundColor: \"#2563eb\", padding: 12, borderRadius: 10 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn20-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Ахицын мөр (өргөн анимац)"
+      },
+      "statement": {
+        "mn": "`load` функцэд `Animated.timing(w, { toValue: 220, duration: 600 }).start()` бич. Ахицын мөрийн өргөн (`w`) 0-ээс 220 болж гөлгөр дүүрнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`Animated.timing(w, ...).start()`"
+        },
+        {
+          "mn": "`toValue: 220`"
+        },
+        {
+          "mn": "Дархад мөр дүүрнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Ачаалах» дархад ногоон мөр 0-ээс дүүртлээ гөлгөр сунана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#load"
+              },
+              {
+                "expectEval": {
+                  "expr": "parseInt(getComputedStyle(document.getElementById('bar')).width)",
+                  "equals": 220
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Дархад мөр дүүрэхгүй байна (өргөн 220 болохгүй)."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Өргөнг (`width`) анимацлавал мөр дүүрэх мэт харагдана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`Animated.timing(w, { toValue: 220, duration: 600 }).start()`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "load:"
+          },
+          "code": "Animated.timing(w, { toValue: 220, duration: 600 }).start();"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, Animated, StyleSheet } from \"react-native\";\nimport { useRef } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const w = useRef(new Animated.Value(0)).current;\n  const load = () => {\n    Animated.timing(w, { toValue: 220, duration: 600 }).start();\n  };\n  return (\n    <View style={styles.s}>\n      <View style={styles.track}>\n        <Animated.View nativeID=\"bar\" style={[styles.fill, { width: w }]} />\n      </View>\n      <Pressable nativeID=\"load\" style={styles.b} onPress={load}><Text style={styles.t}>Ачаалах</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  track: { width: 220, height: 16, backgroundColor: \"#e2e8f0\", borderRadius: 999, overflow: \"hidden\" },\n  fill: { height: 16, backgroundColor: \"#16a34a\", borderRadius: 999 },\n  b: { backgroundColor: \"#2563eb\", padding: 12, borderRadius: 10 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Өргөнг анимацлаж дүүргэх нь ахиц, ачаалал, үнэлгээний мөрт тохиромжтой. `track` дотор `overflow: \"hidden\"`-тэй тул дүүргэлт цэвэрхэн дугуй захтай харагдана."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Ахицын мөрийг дүүргэхэд юуг анимацлах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Өндрийг"
+        },
+        {
+          "mn": "Өргөнг (width)"
+        },
+        {
+          "mn": "Өнгийг"
+        },
+        {
+          "mn": "Байрлалыг"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Өргөнг 0-ээс дүүрэн болгоход мөр дүүрэх мэт харагдана."
+      },
+      "hint": {
+        "mn": "Мөр хажуу тийш дүүрдэг — ямар хэмжээ вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`duration: 600` юуг заадаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "600 пиксел"
+        },
+        {
+          "mn": "Анимаци 600мс (0.6 сек) үргэлжилнэ"
+        },
+        {
+          "mn": "600 удаа"
+        },
+        {
+          "mn": "Хурдыг бууруулна гэдэг л"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "duration нь анимаци хэдэн миллисекунд үргэлжлэхийг заана."
+      },
+      "hint": {
+        "mn": "Хугацаа — миллисекундээр."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

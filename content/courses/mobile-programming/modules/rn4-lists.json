@@ -1,0 +1,9 @@
+{
+  "id": "rn4-lists",
+  "stageId": "s4",
+  "order": 1,
+  "title": { "mn": "FlatList" },
+  "description": { "mn": "Олон зуун бараагаа хурдан, гөлгөр гүйдэг FlatList-ээр харуул." },
+  "estimatedHours": 1,
+  "lessons": ["rn4-l1", "rn4-l2", "rn4-l3"]
+}

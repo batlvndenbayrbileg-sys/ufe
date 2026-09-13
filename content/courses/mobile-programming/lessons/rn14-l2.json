@@ -1,0 +1,227 @@
+{
+  "id": "rn14-l2",
+  "moduleId": "rn14-tabs",
+  "slug": "tab-switch",
+  "order": 2,
+  "title": {
+    "mn": "Таб солих"
+  },
+  "why": {
+    "mn": "Таб дархад тэр хэсэг рүү шилжиж, идэвхтэй таб тодрох ёстой. Shop.mn-д `activeTab` төлөвийг ашиглаж табын агуулга ба идэвхтэй тодотголыг удирдана."
+  },
+  "buildsInProject": "Таб дархад идэвхтэй нь тодорч агуулга солигдоно",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useState",
+    "state",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn14-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst TABS = [\"Нүүр\", \"Сагс\", \"Профайл\"];\n\nfunction App() {\n  const [tab, setTab] = useState(\"Нүүр\");\n  return (\n    <View style={styles.container}>\n      <Text nativeID=\"body\" style={styles.body}>{tab}</Text>\n      <View style={styles.tabbar}>\n        {TABS.map((t, i) => (\n          <Pressable key={t} nativeID={\"tab\" + i} testID=\"tab\" style={styles.tab}>\n            {/* энд бичнэ үү: onPress-оор tab солиж, идэвхтэйг тодотго */}\n            <Text style={styles.tabText}>{t}</Text>\n          </Pressable>\n        ))}\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1 },\n  body: { flex: 1, textAlign: \"center\", textAlignVertical: \"center\", fontSize: 24, fontWeight: \"bold\" },\n  tabbar: { flexDirection: \"row\", borderTopWidth: 1, borderTopColor: \"#e5e7eb\" },\n  tab: { flexGrow: 1, paddingVertical: 12, alignItems: \"center\" },\n  active: { backgroundColor: \"#dbeafe\" },\n  tabText: { fontWeight: \"600\", color: \"#334155\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn14-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Таб солих"
+      },
+      "statement": {
+        "mn": "Таб бүрд `onPress={() => setTab(t)}` нэм. `style`-г массив болгож `[styles.tab, tab === t && styles.active]` гэж бич. Таб дархад дээрх агуулга (body) солигдож, идэвхтэй таб цайвар цэнхэрээр тодорно."
+      },
+      "requirements": [
+        {
+          "mn": "Таб дархад `setTab(t)` дуудна"
+        },
+        {
+          "mn": "Идэвхтэй таб `styles.active` авна"
+        },
+        {
+          "mn": "body идэвхтэй табыг харуулна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Сагс» дархад дээр «Сагс» гэж бичигдэж, тэр таб цайвар цэнхэрээр тодорно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#tab1"
+              },
+              {
+                "expectText": {
+                  "selector": "#body",
+                  "contains": "Сагс"
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "getComputedStyle(document.getElementById('tab1')).backgroundColor",
+                  "equals": "#dbeafe"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Таб солигдохгүй эсвэл тодрохгүй байна. onPress ба style массиваа шалга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Идэвхтэй таб бол `activeTab` төлөвт хадгалагдсан нэр. Таб дархад тэр төлвийг шинэчилнэ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`onPress={() => setTab(t)}` нь идэвхтэй табыг сольж, `[styles.tab, tab === t && styles.active]` нь тодотголыг өгнө."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Таб Pressable:"
+          },
+          "code": "<Pressable onPress={() => setTab(t)}\n  style={[styles.tab, tab === t && styles.active]}>\n  <Text>{t}</Text>\n</Pressable>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst TABS = [\"Нүүр\", \"Сагс\", \"Профайл\"];\n\nfunction App() {\n  const [tab, setTab] = useState(\"Нүүр\");\n  return (\n    <View style={styles.container}>\n      <Text nativeID=\"body\" style={styles.body}>{tab}</Text>\n      <View style={styles.tabbar}>\n        {TABS.map((t, i) => (\n          <Pressable key={t} nativeID={\"tab\" + i} testID=\"tab\" onPress={() => setTab(t)}\n            style={[styles.tab, tab === t && styles.active]}>\n            <Text style={styles.tabText}>{t}</Text>\n          </Pressable>\n        ))}\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1 },\n  body: { flex: 1, textAlign: \"center\", textAlignVertical: \"center\", fontSize: 24, fontWeight: \"bold\" },\n  tabbar: { flexDirection: \"row\", borderTopWidth: 1, borderTopColor: \"#e5e7eb\" },\n  tab: { flexGrow: 1, paddingVertical: 12, alignItems: \"center\" },\n  active: { backgroundColor: \"#dbeafe\" },\n  tabText: { fontWeight: \"600\", color: \"#334155\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Табын систем нь `activeTab` нэг л төлвөөр удирдагдана: аль табыг дарснаа хадгалж, түүнээс хамааруулж агуулга (нөхцөлт зураг) ба идэвхтэй тодотгол (нөхцөлт загвар) хоёуланг нь харуулна."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Табын систем хэдэн үндсэн төлвөөр удирдагддаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Таб бүрт нэг"
+        },
+        {
+          "mn": "Нэг — идэвхтэй таб аль нь болох (`activeTab`)"
+        },
+        {
+          "mn": "Хоёр"
+        },
+        {
+          "mn": "Төлөвгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Идэвхтэй таб аль нь болохыг нэг төлөвт хадгалахад л хангалттай."
+      },
+      "hint": {
+        "mn": "Аль таб идэвхтэйг санахад хэдэн утга хэрэгтэй вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Идэвхтэй тодотгол ба агуулгын солилт хоёулаа юунаас хамаарах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Өөр өөр төлвөөс"
+        },
+        {
+          "mn": "Ижил `tab` төлвөөс"
+        },
+        {
+          "mn": "Санамсаргүй"
+        },
+        {
+          "mn": "Индексээс"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хоёулаа `tab` төлвийг уншина — нэг эх сурвалж."
+      },
+      "hint": {
+        "mn": "Хоёр зан үйл нэг л утгыг харж байна."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

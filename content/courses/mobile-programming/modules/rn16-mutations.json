@@ -1,0 +1,20 @@
+{
+  "id": "rn16-mutations",
+  "stageId": "s10",
+  "order": 2,
+  "title": {
+    "mn": "Өгөгдөл өөрчлөх"
+  },
+  "description": {
+    "mn": "Нэмэх, засах, устгах (POST/PUT/DELETE), optimistic шинэчлэл."
+  },
+  "estimatedHours": 6,
+  "lessons": [
+    "rn16-l1",
+    "rn16-l2",
+    "rn16-l3",
+    "rn16-l4",
+    "rn16-l5",
+    "rn16-l6"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "rn6-data",
+  "stageId": "s5",
+  "order": 2,
+  "title": { "mn": "Өгөгдөл ба сагс" },
+  "description": { "mn": "useEffect-ээр өгөгдөл ачаалж, сагсаа AsyncStorage-д хадгалж, апп-аа гүйцээ." },
+  "estimatedHours": 1,
+  "lessons": ["rn6-l1", "rn6-l2"]
+}

@@ -1,0 +1,231 @@
+{
+  "id": "rn21-l6",
+  "moduleId": "rn21-modal-device",
+  "slug": "safe-area",
+  "order": 6,
+  "title": {
+    "mn": "SafeAreaView ба гар зайлсхийх"
+  },
+  "why": {
+    "mn": "Утасны дэлгэцийн дээд хонхор (notch), доод зурвас контентыг халхалж болзошгүй. `SafeAreaView` нь агуулгыг аюулгүй мужид байлгана. Гар гарахад талбар халхлагдахаас `KeyboardAvoidingView` сэргийлнэ. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Аюулгүй мужид байрлах бүрэн дэлгэц",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "component",
+    "flexbox",
+    "TextInput"
+  ],
+  "prerequisites": [
+    "rn21-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, TextInput, KeyboardAvoidingView, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    // энд бичнэ үү: SafeAreaView-ээр ороо\n    <View style={styles.safe}>\n      <Text style={styles.h}>Хүргэлтийн хаяг</Text>\n      <KeyboardAvoidingView style={styles.body}>\n        <TextInput nativeID=\"addr\" style={styles.input} placeholder=\"Гэрийн хаяг\" />\n      </KeyboardAvoidingView>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  safe: { flex: 1, backgroundColor: \"#fff\" },\n  h: { fontSize: 20, fontWeight: \"bold\", padding: 20 },\n  body: { flex: 1, padding: 20 },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14, fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn21-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "SafeAreaView ба гар зайлсхийх"
+      },
+      "statement": {
+        "mn": "Гадна `<View>`-г `<SafeAreaView>`-ээр солиж (`react-native`-аас импортол), агуулгыг дэлгэцийн аюулгүй мужид (notch, доод зурвасаас гадуур) байлга. Доtorх `KeyboardAvoidingView` гар гарахад талбарыг халхлуулахгүй."
+      },
+      "requirements": [
+        {
+          "mn": "`SafeAreaView`-ийг импортолж ашигласан"
+        },
+        {
+          "mn": "Хаягийн `TextInput` харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Гарчиг ба хаягийн талбар аюулгүй мужид цэвэрхэн харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.imports",
+          "args": {
+            "file": "src/App.jsx",
+            "from": "react-native",
+            "named": "SafeAreaView"
+          },
+          "onFail": {
+            "mn": "`SafeAreaView`-ийг импортлоогүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#root [data-rn=\"safeareaview\"]"
+          },
+          "onFail": {
+            "mn": "`<SafeAreaView>` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#addr"
+          },
+          "onFail": {
+            "mn": "Хаягийн талбар алга."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`SafeAreaView` нь `View`-тэй адил боловч notch, доод зурвасаас гадуур автомат зайтай."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Гадна багтаагчаа `<View>`-ээс `<SafeAreaView>` болгож, импортод нэмнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц:"
+          },
+          "code": "<SafeAreaView style={styles.safe}>\n  ...\n  <KeyboardAvoidingView>...</KeyboardAvoidingView>\n</SafeAreaView>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, TextInput, SafeAreaView, KeyboardAvoidingView, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <SafeAreaView style={styles.safe}>\n      <Text style={styles.h}>Хүргэлтийн хаяг</Text>\n      <KeyboardAvoidingView style={styles.body}>\n        <TextInput nativeID=\"addr\" style={styles.input} placeholder=\"Гэрийн хаяг\" />\n      </KeyboardAvoidingView>\n    </SafeAreaView>\n  );\n}\n\nconst styles = StyleSheet.create({\n  safe: { flex: 1, backgroundColor: \"#fff\" },\n  h: { fontSize: 20, fontWeight: \"bold\", padding: 20 },\n  body: { flex: 1, padding: 20 },\n  input: { borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, padding: 14, fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`SafeAreaView` нь контентыг төхөөрөмжийн хонхор/зурвасаас хамгаалж, `KeyboardAvoidingView` нь гар гарахад талбар дарагдахаас сэргийлнэ. Хоёулаа мэргэжлийн, эвгүйрхэггүй апп-ийн шаардлага."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`SafeAreaView` юунаас хамгаалдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Вирусаас"
+        },
+        {
+          "mn": "Notch (хонхор), доод зурвас зэрэг контентыг халхлахаас"
+        },
+        {
+          "mn": "Алдаанаас"
+        },
+        {
+          "mn": "Удаанаас"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "SafeAreaView нь агуулгыг төхөөрөмжийн хонхор/зурвасаас гадуур аюулгүй мужид байлгана."
+      },
+      "hint": {
+        "mn": "Орчин үеийн утасны дэлгэцийн дээд/доод захад юу байдаг вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`KeyboardAvoidingView` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Гарыг нуудаг"
+        },
+        {
+          "mn": "Гар гарахад доtorх талбарыг халхлуулахгүй дээш зөөдөг"
+        },
+        {
+          "mn": "Гарыг сольдог"
+        },
+        {
+          "mn": "Юу ч биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Гар гарч ирэхэд оролтын талбарыг дарахгүйгээр UI-г тохируулна."
+      },
+      "hint": {
+        "mn": "«Keyboard avoiding» = гараас зайлсхийх."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 40,
+    "badge": "rn-polish"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

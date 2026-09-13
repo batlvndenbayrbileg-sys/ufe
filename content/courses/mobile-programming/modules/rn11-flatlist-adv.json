@@ -1,0 +1,21 @@
+{
+  "id": "rn11-flatlist-adv",
+  "stageId": "s8",
+  "order": 1,
+  "title": {
+    "mn": "FlatList мэргэжлийн"
+  },
+  "description": {
+    "mn": "Header, footer, тусгаарлагч, тор, хэвтээ жагсаалт, pull-to-refresh."
+  },
+  "estimatedHours": 7,
+  "lessons": [
+    "rn11-l1",
+    "rn11-l2",
+    "rn11-l3",
+    "rn11-l4",
+    "rn11-l5",
+    "rn11-l6",
+    "rn11-l7"
+  ]
+}

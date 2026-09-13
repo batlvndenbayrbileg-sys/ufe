@@ -1,0 +1,220 @@
+{
+  "id": "rn12-l4",
+  "moduleId": "rn12-sectionlist",
+  "slug": "section-empty",
+  "order": 4,
+  "title": {
+    "mn": "Хоосон SectionList — ListEmptyComponent"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн ангилалд бараа байхгүй эсвэл нөөц дуусвал SectionList хоосон болно. `ListEmptyComponent` нь `sections` хоосон үед «Илэрц алга» мессежийг харуулна."
+  },
+  "buildsInProject": "Хоосон бүлгийн үеийн мессеж",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "SectionList",
+    "sections",
+    "ListEmptyComponent",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn12-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, SectionList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\n// Одоогоор нөөцөд бараа алга — sections хоосон.\nconst SECTIONS = [];\n\nfunction App() {\n  // энд бичнэ үү: SectionList-д ListEmptyComponent нэмж \"Илэрц алга\" харуул\n  return (\n    <SectionList\n      style={styles.screen}\n      sections={SECTIONS}\n      keyExtractor={(item, i) => item + i}\n      renderSectionHeader={({ section }) => (\n        <View testID=\"section-header\" style={styles.header}>\n          <Text style={styles.headerText}>{section.title}</Text>\n        </View>\n      )}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text>{item}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  header: { padding: 12, backgroundColor: \"#e0e7ff\" },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n  empty: { padding: 48, alignItems: \"center\" },\n  emptyText: { fontSize: 18, color: \"#94a3b8\", fontWeight: \"600\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn12-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хоосон SectionList — ListEmptyComponent"
+      },
+      "statement": {
+        "mn": "SectionList-д `ListEmptyComponent` prop нэм. Түүнд `nativeID=\"empty\"`-тэй View өгч «Илэрц алга» текст харуул. `sections` хоосон (`[]`) тул энэ л зурагдана."
+      },
+      "requirements": [
+        {
+          "mn": "`ListEmptyComponent` нэмсэн"
+        },
+        {
+          "mn": "Текст «Илэрц алга»"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Бүлэг байхгүй тул «Илэрц алга» гэсэн саарал мессеж голлон гарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#empty"
+          },
+          "onFail": {
+            "mn": "`ListEmptyComponent` (`#empty`) алга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.text",
+          "args": {
+            "selector": "#empty",
+            "contains": "алга"
+          },
+          "onFail": {
+            "mn": "«Илэрц алга» текст алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`ListEmptyComponent` нь `sections` массив ХООСОН үед л зурагдана — FlatList дээрхтэй адил ажиллана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Утга нь React элемент: `ListEmptyComponent={<View>...</View>}`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "SectionList-д prop нэм:"
+          },
+          "code": "ListEmptyComponent={\n  <View nativeID=\"empty\" style={styles.empty}>\n    <Text>{/* мессеж */}</Text>\n  </View>\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, SectionList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\n// Одоогоор нөөцөд бараа алга — sections хоосон.\nconst SECTIONS = [];\n\nfunction App() {\n  return (\n    <SectionList\n      style={styles.screen}\n      sections={SECTIONS}\n      keyExtractor={(item, i) => item + i}\n      ListEmptyComponent={\n        <View nativeID=\"empty\" style={styles.empty}>\n          <Text style={styles.emptyText}>Илэрц алга</Text>\n        </View>\n      }\n      renderSectionHeader={({ section }) => (\n        <View testID=\"section-header\" style={styles.header}>\n          <Text style={styles.headerText}>{section.title}</Text>\n        </View>\n      )}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text>{item}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  header: { padding: 12, backgroundColor: \"#e0e7ff\" },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n  empty: { padding: 48, alignItems: \"center\" },\n  emptyText: { fontSize: 18, color: \"#94a3b8\", fontWeight: \"600\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`ListEmptyComponent` нь `sections` хоосон үед SectionList-д ч зурагддаг. Хоосон дэлгэцийг эелдэг мессежээр солих нь FlatList, SectionList хоёуланд адил хэв маяг."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "SectionList-ийн `ListEmptyComponent` хэзээ зурагдах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Үргэлж"
+        },
+        {
+          "mn": "`sections` хоосон үед л"
+        },
+        {
+          "mn": "Бүлэг олон үед"
+        },
+        {
+          "mn": "Гарчиг дархад"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Зөвхөн section огт байхгүй үед энэ компонент зурагдана."
+      },
+      "hint": {
+        "mn": "«Empty» = хоосон."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`ListEmptyComponent` нь FlatList болон SectionList-д хэрхэн ажиллах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн FlatList-д"
+        },
+        {
+          "mn": "Хоёуланд ижилхэн — хоосон үед"
+        },
+        {
+          "mn": "Зөвхөн SectionList-д"
+        },
+        {
+          "mn": "Хаана ч ажиллахгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хоёр жагсаалт хоёулаа хоосон үед `ListEmptyComponent`-оо зурдаг."
+      },
+      "hint": {
+        "mn": "Нэг адил зан төлөв."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

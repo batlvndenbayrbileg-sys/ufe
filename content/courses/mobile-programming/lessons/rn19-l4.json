@@ -1,0 +1,229 @@
+{
+  "id": "rn19-l4",
+  "moduleId": "rn19-reducer",
+  "slug": "quantity",
+  "order": 4,
+  "title": {
+    "mn": "Тоо ширхэг өөрчлөх"
+  },
+  "why": {
+    "mn": "Сагсан дахь барааны тоо ширхгийг тусад нь нэмэгдүүлэх ёстой. reducer нь массив доторх тодорхой элементийг ID-гаар нь олж шинэчилнэ. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Барааны тоо ширхэг нэмэгддэг сагс",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "useReducer",
+    "filter",
+    "state"
+  ],
+  "prerequisites": [
+    "rn19-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, FlatList, StyleSheet } from \"react-native\";\nimport { useReducer } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst INIT = [{ id: \"1\", name: \"Чихэвч\", qty: 1 }, { id: \"2\", name: \"Цүнх\", qty: 1 }];\n\nfunction reducer(state, action) {\n  // энд бичнэ үү: \"inc\" action — action.id-тэй барааны qty-г нэмнэ\n  return state;\n}\n\nfunction App() {\n  const [items, dispatch] = useReducer(reducer, INIT);\n  return (\n    <FlatList\n      style={styles.s}\n      data={items}\n      keyExtractor={(x) => x.id}\n      renderItem={({ item }) => (\n        <View testID=\"row\" style={styles.row}>\n          <Text style={styles.name}>{item.name}</Text>\n          <Text nativeID={\"qty-\" + item.id} style={styles.qty}>{item.qty}</Text>\n          <Pressable nativeID={\"inc-\" + item.id} style={styles.b} onPress={() => dispatch({ type: \"inc\", id: item.id })}><Text style={styles.t}>+</Text></Pressable>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 16 },\n  row: { flexDirection: \"row\", alignItems: \"center\", gap: 12, padding: 14, backgroundColor: \"#f8fafc\", borderRadius: 12, marginBottom: 10 },\n  name: { flexGrow: 1, fontSize: 16 }, qty: { fontSize: 18, fontWeight: \"bold\", minWidth: 24, textAlign: \"center\" },\n  b: { backgroundColor: \"#2563eb\", width: 40, height: 40, borderRadius: 20, alignItems: \"center\", justifyContent: \"center\" }, t: { color: \"#fff\", fontSize: 20, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn19-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Тоо ширхэг өөрчлөх"
+      },
+      "statement": {
+        "mn": "`reducer`-т `\"inc\"` action бич: `state.map(...)`-ээр `action.id`-тэй тохирох барааны `qty`-г 1-ээр нэмж, `{ ...item, qty: item.qty + 1 }` буцаа. Бусад бараа хэвээр."
+      },
+      "requirements": [
+        {
+          "mn": "`.map()`-оор зөв барааг олсон"
+        },
+        {
+          "mn": "`{ ...item, qty: item.qty + 1 }` шинэчилсэн"
+        },
+        {
+          "mn": "«+» дархад тоо ширхэг нэмэгдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Тухайн барааны «+» дархад зөвхөн ТҮҮНИЙ тоо ширхэг нэмэгдэнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#inc-1"
+              },
+              {
+                "expectText": {
+                  "selector": "#qty-1",
+                  "equals": "2"
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "#qty-2",
+                  "equals": "1"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«+» дархад зөвхөн тухайн барааны тоо нэмэгдэхгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Массиваас нэг элементийг шинэчлэхдээ `.map()`-оор эргүүлж, тохирохыг нь солино."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`item.id === action.id ? { ...item, qty: item.qty + 1 } : item` — тохирвол шинэ объект, эс бол хэвээр."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "inc action:"
+          },
+          "code": "return state.map((item) =>\n  item.id === action.id ? { ...item, qty: item.qty + 1 } : item\n);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, FlatList, StyleSheet } from \"react-native\";\nimport { useReducer } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst INIT = [{ id: \"1\", name: \"Чихэвч\", qty: 1 }, { id: \"2\", name: \"Цүнх\", qty: 1 }];\n\nfunction reducer(state, action) {\n  if (action.type === \"inc\") {\n    return state.map((item) => item.id === action.id ? { ...item, qty: item.qty + 1 } : item);\n  }\n  return state;\n}\n\nfunction App() {\n  const [items, dispatch] = useReducer(reducer, INIT);\n  return (\n    <FlatList\n      style={styles.s}\n      data={items}\n      keyExtractor={(x) => x.id}\n      renderItem={({ item }) => (\n        <View testID=\"row\" style={styles.row}>\n          <Text style={styles.name}>{item.name}</Text>\n          <Text nativeID={\"qty-\" + item.id} style={styles.qty}>{item.qty}</Text>\n          <Pressable nativeID={\"inc-\" + item.id} style={styles.b} onPress={() => dispatch({ type: \"inc\", id: item.id })}><Text style={styles.t}>+</Text></Pressable>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 16 },\n  row: { flexDirection: \"row\", alignItems: \"center\", gap: 12, padding: 14, backgroundColor: \"#f8fafc\", borderRadius: 12, marginBottom: 10 },\n  name: { flexGrow: 1, fontSize: 16 }, qty: { fontSize: 18, fontWeight: \"bold\", minWidth: 24, textAlign: \"center\" },\n  b: { backgroundColor: \"#2563eb\", width: 40, height: 40, borderRadius: 20, alignItems: \"center\", justifyContent: \"center\" }, t: { color: \"#fff\", fontSize: 20, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Массив доторх нэг объектыг шинэчлэхдээ `.map()` + spread (`{ ...item, qty: ... }`)-ээр зөвхөн тохирохыг нь ШИНЭ объект болгож, бусдыг хэвээр буцаана. Ингэж immutable байдлаа хадгална."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Массив доторх нэг объектыг яаж immutable-аар шинэчилдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`item.qty++`"
+        },
+        {
+          "mn": "`.map()`-оор тохирохыг нь `{ ...item, ... }` болгож солих"
+        },
+        {
+          "mn": "`.push()`"
+        },
+        {
+          "mn": "Шууд утга оноох"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": ".map()-оор шинэ массив, тохирох элементийг spread-ээр шинэ объект болгоно."
+      },
+      "hint": {
+        "mn": "Хуучин объектыг мутаци хийхгүйгээр яаж шинэчлэх вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`.map()` доторх `: item` (эс тохирвол) юу хийж байна вэ?"
+      },
+      "options": [
+        {
+          "mn": "Устгана"
+        },
+        {
+          "mn": "Тохирохгүй элементийг хэвээр үлдээнэ"
+        },
+        {
+          "mn": "Хуулна"
+        },
+        {
+          "mn": "Алдаа"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Тохирохгүй элементийг өөрчлөлгүй буцаана — зөвхөн зорьсон элемент л шинэчлэгдэнэ."
+      },
+      "hint": {
+        "mn": "Бусад бараа өөрчлөгдөх ёстой юу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

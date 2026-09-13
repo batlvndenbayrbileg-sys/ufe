@@ -1,10 +1,14 @@
 import { REACT_RUNTIME_JS } from "./react-runtime.generated";
+import { RN_RUNTIME_JS } from "./rn-runtime.generated";
 import { transpileJsx } from "./transpile";
 import type { FileSet } from "./types";
 
 const isJsx = (p: string) => /\.(jsx|tsx)$/.test(p);
 /** Plain TypeScript: same strip, but it needs no React runtime. */
 const isTs = (p: string) => /\.ts$/.test(p);
+/** Does this source pull in the React Native family (→ needs the RN shim)? */
+const importsReactNative = (src: string) =>
+  /from\s+["'](react-native|expo|expo-status-bar|@react-native-async-storage\/async-storage)["']/.test(src);
 
 /**
  * Assemble a single HTML string from a Tier-1 workspace, inlining referenced
@@ -46,6 +50,7 @@ export function assembleHtml(
 
   // Inline <script src="..."></script>, transpiling JSX/TSX on the way.
   let needsReact = false;
+  let needsReactNative = false;
   html = html.replace(
     /<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>\s*<\/script>/gi,
     (tag, src: string) => {
@@ -66,15 +71,21 @@ ${transpileJsx(js.content, src)}
       }
       if (isJsx(src)) {
         needsReact = true;
+        if (importsReactNative(js.content)) needsReactNative = true;
         return `<script>\n${transpileJsx(js.content, src)}\n</script>`;
       }
       return `<script${isModule ? ' type="module"' : ""}>\n${js.content}\n</script>`;
     },
   );
 
-  // React lessons run entirely offline: the runtime is inlined, no CDN needed.
+  // React (and React Native) lessons run entirely offline: the runtime is
+  // inlined, no CDN needed. The RN shim must come AFTER React (it reads
+  // window.React) and BEFORE the student script.
   if (needsReact) {
-    html = html.replace(/<script>/i, `<script>\n${REACT_RUNTIME_JS}\n</script>\n<script>`);
+    const runtime =
+      `<script>\n${REACT_RUNTIME_JS}\n</script>\n` +
+      (needsReactNative ? `<script>\n${RN_RUNTIME_JS}\n</script>\n` : "");
+    html = html.replace(/<script>/i, `${runtime}<script>`);
   }
 
   if (!/<html[\s>]/i.test(html)) {

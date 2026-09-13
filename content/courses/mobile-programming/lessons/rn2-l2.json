@@ -1,0 +1,234 @@
+{
+  "id": "rn2-l2",
+  "moduleId": "rn2-visual",
+  "slug": "scrollview",
+  "order": 2,
+  "title": {
+    "mn": "ScrollView — гүйлгэж үзэх"
+  },
+  "why": {
+    "mn": "Утасны дэлгэц жижиг. Ангиллын урт жагсаалт багтахгүй бол `<ScrollView>`-д хийж, хэрэглэгч доош гүйлгэж үздэг болгоно. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Гүйдэг ангиллын хуудас",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 13,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "ScrollView",
+    "View",
+    "flexbox"
+  ],
+  "prerequisites": [
+    "rn2-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { ScrollView, View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst ANGILAL = [\"Гар утас\", \"Компьютер\", \"Гэр ахуй\", \"Хувцас\", \"Гоо сайхан\", \"Спорт\", \"Ном\", \"Тоглоом\"];\n\nfunction App() {\n  return (\n    // энд бичнэ үү: ANGILAL-ийг гүйдэг жагсаалт болго\n    <View style={styles.screen}>\n      <Text style={styles.h}>Ангилал</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1 },\n  content: { padding: 16, gap: 10 },\n  h: { fontSize: 22, fontWeight: \"bold\", marginBottom: 8 },\n  row: { padding: 16, backgroundColor: \"#ffffff\", borderRadius: 12, fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn2-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "ScrollView — гүйлгэж үзэх"
+      },
+      "statement": {
+        "mn": "Гадна `<View>`-г `<ScrollView>` болго. `ANGILAL` массивыг `.map()`-оор бүх ангиллыг `<Text>` мөр болгон харуул (`testID=\"cat\"`, `key={i}`). Дотор зайг `contentContainerStyle`-оор өг."
+      },
+      "requirements": [
+        {
+          "mn": "`react-native`-аас `ScrollView` импортолсон"
+        },
+        {
+          "mn": "`<ScrollView>` ашигласан"
+        },
+        {
+          "mn": "`ANGILAL`-ийн бүх (8) ангилал `<Text>` болж харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "8 ангилал доош жагсаж, дэлгэц дүүрэхэд доош гүйлгэж үзэх боломжтой болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.imports",
+          "args": {
+            "file": "src/App.jsx",
+            "from": "react-native",
+            "named": "ScrollView"
+          },
+          "onFail": {
+            "mn": "`react-native`-аас `ScrollView`-г импортлоогүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#root [data-rn=\"scrollview\"]"
+          },
+          "onFail": {
+            "mn": "`<ScrollView>` алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"cat\"]",
+            "equals": 8
+          },
+          "onFail": {
+            "mn": "8 ангилал бүгд харагдах ёстой — `.map()`-оо шалгаарай."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`<ScrollView>` бол доторх зүйл дэлгэцээс урт бол автоматаар гүйдэг `<View>`."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Массиваас олон элемент гаргахдаа `.map()` ашиглана. `.map()` бүрт `key` prop өгөх ёстой — эс бөгөөс console-д анхааруулга гарна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": ".map() ийм харагдана:"
+          },
+          "code": "<ScrollView style={styles.screen} contentContainerStyle={styles.content}>\n  <Text style={styles.h}>Ангилал</Text>\n  {ANGILAL.map((name, i) => (\n    <Text key={i} testID=\"cat\" style={styles.row}>{name}</Text>\n  ))}\n</ScrollView>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { ScrollView, View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst ANGILAL = [\"Гар утас\", \"Компьютер\", \"Гэр ахуй\", \"Хувцас\", \"Гоо сайхан\", \"Спорт\", \"Ном\", \"Тоглоом\"];\n\nfunction App() {\n  return (\n    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>\n      <Text style={styles.h}>Ангилал</Text>\n      {ANGILAL.map((name, i) => (\n        <Text key={i} testID=\"cat\" style={styles.row}>{name}</Text>\n      ))}\n    </ScrollView>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f5f6f8\" },\n  content: { padding: 16, gap: 10 },\n  h: { fontSize: 22, fontWeight: \"bold\", marginBottom: 8 },\n  row: { padding: 16, backgroundColor: \"#ffffff\", borderRadius: 12, fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`<ScrollView>` доторх бүх зүйлийг санах ойд нэг дор зурж, гүйлгэх боломж нэмнэ (цөөн зүйлд тохиромжтой). `.map()` нь массивын элемент бүрийг элемент болгон хувиргана — `key` нь React-д аль нь аль болохыг ялгуулна."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 11,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`<ScrollView>`-г хэзээ хэрэглэх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн зураг харуулахад"
+        },
+        {
+          "mn": "Контент дэлгэцээс урт, доош/хажуу гүйлгэх шаардлагатай үед"
+        },
+        {
+          "mn": "Сервертэй холбогдоход"
+        },
+        {
+          "mn": "Товч дарахад"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`<ScrollView>` нь дэлгэцэнд багтахгүй урт контентыг гүйлгэж үзэх боломж олгоно."
+      },
+      "hint": {
+        "mn": "Утасны дэлгэц жижиг. Урт жагсаалт багтахгүй бол яана?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`.map()`-оор элемент гаргахад `key` prop яагаад хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Өнгө өгөхийн тулд"
+        },
+        {
+          "mn": "React-д элемент бүрийг ялган таниулж, шинэчлэлтийг хурдан хийхэд"
+        },
+        {
+          "mn": "Хэмжээг тогтооход"
+        },
+        {
+          "mn": "Огт хэрэггүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`key` нь React-д жагсаалтын элемент бүрийг ялгуулж, өөрчлөлт гарахад зөвхөн шаардлагатайг нь дахин зурахад тусална."
+      },
+      "hint": {
+        "mn": "Олон адилхан элемент байхад React аль нь өөрчлөгдснийг яаж мэдэх вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

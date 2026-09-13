@@ -1,0 +1,221 @@
+{
+  "id": "rn14-l3",
+  "moduleId": "rn14-tabs",
+  "slug": "tab-badge",
+  "order": 3,
+  "title": {
+    "mn": "Таб badge — сагсны тоо"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн Сагс таб дээр хэдэн бараа байгааг жижиг тоо (badge) харуулах ёстой. Сагс хоосон үед badge гарахгүй, бараа нэмэгдэхэд тоо гарч ирнэ."
+  },
+  "buildsInProject": "Сагс таб дээрх тооны badge",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useState",
+    "conditional-rendering",
+    "state"
+  ],
+  "prerequisites": [
+    "rn14-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [cart, setCart] = useState(0);\n  return (\n    <View style={styles.container}>\n      <Pressable nativeID=\"add\" style={styles.add} onPress={() => setCart((c) => c + 1)}>\n        <Text style={styles.addText}>Сагслах</Text>\n      </Pressable>\n      <View style={styles.tabbar}>\n        <View style={styles.tab}><Text style={styles.tabText}>Нүүр</Text></View>\n        <View style={styles.tab}>\n          <Text style={styles.tabText}>Сагс</Text>\n          {/* энд бичнэ үү: cart > 0 бол badge (nativeID \"badge\") харуул */}\n        </View>\n        <View style={styles.tab}><Text style={styles.tabText}>Профайл</Text></View>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1, justifyContent: \"flex-end\" },\n  add: { margin: 24, backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  addText: { color: \"#fff\", fontWeight: \"bold\" },\n  tabbar: { flexDirection: \"row\", borderTopWidth: 1, borderTopColor: \"#e5e7eb\" },\n  tab: { flexGrow: 1, paddingVertical: 12, alignItems: \"center\" },\n  tabText: { fontWeight: \"600\", color: \"#334155\" },\n  badge: { position: \"absolute\", top: 2, right: 24, backgroundColor: \"#dc2626\", color: \"#fff\", fontSize: 12, fontWeight: \"bold\", minWidth: 18, textAlign: \"center\", paddingHorizontal: 5, borderRadius: 999 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn14-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Таб badge — сагсны тоо"
+      },
+      "statement": {
+        "mn": "Сагс табны дотор `cart > 0 && <Text nativeID=\"badge\" style={styles.badge}>{cart}</Text>` нэм. Сагс хоосон (0) үед badge гарахгүй, «Сагслах» дархад тоо гарч ирнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`cart > 0` нөхцөлтэй badge"
+        },
+        {
+          "mn": "«Сагслах» дархад badge тоо харуулна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Эхэндээ badge алга. «Сагслах» дархад Сагс таб дээр «1» гэсэн улаан badge гарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#add"
+              },
+              {
+                "waitFor": "#badge"
+              },
+              {
+                "expectText": {
+                  "selector": "#badge",
+                  "contains": "1"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Badge гарахгүй байна. cart > 0 && <Text nativeID=\"badge\">{cart}</Text> нэмсэн эсэхээ шалга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Badge зөвхөн тоо байгаа үед л хэрэгтэй. `cart > 0` үнэн бол л зурна — энэ бол нөхцөлт зураг."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`{cart > 0 && <Text nativeID=\"badge\">{cart}</Text>}` — 0 бол `false`, юу ч зурагдахгүй."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Сагс таб дотор:"
+          },
+          "code": "<Text style={styles.tabText}>Сагс</Text>\n{cart > 0 && (\n  <Text nativeID=\"badge\" style={styles.badge}>{cart}</Text>\n)}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [cart, setCart] = useState(0);\n  return (\n    <View style={styles.container}>\n      <Pressable nativeID=\"add\" style={styles.add} onPress={() => setCart((c) => c + 1)}>\n        <Text style={styles.addText}>Сагслах</Text>\n      </Pressable>\n      <View style={styles.tabbar}>\n        <View style={styles.tab}><Text style={styles.tabText}>Нүүр</Text></View>\n        <View style={styles.tab}>\n          <Text style={styles.tabText}>Сагс</Text>\n          {cart > 0 && <Text nativeID=\"badge\" style={styles.badge}>{cart}</Text>}\n        </View>\n        <View style={styles.tab}><Text style={styles.tabText}>Профайл</Text></View>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1, justifyContent: \"flex-end\" },\n  add: { margin: 24, backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  addText: { color: \"#fff\", fontWeight: \"bold\" },\n  tabbar: { flexDirection: \"row\", borderTopWidth: 1, borderTopColor: \"#e5e7eb\" },\n  tab: { flexGrow: 1, paddingVertical: 12, alignItems: \"center\" },\n  tabText: { fontWeight: \"600\", color: \"#334155\" },\n  badge: { position: \"absolute\", top: 2, right: 24, backgroundColor: \"#dc2626\", color: \"#fff\", fontSize: 12, fontWeight: \"bold\", minWidth: 18, textAlign: \"center\", paddingHorizontal: 5, borderRadius: 999 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Badge бол нөхцөлт зурагтын жишээ: `cart > 0 && <Badge/>` нь тоо байгаа үед л зурна. Тоог `{cart}`-аар шууд харуулж, төлөв өөрчлөгдөх бүрд badge шинэчлэгдэнэ."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`{cart > 0 && <Text>...}`-д cart нь 0 бол юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "0 гэж бичигдэнэ"
+        },
+        {
+          "mn": "`false` буцаж, юу ч зурагдахгүй"
+        },
+        {
+          "mn": "Алдаа"
+        },
+        {
+          "mn": "Badge үргэлж гарна"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "0 > 0 нь false тул && нь false буцааж, зурагдахгүй."
+      },
+      "hint": {
+        "mn": "0 > 0 үнэн үү, худал уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Badge доторх тоо яаж шинэчлэгддэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Гараар"
+        },
+        {
+          "mn": "`{cart}` төлвийг харуулдаг тул setCart дуудахад автоматаар"
+        },
+        {
+          "mn": "Хуудас ачаалахад"
+        },
+        {
+          "mn": "Шинэчлэгддэггүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`{cart}` төлвийг уншдаг тул төлөв өөрчлөгдөхөд дахин зурна."
+      },
+      "hint": {
+        "mn": "Badge юуг харуулж байна вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

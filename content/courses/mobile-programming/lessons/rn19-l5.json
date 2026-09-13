@@ -1,0 +1,229 @@
+{
+  "id": "rn19-l5",
+  "moduleId": "rn19-reducer",
+  "slug": "remove-item",
+  "order": 5,
+  "title": {
+    "mn": "Бараа устгах — filter"
+  },
+  "why": {
+    "mn": "Сагснаас барааг бүрэн хасах хэрэгтэй. reducer нь `filter`-ээр тухайн ID-тай барааг хассан шинэ жагсаалт буцаана. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Сагснаас бараа устгах",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "useReducer",
+    "filter",
+    "state"
+  ],
+  "prerequisites": [
+    "rn19-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, FlatList, StyleSheet } from \"react-native\";\nimport { useReducer } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst INIT = [{ id: \"1\", name: \"Чихэвч\" }, { id: \"2\", name: \"Цүнх\" }, { id: \"3\", name: \"Ном\" }];\n\nfunction reducer(state, action) {\n  // энд бичнэ үү: \"remove\" action — action.id-тай барааг хас\n  return state;\n}\n\nfunction App() {\n  const [items, dispatch] = useReducer(reducer, INIT);\n  return (\n    <FlatList\n      style={styles.s}\n      data={items}\n      keyExtractor={(x) => x.id}\n      renderItem={({ item }) => (\n        <View testID=\"row\" style={styles.row}>\n          <Text style={styles.name}>{item.name}</Text>\n          <Pressable nativeID={\"del-\" + item.id} style={styles.b} onPress={() => dispatch({ type: \"remove\", id: item.id })}><Text style={styles.t}>Устгах</Text></Pressable>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 16 },\n  row: { flexDirection: \"row\", alignItems: \"center\", padding: 14, backgroundColor: \"#f8fafc\", borderRadius: 12, marginBottom: 10 },\n  name: { flexGrow: 1, fontSize: 16 }, b: { backgroundColor: \"#dc2626\", paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn19-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Бараа устгах — filter"
+      },
+      "statement": {
+        "mn": "`reducer`-т `\"remove\"` action бич: `state.filter((item) => item.id !== action.id)`-ээр устгах барааг хассан шинэ жагсаалт буцаа. «Устгах» дархад тэр мөр алга болно."
+      },
+      "requirements": [
+        {
+          "mn": "`.filter()` ашигласан"
+        },
+        {
+          "mn": "`item.id !== action.id` нөхцөл"
+        },
+        {
+          "mn": "Устгах дархад мөр хасагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Барааны «Устгах» дархад тэр мөр жагсаалтаас алга болно (3→2)."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#del-2"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 2
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "#root",
+                  "contains": "Ном"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Устгах дархад мөр хасагдахгүй байна. `filter`-ээ шалга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`.filter()` нь нөхцөл хангасан элементүүдийг үлдээж, бусдыг хасна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`item.id !== action.id` — устгах ID-тайгаас БУСДЫГ үлдээвэл тэр нэг нь хасагдана."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "remove action:"
+          },
+          "code": "if (action.type === \"remove\")\n  return state.filter((item) => item.id !== action.id);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, FlatList, StyleSheet } from \"react-native\";\nimport { useReducer } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst INIT = [{ id: \"1\", name: \"Чихэвч\" }, { id: \"2\", name: \"Цүнх\" }, { id: \"3\", name: \"Ном\" }];\n\nfunction reducer(state, action) {\n  if (action.type === \"remove\") return state.filter((item) => item.id !== action.id);\n  return state;\n}\n\nfunction App() {\n  const [items, dispatch] = useReducer(reducer, INIT);\n  return (\n    <FlatList\n      style={styles.s}\n      data={items}\n      keyExtractor={(x) => x.id}\n      renderItem={({ item }) => (\n        <View testID=\"row\" style={styles.row}>\n          <Text style={styles.name}>{item.name}</Text>\n          <Pressable nativeID={\"del-\" + item.id} style={styles.b} onPress={() => dispatch({ type: \"remove\", id: item.id })}><Text style={styles.t}>Устгах</Text></Pressable>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 16 },\n  row: { flexDirection: \"row\", alignItems: \"center\", padding: 14, backgroundColor: \"#f8fafc\", borderRadius: 12, marginBottom: 10 },\n  name: { flexGrow: 1, fontSize: 16 }, b: { backgroundColor: \"#dc2626\", paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`.filter()` нь нөхцөл хангасан элементүүдийн ШИНЭ массив буцаана. `!== action.id` буюу «устгах ID биш бол үлдэ» гэдэг нь тэр нэг барааг л хасна — устгалт ингэж хийгддэг."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Массиваас нэг элемент хасахад юу ашигладаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`.map()`"
+        },
+        {
+          "mn": "`.filter()` (хасахаас бусдыг үлдээх)"
+        },
+        {
+          "mn": "`.push()`"
+        },
+        {
+          "mn": "`.reduce()`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": ".filter() нь нөхцөл хангасныг үлдээнэ — устгах биш бусдыг үлдээж, нэгийг нь хасна."
+      },
+      "hint": {
+        "mn": "«шүүх» — хэрэгтэйг нь үлдээж, нэгийг гаргах."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`item.id !== action.id` яагаад `!==` (тэнцүү биш) вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаа"
+        },
+        {
+          "mn": "Устгах ID-аас БУСДЫГ (үлдэх ёстойг) л дамжуулахын тулд"
+        },
+        {
+          "mn": "`===` байх ёстой"
+        },
+        {
+          "mn": "Ялгаагүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "filter нь үнэн буцаасан элементийг үлдээдэг тул «устгах биш» гэсэн нөхцөл (≠) хэрэгтэй."
+      },
+      "hint": {
+        "mn": "filter юуг үлдээдэг вэ — үнэн үү, худал уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

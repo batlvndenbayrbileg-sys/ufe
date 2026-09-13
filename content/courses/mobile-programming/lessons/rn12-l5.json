@@ -1,0 +1,234 @@
+{
+  "id": "rn12-l5",
+  "moduleId": "rn12-sectionlist",
+  "slug": "section-pressable",
+  "order": 5,
+  "title": {
+    "mn": "SectionList + Pressable — мөр сонгох"
+  },
+  "why": {
+    "mn": "Shop.mn-д бүлэглэсэн жагсаалтаас барааг дарж сонгоход дээд талд «Сонгосон: ...» гэж харагддаг. `renderItem` доторх мөрийг `Pressable` болгож сонголтыг барина."
+  },
+  "buildsInProject": "Мөр дархад дээр харуулах сонголт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-lists",
+    "mobile-state"
+  ],
+  "concepts": [
+    "SectionList",
+    "Pressable",
+    "onPress",
+    "useState"
+  ],
+  "prerequisites": [
+    "rn12-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, SectionList, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst SECTIONS = [\n  { title: \"Электроник\", data: [\"Чихэвч\", \"Гар цаг\"] },\n  { title: \"Хувцас\", data: [\"Гутал\", \"Цүнх\"] },\n];\n\nfunction App() {\n  const [selected, setSelected] = useState(\"\");\n  return (\n    <View style={styles.screen}>\n      <Text nativeID=\"chosen\" style={styles.chosen}>Сонгосон: {selected || \"—\"}</Text>\n      <SectionList\n        style={styles.list}\n        sections={SECTIONS}\n        keyExtractor={(item, i) => item + i}\n        renderSectionHeader={({ section }) => (\n          <View style={styles.header}>\n            <Text style={styles.headerText}>{section.title}</Text>\n          </View>\n        )}\n        renderItem={({ item }) => (\n          // энд бичнэ үү: мөрийг Pressable болгож onPress-д setSelected(item) дууд\n          <View testID=\"row\" style={styles.row}>\n            <Text>{item}</Text>\n          </View>\n        )}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  chosen: { padding: 16, fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\", backgroundColor: \"#eff6ff\" },\n  list: { flex: 1 },\n  header: { padding: 12, backgroundColor: \"#e0e7ff\" },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn12-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "SectionList + Pressable — мөр сонгох"
+      },
+      "statement": {
+        "mn": "`renderItem` доторх мөрийг `View`-ээс `Pressable` болго. `testID=\"row\"`-г үлдээж, `onPress={() => setSelected(item)}` нэм. Мөр дархад дээд талын «Сонгосон:» тухайн барааг харуулна."
+      },
+      "requirements": [
+        {
+          "mn": "Мөр `Pressable` болсон"
+        },
+        {
+          "mn": "`onPress`-д `setSelected(item)`"
+        },
+        {
+          "mn": "Дархад дээр гарч ирнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Аль нэг барааг дархад дээд талд «Сонгосон: <нэр>» болж өөрчлөгдөнө."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "[data-testid=\"row\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "#chosen",
+                  "contains": "Чихэвч"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Мөр дархад дээд талд сонголт харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#chosen"
+          },
+          "onFail": {
+            "mn": "«Сонгосон» мөр (`#chosen`) алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`Pressable` нь дарагдах боломжтой контейнер. `onPress`-д дуудагдах функцээ өгнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`onPress={() => setSelected(item)}` нь тухайн мөрийн `item`-г төлөвт хадгална."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "renderItem доторх мөр:"
+          },
+          "code": "<Pressable testID=\"row\" style={styles.row} onPress={() => /* setSelected(item) */}>\n  <Text>{item}</Text>\n</Pressable>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, SectionList, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst SECTIONS = [\n  { title: \"Электроник\", data: [\"Чихэвч\", \"Гар цаг\"] },\n  { title: \"Хувцас\", data: [\"Гутал\", \"Цүнх\"] },\n];\n\nfunction App() {\n  const [selected, setSelected] = useState(\"\");\n  return (\n    <View style={styles.screen}>\n      <Text nativeID=\"chosen\" style={styles.chosen}>Сонгосон: {selected || \"—\"}</Text>\n      <SectionList\n        style={styles.list}\n        sections={SECTIONS}\n        keyExtractor={(item, i) => item + i}\n        renderSectionHeader={({ section }) => (\n          <View style={styles.header}>\n            <Text style={styles.headerText}>{section.title}</Text>\n          </View>\n        )}\n        renderItem={({ item }) => (\n          <Pressable testID=\"row\" style={styles.row} onPress={() => setSelected(item)}>\n            <Text>{item}</Text>\n          </Pressable>\n        )}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  chosen: { padding: 16, fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\", backgroundColor: \"#eff6ff\" },\n  list: { flex: 1 },\n  header: { padding: 12, backgroundColor: \"#e0e7ff\" },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`renderItem`-ийн буцаадаг мөрийг `Pressable` болгож `onPress`-д `setSelected`-г дуудвал сонголт төлөвт хадгалагдаж, дэлгэцийн өөр хэсэгт (энд дээд талд) харагдана."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-lists",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Мөрийг дарагдах болгохын тулд юу ашиглах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн View"
+        },
+        {
+          "mn": "Pressable (эсвэл TouchableOpacity)"
+        },
+        {
+          "mn": "Text"
+        },
+        {
+          "mn": "StyleSheet"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`Pressable`/`TouchableOpacity` нь `onPress`-ээр дарах үйлдлийг барьдаг."
+      },
+      "hint": {
+        "mn": "«Press» = дарах."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`onPress={() => setSelected(item)}` дархад юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Апп хаагдана"
+        },
+        {
+          "mn": "`selected` төлөв тухайн мөрийн утгаар шинэчлэгдэнэ"
+        },
+        {
+          "mn": "Мөр устана"
+        },
+        {
+          "mn": "Юу ч болохгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`setSelected` дуудагдаж, төлөв шинэчлэгдэн дахин зурагдана."
+      },
+      "hint": {
+        "mn": "setState дуудахад юу шинэчлэгдэх вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

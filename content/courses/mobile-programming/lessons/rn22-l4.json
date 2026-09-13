@@ -1,0 +1,219 @@
+{
+  "id": "rn22-l4",
+  "moduleId": "rn22-quality",
+  "slug": "performance",
+  "order": 4,
+  "title": {
+    "mn": "Гүйцэтгэл — React.memo"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн урт жагсаалтад эцэг дахин зурагдах болгонд мөр бүр дахин зурагдвал удаашрана. `React.memo` нь prop нь өөрчлөгдөөгүй мөрийг дахин зурахаас сэргийлнэ."
+  },
+  "buildsInProject": "Илүүдэл зуралтаас сэргийлсэн мөр",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "component",
+    "FlatList"
+  ],
+  "prerequisites": [
+    "rn22-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, FlatList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst DATA = [{ id: \"1\", name: \"Чихэвч\" }, { id: \"2\", name: \"Гар цаг\" }, { id: \"3\", name: \"Цүнх\" }];\n\n// энд бичнэ үү: Row-г React.memo-оор боо\nfunction Row({ name }) {\n  return <Text testID=\"row\" style={styles.row}>{name}</Text>;\n}\n\nfunction App() {\n  return (\n    <FlatList\n      style={styles.s}\n      data={DATA}\n      keyExtractor={(item) => item.id}\n      renderItem={({ item }) => <Row name={item.name} />}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({ s: { flex: 1, padding: 16 }, row: { padding: 14, backgroundColor: \"#f1f5f9\", borderRadius: 10, marginBottom: 8 } });\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn22-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Гүйцэтгэл — React.memo"
+      },
+      "statement": {
+        "mn": "`Row` component-ийг `memo(...)`-оор боо (`react`-аас `memo` импортол): `const Row = memo(function Row({ name }) { ... })`. Ингэснээр `name` prop өөрчлөгдөөгүй мөр дахин зурагдахгүй."
+      },
+      "requirements": [
+        {
+          "mn": "`memo`-г ашигласан"
+        },
+        {
+          "mn": "3 мөр зөв харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Жагсаалт урьдын адил харагдана — гэхдээ мөрүүд шаардлагагүй дахин зурагдахгүй."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "memo"
+          },
+          "onFail": {
+            "mn": "`memo`-г ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"row\"]",
+            "equals": 3
+          },
+          "onFail": {
+            "mn": "3 мөр харагдах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`React.memo(Component)` нь component-ийг prop нь өөрчлөгдөөгүй бол дахин зурахгүй болгож «сануулна»."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`import { memo } from \"react\";` дараа нь `const Row = memo(function Row({ name }) { ... });`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц:"
+          },
+          "code": "const Row = memo(function Row({ name }) {\n  return <Text testID=\"row\">{name}</Text>;\n});"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, FlatList, StyleSheet } from \"react-native\";\nimport { memo } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst DATA = [{ id: \"1\", name: \"Чихэвч\" }, { id: \"2\", name: \"Гар цаг\" }, { id: \"3\", name: \"Цүнх\" }];\n\nconst Row = memo(function Row({ name }) {\n  return <Text testID=\"row\" style={styles.row}>{name}</Text>;\n});\n\nfunction App() {\n  return (\n    <FlatList\n      style={styles.s}\n      data={DATA}\n      keyExtractor={(item) => item.id}\n      renderItem={({ item }) => <Row name={item.name} />}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({ s: { flex: 1, padding: 16 }, row: { padding: 14, backgroundColor: \"#f1f5f9\", borderRadius: 10, marginBottom: 8 } });\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`React.memo` нь component-ийн гаралтыг санаж, prop нь ижил бол дахин зурдаггүй. `FlatList`-ийн урт жагсаалтад мөр бүрийг memo хийвэл гүйцэтгэл эрс сайжирна — `useCallback`-той хослуулбал бүр илүү."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`React.memo` юунаас сэргийлдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаанаас"
+        },
+        {
+          "mn": "Prop нь өөрчлөгдөөгүй component шаардлагагүй дахин зурагдахаас"
+        },
+        {
+          "mn": "Санах ой дүүрэхээс"
+        },
+        {
+          "mn": "Сүлжээнээс"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "memo нь ижил prop-той component-ийг дахин зурахгүй — илүүдэл ажлыг арилгана."
+      },
+      "hint": {
+        "mn": "«memo» = санах. Юу гарсныг санаж, дахин хийхгүй."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`memo`-г юутэй хослуулбал илүү үр дүнтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "useState"
+        },
+        {
+          "mn": "`useCallback` (функц prop-ыг тогтвортой байлгах)"
+        },
+        {
+          "mn": "useEffect"
+        },
+        {
+          "mn": "Alert"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Функц prop бүр render-т шинэ болдог тул useCallback-аар тогтворжуулж, memo-г ажиллуулна."
+      },
+      "hint": {
+        "mn": "Функц prop бүр шинэ бол memo ажиллах уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

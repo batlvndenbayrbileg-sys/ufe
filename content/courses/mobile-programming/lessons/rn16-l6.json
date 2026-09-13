@@ -1,0 +1,243 @@
+{
+  "id": "rn16-l6",
+  "moduleId": "rn16-mutations",
+  "slug": "feedback-revert",
+  "order": 6,
+  "title": {
+    "mn": "Амжилт/алдаа — Alert ба алдаа гарвал буцаах"
+  },
+  "why": {
+    "mn": "Shop.mn-д захиалга илгээхэд амжилттай бол баяр хүргэж, алдаа гарвал мэдэгдээд өөрчлөлтийг БУЦААх ёстой. Optimistic өөрчлөлт бүтэлгүйтвэл хуучин байдалд нь эргүүлж, `Alert`-оор мэдэгдэнэ."
+  },
+  "buildsInProject": "Алдаа гарвал буцааж, Alert-оор мэдэгддэг захиалга",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-data"
+  ],
+  "concepts": [
+    "Alert",
+    "state",
+    "conditional-rendering",
+    "onPress"
+  ],
+  "prerequisites": [
+    "rn16-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, Alert, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\n// Сервер энэ удаа унасан гэж бод — захиалга үргэлж алдаа өгнө.\nconst fakeOrder = () => new Promise((res, rej) => setTimeout(() => rej(new Error(\"Сервер алдаа\")), 200));\n\nfunction App() {\n  const [ordered, setOrdered] = useState(false);\n\n  function order() {\n    setOrdered(true); // optimistic: шууд «захиалсан» болгоно\n    fakeOrder()\n      .then(() => Alert.alert(\"Амжилттай\", \"Захиалга баталгаажлаа\"))\n      .catch(() => {\n        // энд бичнэ үү: алдаа гарсан тул ordered-г false болгож буцаагаад Alert(\"Алдаа\", ...) харуул\n      });\n  }\n\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"status\" style={styles.status}>{ordered ? \"Захиалсан\" : \"Захиалаагүй\"}</Text>\n      <Pressable nativeID=\"order\" style={styles.btn} onPress={order}><Text style={styles.btnText}>Захиалах</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\", gap: 16, padding: 24 },\n  status: { fontSize: 18, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", paddingHorizontal: 24, paddingVertical: 14, borderRadius: 12 },\n  btnText: { color: \"#fff\", fontWeight: \"bold\", fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn16-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Амжилт/алдаа — Alert ба алдаа гарвал буцаах"
+      },
+      "statement": {
+        "mn": "`.catch`-д алдаа зохицуул: `setOrdered(false)`-оор optimistic өөрчлөлтийг буцаагаад, `Alert.alert(\"Алдаа\", \"...\")`-оор хэрэглэгчид мэдэгд. Ингэснээр сервер унахад төлөв худал үлдэхгүй."
+      },
+      "requirements": [
+        {
+          "mn": "`.catch`-д `setOrdered(false)` буцаасан"
+        },
+        {
+          "mn": "`Alert.alert`-оор алдаа мэдэгдсэн"
+        },
+        {
+          "mn": "Алдааны дараа «Захиалаагүй» болно"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Захиалах» дархад алдаа гарч «Алдаа» Alert гарна, төлөв «Захиалаагүй» рүү буцна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "alert"
+          },
+          "onFail": {
+            "mn": "`Alert.alert`-г дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#order"
+              },
+              {
+                "waitFor": "[data-rn=\"alert-title\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-rn=\"alert-title\"]",
+                  "contains": "Алдаа"
+                }
+              },
+              {
+                "expectText": {
+                  "selector": "#status",
+                  "contains": "Захиалаагүй"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Алдаа гарахад буцааж, Alert харуулахгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Optimistic өөрчлөлт бүтэлгүйтвэл заавал буцаах ёстой — эс бол UI худал төлөв харуулна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`.catch`-д хоёр зүйл хий: `setOrdered(false)` (буцаах) ба `Alert.alert(\"Алдаа\", \"...\")` (мэдэгдэх)."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "catch блок:"
+          },
+          "code": ".catch(() => {\n  setOrdered(false); // буцаах\n  Alert.alert(\"Алдаа\", \"Дахин оролдоно уу.\");\n});"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, Alert, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\n// Сервер энэ удаа унасан гэж бод — захиалга үргэлж алдаа өгнө.\nconst fakeOrder = () => new Promise((res, rej) => setTimeout(() => rej(new Error(\"Сервер алдаа\")), 200));\n\nfunction App() {\n  const [ordered, setOrdered] = useState(false);\n\n  function order() {\n    setOrdered(true); // optimistic: шууд «захиалсан» болгоно\n    fakeOrder()\n      .then(() => Alert.alert(\"Амжилттай\", \"Захиалга баталгаажлаа\"))\n      .catch(() => {\n        setOrdered(false);\n        Alert.alert(\"Алдаа\", \"Захиалга амжилтгүй. Дахин оролдоно уу.\");\n      });\n  }\n\n  return (\n    <View style={styles.s}>\n      <Text nativeID=\"status\" style={styles.status}>{ordered ? \"Захиалсан\" : \"Захиалаагүй\"}</Text>\n      <Pressable nativeID=\"order\" style={styles.btn} onPress={order}><Text style={styles.btnText}>Захиалах</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\", gap: 16, padding: 24 },\n  status: { fontSize: 18, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", paddingHorizontal: 24, paddingVertical: 14, borderRadius: 12 },\n  btnText: { color: \"#fff\", fontWeight: \"bold\", fontSize: 16 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Сервертэй ажиллах бүрд амжилт ба алдааны хоёр замыг зохицуулна. Optimistic UI алдаа гарвал хуучин байдалдаа буцаж, `Alert`-оор шалтгааныг мэдэгдэх нь хэрэглэгчийн итгэлийг хадгална. Энэ бол сүлжээний найдвартай апп-ийн үндэс."
+        },
+        "xpPenalty": 13
+      },
+      "xp": 22,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-data"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Optimistic өөрчлөлт серверт бүтэлгүйтвэл юу хийх нь зөв бэ?"
+      },
+      "options": [
+        {
+          "mn": "Юу ч хийхгүй"
+        },
+        {
+          "mn": "Өөрчлөлтийг хуучин байдалд нь буцааж, алдаа мэдэгдэх"
+        },
+        {
+          "mn": "Аппыг унагаах"
+        },
+        {
+          "mn": "Дахин 10 удаа оролдох"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Буцаах (revert) ба мэдэгдэх нь UI-г үнэн байлгаж, хэрэглэгчид ойлгуулна."
+      },
+      "hint": {
+        "mn": "UI худал төлөвт үлдэж болохгүй."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`Alert.alert(title, message)` юунд ашиглагддаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Өгөгдөл татах"
+        },
+        {
+          "mn": "Хэрэглэгчид богино мэдэгдэл/сонордуулга харуулах"
+        },
+        {
+          "mn": "Жагсаалт зурах"
+        },
+        {
+          "mn": "Сервер дуудах"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`Alert` нь амжилт, алдаа зэрэг мэдэгдлийг харуулах жижиг цонх гаргана."
+      },
+      "hint": {
+        "mn": "Гарч ирдэг жижиг мэдэгдлийн цонх."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30,
+    "badge": "rn-network"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

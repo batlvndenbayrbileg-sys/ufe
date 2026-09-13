@@ -14,6 +14,7 @@ const rise: Variants = {
 import { level, loadProgress, lessonProgress, type Progress } from "@/lib/progress";
 import { flattenLessons, type MapLesson } from "./course-types";
 import { useCourseMap } from "./useCourseMap";
+import { OtherCourses } from "./OtherCourses";
 import { BrandLockup } from "../BrandMark";
 import { AccountControl } from "../AccountControl";
 import { useIsAdmin } from "@/lib/admin";
@@ -175,6 +176,11 @@ export function Dashboard() {
               ) : null}
             </div>
           </Card>
+        </motion.div>
+
+        {/* Other tracks (e.g. the React Native course). */}
+        <motion.div variants={rise}>
+          <OtherCourses excludeId={map.id} />
         </motion.div>
 
         <motion.div className={s.body} variants={rise}>

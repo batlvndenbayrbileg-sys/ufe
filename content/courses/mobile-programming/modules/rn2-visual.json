@@ -1,0 +1,9 @@
+{
+  "id": "rn2-visual",
+  "stageId": "s2",
+  "order": 1,
+  "title": { "mn": "Зураг ба ScrollView" },
+  "description": { "mn": "Бүтээгдэхүүний зураг харуулж, урт хуудсыг гүйлгэж болдог болго." },
+  "estimatedHours": 1,
+  "lessons": ["rn2-l1", "rn2-l2", "rn2-l3"]
+}

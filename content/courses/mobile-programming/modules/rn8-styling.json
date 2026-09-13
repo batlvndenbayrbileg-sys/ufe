@@ -1,0 +1,20 @@
+{
+  "id": "rn8-styling",
+  "stageId": "s6",
+  "order": 2,
+  "title": {
+    "mn": "Загварын урлаг"
+  },
+  "description": {
+    "mn": "Сүүдэр, хүрээ, ил тод байдал, дахин ашиглагдах загварын систем."
+  },
+  "estimatedHours": 6,
+  "lessons": [
+    "rn8-l1",
+    "rn8-l2",
+    "rn8-l3",
+    "rn8-l4",
+    "rn8-l5",
+    "rn8-l6"
+  ]
+}

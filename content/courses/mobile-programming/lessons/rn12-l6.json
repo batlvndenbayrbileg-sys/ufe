@@ -1,0 +1,257 @@
+{
+  "id": "rn12-l6",
+  "moduleId": "rn12-sectionlist",
+  "slug": "search-filter-sections",
+  "order": 6,
+  "title": {
+    "mn": "Хайлтаар бүлгүүдийг шүүх"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн бүлэглэсэн каталогт хайлт бичихэд тохирох бараатай бүлгүүд л үлдэх ёстой. Хайлтын үг бүр `sections`-ийг шүүж, хоосон бүлгийг хасна."
+  },
+  "buildsInProject": "Хайлтаар шүүгддэг бүлэглэсэн каталог",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-lists",
+    "mobile-state"
+  ],
+  "concepts": [
+    "SectionList",
+    "sections",
+    "filter",
+    "TextInput",
+    "onChangeText"
+  ],
+  "prerequisites": [
+    "rn12-l5"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, SectionList, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst SECTIONS = [\n  { title: \"Электроник\", data: [\"Чихэвч\", \"Гар цаг\"] },\n  { title: \"Хувцас\", data: [\"Гутал\", \"Цүнх\"] },\n];\n\nfunction App() {\n  const [query, setQuery] = useState(\"\");\n  // энд бичнэ үү: query-ээр SECTIONS-ийг шүүж visible бүтээ\n  const visible = SECTIONS;\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"search\" style={styles.input} placeholder=\"Бараа хайх...\" value={query} onChangeText={setQuery} />\n      <SectionList\n        style={styles.list}\n        sections={visible}\n        keyExtractor={(item, i) => item + i}\n        renderSectionHeader={({ section }) => (\n          <View testID=\"section-header\" style={styles.header}>\n            <Text style={styles.headerText}>{section.title}</Text>\n          </View>\n        )}\n        renderItem={({ item }) => (\n          <View testID=\"product\" style={styles.row}>\n            <Text>{item}</Text>\n          </View>\n        )}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  input: { margin: 16, padding: 12, borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, backgroundColor: \"#fff\" },\n  list: { flex: 1 },\n  header: { padding: 12, backgroundColor: \"#e0e7ff\" },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn12-l6-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хайлтаар бүлгүүдийг шүүх"
+      },
+      "statement": {
+        "mn": "`query`-ээр `SECTIONS`-ийг шүү. Бүлэг бүрийн `data`-г хайлтын үгээр (`toLowerCase().includes`) шүүж, гишүүнгүй үлдсэн бүлгийг `filter`-ээр хас. Үр дүнг `visible`-д хадгалж SectionList-д өг."
+      },
+      "requirements": [
+        {
+          "mn": "`filter`-ээр шүүсэн"
+        },
+        {
+          "mn": "Хоосон бүлгийг хассан"
+        },
+        {
+          "mn": "«Чих» гэж хайхад 1 бараа, 1 бүлэг"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Чих» гэж бичихэд зөвхөн «Электроник» бүлэгт «Чихэвч» л үлдэнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useState"
+          },
+          "onFail": {
+            "mn": "`useState` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "filter"
+          },
+          "onFail": {
+            "mn": "Шүүхэд `filter` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "type": {
+                  "selector": "#search",
+                  "text": "Чих"
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"product\"]",
+                  "equals": 1
+                }
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"section-header\"]",
+                  "equals": 1
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хайлтаар бүлэг ба бараа шүүгдэхгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Бүлэг бүрийн доторх `data`-г эхлээд `filter`-ээр хайлтын үгэнд тааруул: `item.toLowerCase().includes(query.toLowerCase())`."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Дараа нь бүлгүүдээ дахин `filter`-дэж `data.length > 0` буюу гишүүнтэй бүлгийг л үлдээ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Шүүлтийн бүтэц:"
+          },
+          "code": "const visible = SECTIONS\n  .map((s) => ({ title: s.title, data: s.data.filter(/* ... */) }))\n  .filter((s) => s.data.length > 0);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, SectionList, TextInput, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst SECTIONS = [\n  { title: \"Электроник\", data: [\"Чихэвч\", \"Гар цаг\"] },\n  { title: \"Хувцас\", data: [\"Гутал\", \"Цүнх\"] },\n];\n\nfunction App() {\n  const [query, setQuery] = useState(\"\");\n  const visible = SECTIONS\n    .map((s) => ({\n      title: s.title,\n      data: s.data.filter((item) => item.toLowerCase().includes(query.toLowerCase())),\n    }))\n    .filter((s) => s.data.length > 0);\n  return (\n    <View style={styles.screen}>\n      <TextInput nativeID=\"search\" style={styles.input} placeholder=\"Бараа хайх...\" value={query} onChangeText={setQuery} />\n      <SectionList\n        style={styles.list}\n        sections={visible}\n        keyExtractor={(item, i) => item + i}\n        renderSectionHeader={({ section }) => (\n          <View testID=\"section-header\" style={styles.header}>\n            <Text style={styles.headerText}>{section.title}</Text>\n          </View>\n        )}\n        renderItem={({ item }) => (\n          <View testID=\"product\" style={styles.row}>\n            <Text>{item}</Text>\n          </View>\n        )}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  input: { margin: 16, padding: 12, borderWidth: 1, borderColor: \"#cbd5e1\", borderRadius: 10, backgroundColor: \"#fff\" },\n  list: { flex: 1 },\n  header: { padding: 12, backgroundColor: \"#e0e7ff\" },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Эхлээд бүлэг бүрийн гишүүдийг шүүж, дараа нь хоосон болсон бүлгийг хасна. Ингэснээр хайлтад тохирох бараатай бүлгүүд л гарч, каталог амьд шүүлттэй болно."
+        },
+        "xpPenalty": 13
+      },
+      "xp": 22,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-lists",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Бүлгүүдийг шүүхдээ хоёр дахь `filter` юунд хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Гарчгийг өөрчлөх"
+        },
+        {
+          "mn": "Гишүүнгүй болсон хоосон бүлгийг хасах"
+        },
+        {
+          "mn": "Хурдасгах"
+        },
+        {
+          "mn": "Өнгө өгөх"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Эхний шүүлтийн дараа зарим бүлэг хоосорно — тэдгээрийг `data.length > 0`-оор хасна."
+      },
+      "hint": {
+        "mn": "Хоосон бүлэг гарч ирвэл яах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`item.toLowerCase().includes(query.toLowerCase())` яагаад хоёуланг нь жижиг үсэг болгодог вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хурдан болгохын тулд"
+        },
+        {
+          "mn": "Том/жижиг үсгээс үл хамааран тааруулахын тулд"
+        },
+        {
+          "mn": "Заавал биш"
+        },
+        {
+          "mn": "Өнгө өөрчлөхөд"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хоёр талыг жижиг үсэг болгосноор «Чих» ба «чих» адилхан тохирно."
+      },
+      "hint": {
+        "mn": "«Чих» ба «чих» ялгаатай юу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30,
+    "badge": "rn-lists-pro"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

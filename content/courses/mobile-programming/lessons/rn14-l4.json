@@ -1,0 +1,237 @@
+{
+  "id": "rn14-l4",
+  "moduleId": "rn14-tabs",
+  "slug": "tab-inner-nav",
+  "order": 4,
+  "title": {
+    "mn": "Таб доторх дэлгэрэнгүй"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн Нүүр табын дотор бараа сонгоод дэлгэрэнгүйг нь үзэх боломжтой байх ёстой — таб бар хэвээр үлдэнэ. Таб бүр өөрийн дотоод навигацитай."
+  },
+  "buildsInProject": "Таб доторх жагсаалт → дэлгэрэнгүй",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useState",
+    "state",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn14-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [tab, setTab] = useState(\"Нүүр\");\n  const [home, setHome] = useState(\"list\");\n\n  function Body() {\n    if (tab === \"Нүүр\") {\n      if (home === \"detail\") {\n        return (\n          <View style={styles.pad}>\n            <Text nativeID=\"hd\" style={styles.h}>Бараа: Утасгүй чихэвч</Text>\n            <Pressable nativeID=\"hback\" style={styles.btn} onPress={() => setHome(\"list\")}>\n              <Text style={styles.btnText}>← Буцах</Text>\n            </Pressable>\n          </View>\n        );\n      }\n      return (\n        <View style={styles.pad}>\n          <Pressable nativeID=\"open\" style={styles.btn}>\n            <Text style={styles.btnText}>Утасгүй чихэвч</Text>\n          </Pressable>\n          {/* энд бичнэ үү: open дархад home-г \"detail\" болго */}\n        </View>\n      );\n    }\n    return <View style={styles.pad}><Text style={styles.h}>{tab}</Text></View>;\n  }\n\n  return (\n    <View style={styles.container}>\n      <View style={styles.bodyWrap}><Body /></View>\n      <View nativeID=\"tabbar\" style={styles.tabbar}>\n        {[\"Нүүр\", \"Сагс\", \"Профайл\"].map((t, i) => (\n          <Pressable key={t} nativeID={\"tab\" + i} style={styles.tab} onPress={() => setTab(t)}>\n            <Text style={styles.tabText}>{t}</Text>\n          </Pressable>\n        ))}\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1 },\n  bodyWrap: { flex: 1 },\n  pad: { flex: 1, padding: 24, gap: 14, justifyContent: \"center\" },\n  h: { fontSize: 20, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n  tabbar: { flexDirection: \"row\", borderTopWidth: 1, borderTopColor: \"#e5e7eb\" },\n  tab: { flexGrow: 1, paddingVertical: 12, alignItems: \"center\" },\n  tabText: { fontWeight: \"600\", color: \"#334155\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn14-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Таб доторх дэлгэрэнгүй"
+      },
+      "statement": {
+        "mn": "Нүүр табын жагсаалт дахь бараа (`open`) дархад `setHome(\"detail\")` дуудаж, таб дотор дэлгэрэнгүй дэлгэц гарга. Таб бар доор хэвээрээ үлдэнэ — навигаци нь табын ДОТОР явна."
+      },
+      "requirements": [
+        {
+          "mn": "Бараа дархад `setHome(\"detail\")` дуудна"
+        },
+        {
+          "mn": "Дэлгэрэнгүй гарсан ч таб бар хэвээр"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Нүүр таб дээр барааг дархад дэлгэрэнгүй гарч, доод таб бар хэвээр харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#tabbar"
+          },
+          "onFail": {
+            "mn": "Таб бар алга байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#open"
+              },
+              {
+                "waitFor": "#hd"
+              },
+              {
+                "expectText": {
+                  "selector": "#hd",
+                  "contains": "чихэвч"
+                }
+              },
+              {
+                "expectEval": {
+                  "expr": "!!document.getElementById('tabbar')",
+                  "equals": true
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Таб доторх навигаци ажиллахгүй байна. open дархад setHome(\"detail\") дуудсан эсэхээ шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Таб доторх навигаци нь тусдаа төлөв (`home`) хэрэгтэй — идэвхтэй таб (`tab`)-аас ялгаатай."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Бараа дархад `setHome(\"detail\")` дуудна. Таб бар нь `Body`-ийн ГАДНА тул хэвээр үлдэнэ."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "open товч:"
+          },
+          "code": "<Pressable nativeID=\"open\" onPress={() => setHome(\"detail\")}>\n  <Text>Утасгүй чихэвч</Text>\n</Pressable>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [tab, setTab] = useState(\"Нүүр\");\n  const [home, setHome] = useState(\"list\");\n\n  function Body() {\n    if (tab === \"Нүүр\") {\n      if (home === \"detail\") {\n        return (\n          <View style={styles.pad}>\n            <Text nativeID=\"hd\" style={styles.h}>Бараа: Утасгүй чихэвч</Text>\n            <Pressable nativeID=\"hback\" style={styles.btn} onPress={() => setHome(\"list\")}>\n              <Text style={styles.btnText}>← Буцах</Text>\n            </Pressable>\n          </View>\n        );\n      }\n      return (\n        <View style={styles.pad}>\n          <Pressable nativeID=\"open\" style={styles.btn} onPress={() => setHome(\"detail\")}>\n            <Text style={styles.btnText}>Утасгүй чихэвч</Text>\n          </Pressable>\n        </View>\n      );\n    }\n    return <View style={styles.pad}><Text style={styles.h}>{tab}</Text></View>;\n  }\n\n  return (\n    <View style={styles.container}>\n      <View style={styles.bodyWrap}><Body /></View>\n      <View nativeID=\"tabbar\" style={styles.tabbar}>\n        {[\"Нүүр\", \"Сагс\", \"Профайл\"].map((t, i) => (\n          <Pressable key={t} nativeID={\"tab\" + i} style={styles.tab} onPress={() => setTab(t)}>\n            <Text style={styles.tabText}>{t}</Text>\n          </Pressable>\n        ))}\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1 },\n  bodyWrap: { flex: 1 },\n  pad: { flex: 1, padding: 24, gap: 14, justifyContent: \"center\" },\n  h: { fontSize: 20, fontWeight: \"bold\" },\n  btn: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12, alignItems: \"center\" },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n  tabbar: { flexDirection: \"row\", borderTopWidth: 1, borderTopColor: \"#e5e7eb\" },\n  tab: { flexGrow: 1, paddingVertical: 12, alignItems: \"center\" },\n  tabText: { fontWeight: \"600\", color: \"#334155\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Жинхэнэ апп-д таб бүр өөрийн навигацийн стектэй. Энд `tab` (аль таб) ба `home` (тухайн таб доторх дэлгэц) гэсэн хоёр төлвийг зэрэг барьж, таб бар үргэлж харагдсаар дотор нь дэлгэц солигдоно."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Таб доторх навигаци яагаад тусдаа төлөв (`home`) шаарддаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Шаарддаггүй"
+        },
+        {
+          "mn": "Идэвхтэй таб ба таб доторх дэлгэц хоёр өөр зүйл тул"
+        },
+        {
+          "mn": "Хурдны төлөө"
+        },
+        {
+          "mn": "Өнгөний төлөө"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "«Аль таб» ба «таб дотор аль дэлгэц» нь тусдаа мэдээлэл — тусдаа төлөв."
+      },
+      "hint": {
+        "mn": "Хоёр өөр асуулт: аль таб? таб дотор хаана?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Дэлгэрэнгүй гарахад яагаад таб бар хэвээр үлддэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Санамсаргүй"
+        },
+        {
+          "mn": "Таб бар нь `Body`-ийн гадна зурагддаг тул"
+        },
+        {
+          "mn": "Таб бар хатуу кодтой"
+        },
+        {
+          "mn": "Үлддэггүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Зөвхөн Body солигдоно; таб бар түүний гадна тул тогтмол."
+      },
+      "hint": {
+        "mn": "Ямар хэсэг л дотор нь солигдож байна?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

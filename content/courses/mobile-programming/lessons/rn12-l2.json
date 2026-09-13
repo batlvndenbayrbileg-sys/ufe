@@ -1,0 +1,224 @@
+{
+  "id": "rn12-l2",
+  "moduleId": "rn12-sectionlist",
+  "slug": "styled-section-header",
+  "order": 2,
+  "title": {
+    "mn": "Бүлгийн гарчгийг загварчлах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн бүлгийн гарчиг тодорхой дэвсгэр өнгөтэй байвал бараануудаас ялгарч, гүйлгэх үед наалдан харагдана. Гарчгийг загварчилж илүү ойлгомжтой болгоё."
+  },
+  "buildsInProject": "Дэвсгэр өнгөтэй, тод бүлгийн гарчиг",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-lists",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "SectionList",
+    "renderSectionHeader",
+    "backgroundColor",
+    "style"
+  ],
+  "prerequisites": [
+    "rn12-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, SectionList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst SECTIONS = [\n  { title: \"Гар утас\", data: [\"iPhone 15\", \"Samsung S24\"] },\n  { title: \"Компьютер\", data: [\"Ноутбук Pro\", \"Хулгана\"] },\n];\n\nfunction App() {\n  return (\n    <SectionList\n      style={styles.screen}\n      sections={SECTIONS}\n      keyExtractor={(item, i) => item + i}\n      renderSectionHeader={({ section }) => (\n        <View testID=\"section-header\" style={styles.header}>\n          <Text style={styles.headerText}>{section.title}</Text>\n        </View>\n      )}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text>{item}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  // энд бичнэ үү: header загварт backgroundColor нэмж гарчгийг тодотго\n  header: { padding: 12 },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn12-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Бүлгийн гарчгийг загварчлах"
+      },
+      "statement": {
+        "mn": "`header` загварт `backgroundColor: \"#e0e7ff\"` нэмж, бүлгийн гарчгийг цайвар ягаан дэвсгэртэй болго. Ингэснээр гарчиг бараануудаас тодорхой ялгарна."
+      },
+      "requirements": [
+        {
+          "mn": "`header`-т `backgroundColor: \"#e0e7ff\"`"
+        },
+        {
+          "mn": "2 бүлгийн гарчиг хэвээр"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Бүлгийн гарчиг цайвар ягаан дэвсгэртэй болж, бараануудаас тод ялгарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.computed",
+          "args": {
+            "selector": "[data-testid=\"section-header\"]",
+            "prop": "background-color",
+            "equals": "#e0e7ff"
+          },
+          "onFail": {
+            "mn": "`header`-т `backgroundColor: \"#e0e7ff\"` алга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"section-header\"]",
+            "equals": 2
+          },
+          "onFail": {
+            "mn": "2 бүлгийн гарчиг байх ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Гарчгийн View нь `styles.header` загвартай. Тэнд `backgroundColor` нэмбэл бүх гарчигт мөрдөгдөнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`backgroundColor: \"#e0e7ff\"` нь цайвар ягаан өнгө өгнө."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "header загварт нэм:"
+          },
+          "code": "header: {\n  padding: 12,\n  backgroundColor: \"#e0e7ff\", // тодруулах дэвсгэр\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, SectionList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst SECTIONS = [\n  { title: \"Гар утас\", data: [\"iPhone 15\", \"Samsung S24\"] },\n  { title: \"Компьютер\", data: [\"Ноутбук Pro\", \"Хулгана\"] },\n];\n\nfunction App() {\n  return (\n    <SectionList\n      style={styles.screen}\n      sections={SECTIONS}\n      keyExtractor={(item, i) => item + i}\n      renderSectionHeader={({ section }) => (\n        <View testID=\"section-header\" style={styles.header}>\n          <Text style={styles.headerText}>{section.title}</Text>\n        </View>\n      )}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text>{item}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  header: { padding: 12, backgroundColor: \"#e0e7ff\" },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Бүлгийн гарчгийг дэвсгэр өнгө, зузаан фонтоор ялгаруулбал урт жагсаалт хэсэгчлэн ойлгомжтой болно. Жинхэнэ RN-д гарчиг гүйлгэх үед дээр наалддаг (sticky)."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-lists",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`renderSectionHeader` доторх View-д `backgroundColor` тавибал юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн эхний гарчиг өнгөтэй"
+        },
+        {
+          "mn": "Бүх бүлгийн гарчиг тэр өнгөтэй болно"
+        },
+        {
+          "mn": "Бараа өнгөтэй болно"
+        },
+        {
+          "mn": "Юу ч болохгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Гарчиг бүр ижил компонентоор зурагддаг тул бүгд адил загвартай болно."
+      },
+      "hint": {
+        "mn": "Гарчиг бүр нэг ижил функцээр зурагдана."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Бодит RN-д загварчилсан бүлгийн гарчиг гүйлгэх үед юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алга болно"
+        },
+        {
+          "mn": "Дэлгэцийн дээр наалдана (sticky)"
+        },
+        {
+          "mn": "Доошоо унана"
+        },
+        {
+          "mn": "Өнгөө солино"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "SectionList-ийн гарчиг гүйлгэх үед дээрээ наалдаж, аль бүлэгт байгааг сануулна."
+      },
+      "hint": {
+        "mn": "«Sticky» = наалддаг."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

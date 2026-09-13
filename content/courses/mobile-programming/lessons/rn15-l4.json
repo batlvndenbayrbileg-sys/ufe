@@ -1,0 +1,234 @@
+{
+  "id": "rn15-l4",
+  "moduleId": "rn15-networking",
+  "slug": "retry",
+  "order": 4,
+  "title": {
+    "mn": "Retry — алдаа гарвал «Дахин оролдох»"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн сервер заримдаа алдаа өгдөг. Ийм үед аппыг гацаахгүйгээр алдаа мэдэгдэж, «Дахин оролдох» товчоор дахин татах боломж өгөх ёстой."
+  },
+  "buildsInProject": "Алдаа + дахин татах товч бүхий дэлгэц",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-data"
+  ],
+  "concepts": [
+    "conditional-rendering",
+    "Pressable",
+    "onPress",
+    "useEffect"
+  ],
+  "prerequisites": [
+    "rn15-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, ActivityIndicator, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\n// Эхний дуудлага алдаа өгч, дараагийнх нь амжилттай (сервер сэргэсэн гэж бод).\nlet attempts = 0;\nconst fakeApi = () => new Promise((res, rej) => setTimeout(() => {\n  attempts += 1;\n  if (attempts === 1) rej(new Error(\"Сүлжээний алдаа\"));\n  else res([{ id: \"p1\", name: \"Чихэвч\" }, { id: \"p2\", name: \"Гар цаг\" }]);\n}, 200));\n\nfunction App() {\n  const [items, setItems] = useState(null);\n  const [error, setError] = useState(false);\n\n  function load() {\n    setError(false);\n    setItems(null);\n    fakeApi()\n      .then((data) => setItems(data))\n      .catch(() => setError(true));\n  }\n  useEffect(() => { load(); }, []);\n\n  if (error) {\n    return (\n      <View style={styles.center}>\n        <Text nativeID=\"err\" style={styles.err}>Ачаалж чадсангүй</Text>\n        {/* энд бичнэ үү: load()-г дахин дуудах \"Дахин оролдох\" Pressable товч */}\n      </View>\n    );\n  }\n  if (items === null) return <View style={styles.center}><ActivityIndicator size=\"large\" /></View>;\n  return (\n    <View style={styles.list}>\n      {items.map((it) => <Text key={it.id} testID=\"row\" style={styles.row}>{it.name}</Text>)}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  center: { flex: 1, alignItems: \"center\", justifyContent: \"center\", gap: 14 },\n  err: { fontSize: 16, color: \"#dc2626\" },\n  btn: { backgroundColor: \"#2563eb\", paddingHorizontal: 20, paddingVertical: 12, borderRadius: 10 },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n  list: { flex: 1, padding: 16 },\n  row: { fontSize: 16, paddingVertical: 12, borderBottomWidth: 1, borderColor: \"#e2e8f0\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn15-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Retry — алдаа гарвал «Дахин оролдох»"
+      },
+      "statement": {
+        "mn": "Алдааны дэлгэц дээр `nativeID=\"retry\"` бүхий `Pressable` товч нэм. Түүний `onPress`-д `load` функцийг дуудаж, сервер рүү дахин хандах болго. Дахин татахад амжилттай болж бараанууд гарч ирнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`Pressable` дахин татах товч нэмсэн"
+        },
+        {
+          "mn": "`onPress={load}` буюу `load()`-г дуудсан"
+        },
+        {
+          "mn": "Дархад бараанууд ачаалагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Эхлээд «Ачаалж чадсангүй» + товч. Товч дархад бараанууд ирж жагсаана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "#retry"
+              },
+              {
+                "expectText": {
+                  "selector": "#err",
+                  "contains": "чадсангүй"
+                }
+              },
+              {
+                "click": "#retry"
+              },
+              {
+                "waitFor": "[data-testid=\"row\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 2
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "«Дахин оролдох» товч дахин татдаггүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`.catch`-д `setError(true)` аль хэдийн бичигдсэн. Дутуу зүйл нь дахин татах ТОВЧ."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Товчийг `onPress`-д `load`-г шууд өгч болно: `onPress={load}`. `load` дотор алдааг цэвэрлээд дахин `fakeApi()` дуудна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Алдааны дэлгэцэд:"
+          },
+          "code": "<Pressable nativeID=\"retry\" onPress={load}>\n  <Text>Дахин оролдох</Text>\n</Pressable>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, ActivityIndicator, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\n// Эхний дуудлага алдаа өгч, дараагийнх нь амжилттай (сервер сэргэсэн гэж бод).\nlet attempts = 0;\nconst fakeApi = () => new Promise((res, rej) => setTimeout(() => {\n  attempts += 1;\n  if (attempts === 1) rej(new Error(\"Сүлжээний алдаа\"));\n  else res([{ id: \"p1\", name: \"Чихэвч\" }, { id: \"p2\", name: \"Гар цаг\" }]);\n}, 200));\n\nfunction App() {\n  const [items, setItems] = useState(null);\n  const [error, setError] = useState(false);\n\n  function load() {\n    setError(false);\n    setItems(null);\n    fakeApi()\n      .then((data) => setItems(data))\n      .catch(() => setError(true));\n  }\n  useEffect(() => { load(); }, []);\n\n  if (error) {\n    return (\n      <View style={styles.center}>\n        <Text nativeID=\"err\" style={styles.err}>Ачаалж чадсангүй</Text>\n        <Pressable nativeID=\"retry\" style={styles.btn} onPress={load}>\n          <Text style={styles.btnText}>Дахин оролдох</Text>\n        </Pressable>\n      </View>\n    );\n  }\n  if (items === null) return <View style={styles.center}><ActivityIndicator size=\"large\" /></View>;\n  return (\n    <View style={styles.list}>\n      {items.map((it) => <Text key={it.id} testID=\"row\" style={styles.row}>{it.name}</Text>)}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  center: { flex: 1, alignItems: \"center\", justifyContent: \"center\", gap: 14 },\n  err: { fontSize: 16, color: \"#dc2626\" },\n  btn: { backgroundColor: \"#2563eb\", paddingHorizontal: 20, paddingVertical: 12, borderRadius: 10 },\n  btnText: { color: \"#fff\", fontWeight: \"bold\" },\n  list: { flex: 1, padding: 16 },\n  row: { fontSize: 16, paddingVertical: 12, borderBottomWidth: 1, borderColor: \"#e2e8f0\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`load` функцийг useEffect-д болон товчинд дахин ашиглаж болно. Товч дархад `load` дахин ажиллаж, `setItems(null)`-оор ачаалалтын төлөвт шилжээд `fakeApi()`-г дахин дуудна. Энэ удаа сервер амжилттай хариулна."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-data"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Алдаа гарахад аппыг унагаахын оронд юу хийх нь зөв вэ?"
+      },
+      "options": [
+        {
+          "mn": "Юу ч харуулахгүй"
+        },
+        {
+          "mn": "Алдааг мэдэгдэж, дахин оролдох боломж өгөх"
+        },
+        {
+          "mn": "Аппыг хаах"
+        },
+        {
+          "mn": "Хуудсыг сэргээхийг албадах"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Алдааг ойлгомжтой харуулж, retry товч өгөх нь хэрэглэгчийн туршлагыг хамгаална."
+      },
+      "hint": {
+        "mn": "Хэрэглэгч дахин юу хийж чадвал сайн бэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Нэг `load` функцийг useEffect ба товчинд дахин ашиглах давуу тал юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Илүү хурдан"
+        },
+        {
+          "mn": "Кодыг давхардуулахгүй — нэг л логик хоёр газар ажиллана"
+        },
+        {
+          "mn": "Заавал шаардлагатай"
+        },
+        {
+          "mn": "Санах ой хэмнэнэ"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Дахин ашиглагдах функц нь давхардлыг арилгаж, засварыг хялбар болгоно."
+      },
+      "hint": {
+        "mn": "Ижил кодыг хоёр удаа бичих нь сайн уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

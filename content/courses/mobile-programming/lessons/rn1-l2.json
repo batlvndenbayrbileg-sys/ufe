@@ -1,0 +1,251 @@
+{
+  "id": "rn1-l2",
+  "moduleId": "rn1-basics",
+  "slug": "stylesheet",
+  "order": 2,
+  "title": {
+    "mn": "StyleSheet — өнгө, зай, хэлбэр"
+  },
+  "why": {
+    "mn": "Мобайл дээр CSS файл байхгүй. Оронд нь `StyleSheet.create()`-ээр загвараа JavaScript объект болгон бичдэг. Бүтээгдэхүүний үнийн шошгыг гоё харагдуулъя. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Бүтээгдэхүүний картын загвар",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "StyleSheet",
+    "style",
+    "backgroundColor",
+    "borderRadius"
+  ],
+  "prerequisites": [
+    "rn1-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <Text>Утасгүй чихэвч</Text>\n      <Text>159,000₮</Text>\n      {/* энд бичнэ үү: үнийг гоё шошго болго */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn1-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "StyleSheet — өнгө, зай, хэлбэр"
+      },
+      "statement": {
+        "mn": "`StyleSheet.create`-д загваруудаа тодорхойл. Үнийн `<Text>`-д `nativeID=\"price\"` өгч, түүнийг цэнхэр дэвсгэртэй (`#2563eb`), цагаан үсэгтэй, дугуй өнцөгтэй (`borderRadius`) шошго болго. Барааг цагаан карт (`card`) дотор байрлуул."
+      },
+      "requirements": [
+        {
+          "mn": "`StyleSheet.create(...)` ашигласан"
+        },
+        {
+          "mn": "Үнийн `<Text>`-д `nativeID=\"price\"`"
+        },
+        {
+          "mn": "Үнэ цэнхэр дэвсгэр `#2563eb`-тэй"
+        },
+        {
+          "mn": "Үнэ дугуй өнцөгтэй (borderRadius)"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Үнэ нь цэнхэр, дугуйдуу шошго болж, цагаан карт дээр цэвэрхэн харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "create"
+          },
+          "onFail": {
+            "mn": "`StyleSheet.create(...)` дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.text",
+          "args": {
+            "selector": "#price",
+            "contains": "159,000₮"
+          },
+          "onFail": {
+            "mn": "`nativeID=\"price\"` бүхий үнийн `<Text>` алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "css.computed",
+          "args": {
+            "selector": "#price",
+            "prop": "background-color",
+            "equals": "#2563eb"
+          },
+          "onFail": {
+            "mn": "Үнийн дэвсгэр өнгийг `#2563eb` болго (`backgroundColor`)."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "css.numeric",
+          "args": {
+            "selector": "#price",
+            "prop": "border-radius",
+            "min": 8
+          },
+          "onFail": {
+            "mn": "`borderRadius` нэмж үнийг дугуйдуу шошго болго."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`StyleSheet.create({ ... })` нь нэртэй загваруудын объект буцаана. Тухайн элементэд `style={styles.нэр}` гэж өгнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Өнгийг `backgroundColor`, `color`; зайг `padding`, `paddingHorizontal`; дугуй өнцгийг `borderRadius` гэж бичнэ. Тоо бичихэд `px` хэрэггүй."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Үнийн загвар ийм харагдана:"
+          },
+          "code": "price: {\n  color: \"#ffffff\",\n  backgroundColor: \"#2563eb\",\n  paddingHorizontal: 12,\n  paddingVertical: 4,\n  borderRadius: 999,\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View style={styles.card}>\n        <Text style={styles.name}>Утасгүй чихэвч</Text>\n        <Text nativeID=\"price\" style={styles.price}>159,000₮</Text>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, backgroundColor: \"#f5f6f8\", alignItems: \"center\", justifyContent: \"center\" },\n  card: { backgroundColor: \"#ffffff\", padding: 20, borderRadius: 16, alignItems: \"center\", gap: 8 },\n  name: { fontSize: 18, fontWeight: \"600\", color: \"#18181b\" },\n  price: { fontSize: 16, fontWeight: \"bold\", color: \"#ffffff\", backgroundColor: \"#2563eb\", paddingHorizontal: 12, paddingVertical: 4, borderRadius: 999 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`StyleSheet.create` нь загваруудыг нэг дор цэгцтэй хадгална. `borderRadius: 999` нь маш дугуй өнцөг үүсгэдэг тул шошго «эмийн шахмал» хэлбэртэй болно."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "React Native дээр загварын өнгө, зайг хаана бичдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "`.css` файлд"
+        },
+        {
+          "mn": "`StyleSheet.create()` доторх JavaScript объектод"
+        },
+        {
+          "mn": "HTML `style` атрибутад"
+        },
+        {
+          "mn": "Сервер дээр"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Мобайл дээр CSS файл байхгүй. Загварыг JS объект болгон `StyleSheet.create()`-д бичнэ."
+      },
+      "hint": {
+        "mn": "Мобайл апп-д `.css` файл байдаггүй. Тэгвэл загвар хаана амьдрах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`padding: 16` гэж бичихэд юу тохируулж байна вэ?"
+      },
+      "options": [
+        {
+          "mn": "Үсгийн өнгийг"
+        },
+        {
+          "mn": "Элементийн доторх зайг (16 цэг)"
+        },
+        {
+          "mn": "Хүрээний зузааныг"
+        },
+        {
+          "mn": "Элементийн өргөнийг"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`padding` нь элементийн доторх зай. Мобайл дээр тоог шууд бичнэ — нэгж (px) шаардлагагүй."
+      },
+      "hint": {
+        "mn": "CSS-тэй адилхан. `padding` доторх зай юу гэсэн үг байсан бэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

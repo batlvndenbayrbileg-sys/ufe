@@ -1,0 +1,221 @@
+{
+  "id": "rn22-l3",
+  "moduleId": "rn22-quality",
+  "slug": "accessibility",
+  "order": 3,
+  "title": {
+    "mn": "Хүртээмж — accessibilityLabel"
+  },
+  "why": {
+    "mn": "Хараагүй хэрэглэгчид дэлгэцээ дуугаар уншуулдаг. Зөвхөн зурагт (icon) товчинд `accessibilityLabel` өгвөл дэлгэц уншигч «сагслах товч» гэж хэлж чадна. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Дэлгэц уншигчид ойлгомжтой товч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "Pressable",
+    "component"
+  ],
+  "prerequisites": [
+    "rn22-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.s}>\n      <Pressable\n        nativeID=\"cart\"\n        style={styles.icon}\n        accessibilityRole=\"button\"\n        onPress={() => {}}\n      >\n        {/* энд бичнэ үү: accessibilityLabel=\"Сагслах\" нэм */}\n        <Text style={styles.emoji}>🛒</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" },\n  icon: { backgroundColor: \"#2563eb\", width: 64, height: 64, borderRadius: 32, alignItems: \"center\", justifyContent: \"center\" },\n  emoji: { fontSize: 28 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn22-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хүртээмж — accessibilityLabel"
+      },
+      "statement": {
+        "mn": "Сагсны icon товчинд `accessibilityLabel=\"Сагслах\"` нэм. Ингэснээр дэлгэц уншигч зөвхөн 🛒-г харахын оронд «Сагслах товч» гэж дуугаар хэлнэ."
+      },
+      "requirements": [
+        {
+          "mn": "`accessibilityLabel=\"Сагслах\"` нэмсэн"
+        },
+        {
+          "mn": "`accessibilityRole=\"button\"` хэвээр"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Товч нүдэнд адилхан харагдана, гэхдээ дэлгэц уншигчид «Сагслах» гэж танигдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.attr",
+          "args": {
+            "selector": "#cart",
+            "name": "aria-label",
+            "contains": "Сагслах"
+          },
+          "onFail": {
+            "mn": "`accessibilityLabel=\"Сагслах\"` нэмээгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.attr",
+          "args": {
+            "selector": "#cart",
+            "name": "role",
+            "equals": "button"
+          },
+          "onFail": {
+            "mn": "`accessibilityRole=\"button\"` алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Зөвхөн зурагтай товч дэлгэц уншигчид «утгагүй» — түүнд үг оноож өгөх ёстой."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`accessibilityLabel=\"Сагслах\"` нь товчны дуут нэр болно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "нэм:"
+          },
+          "code": "accessibilityLabel=\"Сагслах\""
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.s}>\n      <Pressable\n        nativeID=\"cart\"\n        style={styles.icon}\n        accessibilityRole=\"button\"\n        accessibilityLabel=\"Сагслах\"\n        onPress={() => {}}\n      >\n        <Text style={styles.emoji}>🛒</Text>\n      </Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, alignItems: \"center\", justifyContent: \"center\" },\n  icon: { backgroundColor: \"#2563eb\", width: 64, height: 64, borderRadius: 32, alignItems: \"center\", justifyContent: \"center\" },\n  emoji: { fontSize: 28 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`accessibilityLabel` нь дэлгэц уншигч (screen reader)-т элементийн зорилгыг хэлнэ; `accessibilityRole` нь «энэ бол товч» гэдгийг илэрхийлнэ. Хүртээмж нь бүх хэрэглэгчид зориулсан үүрэг."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Зөвхөн icon-той товчинд яагаад `accessibilityLabel` хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хурдан болгоно"
+        },
+        {
+          "mn": "Дэлгэц уншигч icon-ыг уншиж чадахгүй тул түүнд үг оноож өгнө"
+        },
+        {
+          "mn": "Өнгө өгнө"
+        },
+        {
+          "mn": "Заавал биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Screen reader зурагт текст байхгүй бол юу гэж хэлэхээ мэдэхгүй — label нь утгыг өгнө."
+      },
+      "hint": {
+        "mn": "Хараагүй хүн 🛒-г яаж мэдэх вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`accessibilityRole=\"button\"` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Товчийг том болгоно"
+        },
+        {
+          "mn": "Элемент бол товч гэдгийг туслах технологид хэлнэ"
+        },
+        {
+          "mn": "Өнгө өгнө"
+        },
+        {
+          "mn": "Дарагдахгүй болгоно"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "role нь элементийн төрлийг (товч, гарчиг, зураг...) туслах технологид илэрхийлнэ."
+      },
+      "hint": {
+        "mn": "«role» = үүрэг/төрөл."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

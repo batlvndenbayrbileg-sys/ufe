@@ -1,0 +1,220 @@
+{
+  "id": "rn22-l2",
+  "moduleId": "rn22-quality",
+  "slug": "theme-context",
+  "order": 2,
+  "title": {
+    "mn": "Theme context — апп даяар нэг тема"
+  },
+  "why": {
+    "mn": "Горимыг нэг дэлгэцэд биш, апп даяар мөрдүүлэх ёстой. Context-д тема хийж, аль ч дэлгэц түүнийг уншина. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Апп даяарх тема Context",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useContext",
+    "useState",
+    "conditional-rendering"
+  ],
+  "prerequisites": [
+    "rn22-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { createContext, useContext, useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst ThemeContext = createContext(null);\n\nfunction Card() {\n  const { dark } = useContext(ThemeContext);\n  // энд бичнэ үү: dark-аас хамааруулж bg сонго\n  const bg = \"#ffffff\";\n  return <View nativeID=\"card\" style={[styles.card, { backgroundColor: bg }]}><Text style={{ color: dark ? \"#fff\" : \"#000\" }}>Бараа</Text></View>;\n}\nfunction Toggle() {\n  const { setDark } = useContext(ThemeContext);\n  return <Pressable nativeID=\"toggle\" style={styles.b} onPress={() => setDark((d) => !d)}><Text style={styles.t}>Тема</Text></Pressable>;\n}\n\nfunction App() {\n  const [dark, setDark] = useState(false);\n  return (\n    <ThemeContext.Provider value={{ dark, setDark }}>\n      <View style={styles.s}><Card /><Toggle /></View>\n    </ThemeContext.Provider>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  card: { padding: 30, borderRadius: 16, borderWidth: 1, borderColor: \"#cbd5e1\" },\n  b: { backgroundColor: \"#2563eb\", padding: 12, borderRadius: 10 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn22-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Theme context — апп даяар нэг тема"
+      },
+      "statement": {
+        "mn": "`Card` дотор `bg`-г Context-ийн `dark`-аас хамааруул: `dark ? \"#0f172a\" : \"#ffffff\"`. «Тема» товч (өөр component) дархад карт бараан болно — тема Context-оор апп даяар мөрдөнө."
+      },
+      "requirements": [
+        {
+          "mn": "`Card` темаг Context-оос уншиж bg сонгосон"
+        },
+        {
+          "mn": "Тусдаа Toggle дархад карт өөрчлөгдөнө"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Тема» дархад тусдаа байрлах карт бараан болно — глобал тема ажиллаж байна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#toggle"
+              },
+              {
+                "expectEval": {
+                  "expr": "getComputedStyle(document.getElementById('card')).backgroundColor",
+                  "equals": "#0f172a"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Тема солиход карт өөрчлөгдөхгүй байна. Context-оос dark-ыг уншиж байгаа эсэхээ шалга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Тема (`dark`) ба сэлгэгч (`setDark`)-ийг Context-д хийвэл аль ч дэлгэц уншиж, өөрчилнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`Card` дотор `const { dark } = useContext(ThemeContext)` аваад `dark ? ... : ...`-аар өнгө сонго."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Card дотор:"
+          },
+          "code": "const { dark } = useContext(ThemeContext);\nconst bg = dark ? \"#0f172a\" : \"#ffffff\";"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { createContext, useContext, useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst ThemeContext = createContext(null);\n\nfunction Card() {\n  const { dark } = useContext(ThemeContext);\n  const bg = dark ? \"#0f172a\" : \"#ffffff\";\n  return <View nativeID=\"card\" style={[styles.card, { backgroundColor: bg }]}><Text style={{ color: dark ? \"#fff\" : \"#000\" }}>Бараа</Text></View>;\n}\nfunction Toggle() {\n  const { setDark } = useContext(ThemeContext);\n  return <Pressable nativeID=\"toggle\" style={styles.b} onPress={() => setDark((d) => !d)}><Text style={styles.t}>Тема</Text></Pressable>;\n}\n\nfunction App() {\n  const [dark, setDark] = useState(false);\n  return (\n    <ThemeContext.Provider value={{ dark, setDark }}>\n      <View style={styles.s}><Card /><Toggle /></View>\n    </ThemeContext.Provider>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  card: { padding: 30, borderRadius: 16, borderWidth: 1, borderColor: \"#cbd5e1\" },\n  b: { backgroundColor: \"#2563eb\", padding: 12, borderRadius: 10 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Темаг Context-д төвлөрүүлснээр толгой, карт, товч — бүх component нэг эх сурвалжаас өнгөө авна. Нэг товшилтоор апп бүхэлдээ горимоо сольдог болно."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Темаг апп даяар мөрдүүлэхэд юуг ашиглах вэ?"
+      },
+      "options": [
+        {
+          "mn": "prop дамжуулах"
+        },
+        {
+          "mn": "Context (Provider + useContext)"
+        },
+        {
+          "mn": "Глобал хувьсагч"
+        },
+        {
+          "mn": "Олон файл"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Context нь темаг аль ч гүнд байгаа component-д prop-гүйгээр хүргэнэ."
+      },
+      "hint": {
+        "mn": "Глобал өгөгдөл хүргэх механизм."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Theme context-д юу юуг хамт түгээх нь тохиромжтой вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн өнгө"
+        },
+        {
+          "mn": "Одоогийн тема БА түүнийг солих функцийг"
+        },
+        {
+          "mn": "Зөвхөн функц"
+        },
+        {
+          "mn": "Юу ч биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "dark ба setDark хоёуланг түгээвэл аль ч дэлгэц уншиж, өөрчилж чадна."
+      },
+      "hint": {
+        "mn": "Уншихад төлөв, солиход функц."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

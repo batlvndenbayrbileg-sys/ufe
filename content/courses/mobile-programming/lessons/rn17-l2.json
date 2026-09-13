@@ -1,0 +1,220 @@
+{
+  "id": "rn17-l2",
+  "moduleId": "rn17-hooks",
+  "slug": "usememo",
+  "order": 2,
+  "title": {
+    "mn": "useMemo — үнэтэй тооцооллыг санах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн сагсны нийт үнийг олон бараан дээр дахин дахин бодох нь үрэлгэн. `useMemo` нь өгөгдөл өөрчлөгдөөгүй бол өмнөх үр дүнг сануулна."
+  },
+  "buildsInProject": "Санах ойд хадгалагдсан сагсны нийт үнэ",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useMemo",
+    "state",
+    "filter"
+  ],
+  "prerequisites": [
+    "rn17-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst CART = [\n  { id: \"1\", name: \"Чихэвч\", price: 159000 },\n  { id: \"2\", name: \"Гар цаг\", price: 249000 },\n  { id: \"3\", name: \"Цүнх\", price: 129000 },\n];\n\nfunction App() {\n  // энд бичнэ үү: total-г useMemo-оор бод\n  const total = 0;\n  return (\n    <View style={styles.s}>\n      <Text style={styles.h}>Сагс</Text>\n      <Text nativeID=\"total\" style={styles.total}>Нийт: {total}₮</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 24, gap: 10, justifyContent: \"center\" },\n  h: { fontSize: 20, fontWeight: \"bold\" },\n  total: { fontSize: 22, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn17-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "useMemo — үнэтэй тооцооллыг санах"
+      },
+      "statement": {
+        "mn": "`total`-г `useMemo(() => CART.reduce((s, p) => s + p.price, 0), [])`-оор тооцоол. Хамаарлын массив `[]` хоосон тул нэг л удаа бодогдож, дараа нь санагдана. Нийт 537000₮ гарна."
+      },
+      "requirements": [
+        {
+          "mn": "`useMemo` ашигласан"
+        },
+        {
+          "mn": "Нийт үнэ зөв (537000₮)"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Нийт: 537000₮» гэж бодогдож харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useMemo"
+          },
+          "onFail": {
+            "mn": "`useMemo`-г ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.text",
+          "args": {
+            "selector": "#total",
+            "contains": "537000"
+          },
+          "onFail": {
+            "mn": "Нийт үнэ буруу байна — `reduce`-ээ шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`useMemo(() => ...утга..., [хамаарал])` нь хамаарал өөрчлөгдөх хүртэл өмнөх үр дүнг сануулна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`CART.reduce((sum, p) => sum + p.price, 0)` нь бүх үнийг нэмнэ. Үүнийг useMemo дотор хий, `[]` хамааралтай."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц:"
+          },
+          "code": "const total = useMemo(\n  () => CART.reduce((sum, p) => sum + p.price, 0),\n  []\n);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { useMemo } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst CART = [\n  { id: \"1\", name: \"Чихэвч\", price: 159000 },\n  { id: \"2\", name: \"Гар цаг\", price: 249000 },\n  { id: \"3\", name: \"Цүнх\", price: 129000 },\n];\n\nfunction App() {\n  const total = useMemo(() => CART.reduce((sum, p) => sum + p.price, 0), []);\n  return (\n    <View style={styles.s}>\n      <Text style={styles.h}>Сагс</Text>\n      <Text nativeID=\"total\" style={styles.total}>Нийт: {total}₮</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 24, gap: 10, justifyContent: \"center\" },\n  h: { fontSize: 20, fontWeight: \"bold\" },\n  total: { fontSize: 22, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`useMemo` нь үнэтэй тооцооллын үр дүнг санах ойд хадгалж, хамаарал өөрчлөгдөөгүй үед дахин бодохгүй. Том жагсаалт, нарийн тооцоололд гүйцэтгэлийг хэмнэнэ."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`useMemo` юуг сануулдаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Component-ийг"
+        },
+        {
+          "mn": "Тооцооллын үр дүнг (хамаарал өөрчлөгдөх хүртэл)"
+        },
+        {
+          "mn": "Дэлгэцийн зургийг"
+        },
+        {
+          "mn": "Товчийг"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "useMemo нь функцийн буцаах утгыг санаж, хамаарал өөрчлөгдтөл дахин бодохгүй."
+      },
+      "hint": {
+        "mn": "«memo» = санах. Юуг санах вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`useMemo(fn, [])`-ийн хоосон `[]` юу заадаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаа"
+        },
+        {
+          "mn": "Нэг л удаа бодож, дараа нь дандаа сануулна"
+        },
+        {
+          "mn": "Секунд тутам бодно"
+        },
+        {
+          "mn": "Хэзээ ч бодохгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хоосон хамаарал = утга хэзээ ч дахин бодогдохгүй, эхний удаагийнхаа хэвээр."
+      },
+      "hint": {
+        "mn": "Хамаарал хоосон бол дахин бодох шалтгаан байна уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

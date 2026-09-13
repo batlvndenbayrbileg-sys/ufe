@@ -1,0 +1,223 @@
+{
+  "id": "rn8-l5",
+  "moduleId": "rn8-styling",
+  "slug": "conditional-style",
+  "order": 5,
+  "title": {
+    "mn": "Нөхцөлт загвар — идэвхтэй байдлыг харуулах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн хэмжээ сонголтод (S/M/L) сонгосон нь өнгө өөрчилдөг. Загварын массив `[base, condition && active]`-аар нөхцөлөөс хамааруулж загвар өгнө."
+  },
+  "buildsInProject": "Сонгосон хэмжээ өнгөөр тодрох",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui",
+    "mobile-state"
+  ],
+  "concepts": [
+    "conditional-rendering",
+    "style",
+    "useState"
+  ],
+  "prerequisites": [
+    "rn8-l4"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst SIZES = [\"S\", \"M\", \"L\"];\n\nfunction App() {\n  const [selected, setSelected] = useState(\"M\");\n  return (\n    <View style={styles.row}>\n      {SIZES.map((s) => (\n        <Pressable key={s} testID=\"size\" onPress={() => setSelected(s)}\n          style={styles.size}>\n          {/* энд бичнэ үү: сонгогдсон бол styles.active-г нэм */}\n          <Text style={styles.text}>{s}</Text>\n        </Pressable>\n      ))}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  row: { flex: 1, flexDirection: \"row\", gap: 12, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  size: { width: 56, height: 56, borderRadius: 12, borderWidth: 1, borderColor: \"#cbd5e1\", alignItems: \"center\", justifyContent: \"center\" },\n  active: { backgroundColor: \"#2563eb\", borderColor: \"#2563eb\" },\n  text: { fontSize: 18, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn8-l5-t1",
+      "order": 1,
+      "title": {
+        "mn": "Нөхцөлт загвар — идэвхтэй байдлыг харуулах"
+      },
+      "statement": {
+        "mn": "Хэмжээний `style`-г массив болгож `[styles.size, selected === s && styles.active]` гэж бич. Сонгосон хэмжээ (`selected === s`) үед л `active` загвар нэмэгдэж, цэнхрээр тодорно."
+      },
+      "requirements": [
+        {
+          "mn": "`style` нь массив (`[...]`)"
+        },
+        {
+          "mn": "`selected === s && styles.active` нөхцөл"
+        },
+        {
+          "mn": "Дархад сонголт өөрчлөгдөнө"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Аль нэг хэмжээ дархад тэр нь цэнхэр болж, бусад нь саарал хүрээтэй хэвээр."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "[data-testid=\"size\"]"
+              },
+              {
+                "expectEval": {
+                  "expr": "(function(){var e=document.querySelectorAll('[data-testid=size]')[0];return getComputedStyle(e).backgroundColor;})()",
+                  "equals": "#2563eb"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Сонгосон хэмжээ цэнхэр болохгүй байна. Загварын массив ба нөхцөлөө шалга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`style`-д массив өгч болно: `style={[a, b]}`. Хожуу загвар нь өмнөхийг дарна."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`условие && styles.active` — нөхцөл үнэн бол `styles.active`, худал бол `false` (үл хэрэгсэнэ)."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Pressable-ийн style:"
+          },
+          "code": "style={[styles.size, selected === s && styles.active]}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst SIZES = [\"S\", \"M\", \"L\"];\n\nfunction App() {\n  const [selected, setSelected] = useState(\"M\");\n  return (\n    <View style={styles.row}>\n      {SIZES.map((s) => (\n        <Pressable key={s} testID=\"size\" onPress={() => setSelected(s)}\n          style={[styles.size, selected === s && styles.active]}>\n          <Text style={styles.text}>{s}</Text>\n        </Pressable>\n      ))}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  row: { flex: 1, flexDirection: \"row\", gap: 12, padding: 24, alignItems: \"center\", justifyContent: \"center\" },\n  size: { width: 56, height: 56, borderRadius: 12, borderWidth: 1, borderColor: \"#cbd5e1\", alignItems: \"center\", justifyContent: \"center\" },\n  active: { backgroundColor: \"#2563eb\", borderColor: \"#2563eb\" },\n  text: { fontSize: 18, fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Загварын массивд `false`/`null` орвол алгасагдана. Тийм учир `нөхцөл && style` нь нөхцөл үнэн үед л загвар нэмнэ — идэвхтэй/сонгогдсон төлөв харуулах хамгийн түгээмэл арга."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`style={[styles.a, false]}` гэвэл юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Алдаа гарна"
+        },
+        {
+          "mn": "`false`-г алгасаж зөвхөн `styles.a`-г хэрэглэнэ"
+        },
+        {
+          "mn": "Хоосон болно"
+        },
+        {
+          "mn": "`styles.a` устна"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Загварын массив дахь false/null-ийг RN алгасдаг. Тийм учир нөхцөлт загвар ажилладаг."
+      },
+      "hint": {
+        "mn": "false загвар байж чадах уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Массив дахь загваруудын аль нь давамгайлах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Эхнийх нь"
+        },
+        {
+          "mn": "Сүүлд бичсэн нь (давхардсан шинжийг дарна)"
+        },
+        {
+          "mn": "Хамгийн урт нь"
+        },
+        {
+          "mn": "Санамсаргүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Массивд хожуу байгаа загвар өмнөхийн ижил шинжийг дарна."
+      },
+      "hint": {
+        "mn": "Дараалал чухал — сүүлд түрхсэн будаг."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

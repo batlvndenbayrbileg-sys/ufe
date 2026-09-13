@@ -1,0 +1,218 @@
+{
+  "id": "rn22-l1",
+  "moduleId": "rn22-quality",
+  "slug": "dark-mode",
+  "order": 1,
+  "title": {
+    "mn": "Dark mode — өнгө солих"
+  },
+  "why": {
+    "mn": "Shop.mn-ийг шөнө ашиглахад цайвар дэлгэц нүд гялбуулна. Dark mode нэмбэл хэрэглэгч тав тухтай. Төлөвөөр гэрэл/бараан загварыг сольё."
+  },
+  "buildsInProject": "Гэрэл/бараан горим сэлгэгч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "useState",
+    "conditional-rendering",
+    "backgroundColor"
+  ],
+  "prerequisites": [
+    "rn21-l6"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [dark, setDark] = useState(false);\n  // энд бичнэ үү: dark-аас хамааруулж дэвсгэр/үсгийн өнгө сонго\n  const bg = \"#ffffff\";\n  const fg = \"#18181b\";\n  return (\n    <View nativeID=\"screen\" style={[styles.s, { backgroundColor: bg }]}>\n      <Text style={[styles.h, { color: fg }]}>Shop.mn</Text>\n      <Pressable nativeID=\"toggle\" style={styles.b} onPress={() => setDark((d) => !d)}><Text style={styles.t}>Горим солих</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, alignItems: \"center\", justifyContent: \"center\" },\n  h: { fontSize: 28, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn22-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Dark mode — өнгө солих"
+      },
+      "statement": {
+        "mn": "`bg` ба `fg`-г `dark` төлөвөөс хамааруул: `dark` бол `bg = \"#0f172a\"`, `fg = \"#f8fafc\"`, эс бол цайвар. «Горим солих» дархад дэлгэц бараан болно."
+      },
+      "requirements": [
+        {
+          "mn": "`dark`-аас хамааруулж өнгө сонгосон"
+        },
+        {
+          "mn": "Дархад дэвсгэр бараан болно"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Горим солих» дархад дэлгэц бараан (шөнийн) болж, дахин дархад цайвар болно."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#toggle"
+              },
+              {
+                "expectEval": {
+                  "expr": "getComputedStyle(document.getElementById('screen')).backgroundColor",
+                  "equals": "#0f172a"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Горим солиход дэвсгэр бараан болохгүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Нэг `dark` boolean төлвөөс бүх өнгийг сонговол горим солих амархан."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`const bg = dark ? \"#0f172a\" : \"#ffffff\";` — тернар оператор нөхцөлөөр өнгө сонгоно."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Өнгө сонголт:"
+          },
+          "code": "const bg = dark ? \"#0f172a\" : \"#ffffff\";\nconst fg = dark ? \"#f8fafc\" : \"#18181b\";"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [dark, setDark] = useState(false);\n  const bg = dark ? \"#0f172a\" : \"#ffffff\";\n  const fg = dark ? \"#f8fafc\" : \"#18181b\";\n  return (\n    <View nativeID=\"screen\" style={[styles.s, { backgroundColor: bg }]}>\n      <Text style={[styles.h, { color: fg }]}>Shop.mn</Text>\n      <Pressable nativeID=\"toggle\" style={styles.b} onPress={() => setDark((d) => !d)}><Text style={styles.t}>Горим солих</Text></Pressable>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, gap: 20, alignItems: \"center\", justifyContent: \"center\" },\n  h: { fontSize: 28, fontWeight: \"bold\" },\n  b: { backgroundColor: \"#2563eb\", padding: 14, borderRadius: 12 }, t: { color: \"#fff\", fontWeight: \"bold\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Dark mode нь эцэст нь нэг boolean төлвөөс бүх өнгийг нөхцөлт сонгох явдал. Өнгөө `theme` объект/context-д төвлөрүүлбэл том апп-д ч цэвэрхэн ажиллана."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Dark mode-ийн хамгийн энгийн үндэс юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Тусдаа апп"
+        },
+        {
+          "mn": "Нэг boolean төлвөөс өнгийг нөхцөлт сонгох"
+        },
+        {
+          "mn": "Зөвхөн CSS"
+        },
+        {
+          "mn": "Боломжгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "dark/light boolean-оос өнгийг сонгоно — том апп-д context-д төвлөрүүлнэ."
+      },
+      "hint": {
+        "mn": "Гэрэл/бараан хоёрын аль нэг — ямар төрлийн утга вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Системийн горимыг (хэрэглэгчийн тохиргоо) уншихад аль hook хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "useState"
+        },
+        {
+          "mn": "`useColorScheme()`"
+        },
+        {
+          "mn": "useRef"
+        },
+        {
+          "mn": "useMemo"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "useColorScheme() нь төхөөрөмжийн light/dark тохиргоог буцаадаг."
+      },
+      "hint": {
+        "mn": "«color scheme» = өнгөний схем."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

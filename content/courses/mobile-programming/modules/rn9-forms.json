@@ -1,0 +1,21 @@
+{
+  "id": "rn9-forms",
+  "stageId": "s7",
+  "order": 1,
+  "title": {
+    "mn": "Оролтын төрлүүд"
+  },
+  "description": {
+    "mn": "TextInput төрлүүд, Switch, олон талбартай форм — хэрэглэгчээс мэдээлэл цуглуул."
+  },
+  "estimatedHours": 7,
+  "lessons": [
+    "rn9-l1",
+    "rn9-l2",
+    "rn9-l3",
+    "rn9-l4",
+    "rn9-l5",
+    "rn9-l6",
+    "rn9-l7"
+  ]
+}

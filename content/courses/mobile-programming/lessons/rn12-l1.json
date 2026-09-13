@@ -1,0 +1,245 @@
+{
+  "id": "rn12-l1",
+  "moduleId": "rn12-sectionlist",
+  "slug": "sectionlist-basics",
+  "order": 1,
+  "title": {
+    "mn": "SectionList — бүлэглэсэн жагсаалт"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн бараа ангиллаар бүлэглэгдэж, бүлэг тус бүр гарчигтай харагддаг. `SectionList` нь `sections` өгөгдлийг гарчиг + гишүүдээр зурна."
+  },
+  "buildsInProject": "Ангиллаар бүлэглэсэн барааны жагсаалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "SectionList",
+    "sections",
+    "renderItem",
+    "renderSectionHeader"
+  ],
+  "prerequisites": [
+    "rn11-l7"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst SECTIONS = [\n  { title: \"Гар утас\", data: [\"iPhone 15\", \"Samsung S24\"] },\n  { title: \"Компьютер\", data: [\"Ноутбук Pro\", \"Хулгана\"] },\n];\n\nfunction App() {\n  // энд бичнэ үү: SECTIONS-ийг SectionList-оор харуул (import хийхээ бүү мартаарай)\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.hint}>Жагсаалт энд гарна</Text>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  hint: { padding: 24, color: \"#94a3b8\" },\n  header: { padding: 12, backgroundColor: \"#e0e7ff\" },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn12-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "SectionList — бүлэглэсэн жагсаалт"
+      },
+      "statement": {
+        "mn": "`SectionList`-ийг import хийж ашигла. `sections={SECTIONS}`, `renderSectionHeader`-д `section.title`-г (`testID=\"section-header\"`), `renderItem`-д `item`-г (`testID=\"product\"`) харуул."
+      },
+      "requirements": [
+        {
+          "mn": "`SectionList` ашигласан"
+        },
+        {
+          "mn": "2 бүлгийн гарчиг"
+        },
+        {
+          "mn": "4 бараа"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Гар утас», «Компьютер» гэсэн 2 гарчиг, тус бүрийн доор бараанууд гарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.exists",
+          "args": {
+            "selector": "[data-rn=\"sectionlist\"]"
+          },
+          "onFail": {
+            "mn": "`SectionList` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"section-header\"]",
+            "equals": 2
+          },
+          "onFail": {
+            "mn": "2 бүлгийн гарчиг байх ёстой (`renderSectionHeader`)."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"product\"]",
+            "equals": 4
+          },
+          "onFail": {
+            "mn": "4 бараа харагдах ёстой (`renderItem`)."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "dom.text",
+          "args": {
+            "selector": "[data-testid=\"section-header\"]",
+            "contains": "Гар утас"
+          },
+          "onFail": {
+            "mn": "Эхний гарчиг «Гар утас» байх ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`SectionList` нь `sections` массив авдаг. Элемент бүр `{ title, data }` бүтэцтэй."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`renderSectionHeader={({ section }) => ...}` нь бүлгийн гарчгийг, `renderItem={({ item }) => ...}` нь гишүүн бүрийг зурна."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "SectionList бүтэц:"
+          },
+          "code": "<SectionList\n  sections={SECTIONS}\n  renderSectionHeader={({ section }) => (/* section.title */)}\n  renderItem={({ item }) => (/* item */)}\n/>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, SectionList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst SECTIONS = [\n  { title: \"Гар утас\", data: [\"iPhone 15\", \"Samsung S24\"] },\n  { title: \"Компьютер\", data: [\"Ноутбук Pro\", \"Хулгана\"] },\n];\n\nfunction App() {\n  return (\n    <SectionList\n      style={styles.screen}\n      sections={SECTIONS}\n      keyExtractor={(item, i) => item + i}\n      renderSectionHeader={({ section }) => (\n        <View testID=\"section-header\" style={styles.header}>\n          <Text style={styles.headerText}>{section.title}</Text>\n        </View>\n      )}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text>{item}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, backgroundColor: \"#f8fafc\" },\n  hint: { padding: 24, color: \"#94a3b8\" },\n  header: { padding: 12, backgroundColor: \"#e0e7ff\" },\n  headerText: { fontSize: 16, fontWeight: \"bold\", color: \"#3730a3\" },\n  row: { padding: 16, backgroundColor: \"#fff\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`SectionList` нь бүлэглэсэн өгөгдлийг зурдаг: `sections` доторх `title`-г `renderSectionHeader`, `data` доторх гишүүн бүрийг `renderItem` харуулна. Ангилалтай жагсаалтад төгс."
+        },
+        "xpPenalty": 11
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`SectionList`-ийн `sections` массивын элемент ямар бүтэцтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн текст"
+        },
+        {
+          "mn": "`{ title, data }`"
+        },
+        {
+          "mn": "Зөвхөн тоо"
+        },
+        {
+          "mn": "`{ id, name }`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Section бүр гарчиг (`title`) ба гишүүдийн массив (`data`)-тай."
+      },
+      "hint": {
+        "mn": "Гарчиг ба гишүүд — хоёул хэрэгтэй."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Бүлгийн гарчгийг ямар prop зурах вэ?"
+      },
+      "options": [
+        {
+          "mn": "renderItem"
+        },
+        {
+          "mn": "renderSectionHeader"
+        },
+        {
+          "mn": "ListHeaderComponent"
+        },
+        {
+          "mn": "keyExtractor"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`renderSectionHeader({ section })` нь бүлэг бүрийн гарчгийг зурна."
+      },
+      "hint": {
+        "mn": "«Section header» = бүлгийн гарчиг."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

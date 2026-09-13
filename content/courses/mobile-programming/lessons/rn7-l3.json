@@ -1,0 +1,221 @@
+{
+  "id": "rn7-l3",
+  "moduleId": "rn7-layout",
+  "slug": "flex-wrap",
+  "order": 3,
+  "title": {
+    "mn": "flexWrap — мөр таслах"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн ангиллын шошгууд нэг мөрөнд багтахгүй бол дараагийн мөр рүү автоматаар шилжих ёстой. `flexWrap`-оор ингэж болно."
+  },
+  "buildsInProject": "Ангиллын шошгууд — олон мөрөнд таслагдана",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "flexbox",
+    "flexDirection",
+    "flexWrap"
+  ],
+  "prerequisites": [
+    "rn7-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst TAGS = [\"Гар утас\", \"Компьютер\", \"Гэр ахуй\", \"Хувцас\", \"Гоо сайхан\", \"Спорт\", \"Ном\"];\n\nfunction App() {\n  return (\n    <View nativeID=\"wrap\" style={styles.wrap}>\n      {TAGS.map((t, i) => (\n        <Text key={i} testID=\"tag\" style={styles.tag}>{t}</Text>\n      ))}\n      {/* энд бичнэ үү: wrap-д мөр таслалт нэм */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  wrap: { flexDirection: \"row\", gap: 8, padding: 16 },\n  tag: { backgroundColor: \"#eef2ff\", color: \"#3730a3\", paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn7-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "flexWrap — мөр таслах"
+      },
+      "statement": {
+        "mn": "`wrap` загварт `flexWrap: \"wrap\"` нэмж, багтахгүй болсон шошгуудыг дараагийн мөр рүү автоматаар таслуул. 7 шошго бүгд харагдана."
+      },
+      "requirements": [
+        {
+          "mn": "`wrap`-д `flexWrap: \"wrap\"`"
+        },
+        {
+          "mn": "7 шошго бүгд харагдана"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Шошгууд нэг мөрөнд багтахгүй болмогц дараагийн мөр рүү бууна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.computed",
+          "args": {
+            "selector": "#wrap",
+            "prop": "flex-wrap",
+            "equals": "wrap"
+          },
+          "onFail": {
+            "mn": "`wrap`-д `flexWrap: \"wrap\"` алга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"tag\"]",
+            "equals": 7
+          },
+          "onFail": {
+            "mn": "7 шошго бүгд харагдах ёстой."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Анхдагчаар flex мөр таслалтгүй — бүх элемент нэг мөрөнд шахагдана. `flexWrap: \"wrap\"` үүнийг өөрчилнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`flexWrap`-г `flexDirection: \"row\"`-той хамт эцэг дээр тавина."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "wrap загварт нэм:"
+          },
+          "code": "wrap: {\n  flexDirection: \"row\",\n  flexWrap: \"wrap\", // мөр дүүрвэл дараагийн мөр рүү\n  // ...\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst TAGS = [\"Гар утас\", \"Компьютер\", \"Гэр ахуй\", \"Хувцас\", \"Гоо сайхан\", \"Спорт\", \"Ном\"];\n\nfunction App() {\n  return (\n    <View nativeID=\"wrap\" style={styles.wrap}>\n      {TAGS.map((t, i) => (\n        <Text key={i} testID=\"tag\" style={styles.tag}>{t}</Text>\n      ))}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  wrap: { flexDirection: \"row\", flexWrap: \"wrap\", gap: 8, padding: 16 },\n  tag: { backgroundColor: \"#eef2ff\", color: \"#3730a3\", paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Анхдагчаар flex элементүүд нэг мөрөнд шахагддаг. `flexWrap: \"wrap\"` нь багтахгүй элементийг дараагийн мөр рүү буулгаж, шошго/грид зэрэгт зайлшгүй хэрэгтэй."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`flexWrap: \"wrap\"` байхгүй бол мөр дүүрэхэд юу болох вэ?"
+      },
+      "options": [
+        {
+          "mn": "Элементүүд нэг мөрөнд шахагдана"
+        },
+        {
+          "mn": "Автоматаар шинэ мөр үүснэ"
+        },
+        {
+          "mn": "Алдаа гарна"
+        },
+        {
+          "mn": "Элемент алга болно"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "wrap байхгүй бол бүх элемент нэг мөрөнд шахагдаж, багтахгүй хэсэг нь хэлбэрээ алддаг."
+      },
+      "hint": {
+        "mn": "Анхдагч байдал нь юу вэ — таслах уу, шахах уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`flexWrap`-г хаана тавих вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хүүхэд элемент бүр дээр"
+        },
+        {
+          "mn": "Эцэг (контейнер) дээр"
+        },
+        {
+          "mn": "Текст дээр"
+        },
+        {
+          "mn": "StyleSheet-гүйгээр"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`flexWrap` нь эцэг контейнерийн шинж — доторх хүүхдүүд яаж таслагдахыг заана."
+      },
+      "hint": {
+        "mn": "Хэн хүүхдүүдээ зохион байгуулж байна?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

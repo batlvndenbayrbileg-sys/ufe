@@ -6,6 +6,9 @@ const isJsx = (p: string) => /\.(jsx|tsx)$/.test(p);
 const isTs = (p: string) => /\.ts$/.test(p);
 /** A `<script src>` the platform provides rather than the workspace. */
 const isSqliteRuntime = (p: string) => /(^|\/)sqlite\.js$/.test(p);
+/** Does this source pull in the React Native family (→ needs the RN shim)? */
+const importsReactNative = (src: string) =>
+  /from\s+["'](react-native|expo|expo-status-bar|@react-native-async-storage\/async-storage)["']/.test(src);
 
 export interface AssembleOptions {
   /** The pre-bundled harness IIFE, injected first so it runs before student code. */
@@ -22,6 +25,11 @@ export interface AssembleOptions {
    * bundled: it is 180 KB that lessons without JSX must not pay for.
    */
   reactRuntime?: string;
+  /**
+   * The React Native → DOM teaching shim, inlined (after React) only for lessons
+   * that import "react-native"/"expo". Also fetched on demand by the host.
+   */
+  reactNativeRuntime?: string;
   /**
    * Seed for the harness's localStorage shim. Inlined (not postMessaged) because
    * student code reads storage on its very first line, long before any async
@@ -68,6 +76,7 @@ export function assembleSrcdoc(files: FileSet, opts: AssembleOptions): string {
   // 2. Inline <script src> as a classic inline script (global scope for Tier 1),
   //    transpiling JSX/TSX so React lessons preview without a build step.
   let needsReact = false;
+  let needsReactNative = false;
   html = html.replace(
     /<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>\s*<\/script>/gi,
     (tag, src: string) => {
@@ -87,6 +96,7 @@ ${transpileJsx(js.content, src)}
       }
       if (isJsx(src)) {
         needsReact = true;
+        if (importsReactNative(js.content)) needsReactNative = true;
         return `<script>\n${transpileJsx(js.content, src)}\n</script>`;
       }
       const isModule = /type=["']module["']/i.test(tag);
@@ -125,7 +135,8 @@ ${transpileJsx(js.content, src)}
     genSeed +
     storageSeed +
     `<script>\n${opts.harnessJs}\n</script>` +
-    (needsReact && opts.reactRuntime ? `\n<script>\n${opts.reactRuntime}\n</script>` : "");
+    (needsReact && opts.reactRuntime ? `\n<script>\n${opts.reactRuntime}\n</script>` : "") +
+    (needsReactNative && opts.reactNativeRuntime ? `\n<script>\n${opts.reactNativeRuntime}\n</script>` : "");
 
   // Inject head content right after <head>, or synthesize a <head>.
   if (/<head[\s>]/i.test(html)) {

@@ -1,0 +1,248 @@
+{
+  "id": "rn3-l4",
+  "moduleId": "rn3-interaction",
+  "slug": "button-alert",
+  "order": 4,
+  "title": {
+    "mn": "Button ба Alert — захиалга баталгаажуулах"
+  },
+  "why": {
+    "mn": "Заримдаа энгийн бэлэн товч л хэрэгтэй. `<Button>` нь хамгийн хурдан зам. Захиалгаа баталгаажуулах товч хийе. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Захиалга баталгаажуулах товч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 12,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "Button",
+    "Alert",
+    "onPress"
+  ],
+  "prerequisites": [
+    "rn3-l3"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Button, Alert, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.total}>Нийт: 318,000₮</Text>\n      {/* энд бичнэ үү: Захиалах товч */}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 20, justifyContent: \"center\" },\n  total: { fontSize: 22, fontWeight: \"bold\", textAlign: \"center\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn3-l4-t1",
+      "order": 1,
+      "title": {
+        "mn": "Button ба Alert — захиалга баталгаажуулах"
+      },
+      "statement": {
+        "mn": "`<Button>` нэм: `title=\"Захиалах\"`, `color=\"#16a34a\"`, `onPress`-д `Alert.alert(\"Баярлалаа\", \"Захиалга баталгаажлаа\")`. `<Button>` нь өөрөө текстээ `title`-аас авдаг тул дотор `<Text>` бичих шаардлагагүй."
+      },
+      "requirements": [
+        {
+          "mn": "`react-native`-аас `Button` импортолсон"
+        },
+        {
+          "mn": "`title=\"Захиалах\"`"
+        },
+        {
+          "mn": "Товч дархад `Alert.alert(...)` гарна"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "«Захиалах» ногоон товч дарахад «Баярлалаа» гэсэн мэдэгдэл гарч ирнэ."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.imports",
+          "args": {
+            "file": "src/App.jsx",
+            "from": "react-native",
+            "named": "Button"
+          },
+          "onFail": {
+            "mn": "`react-native`-аас `Button`-г импортлоогүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.text",
+          "args": {
+            "selector": "#root [data-rn=\"button\"]",
+            "contains": "Захиалах"
+          },
+          "onFail": {
+            "mn": "`title=\"Захиалах\"` бүхий `<Button>` алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "[data-rn=\"button\"]"
+              },
+              {
+                "waitFor": "[data-rn=\"alert\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-rn=\"alert-title\"]",
+                  "contains": "Баярлалаа"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Товч дархад «Баярлалаа» мэдэгдэл гарахгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`<Button>` бол бэлэн, энгийн товч. Текстээ `title` prop-оор өгнө — дотор нь `<Text>` хийхгүй."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`<Button title=\"...\" onPress={...} />` гэж өөрөө хаагддаг (self-closing) элемент. Өнгийг `color` prop-оор өгнө."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Button ийм харагдана:"
+          },
+          "code": "<Button\n  title=\"Захиалах\"\n  color=\"#16a34a\"\n  onPress={() => Alert.alert(\"Баярлалаа\", \"Захиалга баталгаажлаа\")}\n/>"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Button, Alert, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.total}>Нийт: 318,000₮</Text>\n      <Button\n        title=\"Захиалах\"\n        color=\"#16a34a\"\n        onPress={() => Alert.alert(\"Баярлалаа\", \"Захиалга баталгаажлаа\")}\n      />\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, padding: 24, gap: 20, justifyContent: \"center\" },\n  total: { fontSize: 22, fontWeight: \"bold\", textAlign: \"center\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`<Button>` бол хамгийн энгийн товч — текст (`title`), өнгө (`color`), дарах үйлдэл (`onPress`) л авна. Загварыг нарийн хийх бол `<Pressable>`, хурдан бол `<Button>`."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 10,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`<Button>`-ийн текстийг хэрхэн өгдөг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Дотор нь `<Text>` бичнэ"
+        },
+        {
+          "mn": "`title` prop-оор"
+        },
+        {
+          "mn": "`label` prop-оор"
+        },
+        {
+          "mn": "`children`-ээр"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`<Button title=\"...\" />` — текстийг `title` prop-оор өгнө. `<Button>` дотор `<Text>` бичихгүй."
+      },
+      "hint": {
+        "mn": "`<Button>` өөрөө хаагддаг элемент. Текст нь prop-оор орно."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`<Pressable>` ба `<Button>`-ийн ялгаа юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "Ялгаагүй"
+        },
+        {
+          "mn": "`<Button>` энгийн бэлэн, `<Pressable>` загварыг бүрэн удирдах боломжтой"
+        },
+        {
+          "mn": "`<Button>` зөвхөн iOS дээр"
+        },
+        {
+          "mn": "`<Pressable>` товч биш"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`<Button>` хурдан бөгөөд хязгаарлагдмал загвартай. `<Pressable>` бол дурын харагдацтай товч хийх уян хатан сонголт."
+      },
+      "hint": {
+        "mn": "Аль нь загварыг илүү чөлөөтэй өөрчлүүлдэг вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 30,
+    "badge": "rn-interactive"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

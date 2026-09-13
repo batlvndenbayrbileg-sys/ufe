@@ -1,0 +1,234 @@
+{
+  "id": "rn11-l1",
+  "moduleId": "rn11-flatlist-adv",
+  "slug": "list-header",
+  "order": 1,
+  "title": {
+    "mn": "ListHeaderComponent — жагсаалтын дээд гарчиг"
+  },
+  "why": {
+    "mn": "Shop.mn-ийн барааны жагсаалтын дээр «Бүх бараа» гарчиг, хайлт байрлана. `ListHeaderComponent` нь жагсаалттай хамт гүйдэг дээд толгойг өгнө."
+  },
+  "buildsInProject": "Гарчигтай барааны жагсаалт",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-lists"
+  ],
+  "concepts": [
+    "FlatList",
+    "data",
+    "renderItem",
+    "ListHeaderComponent"
+  ],
+  "prerequisites": [
+    "rn10-l6"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, FlatList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"p1\", name: \"Утасгүй чихэвч\", price: \"159,000₮\" },\n  { id: \"p2\", name: \"Гар цаг X100\", price: \"249,000₮\" },\n  { id: \"p3\", name: \"Нарны шил\", price: \"89,000₮\" },\n  { id: \"p4\", name: \"Арьсан цүнх\", price: \"199,000₮\" },\n];\n\nfunction App() {\n  // энд бичнэ үү: FlatList-д ListHeaderComponent нэмж дээд гарчиг гарга\n  return (\n    <FlatList\n      style={styles.list}\n      data={PRODUCTS}\n      keyExtractor={(item) => item.id}\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text style={styles.name}>{item.name}</Text>\n          <Text style={styles.price}>{item.price}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  list: { flex: 1, backgroundColor: \"#f8fafc\" },\n  header: { padding: 16, backgroundColor: \"#2563eb\" },\n  headerTitle: { color: \"#fff\", fontSize: 20, fontWeight: \"bold\" },\n  row: { flexDirection: \"row\", justifyContent: \"space-between\", padding: 16, backgroundColor: \"#fff\" },\n  name: { fontSize: 16 },\n  price: { fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn11-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "ListHeaderComponent — жагсаалтын дээд гарчиг"
+      },
+      "statement": {
+        "mn": "FlatList-д `ListHeaderComponent` prop нэм. Түүнд `nativeID=\"list-header\"`-тэй View өгч, дотор нь «Бүх бараа» гэсэн гарчиг харуул. Жагсаалт 4 бараагаа хэвээр харуулна."
+      },
+      "requirements": [
+        {
+          "mn": "`ListHeaderComponent` нэмсэн"
+        },
+        {
+          "mn": "Гарчигт «Бүх бараа» текст"
+        },
+        {
+          "mn": "4 бараа хэвээр"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Жагсаалтын дээд талд «Бүх бараа» цэнхэр гарчиг, дор нь 4 бараа гарна."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "dom.exists",
+          "args": {
+            "selector": "#list-header"
+          },
+          "onFail": {
+            "mn": "`ListHeaderComponent` (`#list-header`) алга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "dom.text",
+          "args": {
+            "selector": "#list-header",
+            "contains": "Бүх бараа"
+          },
+          "onFail": {
+            "mn": "Гарчигт «Бүх бараа» текст алга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "dom.count",
+          "args": {
+            "selector": "[data-testid=\"product\"]",
+            "equals": 4
+          },
+          "onFail": {
+            "mn": "4 бараа харагдах ёстой."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`ListHeaderComponent` нь жагсаалтын эхэнд нэг удаа орж, мөрүүдтэй хамт гүйдэг толгой хэсэг."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Утга нь React элемент байж болно: `ListHeaderComponent={<View>...</View>}`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "FlatList-д prop нэм:"
+          },
+          "code": "ListHeaderComponent={\n  <View nativeID=\"list-header\" style={styles.header}>\n    {/* энд гарчгийн Text */}\n  </View>\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, FlatList, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nconst PRODUCTS = [\n  { id: \"p1\", name: \"Утасгүй чихэвч\", price: \"159,000₮\" },\n  { id: \"p2\", name: \"Гар цаг X100\", price: \"249,000₮\" },\n  { id: \"p3\", name: \"Нарны шил\", price: \"89,000₮\" },\n  { id: \"p4\", name: \"Арьсан цүнх\", price: \"199,000₮\" },\n];\n\nfunction App() {\n  return (\n    <FlatList\n      style={styles.list}\n      data={PRODUCTS}\n      keyExtractor={(item) => item.id}\n      ListHeaderComponent={\n        <View nativeID=\"list-header\" style={styles.header}>\n          <Text style={styles.headerTitle}>Бүх бараа</Text>\n        </View>\n      }\n      renderItem={({ item }) => (\n        <View testID=\"product\" style={styles.row}>\n          <Text style={styles.name}>{item.name}</Text>\n          <Text style={styles.price}>{item.price}</Text>\n        </View>\n      )}\n    />\n  );\n}\n\nconst styles = StyleSheet.create({\n  list: { flex: 1, backgroundColor: \"#f8fafc\" },\n  header: { padding: 16, backgroundColor: \"#2563eb\" },\n  headerTitle: { color: \"#fff\", fontSize: 20, fontWeight: \"bold\" },\n  row: { flexDirection: \"row\", justifyContent: \"space-between\", padding: 16, backgroundColor: \"#fff\" },\n  name: { fontSize: 16 },\n  price: { fontSize: 16, fontWeight: \"bold\", color: \"#2563eb\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`ListHeaderComponent` нь жагсаалтын гишүүдийн өмнө нэг удаа зурагдаж, жагсаалттай хамт гүйдэг. Гарчиг, хайлтын мөр, шүүлтүүр байрлуулахад тохиромжтой."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-lists"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "`ListHeaderComponent` хаана харагдах вэ?"
+      },
+      "options": [
+        {
+          "mn": "Жагсаалтын доор"
+        },
+        {
+          "mn": "Жагсаалтын гишүүдийн ДЭЭР, тэдэнтэй хамт гүйнэ"
+        },
+        {
+          "mn": "Дэлгэцийн голд тогтмол"
+        },
+        {
+          "mn": "Огт харагдахгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Толгой нь гишүүдийн өмнө нэг удаа орж, жагсаалттай хамт гүйнэ."
+      },
+      "hint": {
+        "mn": "«Header» = толгой. Дээр үү, доор уу?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`ListHeaderComponent`-д ямар утга өгөх вэ?"
+      },
+      "options": [
+        {
+          "mn": "Зөвхөн текст"
+        },
+        {
+          "mn": "React элемент буюу компонент"
+        },
+        {
+          "mn": "Тоо"
+        },
+        {
+          "mn": "Өнгө"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "React элемент (`<View>...`) эсвэл компонент функц өгнө."
+      },
+      "hint": {
+        "mn": "JSX элемент өгч болно."
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

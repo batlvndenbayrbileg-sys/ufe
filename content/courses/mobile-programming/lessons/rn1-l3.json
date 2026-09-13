@@ -1,0 +1,249 @@
+{
+  "id": "rn1-l3",
+  "moduleId": "rn1-basics",
+  "slug": "flexbox",
+  "order": 3,
+  "title": {
+    "mn": "Flexbox — байрлал зохицуулах"
+  },
+  "why": {
+    "mn": "Мобайл дээр бүх байрлалыг Flexbox-оор хийдэг. Апп-ийн дээд талын header-т нэрийг зүүн, сагсны тоог баруун талд байрлуулъя. Энэ бол Shop.mn мобайл апп-ийг бүтээх нэг алхам."
+  },
+  "buildsInProject": "Апп-ийн дээд header мөр",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-ui"
+  ],
+  "concepts": [
+    "flexbox",
+    "flexDirection",
+    "justifyContent",
+    "alignItems"
+  ],
+  "prerequisites": [
+    "rn1-l2"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"header\" style={styles.header}>\n        <Text style={styles.brand}>Shop.mn</Text>\n        <Text style={styles.cart}>Сагс: 3</Text>\n        {/* энд бичнэ үү: header-ийг мөр болгож, хоёр талд түлх */}\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1 },\n  header: { padding: 16, backgroundColor: \"#2563eb\" },\n  brand: { color: \"#ffffff\", fontSize: 20, fontWeight: \"bold\" },\n  cart: { color: \"#ffffff\", fontSize: 14 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn1-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Flexbox — байрлал зохицуулах"
+      },
+      "statement": {
+        "mn": "`header` загварт `flexDirection: \"row\"` нэмж хоёр текстийг зэрэгцүүл. Дараа нь `justifyContent: \"space-between\"`-ээр нэрийг зүүн, сагсыг баруун тийш түлж, `alignItems: \"center\"`-ээр босоо тэнхлэгт голлуул."
+      },
+      "requirements": [
+        {
+          "mn": "`header`-т `flexDirection: \"row\"`"
+        },
+        {
+          "mn": "`justifyContent: \"space-between\"`"
+        },
+        {
+          "mn": "`alignItems: \"center\"`"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Header мөр болж, «Shop.mn» зүүн талд, «Сагс: 3» баруун талд, дундаа зайтай харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "css.computed",
+          "args": {
+            "selector": "#header",
+            "prop": "flex-direction",
+            "equals": "row"
+          },
+          "onFail": {
+            "mn": "`header`-т `flexDirection: \"row\"` алга."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "css.computed",
+          "args": {
+            "selector": "#header",
+            "prop": "justify-content",
+            "equals": "space-between"
+          },
+          "onFail": {
+            "mn": "`justifyContent: \"space-between\"` нэмээгүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "css.computed",
+          "args": {
+            "selector": "#header",
+            "prop": "align-items",
+            "equals": "center"
+          },
+          "onFail": {
+            "mn": "`alignItems: \"center\"` нэмээгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "dom.count",
+          "args": {
+            "selector": "#header [data-rn=\"text\"]",
+            "equals": 2
+          },
+          "onFail": {
+            "mn": "Header дотор яг 2 `<Text>` байх ёстой."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`<View>`-ийн анхны чиглэл нь БОСОО (column). Хажуу тийш зэрэгцүүлэхийн тулд `flexDirection: \"row\"` болгоно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`justifyContent` нь ГОЛ тэнхлэгийн (энд хэвтээ) зайг зохицуулна. `space-between` бол «хоёр захад нааж, дундыг нь зайдуулна» гэсэн үг."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Header загвар ийм байна:"
+          },
+          "code": "header: {\n  flexDirection: \"row\",\n  justifyContent: \"space-between\",\n  alignItems: \"center\",\n  padding: 16,\n  backgroundColor: \"#2563eb\",\n}"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  return (\n    <View style={styles.screen}>\n      <View nativeID=\"header\" style={styles.header}>\n        <Text style={styles.brand}>Shop.mn</Text>\n        <Text style={styles.cart}>Сагс: 3</Text>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1 },\n  header: {\n    flexDirection: \"row\",\n    justifyContent: \"space-between\",\n    alignItems: \"center\",\n    padding: 16,\n    backgroundColor: \"#2563eb\",\n  },\n  brand: { color: \"#ffffff\", fontSize: 20, fontWeight: \"bold\" },\n  cart: { color: \"#ffffff\", fontSize: 14 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Мобайл дээр `<View>` бүр Flexbox. Анхныхаа чиглэл нь `column` (доошоо). `row` болгоод `space-between` хийхээр хоёр элемент мөрийн хоёр захад наалдана — энэ бол сонгодог header зохион байгуулалт."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 16,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-ui"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "React Native дээр `<View>`-ийн анхны (default) `flexDirection` юу вэ?"
+      },
+      "options": [
+        {
+          "mn": "`row` (хэвтээ)"
+        },
+        {
+          "mn": "`column` (босоо)"
+        },
+        {
+          "mn": "`grid`"
+        },
+        {
+          "mn": "Чиглэлгүй"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Вэбээс ялгаатай нь — мобайл дээр анхны чиглэл нь `column` буюу доошоо. Хажуу тийш зэрэгцүүлэхэд `row` болгоно."
+      },
+      "hint": {
+        "mn": "Вэб дээр default нь row. Мобайл дээр эсрэгээрээ гэж бод."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`justifyContent: \"space-between\"` юу хийдэг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Бүх зайг арилгана"
+        },
+        {
+          "mn": "Элементүүдийг гол тэнхлэгийн хоёр захад нааж, хооронд нь зай тавина"
+        },
+        {
+          "mn": "Текстийг том болгоно"
+        },
+        {
+          "mn": "Өнгийг өөрчилнө"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "`space-between` эхний ба сүүлийн элементийг хоёр захад нь тавьж, үлдсэн зайг тэдгээрийн хооронд жигд хуваарилна."
+      },
+      "hint": {
+        "mn": "«between» = хооронд. Зайг хаана нь тавьдаг вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

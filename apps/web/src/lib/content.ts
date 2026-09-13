@@ -17,35 +17,99 @@ import { resolveConcepts, type ResolvedConcept } from "./concepts";
  * server-side; grading runs on the server (§5.6 D4).
  */
 
-const COURSE_ID = "internet-programming";
+/**
+ * The catalogue. The web app is now multi-course: React Native ships as its own
+ * course ("mobile-programming") beside the web track. `slug` is the folder under
+ * content/courses AND the id used in /app/course/<slug> URLs. The first entry is
+ * the default when no course is named. Progress/XP are shared (one localStorage
+ * blob keyed by task id); per-course completion is computed by task membership.
+ */
+const COURSE_SLUGS = ["internet-programming", "mobile-programming"] as const;
+const DEFAULT_SLUG = COURSE_SLUGS[0];
 
-function resolveCourseDir(): string {
-  const candidates = [
-    process.env.CONTENT_DIR,
-    join(process.cwd(), "content/courses", COURSE_ID),
-    join(process.cwd(), "../../content/courses", COURSE_ID),
+function resolveCourseDir(slug: string): string | null {
+  const bases = [
+    process.env.CONTENT_DIR ? join(process.env.CONTENT_DIR, "..", slug) : null,
+    join(process.cwd(), "content/courses", slug),
+    join(process.cwd(), "../../content/courses", slug),
   ].filter(Boolean) as string[];
-  for (const dir of candidates) if (existsSync(join(dir, "course.json"))) return dir;
-  throw new Error(`content course not found; looked in: ${candidates.join(", ")}`);
+  for (const dir of bases) if (existsSync(join(dir, "course.json"))) return dir;
+  return null;
 }
 
-let cache: { course: ResolvedCourse; lessons: Map<string, Lesson>; tasks: Map<string, { task: Task; lesson: Lesson }> } | null = null;
+interface Loaded {
+  courses: Map<string, ResolvedCourse>; // keyed by slug
+  courseByLesson: Map<string, string>; // lessonId → slug
+  lessons: Map<string, Lesson>;
+  tasks: Map<string, { task: Task; lesson: Lesson }>;
+}
 
-function ensureLoaded() {
+let cache: Loaded | null = null;
+
+function ensureLoaded(): Loaded {
   if (cache) return cache;
-  const course = loadCourse(resolveCourseDir());
+  const courses = new Map<string, ResolvedCourse>();
+  const courseByLesson = new Map<string, string>();
   const lessons = new Map<string, Lesson>();
   const tasks = new Map<string, { task: Task; lesson: Lesson }>();
-  for (const lesson of flattenLessons(course)) {
-    lessons.set(lesson.id, lesson);
-    for (const task of lesson.tasks) tasks.set(task.id, { task, lesson });
+  for (const slug of COURSE_SLUGS) {
+    const dir = resolveCourseDir(slug);
+    if (!dir) {
+      // The web course must exist; a not-yet-authored extra course is skipped.
+      if (slug === DEFAULT_SLUG) throw new Error(`content course not found: ${slug}`);
+      continue;
+    }
+    const course = loadCourse(dir);
+    courses.set(slug, course);
+    for (const lesson of flattenLessons(course)) {
+      lessons.set(lesson.id, lesson);
+      courseByLesson.set(lesson.id, slug);
+      for (const task of lesson.tasks) tasks.set(task.id, { task, lesson });
+    }
   }
-  cache = { course, lessons, tasks };
+  cache = { courses, courseByLesson, lessons, tasks };
   return cache;
 }
 
-export function getCourseMap() {
-  const { course } = ensureLoaded();
+/** Resolve a course by slug or by its internal id (both appear in URLs/records). */
+function resolveCourse(slugOrId?: string): { slug: string; course: ResolvedCourse } {
+  const { courses } = ensureLoaded();
+  if (slugOrId) {
+    if (courses.has(slugOrId)) return { slug: slugOrId, course: courses.get(slugOrId)! };
+    for (const [slug, course] of courses) if (course.id === slugOrId) return { slug, course };
+  }
+  return { slug: DEFAULT_SLUG, course: courses.get(DEFAULT_SLUG)! };
+}
+
+/** The course each lesson belongs to (slug), or the default. */
+function courseSlugForLesson(lessonId: string): string {
+  return ensureLoaded().courseByLesson.get(lessonId) ?? DEFAULT_SLUG;
+}
+
+/** Lightweight catalogue for a course picker: slug, title, description, size. */
+export function getCourseList() {
+  const { courses } = ensureLoaded();
+  return COURSE_SLUGS.filter((s) => courses.has(s)).map((slug) => {
+    const course = courses.get(slug)!;
+    const lessonCount = course.stages.reduce(
+      (n, st) => n + st.moduleObjects.reduce((m, mod) => m + mod.lessonObjects.length, 0),
+      0,
+    );
+    return {
+      id: course.id,
+      slug,
+      title: course.title,
+      description: course.description,
+      level: course.level,
+      stageCount: course.stages.length,
+      lessonCount,
+    };
+  });
+}
+
+export function getCourseMap(slugOrId?: string) {
+  const { slug, course } = resolveCourse(slugOrId);
+  void slug;
   return {
     id: course.id,
     slug: course.slug,
@@ -138,6 +202,8 @@ export interface QuizQuestionPublic {
 export interface LessonPublic {
   id: string;
   moduleId: string;
+  /** Slug of the course this lesson belongs to (for course-scoped links). */
+  courseSlug: string;
   slug: string;
   title: Lesson["title"];
   why: Lesson["why"];
@@ -161,6 +227,7 @@ export function getLessonPublic(lessonId: string): LessonPublic | null {
   return {
     id: lesson.id,
     moduleId: lesson.moduleId,
+    courseSlug: courseSlugForLesson(lesson.id),
     slug: lesson.slug,
     title: lesson.title,
     why: lesson.why,
@@ -220,7 +287,12 @@ export function getNextLesson(lessonId: string): { id: string; title: { mn: stri
 }
 
 export function getNextLessonId(lessonId: string): string | null {
-  const { course } = ensureLoaded();
+  // Stay within the lesson's own course, so the last web lesson doesn't spill
+  // into the mobile course (and vice versa).
+  const { courses } = ensureLoaded();
+  const slug = courseSlugForLesson(lessonId);
+  const course = courses.get(slug);
+  if (!course) return null;
   const flat = flattenLessons(course).map((l) => l.id);
   const i = flat.indexOf(lessonId);
   return i >= 0 && i < flat.length - 1 ? flat[i + 1]! : null;
