@@ -37,11 +37,18 @@ function resolveCourseDir(slug: string): string | null {
   return null;
 }
 
+interface ModuleMeta {
+  id: string;
+  title: { mn: string; en?: string };
+  courseSlug: string;
+}
+
 interface Loaded {
   courses: Map<string, ResolvedCourse>; // keyed by slug
   courseByLesson: Map<string, string>; // lessonId → slug
   lessons: Map<string, Lesson>;
   tasks: Map<string, { task: Task; lesson: Lesson }>;
+  modules: Map<string, ModuleMeta>; // moduleId → title/course
 }
 
 let cache: Loaded | null = null;
@@ -52,6 +59,7 @@ function ensureLoaded(): Loaded {
   const courseByLesson = new Map<string, string>();
   const lessons = new Map<string, Lesson>();
   const tasks = new Map<string, { task: Task; lesson: Lesson }>();
+  const modules = new Map<string, ModuleMeta>();
   for (const slug of COURSE_SLUGS) {
     const dir = resolveCourseDir(slug);
     if (!dir) {
@@ -61,13 +69,18 @@ function ensureLoaded(): Loaded {
     }
     const course = loadCourse(dir);
     courses.set(slug, course);
+    for (const stage of course.stages) {
+      for (const mod of stage.moduleObjects) {
+        modules.set(mod.id, { id: mod.id, title: mod.title, courseSlug: slug });
+      }
+    }
     for (const lesson of flattenLessons(course)) {
       lessons.set(lesson.id, lesson);
       courseByLesson.set(lesson.id, slug);
       for (const task of lesson.tasks) tasks.set(task.id, { task, lesson });
     }
   }
-  cache = { courses, courseByLesson, lessons, tasks };
+  cache = { courses, courseByLesson, lessons, tasks, modules };
   return cache;
 }
 
@@ -296,4 +309,94 @@ export function getNextLessonId(lessonId: string): string | null {
   const flat = flattenLessons(course).map((l) => l.id);
   const i = flat.indexOf(lessonId);
   return i >= 0 && i < flat.length - 1 ? flat[i + 1]! : null;
+}
+
+// ── Stats resolution (ids → human labels) ────────────────────────────────────
+
+export interface TaskDescriptor {
+  taskId: string;
+  taskTitle: { mn: string; en?: string };
+  lessonId: string;
+  lessonTitle: { mn: string; en?: string };
+  moduleId: string;
+  moduleTitle: { mn: string; en?: string };
+  courseSlug: string;
+  xp: number;
+  estimatedMinutes: number;
+}
+
+/** Resolve a set of task ids to their lesson/module/course labels. Ids the
+ *  catalogue no longer contains are simply omitted. */
+export function describeTasks(taskIds: Iterable<string>): Map<string, TaskDescriptor> {
+  const { tasks, modules } = ensureLoaded();
+  const out = new Map<string, TaskDescriptor>();
+  for (const id of taskIds) {
+    const hit = tasks.get(id);
+    if (!hit) continue;
+    const { task, lesson } = hit;
+    const mod = modules.get(lesson.moduleId);
+    out.set(id, {
+      taskId: id,
+      taskTitle: task.title,
+      lessonId: lesson.id,
+      lessonTitle: lesson.title,
+      moduleId: lesson.moduleId,
+      moduleTitle: mod?.title ?? { mn: lesson.moduleId },
+      courseSlug: courseSlugForLesson(lesson.id),
+      xp: task.xp,
+      estimatedMinutes: task.estimatedMinutes,
+    });
+  }
+  return out;
+}
+
+/** Every skill across all courses, de-duplicated by id (mobile reuses some web
+ *  skill ids). Used to label skill-mastery rows in the stats views. */
+export function getAllSkills(): Array<{ id: string; title: { mn: string; en?: string }; order: number }> {
+  const { courses } = ensureLoaded();
+  const seen = new Map<string, { id: string; title: { mn: string; en?: string }; order: number }>();
+  for (const course of courses.values()) {
+    for (const sk of course.skills) if (!seen.has(sk.id)) seen.set(sk.id, sk);
+  }
+  return [...seen.values()].sort((a, b) => a.order - b.order);
+}
+
+export interface BadgeStage {
+  badgeId: string;
+  courseSlug: string;
+  stageTitle: { mn: string; en?: string };
+  lessonIds: string[];
+}
+
+/** Stages that grant an achievement badge, with the lessons that make them up.
+ *  A badge is "earned" once every lesson in its stage is complete — this lets
+ *  both the student page (localStorage) and the admin view (DB) derive the same
+ *  achievement list without a separate awards table. */
+export function getBadgeStages(): BadgeStage[] {
+  const { courses } = ensureLoaded();
+  const out: BadgeStage[] = [];
+  for (const [slug, course] of courses) {
+    for (const stage of course.stages) {
+      if (!stage.badgeId) continue;
+      const lessonIds = stage.moduleObjects.flatMap((m) => m.lessonObjects.map((l) => l.id));
+      out.push({ badgeId: stage.badgeId, courseSlug: slug, stageTitle: stage.title, lessonIds });
+    }
+  }
+  return out;
+}
+
+/** Map every task id to the lesson it belongs to (both courses). */
+export function getTaskLessonIndex(): Map<string, string> {
+  const { tasks } = ensureLoaded();
+  const out = new Map<string, string>();
+  for (const [taskId, { lesson }] of tasks) out.set(taskId, lesson.id);
+  return out;
+}
+
+/** Map every lesson id to its skill ids (both courses), for mastery percentages. */
+export function getLessonSkillIndex(): Map<string, string[]> {
+  const { lessons } = ensureLoaded();
+  const out = new Map<string, string[]>();
+  for (const [id, lesson] of lessons) out.set(id, lesson.skills);
+  return out;
 }

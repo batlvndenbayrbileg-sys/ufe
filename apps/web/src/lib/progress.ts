@@ -9,14 +9,34 @@ import { computeLevel, isoDateIn, nextStreak } from "@khiye/shared";
  * becomes the source of truth and this becomes an offline mirror.
  */
 
+export interface PassedTask {
+  xp: number;
+  skills: string[];
+  assisted: boolean;
+  at: number;
+  /** Time spent before this task first passed (ms). Absent on pre-upgrade entries. */
+  durationMs?: number;
+  /** Highest hint level reached on this task. */
+  hintsUsed?: number;
+  /** Failed submissions before the pass (1 = solved first try). */
+  attempts?: number;
+}
+
 export interface Progress {
-  passedTasks: Record<string, { xp: number; skills: string[]; assisted: boolean; at: number }>;
+  passedTasks: Record<string, PassedTask>;
   xp: number;
   skillXp: Record<string, number>;
   streakDays: number;
   lastActiveDate: string | null;
   badges: string[];
   updatedAt: number;
+}
+
+export interface TaskPassMeta {
+  durationMs?: number;
+  hintsUsed?: number;
+  attempts?: number;
+  assisted?: boolean;
 }
 
 const KEY = "khiye:progress:ip-101";
@@ -54,17 +74,27 @@ export function isTaskPassed(taskId: string): boolean {
   return taskId in loadProgress().passedTasks;
 }
 
-/** Record a passing task (idempotent). Updates XP, per-skill XP and the streak. */
+/** Record a passing task (idempotent). Updates XP, per-skill XP and the streak.
+ *  `meta` carries the effort figures the workspace measured (time, hints,
+ *  attempts) so the stats page can show time-per-task even in local mode. */
 export function recordTaskPass(
   taskId: string,
   xpAwarded: number,
   skills: string[],
-  assisted = false,
+  meta: TaskPassMeta = {},
 ): Progress {
   const p = loadProgress();
   if (p.passedTasks[taskId]) return p; // XP once
 
-  p.passedTasks[taskId] = { xp: xpAwarded, skills, assisted, at: Date.now() };
+  p.passedTasks[taskId] = {
+    xp: xpAwarded,
+    skills,
+    assisted: meta.assisted ?? false,
+    at: Date.now(),
+    durationMs: meta.durationMs,
+    hintsUsed: meta.hintsUsed,
+    attempts: meta.attempts,
+  };
   p.xp += xpAwarded;
   for (const s of skills) p.skillXp[s] = (p.skillXp[s] ?? 0) + xpAwarded;
 

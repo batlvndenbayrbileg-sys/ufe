@@ -14,11 +14,19 @@ import {
   Lightbulb,
 } from "lucide-react";
 import { WorkspaceShell, Badge, ProgressRing, ThemeToggle, useTheme } from "@khiye/ui";
-import { EditorPane, workspaceStore, useWorkspace, type CodeMirrorHandle } from "@khiye/editor";
+import {
+  EditorPane,
+  workspaceStore,
+  useWorkspace,
+  hydrateWorkspace,
+  persistWorkspace,
+  type CodeMirrorHandle,
+} from "@khiye/editor";
 import { PreviewFrame, type ConsoleEntry, type FileSet } from "@khiye/preview";
 import { applyPatch } from "@khiye/content-sdk/patch";
 import type { LessonPublic } from "@/lib/content";
-import { awardBadge, recordTaskPass } from "@/lib/progress";
+import { awardBadge, isTaskPassed, recordTaskPass } from "@/lib/progress";
+import { getLessonResumeIndex, setResumePoint } from "@/lib/resume";
 import { badgeLabel } from "@/lib/badges";
 import { ResultPanel, type SubmitResult } from "./ResultPanel";
 
@@ -101,15 +109,44 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
 
   useEffect(() => {
     const initial = applyPatch({}, lesson.workspace.patch) as FileSet;
+    const courseId = `lesson:${lesson.id}`;
     workspaceStore.getState().init({
-      courseId: `lesson:${lesson.id}`,
+      courseId,
       files: initial,
       visibleFiles: lesson.workspace.visibleFiles,
       readOnlyFiles: lesson.workspace.readOnlyFiles ?? [],
       openFiles: lesson.workspace.openFiles,
       activeFile: lesson.workspace.activeFile,
     });
+    // Resume the learner's own code: restore anything saved for this lesson over
+    // the starter, then keep saving as they type. So leaving mid-task and coming
+    // back reopens exactly what they had written.
+    let unsub = () => {};
+    void hydrateWorkspace(workspaceStore, courseId).finally(() => {
+      unsub = persistWorkspace(workspaceStore, courseId);
+    });
+    return () => unsub();
   }, [lesson.id, lesson.workspace]);
+
+  // Restore progress + the task the learner had reached: passed tasks show as
+  // done and the workspace opens on the first unsolved task (or where they left
+  // off), instead of always restarting at task 1.
+  useEffect(() => {
+    const passedFlags = tasks.map((t) => isTaskPassed(t.id));
+    const firstUnsolved = passedFlags.findIndex((p) => !p);
+    const saved = getLessonResumeIndex(lesson.id);
+    const current = firstUnsolved === -1 ? tasks.length - 1 : firstUnsolved;
+    // Prefer the saved spot when it's still an unsolved task at/after `current`.
+    const target = saved > current && saved < tasks.length && !passedFlags[saved] ? saved : current;
+    setStatuses(tasks.map((_, i) => (passedFlags[i] ? "passed" : i === target ? "current" : "locked")));
+    setTaskIndex(target);
+  }, [lesson.id, tasks]);
+
+  // Remember where the learner is so the dashboard's "continue" and this
+  // workspace can bring them straight back here next time.
+  useEffect(() => {
+    setResumePoint({ lessonId: lesson.id, courseSlug: lesson.courseSlug, taskIndex });
+  }, [taskIndex, lesson.id, lesson.courseSlug]);
 
   useEffect(() => {
     if (task.targetFile) workspaceStore.getState().setActive(task.targetFile);
@@ -136,7 +173,13 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
       if (!data) return;
       setResult(data);
       if (data.passed) {
-        recordTaskPass(task.id, data.xpAwarded, task.skills);
+        const hUsed = hintsUsed[taskIndex] ?? 0;
+        recordTaskPass(task.id, data.xpAwarded, task.skills, {
+          durationMs: Date.now() - startedAt[taskIndex]!,
+          hintsUsed: hUsed,
+          attempts: (attempts[taskIndex] ?? 0) + 1,
+          assisted: hUsed > 0,
+        });
         const next = statuses.map((st, i) => (i === taskIndex ? ("passed" as Status) : st));
         setStatuses(next);
         if (next.every((st) => st === "passed") && lesson.completion.badge) {

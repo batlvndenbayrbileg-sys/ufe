@@ -12,6 +12,7 @@ const rise: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.2, 0.8, 0.2, 1] } },
 };
 import { level, loadProgress, lessonProgress, type Progress } from "@/lib/progress";
+import { getResumePoint } from "@/lib/resume";
 import { flattenLessons, type MapLesson } from "./course-types";
 import { useCourseMap } from "./useCourseMap";
 import { OtherCourses } from "./OtherCourses";
@@ -25,9 +26,11 @@ export function Dashboard() {
   const { map, error, reload } = useCourseMap();
   const isAdmin = useIsAdmin();
   const [progress, setProgress] = useState<Progress | null>(null);
+  const [resumeId, setResumeId] = useState<string | null>(null);
 
   useEffect(() => {
     setProgress(loadProgress());
+    setResumeId(getResumePoint()?.lessonId ?? null);
   }, []);
 
   const lessons = useMemo(() => (map ? flattenLessons(map) : []), [map]);
@@ -56,7 +59,13 @@ export function Dashboard() {
 
   const doneLessons = lessons.filter((l) => lessonProgress(l.taskIds, progress).done);
   const percent = lessons.length ? Math.round((doneLessons.length / lessons.length) * 100) : 0;
-  const nextLesson: MapLesson | undefined = lessons.find((l) => !lessonProgress(l.taskIds, progress).done) ?? lessons[0];
+  // Resume exactly where the learner left off: the last lesson they opened (if
+  // it isn't finished), else the first unfinished lesson in course order.
+  const firstUnfinished = lessons.find((l) => !lessonProgress(l.taskIds, progress).done);
+  const resumeLesson = resumeId
+    ? lessons.find((l) => l.id === resumeId && !lessonProgress(l.taskIds, progress).done)
+    : undefined;
+  const nextLesson: MapLesson | undefined = resumeLesson ?? firstUnfinished ?? lessons[0];
   const nextProg = nextLesson ? lessonProgress(nextLesson.taskIds, progress) : { passed: 0, total: 0 };
   const done = percent === 100;
 
@@ -81,6 +90,9 @@ export function Dashboard() {
             <span className={`${s.headerChip} ${s.chipXp}`} title="Оноо">
               <Zap size={15} strokeWidth={2.4} /> {progress.xp.toLocaleString()}
             </span>
+            <a href="/app/stats" className={s.staffLink}>
+              Статистик
+            </a>
             {isAdmin ? (
               <a href="/app/teacher" className={s.staffLink}>
                 Багшийн самбар

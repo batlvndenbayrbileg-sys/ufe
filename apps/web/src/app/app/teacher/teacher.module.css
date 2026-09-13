@@ -247,6 +247,88 @@
   font-weight: 600;
 }
 
+.rowClickable {
+  cursor: pointer;
+}
+
+/* ── student detail drawer ───────────────────────────────────────────────── */
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: color-mix(in srgb, #000 44%, transparent);
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn var(--dur-fast) var(--ease-out);
+}
+.drawer {
+  width: min(560px, 100%);
+  height: 100%;
+  background: var(--bg);
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn var(--dur) var(--ease-out);
+}
+.drawerHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+.drawerName {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+.drawerSub {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.drawerClose {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.drawerClose:hover {
+  background: var(--bg-muted);
+  color: var(--text);
+}
+.drawerBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-5);
+}
+.drawerLoading {
+  display: grid;
+  place-items: center;
+  padding: var(--space-10);
+}
+.drawerError {
+  color: var(--danger);
+  font-size: var(--text-sm);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideIn {
+  from { transform: translateX(24px); opacity: 0.6; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
 @media (max-width: 860px) {
   .stats {
     grid-template-columns: repeat(2, 1fr);

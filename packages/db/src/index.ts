@@ -20,6 +20,14 @@ export {
 } from "./repos/progress";
 
 export {
+  getUserStats,
+  listStudents,
+  type UserStats,
+  type TaskStatRow,
+  type StudentRow,
+} from "./repos/stats";
+
+export {
   getWorkspace,
   saveWorkspace,
   assertWorkspaceWithinLimits,
