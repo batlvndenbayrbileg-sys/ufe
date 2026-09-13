@@ -27,6 +27,8 @@ export {
   type StudentRow,
 } from "./repos/stats";
 
+export { ensureBootstrapAdmin } from "./repos/admin";
+
 export {
   getWorkspace,
   saveWorkspace,

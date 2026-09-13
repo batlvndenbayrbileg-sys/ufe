@@ -66,13 +66,62 @@ async function runSync(dir: string): Promise<number> {
   return 0;
 }
 
+/**
+ * Deploy-time provisioning: upsert every course under a root dir, then make
+ * sure an admin exists. Best-effort by design — a failure on one course (or the
+ * admin step) is logged and does not abort the others, so a flaky DB never
+ * breaks a deploy. Skips cleanly when DATABASE_URL is absent.
+ */
+async function runProvision(coursesRoot: string): Promise<number> {
+  if (!process.env.DATABASE_URL) {
+    process.stdout.write("content provision: no DATABASE_URL — skipping\n");
+    return 0;
+  }
+  const { readdirSync, existsSync } = await import("node:fs");
+  const { join } = await import("node:path");
+
+  const dirs = existsSync(coursesRoot)
+    ? readdirSync(coursesRoot, { withFileTypes: true })
+        .filter((e) => e.isDirectory() && existsSync(join(coursesRoot, e.name, "course.json")))
+        .map((e) => join(coursesRoot, e.name))
+    : [];
+
+  if (dirs.length === 0) process.stdout.write(`content provision: no courses under ${coursesRoot}\n`);
+
+  const { syncBundle } = await import("./sync");
+  for (const d of dirs) {
+    try {
+      const course = loadCourse(d);
+      if (summarize(lintCourse(course)).errors > 0) {
+        process.stdout.write(`content provision: skip ${d} (lint errors)\n`);
+        continue;
+      }
+      const result = await syncBundle(bundleCourse(course));
+      process.stdout.write(`content provision: ${course.slug} — ${result.lessons} lessons upserted\n`);
+    } catch (e) {
+      process.stderr.write(`content provision: sync failed for ${d} — ${e instanceof Error ? e.message : String(e)}\n`);
+    }
+  }
+
+  try {
+    const { ensureBootstrapAdmin } = await import("@khiye/db");
+    process.stdout.write(`content provision: ${await ensureBootstrapAdmin()}\n`);
+  } catch (e) {
+    process.stderr.write(`content provision: bootstrap admin failed — ${e instanceof Error ? e.message : String(e)}\n`);
+  }
+  return 0;
+}
+
 async function main(): Promise<number> {
   const [cmd, dir, ...rest] = process.argv.slice(2);
   const flags = new Set(rest.filter((a) => a.startsWith("--")));
   const outIdx = rest.indexOf("--out");
   const out = outIdx >= 0 ? rest[outIdx + 1] : undefined;
 
-  if (!cmd || !dir) fail("usage: content <lint|build|sync|test> <courseDir> [--out file] [--strict]");
+  // `provision` defaults its dir to the monorepo's content/courses root.
+  if (cmd === "provision") return runProvision(dir ?? "../../content/courses");
+
+  if (!cmd || !dir) fail("usage: content <lint|build|sync|test|provision> <courseDir> [--out file] [--strict]");
 
   switch (cmd) {
     case "lint":
