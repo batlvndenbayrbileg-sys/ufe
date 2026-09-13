@@ -29,13 +29,25 @@ try {
 }
 
 // ── React + ReactDOM (the pre-bundled preview runtime) ───────────────────────
+// Prefer the plain asset emitted by scripts/build-react-runtime.mjs, but on a
+// fresh checkout (the runtime/ dir is gitignored — e.g. Vercel/CI) fall back to
+// the committed constant in checkers, so the browser copy is always present.
 const reactDest = join(libDir, "react-runtime.js");
 try {
-  // Emitted as a plain asset by @khiye/checkers scripts/build-react-runtime.mjs.
-  const src = join(here, "..", "..", "..", "packages", "checkers", "runtime", "react-runtime.js");
-  if (!existsSync(reactDest) || statSync(reactDest).size !== statSync(src).size) {
-    copyFileSync(src, reactDest);
-    console.log(`vendor: ${mb(statSync(reactDest).size)} MB → public/lib/react-runtime.js`);
+  const asset = join(here, "..", "..", "..", "packages", "checkers", "runtime", "react-runtime.js");
+  let code;
+  if (existsSync(asset)) {
+    code = readFileSync(asset, "utf8");
+  } else {
+    const genPath = join(here, "..", "..", "..", "packages", "checkers", "src", "react-runtime.generated.ts");
+    const gen = readFileSync(genPath, "utf8");
+    const m = gen.match(/REACT_RUNTIME_JS: string = ("(?:\\.|[^"\\])*");/);
+    if (!m) throw new Error("could not read REACT_RUNTIME_JS from react-runtime.generated.ts");
+    code = JSON.parse(m[1]);
+  }
+  if (!existsSync(reactDest) || readFileSync(reactDest, "utf8") !== code) {
+    writeFileSync(reactDest, code);
+    console.log(`vendor: ${(Buffer.byteLength(code) / 1024).toFixed(0)} KB → public/lib/react-runtime.js`);
   }
 } catch (problem) {
   console.error("vendor: React runtime unavailable; React lessons will not preview");
