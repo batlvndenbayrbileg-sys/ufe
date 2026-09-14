@@ -887,6 +887,160 @@
   flex-wrap: wrap;
 }
 
+/* ── side-by-side comparison modal (Таны код | Зөв хариу) ─────────────────── */
+.cmpOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+  background: color-mix(in srgb, #000 46%, transparent);
+  animation: cmpFade 0.15s var(--ease-out);
+}
+@keyframes cmpFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.cmpModal {
+  display: flex;
+  flex-direction: column;
+  width: min(1040px, 96vw);
+  max-height: 88vh;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.cmpHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--accent-subtle);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+}
+.cmpTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+.cmpClose {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.cmpClose:hover {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--text);
+}
+.cmpExplain {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  line-height: var(--leading-prose);
+}
+.cmpExplainIcon {
+  flex: none;
+  margin-top: 3px;
+  color: var(--warning);
+}
+.cmpColsHead {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.cmpColMine,
+.cmpColAns {
+  padding: 6px var(--space-4);
+}
+.cmpColMine {
+  color: var(--danger);
+  background: var(--danger-subtle);
+  border-bottom: 1px solid var(--border);
+}
+.cmpColAns {
+  color: var(--success);
+  background: var(--success-subtle);
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.cmpBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--code-bg);
+}
+.cmpFile:not(:first-child) .cmpFileName {
+  border-top: 1px solid var(--border);
+}
+.cmpFileName {
+  padding: 6px var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  background: var(--bg-muted);
+}
+.cmpRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.cmpCell {
+  margin: 0;
+  padding: 1px var(--space-3);
+  min-width: 0;
+  overflow-x: auto;
+  white-space: pre;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+.cmpCell:last-child {
+  border-left: 1px solid var(--border);
+}
+.cmpDel {
+  background: color-mix(in srgb, var(--danger) 13%, transparent);
+  color: var(--text);
+}
+.cmpAdd {
+  background: color-mix(in srgb, var(--success) 13%, transparent);
+  color: var(--text);
+}
+.cmpActions {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .cmpColsHead,
+  .cmpRow {
+    grid-template-columns: 1fr;
+  }
+  .cmpColAns,
+  .cmpCell:last-child {
+    border-left: 0;
+  }
+}
+
 /* Finishing a lesson hands you the next one: across 84 lessons, a detour
    through the course map every time is the loop failing to close. */
 .completionNext {

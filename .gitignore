@@ -37,6 +37,10 @@ pnpm-debug.log*
 # misc
 *.local
 
-# Vendored at build time (see apps/web/scripts/vendor-runtimes.mjs)
-apps/web/public/lib/
+# Vendored at build time (see apps/web/scripts/vendor-runtimes.mjs).
+# The React + RN preview runtimes are committed so the deployment always serves
+# them (a turbo cache-hit skips the vendor step); big sqlite.js stays generated.
+apps/web/public/lib/*
+!apps/web/public/lib/react-runtime.js
+!apps/web/public/lib/rn-runtime.js
 packages/checkers/runtime/
