@@ -14,19 +14,19 @@
   --bg-subtle: #fafafa;
   --bg-muted: #f4f4f5;
   --surface: #ffffff;
-  --surface-2: #ffffff;
-  --border: #e4e4e7;
-  --border-strong: #d4d4d8;
-  --text: #18181b;
-  --text-muted: #64646d;
-  --text-subtle: #a1a1aa;
+  --surface-2: #f6f7f9;
+  --border: #e6e7eb;
+  --border-strong: #d3d5db;
+  --text: #16181d;
+  --text-muted: #62656e;
+  --text-subtle: #9a9da6;
 
-  /* Accent — a single trustworthy blue */
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-active: #1e40af;
-  --accent-subtle: #eff6ff;
-  --accent-text: #1e40af;
+  /* Accent — the UFE royal blue, matched to the logo */
+  --accent: #2c46d4;
+  --accent-hover: #2139bd;
+  --accent-active: #1b2f9c;
+  --accent-subtle: #eef1fd;
+  --accent-text: #1f37b0;
   --on-accent: #ffffff;
 
   /* Semantic (separate from the accent) */
@@ -52,17 +52,17 @@
   /* Focus ring */
   --ring: var(--accent);
 
-  /* Radii */
-  --radius-sm: 4px;
-  --radius: 6px;
-  --radius-lg: 10px;
-  --radius-xl: 14px;
+  /* Radii — a touch softer for a more modern feel */
+  --radius-sm: 6px;
+  --radius: 9px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.08);
-  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.12);
+  /* Shadows — soft, layered (ambient + direct) */
+  --shadow-sm: 0 1px 2px rgb(16 24 40 / 0.05), 0 1px 3px rgb(16 24 40 / 0.05);
+  --shadow-md: 0 2px 6px rgb(16 24 40 / 0.05), 0 12px 28px rgb(16 24 40 / 0.09);
+  --shadow-lg: 0 8px 16px rgb(16 24 40 / 0.06), 0 28px 60px rgb(16 24 40 / 0.16);
 
   /* Typography — families set by the app via next/font (see app/fonts.ts) */
   --font-sans:
@@ -121,11 +121,11 @@
     --text-muted: #a1a1aa;
     --text-subtle: #71717a;
 
-    --accent: #3b82f6;
-    --accent-hover: #60a5fa;
-    --accent-active: #93c5fd;
-    --accent-subtle: #172554;
-    --accent-text: #93c5fd;
+    --accent: #6f86ff;
+    --accent-hover: #8b9cff;
+    --accent-active: #adb8ff;
+    --accent-subtle: #1b2050;
+    --accent-text: #aab6ff;
     --on-accent: #0b0d11;
 
     --success: #22c55e;
@@ -145,9 +145,9 @@
     --code-border: #27272a;
     --code-text: #fafafa;
 
-    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
-    --shadow-md: 0 4px 12px rgb(0 0 0 / 0.4);
-    --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 2px 6px rgb(0 0 0 / 0.4), 0 12px 28px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 8px 16px rgb(0 0 0 / 0.5), 0 28px 60px rgb(0 0 0 / 0.62);
 
     color-scheme: dark;
   }
@@ -166,11 +166,11 @@
   --text-muted: #a1a1aa;
   --text-subtle: #71717a;
 
-  --accent: #3b82f6;
-  --accent-hover: #60a5fa;
-  --accent-active: #93c5fd;
-  --accent-subtle: #172554;
-  --accent-text: #93c5fd;
+  --accent: #6f86ff;
+  --accent-hover: #8b9cff;
+  --accent-active: #adb8ff;
+  --accent-subtle: #1b2050;
+  --accent-text: #aab6ff;
   --on-accent: #0b0d11;
 
   --success: #22c55e;
@@ -190,9 +190,9 @@
   --code-border: #27272a;
   --code-text: #fafafa;
 
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
-  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.4);
-  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 2px 6px rgb(0 0 0 / 0.4), 0 12px 28px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 8px 16px rgb(0 0 0 / 0.5), 0 28px 60px rgb(0 0 0 / 0.62);
 
   color-scheme: dark;
 }
