@@ -37,8 +37,9 @@ export function SolutionGate({
   return (
     <div className={s.hintStack}>
       <button type="button" className={s.ghostBtn} onClick={request} disabled={busy}>
-        Хариулт харах
+        Зөв хариуг харах ба харьцуулах
       </button>
+      <span className={s.gateNote}>Хариу харвал энэ даалгаврын XP багасна.</span>
       {locked ? (
         <span className={s.gateNote}>
           Хариултыг харахын тулд: {locked.attemptsRequired}+ удаа оролдох (одоо {attempts}), бүх заавар үзэх ({hintsUsed}/

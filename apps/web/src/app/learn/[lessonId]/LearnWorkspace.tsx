@@ -38,6 +38,7 @@ const ConceptDiagram = dynamic(
 );
 import { HintLadder } from "./HintLadder";
 import { SolutionGate } from "./SolutionGate";
+import { SolutionCompare } from "./SolutionCompare";
 import { QuizPanel } from "./QuizPanel";
 import s from "./learn.module.css";
 
@@ -62,6 +63,15 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
   const [startedAt] = useState<number[]>(() => tasks.map(() => Date.now()));
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [checking, setChecking] = useState(false);
+  // Whether the reference solution has been revealed for each task (→ XP penalty).
+  const [solutionRevealed, setSolutionRevealed] = useState<boolean[]>(() => tasks.map(() => false));
+  // The "your code vs the answer" comparison panel, when open.
+  const [compare, setCompare] = useState<{
+    solution: FileSet;
+    explanation: { mn: string };
+    patch: unknown;
+    targetFile?: string;
+  } | null>(null);
 
   // Reading comfort: the student can scale the instruction text up or down; the
   // choice is remembered across lessons.
@@ -167,6 +177,8 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
           attemptNo: attempts[taskIndex]! + 1,
           hintsUsed: hintsUsed[taskIndex],
           durationMs: Date.now() - startedAt[taskIndex]!,
+          // Revealing the answer costs XP — the server reduces the award.
+          assisted: solutionRevealed[taskIndex] ?? false,
         }),
       }).then((r) => r.json());
       const data = res.data as SubmitResult | undefined;
@@ -178,7 +190,7 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
           durationMs: Date.now() - startedAt[taskIndex]!,
           hintsUsed: hUsed,
           attempts: (attempts[taskIndex] ?? 0) + 1,
-          assisted: hUsed > 0,
+          assisted: hUsed > 0 || (solutionRevealed[taskIndex] ?? false),
         });
         const next = statuses.map((st, i) => (i === taskIndex ? ("passed" as Status) : st));
         setStatuses(next);
@@ -191,7 +203,7 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
     } finally {
       setChecking(false);
     }
-  }, [task.id, task.skills, taskIndex, attempts, hintsUsed, startedAt, statuses, lesson.completion.badge]);
+  }, [task.id, task.skills, taskIndex, attempts, hintsUsed, startedAt, statuses, solutionRevealed, lesson.completion.badge]);
 
   const nextTask = useCallback(() => {
     setResult(null);
@@ -202,13 +214,56 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
     }
   }, [taskIndex, tasks.length]);
 
-  const revealSolution = useCallback((patch: unknown) => {
-    workspaceStore.getState().applyContentPatch(patch as never, { force: true });
+  // Reveal the reference solution: instead of silently overwriting the student's
+  // code, open a diff of THEIR code vs the answer so they see what they missed.
+  // Marks the task solution-revealed (→ reduced XP on the eventual pass).
+  const revealSolution = useCallback(
+    (patch: unknown, explanation: { mn: string }) => {
+      const current = workspaceStore.getState().files as FileSet;
+      let solution: FileSet;
+      try {
+        solution = applyPatch(current, patch as never) as FileSet;
+      } catch {
+        solution = current;
+      }
+      setSolutionRevealed((r) => r.map((v, i) => (i === taskIndex ? true : v)));
+      setCompare({ solution, explanation, patch, targetFile: task.targetFile });
+    },
+    [taskIndex, task.targetFile],
+  );
+
+  // "Apply the answer" from the comparison — put the solution into the editor.
+  const applyCompareSolution = useCallback(() => {
+    setCompare((c) => {
+      if (c) workspaceStore.getState().applyContentPatch(c.patch as never, { force: true });
+      return null;
+    });
   }, []);
+
+  // Fresh run, fresh console: clear stale logs when the code changes, so old
+  // transpile errors don't pile up in the strip while you type.
+  useEffect(() => {
+    setLogs([]);
+  }, [files]);
 
   const passedCount = statuses.filter((v) => v === "passed").length;
   const percent = Math.round((passedCount / tasks.length) * 100);
   const lessonDone = passedCount === tasks.length;
+
+  // Collapse repeated console lines so a burst of identical errors reads as one.
+  const consoleLines = useMemo(() => {
+    const out: Array<{ text: string; level: string; count: number }> = [];
+    for (const l of logs) {
+      const text = l.args.join(" ");
+      const last = out[out.length - 1];
+      if (last && last.text === text && last.level === l.level) last.count += 1;
+      else out.push({ text, level: l.level, count: 1 });
+    }
+    return out;
+  }, [logs]);
+  const errorCount = consoleLines
+    .filter((l) => l.level === "error")
+    .reduce((n, l) => n + l.count, 0);
 
   // The verdict must be visible the moment it arrives.
   useEffect(() => {
@@ -413,7 +468,18 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
             </section>
           ) : null}
 
-          {result ? null : (
+          {compare ? (
+            <SolutionCompare
+              mine={files}
+              solution={compare.solution}
+              explanation={compare.explanation}
+              targetFile={compare.targetFile}
+              onApply={applyCompareSolution}
+              onClose={() => setCompare(null)}
+            />
+          ) : null}
+
+          {result || compare ? null : (
             <>
               <HintLadder
                 key={task.id}
@@ -462,11 +528,13 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
               onConsole={(e) => setLogs((l) => [...l.slice(-40), e])}
             />
           </div>
-          {logs.length ? (
+          {consoleLines.length ? (
             <div className={s.consoleStrip}>
-              {logs.map((l, i) => (
+              {errorCount ? <div className={s.consoleErrHead}>⚠ {errorCount} алдаа — доор дэлгэрэнгүй</div> : null}
+              {consoleLines.map((l, i) => (
                 <div key={i} className={l.level === "error" ? s.consoleErr : undefined}>
-                  {l.args.join(" ")}
+                  {l.text}
+                  {l.count > 1 ? ` ×${l.count}` : ""}
                 </div>
               ))}
             </div>
