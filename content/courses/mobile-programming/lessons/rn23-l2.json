@@ -1,0 +1,229 @@
+{
+  "id": "rn23-l2",
+  "moduleId": "rn23-practice",
+  "slug": "quantity-stepper",
+  "order": 2,
+  "title": {
+    "mn": "Тоо ширхэг сонгогч (+/−)"
+  },
+  "why": {
+    "mn": "Дэлгүүрт бараагаа хэдэн ширхэг авахаа + ба − товчоор сонгодог. Энэ бол `useState` ба `Pressable`-ийг хослуулсан бодит апп-ийн жижиг хэсэг. Shop.mn-ийн барааны хуудсанд хэрэгтэй."
+  },
+  "buildsInProject": "Shop.mn барааны тоо ширхэг сонгогч",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 14,
+  "skills": [
+    "react-native",
+    "mobile-state"
+  ],
+  "concepts": [
+    "useState",
+    "Pressable",
+    "onPress"
+  ],
+  "prerequisites": [
+    "rn3-l1"
+  ],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  // энд бичнэ үү: useState-ээр тоо ширхэг, товчнуудад onPress\n  const qty = 1;\n  return (\n    <View style={styles.s}>\n      <Text style={styles.name}>Гутал</Text>\n      <View style={styles.row}>\n        <Pressable nativeID=\"dec\" style={styles.btn}>\n          <Text style={styles.bt}>−</Text>\n        </Pressable>\n        <Text nativeID=\"qty\" style={styles.qty}>{qty}</Text>\n        <Pressable nativeID=\"inc\" style={styles.btn}>\n          <Text style={styles.bt}>+</Text>\n        </Pressable>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 24, gap: 20, justifyContent: \"center\", alignItems: \"center\" },\n  name: { fontSize: 20, fontWeight: \"600\" },\n  row: { flexDirection: \"row\", alignItems: \"center\", gap: 20 },\n  btn: { backgroundColor: \"#e5e7eb\", width: 44, height: 44, borderRadius: 22, alignItems: \"center\", justifyContent: \"center\" },\n  bt: { fontSize: 22, fontWeight: \"bold\" },\n  qty: { fontSize: 24, fontWeight: \"bold\", minWidth: 40, textAlign: \"center\" },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": [
+      "src/App.jsx"
+    ],
+    "openFiles": [
+      "src/App.jsx"
+    ],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn23-l2-t1",
+      "order": 1,
+      "title": {
+        "mn": "Тоо ширхэг сонгогч (+/−)"
+      },
+      "statement": {
+        "mn": "`useState`-ээр тоо ширхэгийг (`qty`) удирд. `+` товч (`#inc`) дархад нэгээр нэмэгдэж, `−` товч (`#dec`) дархад нэгээр хасагдана (доод хязгаар нь 1). Функцэн шинэчлэл `setQty(q => q + 1)` ашигла."
+      },
+      "requirements": [
+        {
+          "mn": "`useState` ашигласан"
+        },
+        {
+          "mn": "`+` дархад тоо нэмэгдэнэ"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "`+` дархад тоо 1 → 2 болж өснө, `−` дархад буурна (1-ээс доош биш)."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useState"
+          },
+          "onFail": {
+            "mn": "`useState`-г ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "click": "#inc"
+              },
+              {
+                "expectText": {
+                  "selector": "#qty",
+                  "contains": "2"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "`+` товч дархад тоо нэмэгдэхгүй байна. `onPress`-д `setQty(q => q + 1)` хийсэн эсэхээ шалга."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ (хаалт, tag) шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "`const [qty, setQty] = useState(1)` гэж тоог төлөвт хадгална. Товч дархад `setQty`-г дуудаж шинэ утга өгнө."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Хуучин утган дээр тулгуурлахдаа `setQty(q => q + 1)` гэж ФУНКЦ өгвөл найдвартай. Хасахдаа доод хязгаараа хамгаал: `setQty(q => Math.max(1, q - 1))`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Товчнуудын onPress:"
+          },
+          "code": "const [qty, setQty] = useState(1);\n// ...\n<Pressable nativeID=\"dec\" onPress={() => setQty((q) => Math.max(1, q - 1))}>...\n<Pressable nativeID=\"inc\" onPress={() => setQty((q) => q + 1)}>..."
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, Pressable, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nfunction App() {\n  const [qty, setQty] = useState(1);\n  return (\n    <View style={styles.s}>\n      <Text style={styles.name}>Гутал</Text>\n      <View style={styles.row}>\n        <Pressable nativeID=\"dec\" style={styles.btn} onPress={() => setQty((q) => Math.max(1, q - 1))}>\n          <Text style={styles.bt}>−</Text>\n        </Pressable>\n        <Text nativeID=\"qty\" style={styles.qty}>{qty}</Text>\n        <Pressable nativeID=\"inc\" style={styles.btn} onPress={() => setQty((q) => q + 1)}>\n          <Text style={styles.bt}>+</Text>\n        </Pressable>\n      </View>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 24, gap: 20, justifyContent: \"center\", alignItems: \"center\" },\n  name: { fontSize: 20, fontWeight: \"600\" },\n  row: { flexDirection: \"row\", alignItems: \"center\", gap: 20 },\n  btn: { backgroundColor: \"#e5e7eb\", width: 44, height: 44, borderRadius: 22, alignItems: \"center\", justifyContent: \"center\" },\n  bt: { fontSize: 22, fontWeight: \"bold\" },\n  qty: { fontSize: 24, fontWeight: \"bold\", minWidth: 40, textAlign: \"center\" },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "`useState`-ийн `setQty(q => q + 1)` функцэн хэлбэр нь ХУУЧИН утгыг найдвартай авдаг тул хурдан дараалсан дарлатад ч зөв ажиллана. `Math.max(1, q - 1)` нь тоог 1-ээс доош буулгахгүй."
+        },
+        "xpPenalty": 10
+      },
+      "xp": 18,
+      "estimatedMinutes": 12,
+      "skills": [
+        "react-native",
+        "mobile-state"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Хуучин төлөв дээр тулгуурлаж шинэчлэхэд аль нь найдвартай вэ?"
+      },
+      "options": [
+        {
+          "mn": "`setQty(qty + 1)`"
+        },
+        {
+          "mn": "`setQty(q => q + 1)` — функцэн хэлбэр"
+        },
+        {
+          "mn": "`qty = qty + 1`"
+        },
+        {
+          "mn": "`qty++`"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Функцэн хэлбэр `setQty(q => q + 1)` нь хамгийн сүүлийн утгыг авдаг тул хурдан дараалсан шинэчлэлд ч алдахгүй."
+      },
+      "hint": {
+        "mn": "Хурдан 2 удаа дарвал аль нь хоёуланг зөв тоолох вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Тоог 1-ээс доош буулгахгүй байхын тулд юу хийх вэ?"
+      },
+      "options": [
+        {
+          "mn": "`Math.max(1, q - 1)`"
+        },
+        {
+          "mn": "`q - 1` шууд"
+        },
+        {
+          "mn": "`Math.min(1, q - 1)`"
+        },
+        {
+          "mn": "`q + 1`"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "`Math.max(1, q - 1)` нь 1 ба `q-1`-ийн ИХийг сонгоно — тэгэхээр хэзээ ч 1-ээс доош болохгүй."
+      },
+      "hint": {
+        "mn": "1 ба (q−1)-ийн аль ИХийг нь авбал доод хязгаар хамгаалагдах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": [
+    "delgermaa"
+  ]
+}

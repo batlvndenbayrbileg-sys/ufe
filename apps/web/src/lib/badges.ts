@@ -31,6 +31,7 @@ export const BADGE_LABEL: Record<string, string> = {
   "rn-hooks": "🪝 Hooks мастер",
   "rn-polish": "✨ Анимаци урлаач",
   "rn-pro": "👑 React Native про",
+  "rn-practice": "🎯 Дадлага мастер",
 };
 
 /** Human label for a badge id, falling back to the id itself if unknown. */
