@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion, type Variants } from "framer-motion";
-import { Flame, Zap, Medal, Trophy, Palette, ArrowRight, Award } from "lucide-react";
+import { Flame, Zap, Medal, Trophy, Palette, ArrowRight } from "lucide-react";
 import { Alert, AppShell, Badge, Button, Card, ProgressBar, ProgressRing, Spinner, ThemeToggle } from "@khiye/ui";
 
 // A gentle staggered rise as the dashboard mounts.
@@ -15,7 +15,7 @@ import { level, loadProgress, lessonProgress, type Progress } from "@/lib/progre
 import { getResumePoint } from "@/lib/resume";
 import { flattenLessons, type MapLesson } from "./course-types";
 import { useCourseMap } from "./useCourseMap";
-import { OtherCourses } from "./OtherCourses";
+import { CoursesSection } from "./CoursesSection";
 import { BrandLockup } from "../BrandMark";
 import { AccountControl } from "../AccountControl";
 import { useIsAdmin } from "@/lib/admin";
@@ -167,32 +167,9 @@ export function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Course progress. */}
+        {/* Courses — both tracks as equal cards. */}
         <motion.div variants={rise}>
-          <Card>
-            <div className={s.panelHead}>
-              <strong style={{ fontSize: "var(--text-md)" }}>{map.title.mn}</strong>
-              <span className={s.panelRight}>
-                {doneLessons.length}/{lessons.length} хичээл · {percent}%
-              </span>
-            </div>
-            <ProgressBar value={percent} />
-            <div className={s.courseLinks}>
-              <a href={`/app/course/${map.id}`} className={s.courseLink}>
-                Бүх хичээл харах →
-              </a>
-              {done ? (
-                <a href={`/app/certificate/${map.id}`} className={s.certLink}>
-                  <Award size={15} strokeWidth={2.2} /> Гэрчилгээ авах
-                </a>
-              ) : null}
-            </div>
-          </Card>
-        </motion.div>
-
-        {/* Other tracks (e.g. the React Native course). */}
-        <motion.div variants={rise}>
-          <OtherCourses excludeId={map.id} />
+          <CoursesSection />
         </motion.div>
 
         <motion.div className={s.body} variants={rise}>

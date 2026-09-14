@@ -333,57 +333,120 @@
   }
 }
 
-/* Other-courses picker (React Native track, etc.). */
-.otherCourses {
+/* ── courses (both tracks as equal cards) ────────────────────────────────── */
+.courseGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  align-items: stretch;
+}
+.courseCard {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
-.otherCourse {
+.courseCard:hover {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.courseCardHead {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md, 12px);
-  background: var(--surface, #fff);
-  text-decoration: none;
-  color: inherit;
-  transition: border-color var(--dur-fast, 0.15s) ease, transform var(--dur-fast, 0.15s) ease;
+  gap: var(--space-3);
 }
-.otherCourse:hover {
-  border-color: var(--accent, #2563eb);
-  transform: translateY(-1px);
-}
-.otherCourseIcon {
+.courseCardIcon {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   flex: none;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--accent, #2563eb) 14%, transparent);
-  color: var(--accent, #2563eb);
+  border-radius: var(--radius);
+  background: var(--accent-subtle);
+  color: var(--accent-text);
 }
-.otherCourseBody {
+.accentWeb {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  color: var(--accent-text);
+}
+.accentMobile {
+  background: color-mix(in srgb, #8b5cf6 16%, var(--surface));
+  color: #8b5cf6;
+}
+.courseCardTitleWrap {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  flex: 1;
+  gap: 2px;
   min-width: 0;
 }
-.otherCourseTitle {
+.courseCardTitle {
+  font-size: var(--text-md);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.courseCardMeta {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.courseCardBar {
+  margin-top: auto;
+}
+.courseCardActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.courseCardPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--on-accent);
+  text-decoration: none;
   font-weight: 600;
-  font-size: var(--text-md, 15px);
+  font-size: var(--text-sm);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
-.otherCourseMeta {
-  font-size: var(--text-sm, 13px);
-  color: var(--text-muted, #71717a);
+.courseCardPrimary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
 }
-.otherCourseBar {
-  margin-top: 4px;
+.courseCardCert {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent-subtle);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  text-decoration: none;
 }
-.otherCourseArrow {
-  flex: none;
-  color: var(--text-muted, #71717a);
+.courseCardCert:hover {
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+}
+
+@media (max-width: 720px) {
+  .courseGrid {
+    grid-template-columns: 1fr;
+  }
 }
