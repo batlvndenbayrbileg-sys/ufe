@@ -136,7 +136,11 @@ ${transpileJsx(js.content, src)}
     storageSeed +
     `<script>\n${opts.harnessJs}\n</script>` +
     (needsReact && opts.reactRuntime ? `\n<script>\n${opts.reactRuntime}\n</script>` : "") +
-    (needsReactNative && opts.reactNativeRuntime ? `\n<script>\n${opts.reactNativeRuntime}\n</script>` : "");
+    // The RN shim needs window.React/ReactDOM to exist first — never inject it
+    // without React, or it throws "window.React missing" on a partial load.
+    (needsReactNative && opts.reactNativeRuntime && opts.reactRuntime
+      ? `\n<script>\n${opts.reactNativeRuntime}\n</script>`
+      : "");
 
   // Inject head content right after <head>, or synthesize a <head>.
   if (/<head[\s>]/i.test(html)) {

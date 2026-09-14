@@ -118,74 +118,72 @@ export const PreviewHost = forwardRef<PreviewHostHandle, PreviewHostProps>(funct
     prevFiles.current = snapshot;
   }, [entry, connectSrc, cdnBase]);
 
-  // Pull the SQLite runtime in before the first render of a SQL lesson, so the
-  // page never flashes a "initSqlJs is not defined" error on its way up.
-  useEffect(() => {
-    if (!sqliteUrl || sqlite.current) return;
-    let alive = true;
-    fetchRuntime(sqliteUrl)
-      .then((src) => {
-        if (!alive) return;
-        sqlite.current = src;
-        reload();
-      })
-      .catch(() => {
-        /* the page will surface the missing runtime itself */
-      });
-    return () => {
-      alive = false;
-    };
-  }, [sqliteUrl, reload]);
-
-  // Same for React, but only when the workspace actually contains JSX — which
-  // is what keeps 180 KB off every HTML, CSS and SQL lesson.
+  // Which heavy runtimes this workspace needs. Fetched on demand so plain
+  // HTML/CSS/SQL lessons never pay for React (~180 KB) or the RN shim.
   const hasJsx = Object.keys(files).some((p) => /\.(jsx|tsx)$/.test(p));
-  useEffect(() => {
-    if (!reactRuntimeUrl || !hasJsx || reactRuntime.current) return;
-    let alive = true;
-    fetchRuntime(reactRuntimeUrl)
-      .then((src) => {
-        if (!alive) return;
-        reactRuntime.current = src;
-        reload();
-      })
-      .catch(() => {
-        /* the page will surface the missing runtime itself */
-      });
-    return () => {
-      alive = false;
-    };
-  }, [reactRuntimeUrl, hasJsx, reload]);
-
-  // And the React Native shim, only when a file actually imports "react-native"
-  // (or the Expo/AsyncStorage family). Keeps it off every plain React lesson.
   const hasRN = Object.values(files).some((f) =>
     /from\s+["'](react-native|expo|expo-status-bar|@react-native-async-storage\/async-storage)["']/.test(f.content),
   );
+
+  // True once every runtime this workspace needs has SETTLED (fetched or
+  // failed — a failed fetch stores "" so we still proceed and let the page
+  // surface the error). Rendering waits for this so a page never boots with the
+  // RN shim but no React — the small shim used to arrive first and log
+  // "window.React missing" before the 180 KB React bundle finished.
+  const runtimesReady = useCallback(() => {
+    if (sqliteUrl && sqlite.current === undefined) return false;
+    if (hasJsx && reactRuntimeUrl && reactRuntime.current === undefined) return false;
+    if (hasRN && reactNativeRuntimeUrl && reactNativeRuntime.current === undefined) return false;
+    return true;
+  }, [sqliteUrl, hasJsx, reactRuntimeUrl, hasRN, reactNativeRuntimeUrl]);
+
+  const reloadWhenReady = useCallback(() => {
+    if (runtimesReady()) reload();
+  }, [runtimesReady, reload]);
+
+  // Fetch each needed runtime once; the reload fires only when they've all
+  // settled, so React is always present before the RN shim runs.
   useEffect(() => {
-    if (!reactNativeRuntimeUrl || !hasRN || reactNativeRuntime.current) return;
+    if (!sqliteUrl || sqlite.current !== undefined) return;
     let alive = true;
-    fetchRuntime(reactNativeRuntimeUrl)
-      .then((src) => {
-        if (!alive) return;
-        reactNativeRuntime.current = src;
-        reload();
-      })
-      .catch(() => {
-        /* the page will surface the missing runtime itself */
-      });
+    fetchRuntime(sqliteUrl)
+      .then((src) => alive && ((sqlite.current = src), reloadWhenReady()))
+      .catch(() => alive && ((sqlite.current = ""), reloadWhenReady()));
     return () => {
       alive = false;
     };
-  }, [reactNativeRuntimeUrl, hasRN, reload]);
+  }, [sqliteUrl, reloadWhenReady]);
 
-  // Initial render (mount only).
+  useEffect(() => {
+    if (!reactRuntimeUrl || !hasJsx || reactRuntime.current !== undefined) return;
+    let alive = true;
+    fetchRuntime(reactRuntimeUrl)
+      .then((src) => alive && ((reactRuntime.current = src), reloadWhenReady()))
+      .catch(() => alive && ((reactRuntime.current = ""), reloadWhenReady()));
+    return () => {
+      alive = false;
+    };
+  }, [reactRuntimeUrl, hasJsx, reloadWhenReady]);
+
+  useEffect(() => {
+    if (!reactNativeRuntimeUrl || !hasRN || reactNativeRuntime.current !== undefined) return;
+    let alive = true;
+    fetchRuntime(reactNativeRuntimeUrl)
+      .then((src) => alive && ((reactNativeRuntime.current = src), reloadWhenReady()))
+      .catch(() => alive && ((reactNativeRuntime.current = ""), reloadWhenReady()));
+    return () => {
+      alive = false;
+    };
+  }, [reactNativeRuntimeUrl, hasRN, reloadWhenReady]);
+
+  // Initial render — but only once the runtimes it needs are in hand. If they
+  // aren't yet, the fetch effects above fire the first reload when they settle.
   const didMount = useRef(false);
   useEffect(() => {
-    if (didMount.current) return;
+    if (didMount.current || !runtimesReady()) return;
     didMount.current = true;
     reload();
-  }, [reload]);
+  }, [runtimesReady, reload]);
 
   // React to file changes: CSS-only → hot-swap; otherwise reload.
   //
