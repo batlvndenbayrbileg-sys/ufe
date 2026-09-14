@@ -4,8 +4,10 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { ThemeProvider, ThemeScript } from "@khiye/ui";
 import "@khiye/ui/styles/tokens.css";
+import "./content-guard.css";
 import { inter, jetbrainsMono } from "./fonts";
 import { Providers } from "./Providers";
+import { ContentGuard } from "./ContentGuard";
 
 export const metadata: Metadata = {
   title: "UFE ISMD",
@@ -28,6 +30,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     >
       <body>
         <ThemeScript />
+        <ContentGuard />
         <ThemeProvider defaultTheme="system">
           <Providers>
             <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
