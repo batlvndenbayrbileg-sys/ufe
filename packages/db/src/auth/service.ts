@@ -77,6 +77,36 @@ export async function registerUser(
   });
 }
 
+/**
+ * Set a new password for the account with this email. Returns true if an active
+ * account was updated, false if no such account exists.
+ *
+ * NOTE: there is no e-mail-link verification step (no mail provider is wired),
+ * so this trusts the requester. That is acceptable for a small, trusted cohort;
+ * when a mail provider is added, gate this behind a one-time token sent to the
+ * address instead.
+ */
+export async function resetPassword(
+  email: string,
+  newPassword: string,
+  client: PrismaClient = defaultPrisma,
+): Promise<boolean> {
+  const normalized = email.trim().toLowerCase();
+  if (!isPasswordAcceptable(newPassword)) {
+    throw errors.validation({ password: "too_short" }, "Нууц үг дор хаяж 8 тэмдэгт байх ёстой.");
+  }
+  const user = await client.user.findUnique({
+    where: { email: normalized },
+    select: { id: true, status: true },
+  });
+  if (!user || user.status !== "ACTIVE") return false;
+  await client.user.update({
+    where: { id: user.id },
+    data: { passwordHash: await hashPassword(newPassword) },
+  });
+  return true;
+}
+
 /** Verify email+password. Returns the user on success, null otherwise. */
 export async function authenticateUser(
   email: string,

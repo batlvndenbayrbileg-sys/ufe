@@ -400,3 +400,27 @@ export function getLessonSkillIndex(): Map<string, string[]> {
   for (const [id, lesson] of lessons) out.set(id, lesson.skills);
   return out;
 }
+
+export interface ModuleInfo {
+  moduleId: string;
+  title: { mn: string; en?: string };
+  courseSlug: string;
+  lessonIds: string[];
+  taskTotal: number;
+}
+
+/** A module's lessons and total task count — for the leaderboard resolver. */
+export function getModuleInfo(moduleId: string): ModuleInfo | null {
+  const { lessons, modules } = ensureLoaded();
+  const mod = modules.get(moduleId);
+  if (!mod) return null;
+  const lessonIds: string[] = [];
+  let taskTotal = 0;
+  for (const [id, lesson] of lessons) {
+    if (lesson.moduleId === moduleId) {
+      lessonIds.push(id);
+      taskTotal += lesson.tasks.length;
+    }
+  }
+  return { moduleId, title: mod.title, courseSlug: mod.courseSlug, lessonIds, taskTotal };
+}

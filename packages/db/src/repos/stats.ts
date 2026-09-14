@@ -222,3 +222,50 @@ export async function listStudents(
     })
     .sort((a, b) => b.totalXp - a.totalXp);
 }
+
+/** One ranked learner on a module leaderboard. */
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  name: string;
+  username: string;
+  tasksPassed: number;
+}
+
+/**
+ * Rank learners by how many tasks they have passed across a module's lessons.
+ * Pass the module's lesson ids (resolved from content). Ties keep DB order;
+ * only learners with at least one passed task appear.
+ */
+export async function moduleLeaderboard(
+  lessonIds: string[],
+  limit = 20,
+  client: PrismaClient = defaultPrisma,
+): Promise<LeaderboardEntry[]> {
+  if (lessonIds.length === 0) return [];
+  const rows = await client.lessonProgress.groupBy({
+    by: ["userId"],
+    where: { lessonId: { in: lessonIds } },
+    _sum: { tasksPassed: true },
+  });
+  const ranked = rows
+    .map((r) => ({ userId: r.userId, tasksPassed: r._sum.tasksPassed ?? 0 }))
+    .filter((r) => r.tasksPassed > 0)
+    .sort((a, b) => b.tasksPassed - a.tasksPassed)
+    .slice(0, Math.min(Math.max(limit, 1), 100));
+  if (ranked.length === 0) return [];
+
+  const users = await client.user.findMany({
+    where: { id: { in: ranked.map((r) => r.userId) } },
+    select: { id: true, name: true, username: true },
+  });
+  const byId = new Map(users.map((u) => [u.id, u]));
+
+  return ranked.map((r, i) => ({
+    rank: i + 1,
+    userId: r.userId,
+    name: byId.get(r.userId)?.name ?? "—",
+    username: byId.get(r.userId)?.username ?? "",
+    tasksPassed: r.tasksPassed,
+  }));
+}

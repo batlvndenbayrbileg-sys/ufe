@@ -89,7 +89,7 @@ export function CertificateView({ courseId }: { courseId: string }) {
         <div className={s.frame}>
           <div className={s.frameInner}>
             <p className={s.certBrand}>
-              <BrandMark size={22} /> Botxon
+              <BrandMark size={22} /> ISMD
             </p>
 
             <h1 className={s.certTitle}>ГЭРЧИЛГЭЭ</h1>

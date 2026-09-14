@@ -3,27 +3,84 @@
   display: grid;
   place-items: center;
   padding: var(--space-6);
-  background: var(--bg);
+  background:
+    radial-gradient(80% 60% at 15% 0%, color-mix(in srgb, var(--accent) 12%, var(--bg)) 0%, var(--bg) 60%),
+    var(--bg);
 }
-.card {
+
+/* The card: a single form panel, or a two-column split when an aside is given. */
+.split {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  padding: var(--space-8);
-  box-shadow: var(--shadow-md);
-  animation: authCardIn 0.4s var(--ease-out, ease-out) both;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: authCardIn 0.45s var(--ease-out, ease-out) both;
+}
+.hasAside {
+  max-width: 880px;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
 }
 @keyframes authCardIn {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translateY(14px) scale(0.985);
   }
   to {
     opacity: 1;
     transform: none;
   }
+}
+
+/* Marketing / decorative column. */
+.aside {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-8);
+  color: #fff;
+  background:
+    radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, #fff 22%, var(--accent)) 0%, var(--accent) 55%, var(--accent-active, var(--accent)) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+/* Soft decorative orbs. */
+.aside::before,
+.aside::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  filter: blur(2px);
+  pointer-events: none;
+}
+.aside::before {
+  width: 220px;
+  height: 220px;
+  right: -70px;
+  bottom: -80px;
+}
+.aside::after {
+  width: 120px;
+  height: 120px;
+  left: -40px;
+  top: 30%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Form column. */
+.panel {
+  padding: var(--space-8);
+  display: grid;
+  place-items: center;
+}
+.inner {
+  width: 100%;
+  max-width: 340px;
 }
 .brand {
   margin-bottom: var(--space-5);
@@ -52,4 +109,14 @@
   color: var(--text-muted);
   font-size: var(--text-sm);
   text-align: center;
+}
+
+@media (max-width: 760px) {
+  .hasAside {
+    grid-template-columns: 1fr;
+  }
+  /* On phones the marketing column would push the form below the fold. */
+  .aside {
+    display: none;
+  }
 }

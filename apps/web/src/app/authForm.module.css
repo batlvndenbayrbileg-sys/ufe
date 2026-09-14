@@ -69,3 +69,73 @@
 .demoRow .hint {
   text-align: center;
 }
+
+/* Forgot-password link, right-aligned under the password field. */
+.forgotRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: calc(-1 * var(--space-2));
+}
+.forgotLink {
+  font-size: var(--text-sm);
+  color: var(--accent-text);
+  text-decoration: none;
+  font-weight: 500;
+}
+.forgotLink:hover {
+  text-decoration: underline;
+}
+.success {
+  font-size: var(--text-sm);
+  color: var(--success);
+  background: var(--success-subtle);
+  border: 1px solid color-mix(in srgb, var(--success) 24%, transparent);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+}
+
+/* ── marketing aside (inside AuthShell's gradient column) ─────────────────── */
+.asideBrand {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.asideHeadline {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-wrap: balance;
+}
+.asideSub {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-md);
+  line-height: var(--leading-prose);
+  color: rgba(255, 255, 255, 0.86);
+  max-width: 30ch;
+}
+.asideFeatures {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.asideFeatures li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+.asideFeatureIcon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.18);
+}

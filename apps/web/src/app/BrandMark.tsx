@@ -1,27 +1,27 @@
 /**
- * The Botxon logomark — the robot mascot artwork at public/brand/head.png
- * (500×500, transparent). Decorative; the adjacent "Botxon" wordmark carries
- * the name.
+ * UFE ISMD brand. The logo artwork is public/img/showcase/ufe-header.png
+ * (the striped mark + "UFE" wordmark). BrandLockup pairs it with "ISMD" so the
+ * full product name "UFE ISMD" reads as one wordmark; BrandMark is the logo
+ * image alone for tight spots.
  */
 export function BrandMark({ size = 26 }: { size?: number }) {
   return (
     <img
-      src="/brand/head.png"
-      alt=""
-      width={size}
+      src="/img/showcase/ufe-header.png"
+      alt="UFE"
       height={size}
       aria-hidden
-      style={{ display: "block", flex: "none", objectFit: "contain" }}
+      style={{ display: "block", flex: "none", width: "auto", objectFit: "contain" }}
     />
   );
 }
 
-/** Mark + wordmark, the standard header lockup. */
-export function BrandLockup({ size = 26 }: { size?: number }) {
+/** Logo + "ISMD" → the standard "UFE ISMD" header lockup. */
+export function BrandLockup({ size = 24 }: { size?: number }) {
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
       <BrandMark size={size} />
-      <strong style={{ fontSize: 18, letterSpacing: "-0.01em" }}>Botxon</strong>
+      <strong style={{ fontSize: 18, letterSpacing: "-0.01em" }}>ISMD</strong>
     </span>
   );
 }

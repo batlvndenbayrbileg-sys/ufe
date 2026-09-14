@@ -7,6 +7,7 @@ export { hashPassword, verifyPassword, isPasswordAcceptable } from "./auth/passw
 export {
   registerUser,
   authenticateUser,
+  resetPassword,
   slugifyUsername,
   type RegisterInput,
 } from "./auth/service";
@@ -22,9 +23,11 @@ export {
 export {
   getUserStats,
   listStudents,
+  moduleLeaderboard,
   type UserStats,
   type TaskStatRow,
   type StudentRow,
+  type LeaderboardEntry,
 } from "./repos/stats";
 
 export { ensureBootstrapAdmin } from "./repos/admin";

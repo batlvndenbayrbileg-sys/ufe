@@ -46,6 +46,11 @@ export function LoginForm() {
           required
         />
       </label>
+      <div className={s.forgotRow}>
+        <a href="/forgot" className={s.forgotLink}>
+          Нууц үгээ мартсан уу?
+        </a>
+      </div>
       <Button type="submit" className={s.submit} loading={busy} disabled={busy}>
         Нэвтрэх
       </Button>

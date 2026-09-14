@@ -90,6 +90,9 @@ export function Dashboard() {
             <span className={`${s.headerChip} ${s.chipXp}`} title="Оноо">
               <Zap size={15} strokeWidth={2.4} /> {progress.xp.toLocaleString()}
             </span>
+            <a href="/app/leaderboard" className={s.staffLink}>
+              Тэргүүлэгчид
+            </a>
             <a href="/app/stats" className={s.staffLink}>
               Статистик
             </a>

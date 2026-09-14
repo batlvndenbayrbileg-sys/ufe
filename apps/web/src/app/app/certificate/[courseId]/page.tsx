@@ -1,6 +1,6 @@
 import { CertificateView } from "./CertificateView";
 
-export const metadata = { title: "Гэрчилгээ · Botxon" };
+export const metadata = { title: "Гэрчилгээ · UFE ISMD" };
 
 export default async function CertificatePage({ params }: { params: Promise<{ courseId: string }> }) {
   const { courseId } = await params;

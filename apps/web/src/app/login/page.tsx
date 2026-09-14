@@ -1,19 +1,17 @@
 import { Suspense } from "react";
 import { AuthShell } from "@khiye/ui";
-import { BrandMark } from "../BrandMark";
+import { BrandLockup } from "../BrandMark";
+import { AuthAside } from "../AuthAside";
 import { LoginForm } from "./LoginForm";
 import s from "../authForm.module.css";
 
-export const metadata = { title: "Нэвтрэх · Botxon" };
+export const metadata = { title: "Нэвтрэх · UFE ISMD" };
 
 export default function LoginPage() {
   return (
     <AuthShell
-      brand={
-        <span className={s.brandLockup}>
-          <BrandMark size={24} /> Botxon
-        </span>
-      }
+      aside={<AuthAside />}
+      brand={<BrandLockup size={26} />}
       title="Тавтай морил"
       subtitle="Үргэлжлүүлэхийн тулд нэвтэрнэ үү."
       footer={
