@@ -34,16 +34,27 @@ export function SolutionGate({
     }
   };
 
+  // Mirror of the server gate (api/tasks/[taskId]/solution) — for a clear,
+  // proactive "here's what unlocks it" hint before the student even clicks.
+  const REQ = { attempts: 2, minutes: 1 };
+  const ready = attempts >= REQ.attempts && minutes >= REQ.minutes;
+
   return (
     <div className={s.hintStack}>
       <button type="button" className={s.ghostBtn} onClick={request} disabled={busy}>
         Зөв хариуг харах ба харьцуулах
       </button>
-      <span className={s.gateNote}>Хариу харвал энэ даалгаврын XP багасна.</span>
+      {ready ? (
+        <span className={s.gateNote}>Хариу харвал энэ даалгаврын XP багасна.</span>
+      ) : (
+        <span className={s.gateNote}>
+          Түгжээтэй — оролдлого {Math.min(attempts, REQ.attempts)}/{REQ.attempts} ·{" "}
+          {Math.min(minutes, REQ.minutes)}/{REQ.minutes} мин болмогц нээгдэнэ.
+        </span>
+      )}
       {locked ? (
         <span className={s.gateNote}>
-          Хариултыг харахын тулд: {locked.attemptsRequired}+ удаа оролдох (одоо {attempts}), бүх заавар үзэх ({hintsUsed}/
-          {locked.hintsRequired}), {locked.minMinutes}+ минут ажиллах.
+          Хараахан болоогүй: {locked.attemptsRequired}+ удаа оролдох (одоо {attempts}), {locked.minMinutes}+ минут ажиллах.
         </span>
       ) : null}
     </div>

@@ -487,7 +487,7 @@ export function LearnWorkspace({ lesson, next }: { lesson: LessonPublic; next?: 
                 hints={task.hints}
                 onHintViewed={(lvl) => setHintsUsed((h) => h.map((n, i) => (i === taskIndex ? Math.max(n, lvl) : n)))}
               />
-              {attempts[taskIndex]! >= 2 ? (
+              {attempts[taskIndex]! >= 1 ? (
                 <SolutionGate
                   taskId={task.id}
                   attempts={attempts[taskIndex]!}

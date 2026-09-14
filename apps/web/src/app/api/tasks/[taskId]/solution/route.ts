@@ -5,9 +5,10 @@ import { ok, route } from "@/lib/api";
 
 export const runtime = "nodejs";
 
+// Reachable after a genuine try, without forcing every hint / a long wait.
 const MIN_ATTEMPTS = 2;
-const MIN_HINTS = 3;
-const MIN_MINUTES = 5;
+const MIN_HINTS = 0;
+const MIN_MINUTES = 1;
 
 export function POST(req: NextRequest, { params }: { params: Promise<{ taskId: string }> }) {
   return route(async () => {
