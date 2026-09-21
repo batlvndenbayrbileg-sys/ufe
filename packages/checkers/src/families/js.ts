@@ -142,12 +142,18 @@ registerChecker("js.interaction", async (args, outerCtx) => {
       const el = doc(ctx).querySelector(step.click);
       if (!el) return fail(`step ${i + 1}: no element ${step.click}`, "clickable element");
       el.dispatchEvent(new w.MouseEvent("click", { bubbles: true, cancelable: true }));
+      // Let React commit the state update + re-render BEFORE the next step, the
+      // way real clicks (separated by event-loop ticks) do. Otherwise two rapid
+      // clicks share one stale render and correct code like `setCount(c + 1)`
+      // appears to fire only once — a false failure on right answers.
+      for (let t = 0; t < 3; t++) await new Promise((r) => setTimeout(r, 0));
     } else if (step.type !== undefined) {
       const el = doc(ctx).querySelector<HTMLInputElement>(step.type.selector);
       if (!el) return fail(`step ${i + 1}: no input ${step.type.selector}`, "an input");
       setValue(w, el, step.type.text);
       el.dispatchEvent(new w.Event("input", { bubbles: true }));
       el.dispatchEvent(new w.Event("change", { bubbles: true }));
+      for (let t = 0; t < 3; t++) await new Promise((r) => setTimeout(r, 0));
     } else if (step.waitFor !== undefined) {
       const el = await waitFor(ctx, step.waitFor);
       if (!el) return fail(`step ${i + 1}: ${step.waitFor} never appeared`, "element to appear");
