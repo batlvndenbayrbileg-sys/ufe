@@ -37,12 +37,29 @@ export interface PreviewHostHandle {
  * in-flight request per URL per document, shared across mounts.
  */
 const runtimeCache = new Map<string, Promise<string>>();
+async function fetchOnce(url: string): Promise<string> {
+  // One transient retry: a flaky network (common on laptops/Wi-Fi) shouldn't
+  // leave the preview permanently blank.
+  for (let i = 0; i < 2; i++) {
+    try {
+      const r = await fetch(url, { cache: "force-cache" });
+      if (!r.ok) throw new Error(`runtime ${url}: ${r.status}`);
+      return await r.text();
+    } catch (e) {
+      if (i === 1) throw e;
+    }
+  }
+  throw new Error(`runtime ${url}: unreachable`);
+}
 function fetchRuntime(url: string): Promise<string> {
   let pending = runtimeCache.get(url);
   if (!pending) {
-    pending = fetch(url).then((r) => {
-      if (!r.ok) throw new Error(`runtime ${url}: ${r.status}`);
-      return r.text();
+    pending = fetchOnce(url);
+    // A failed fetch must NOT poison the cache for the whole session — otherwise
+    // every later mount reuses the rejected promise and the preview never
+    // recovers without a full page reload. Drop it so the next attempt retries.
+    pending.catch(() => {
+      if (runtimeCache.get(url) === pending) runtimeCache.delete(url);
     });
     runtimeCache.set(url, pending);
   }

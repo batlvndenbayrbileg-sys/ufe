@@ -14,7 +14,6 @@ import { useEffect, useRef, useState } from "react";
  */
 export function ContentGuard() {
   const [msg, setMsg] = useState<string | null>(null);
-  const [shielded, setShielded] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -58,18 +57,12 @@ export function ContentGuard() {
       if (k === "v") toast("Хуулж тавих боломжгүй — өөрөө бичээрэй.");
     };
 
-    // Screenshot deterrent: blank the page while the tab is hidden (switched
-    // away / minimised). Uses visibility only — window blur would fire when the
-    // lesson's preview iframe takes focus and wrongly blank the workspace.
-    const onVis = () => setShielded(document.visibilityState === "hidden");
-
     document.addEventListener("copy", onCopyCut);
     document.addEventListener("cut", onCopyCut);
     document.addEventListener("paste", onPaste, true);
     document.addEventListener("contextmenu", onContext);
     document.addEventListener("dragstart", onDragStart);
     document.addEventListener("keydown", onKey, true);
-    document.addEventListener("visibilitychange", onVis);
 
     return () => {
       document.removeEventListener("copy", onCopyCut);
@@ -78,23 +71,13 @@ export function ContentGuard() {
       document.removeEventListener("contextmenu", onContext);
       document.removeEventListener("dragstart", onDragStart);
       document.removeEventListener("keydown", onKey, true);
-      document.removeEventListener("visibilitychange", onVis);
       if (timer.current) clearTimeout(timer.current);
     };
   }, []);
 
-  return (
-    <>
-      {shielded ? (
-        <div className="cg-shield" aria-hidden>
-          UFE ISMD — агуулга хамгаалагдсан
-        </div>
-      ) : null}
-      {msg ? (
-        <div className="cg-toast" role="status" aria-live="polite">
-          {msg}
-        </div>
-      ) : null}
-    </>
-  );
+  return msg ? (
+    <div className="cg-toast" role="status" aria-live="polite">
+      {msg}
+    </div>
+  ) : null;
 }
