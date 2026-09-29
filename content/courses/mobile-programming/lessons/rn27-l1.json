@@ -1,0 +1,245 @@
+{
+  "id": "rn27-l1",
+  "moduleId": "rn27-connect",
+  "slug": "app-fetch-api",
+  "order": 1,
+  "title": {
+    "mn": "Аппаас API-аа дуудах"
+  },
+  "why": {
+    "mn": "Шат 16-д чи Shop.mn серверийн API-г бүтээсэн. Одоо Shop.mn апп тэр API руу хандаж, бараануудаа татаж, дэлгэцэн дээрээ жагсаана — апп ба сервер хоёр анх удаа холбогдоно."
+  },
+  "buildsInProject": "Серверээс бараагаа татаж харуулах",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 16,
+  "skills": ["react-native", "mobile-data", "backend"],
+  "concepts": ["fetch", "useEffect", "state"],
+  "prerequisites": ["rn26-l6"],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\n// Шат 16-д бүтээсэн API. fetchProducts() нь серверийн хариуг Promise-оор буцаана.\nconst SERVER_PRODUCTS = [\n  { id: \"p1\", name: \"Чихэвч\", price: 39000 },\n  { id: \"p2\", name: \"Гар цаг\", price: 129000 },\n  { id: \"p3\", name: \"Нарны шил\", price: 59000 },\n  { id: \"p4\", name: \"Цүнх\", price: 89000 },\n];\nconst fetchProducts = () =>\n  new Promise((res) => setTimeout(() => res(SERVER_PRODUCTS), 200));\n\nfunction App() {\n  const [products, setProducts] = useState([]);\n  // энд бичнэ үү: useEffect дотор fetchProducts()-г дуудаж,\n  // ирсэн жагсаалтыг setProducts-д хадгал\n\n  return (\n    <View style={styles.s}>\n      <Text style={styles.h}>Дэлгүүр ({products.length})</Text>\n      {products.map((p) => (\n        <Text key={p.id} testID=\"row\" style={styles.row}>{p.name} — {p.price}₮</Text>\n      ))}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 24, gap: 8 },\n  h: { fontSize: 20, fontWeight: \"bold\" },\n  row: { fontSize: 16, paddingVertical: 6 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": ["src/App.jsx"],
+    "openFiles": ["src/App.jsx"],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn27-l1-t1",
+      "order": 1,
+      "title": {
+        "mn": "Аппаас API-аа дуудах"
+      },
+      "statement": {
+        "mn": "`useEffect(() => { ... }, [])` дотор `fetchProducts()`-г дууд. Буцах Promise дээр `.then((data) => setProducts(data))` бичиж, серверээс ирсэн жагсаалтыг `products`-д хадга. Апп нээгдэхэд 4 бараа жагсана."
+      },
+      "requirements": [
+        {
+          "mn": "`useEffect` ашигласан"
+        },
+        {
+          "mn": "`fetchProducts()`-г дуудсан"
+        },
+        {
+          "mn": "Ирсэн жагсаалтыг `setProducts`-д хадгалсан"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Апп нээгдээд хэсэг хугацааны дараа 4 бараа жагсаж харагдана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useEffect"
+          },
+          "onFail": {
+            "mn": "`useEffect` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "fetchProducts"
+          },
+          "onFail": {
+            "mn": "`fetchProducts()`-г дуудаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"row\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"row\"]",
+                  "equals": 4
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Серверээс ирсэн 4 бараа жагсахгүй байна."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"row\"]"
+              },
+              {
+                "expectText": {
+                  "selector": "[data-testid=\"row\"]",
+                  "contains": "Чихэвч"
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Эхний барааны нэр (Чихэвч) харагдахгүй байна."
+          }
+        },
+        {
+          "id": "c5",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. JSX бичлэгээ шалгаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Сервер шууд хариулдаггүй — Promise өгнө. `.then(callback)` нь өгөгдөл ирмэгц дуудагдана."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "`useEffect(() => { ... }, [])` — хоосон `[]` нь «нэг удаа, ачаалахад» гэсэн үг. Дотор нь `fetchProducts().then((data) => setProducts(data))`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "Бүтэц:"
+          },
+          "code": "useEffect(() => {\n  fetchProducts().then((data) => setProducts(data));\n}, []);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport { registerRootComponent } from \"expo\";\n\nconst SERVER_PRODUCTS = [\n  { id: \"p1\", name: \"Чихэвч\", price: 39000 },\n  { id: \"p2\", name: \"Гар цаг\", price: 129000 },\n  { id: \"p3\", name: \"Нарны шил\", price: 59000 },\n  { id: \"p4\", name: \"Цүнх\", price: 89000 },\n];\nconst fetchProducts = () =>\n  new Promise((res) => setTimeout(() => res(SERVER_PRODUCTS), 200));\n\nfunction App() {\n  const [products, setProducts] = useState([]);\n\n  useEffect(() => {\n    let alive = true;\n    fetchProducts().then((data) => { if (alive) setProducts(data); });\n    return () => { alive = false; };\n  }, []);\n\n  return (\n    <View style={styles.s}>\n      <Text style={styles.h}>Дэлгүүр ({products.length})</Text>\n      {products.map((p) => (\n        <Text key={p.id} testID=\"row\" style={styles.row}>{p.name} — {p.price}₮</Text>\n      ))}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 24, gap: 8 },\n  h: { fontSize: 20, fontWeight: \"bold\" },\n  row: { fontSize: 16, paddingVertical: 6 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Апп сервертэй ажиллах нь цаг шаарддаг тул `fetchProducts()` Promise буцаана. `.then` нь өгөгдөл ирмэгц `setProducts`-оор төлөвийг шинэчилж, `.map` нь жагсаалтыг зурна. `useEffect([])` нь татаж авалтыг эхлэхэд нэг л удаа хийнэ."
+        },
+        "xpPenalty": 12
+      },
+      "xp": 20,
+      "estimatedMinutes": 14,
+      "skills": ["react-native", "mobile-data", "backend"]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Апп сервер рүү хандахад яагаад Promise/`.then` хэрэгтэй вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хэрэггүй, шууд утга ирнэ"
+        },
+        {
+          "mn": "Сүлжээ цаг зарцуулдаг тул хариу ирэхийг хүлээх ёстой"
+        },
+        {
+          "mn": "Зөвхөн загварын учир"
+        },
+        {
+          "mn": "Алдаа гаргахын тулд"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Сүлжээний хүсэлт агшин зуур биш — Promise нь «дараа нь ирнэ» гэдгийг илэрхийлж, `.then` хариу ирэхэд ажиллана."
+      },
+      "hint": {
+        "mn": "Сервер хол байна — хариу ирэхэд хугацаа орно."
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "`useEffect(..., [])`-ийн хоосон массив юу гэсэн үг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Дахин зурах бүрт татна"
+        },
+        {
+          "mn": "Хэзээ ч ажиллахгүй"
+        },
+        {
+          "mn": "Зөвхөн эхэлж ачаалахад нэг удаа"
+        },
+        {
+          "mn": "Алдаа"
+        }
+      ],
+      "correct": 2,
+      "explanation": {
+        "mn": "Хоосон хамаарлын массив нь эффектийг зөвхөн mount дээр нэг л удаа ажиллуулна — өгөгдлийг давхар татахгүй."
+      },
+      "hint": {
+        "mn": "Юунаас ч хамаарахгүй бол хэдэн удаа ажиллах вэ?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 25
+  },
+  "status": "published",
+  "version": 1,
+  "authors": ["delgermaa"]
+}

@@ -1,0 +1,226 @@
+{
+  "id": "rn27-l3",
+  "moduleId": "rn27-connect",
+  "slug": "authorized-request",
+  "order": 3,
+  "title": {
+    "mn": "Хадгалсан token-оор хамгаалагдсан хүсэлт"
+  },
+  "why": {
+    "mn": "Shop.mn-ий захиалгын түүх зэрэг хувийн өгөгдлийг зөвхөн нэвтэрсэн хэрэглэгч харах ёстой. Утсанд хадгалсан token-оо уншиж серверт илгээснээр хамгаалагдсан өгөгдлөө татна — Shop.mn апп ↔ сервер холболтын бүтэн гинж бүрдэнэ."
+  },
+  "buildsInProject": "Хамгаалагдсан захиалгын түүх татах",
+  "difficulty": "intermediate",
+  "estimatedMinutes": 18,
+  "skills": ["react-native", "mobile-data", "backend"],
+  "concepts": ["AsyncStorage", "token", "useEffect"],
+  "prerequisites": ["rn27-l2"],
+  "execution": {
+    "tier": 1,
+    "runtime": "static",
+    "entry": "index.html",
+    "autoRun": true
+  },
+  "workspace": {
+    "patch": [
+      {
+        "op": "create",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"mn\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>Shop.mn Mobile</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script src=\"src/App.jsx\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "op": "create",
+        "path": "src/App.jsx",
+        "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { useState } from \"react\";\nimport AsyncStorage from \"@react-native-async-storage/async-storage\";\nimport { registerRootComponent } from \"expo\";\n\n// Өмнөх хичээлд нэвтэрч, token-оо хадгалсан гэж үзье:\nAsyncStorage.setItem(\"token\", \"tok_bat@shop.mn\");\n\n// Хамгаалагдсан API: token байвал захиалгуудыг, үгүй бол алдаа буцаана.\nconst fetchOrders = (token) =>\n  new Promise((res, rej) =>\n    setTimeout(() => (token ? res([{ id: \"o1\", total: 129000 }, { id: \"o2\", total: 59000 }]) : rej(new Error(\"401\"))), 200),\n  );\n\nfunction App() {\n  const [orders, setOrders] = useState([]);\n  // энд бичнэ үү: useEffect дотор AsyncStorage.getItem(\"token\")-оор token уншиж,\n  // fetchOrders(token)-д дамжуулж, ирсэн захиалгуудыг setOrders-д хадгал\n\n  return (\n    <View style={styles.s}>\n      <Text style={styles.h}>Миний захиалгууд ({orders.length})</Text>\n      {orders.map((o) => (\n        <Text key={o.id} testID=\"order\" style={styles.row}>{o.total}₮</Text>\n      ))}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 24, gap: 8 },\n  h: { fontSize: 20, fontWeight: \"bold\" },\n  row: { fontSize: 16, paddingVertical: 6 },\n});\n\nregisterRootComponent(App);\n"
+      }
+    ],
+    "visibleFiles": ["src/App.jsx"],
+    "openFiles": ["src/App.jsx"],
+    "activeFile": "src/App.jsx"
+  },
+  "tasks": [
+    {
+      "id": "rn27-l3-t1",
+      "order": 1,
+      "title": {
+        "mn": "Хадгалсан token-оор хамгаалагдсан хүсэлт"
+      },
+      "statement": {
+        "mn": "`useEffect`-д `AsyncStorage.getItem(\"token\")`-оор хадгалсан token-оо уншиж, `fetchOrders(token)`-д дамжуул. Буцах захиалгуудыг `setOrders`-д хадга. Апп нээгдэхэд 2 захиалга жагсана."
+      },
+      "requirements": [
+        {
+          "mn": "`useEffect` ашигласан"
+        },
+        {
+          "mn": "`AsyncStorage.getItem(...)`-оор token уншсан"
+        },
+        {
+          "mn": "`fetchOrders(token)`-ийн үр дүнг `setOrders`-д хадгалсан"
+        }
+      ],
+      "expected": {
+        "description": {
+          "mn": "Апп нээгдээд хадгалсан token-оор 2 захиалга татаж жагсаана."
+        }
+      },
+      "targetFile": "src/App.jsx",
+      "marker": "энд бичнэ үү",
+      "checks": [
+        {
+          "id": "c1",
+          "type": "ast.usesHook",
+          "args": {
+            "file": "src/App.jsx",
+            "hook": "useEffect"
+          },
+          "onFail": {
+            "mn": "`useEffect` ашиглаагүй байна."
+          }
+        },
+        {
+          "id": "c2",
+          "type": "ast.callsFunction",
+          "args": {
+            "file": "src/App.jsx",
+            "name": "getItem"
+          },
+          "onFail": {
+            "mn": "`AsyncStorage.getItem(...)`-оор token-оо уншаагүй байна."
+          }
+        },
+        {
+          "id": "c3",
+          "type": "js.interaction",
+          "args": {
+            "steps": [
+              {
+                "waitFor": "[data-testid=\"order\"]"
+              },
+              {
+                "expectCount": {
+                  "selector": "[data-testid=\"order\"]",
+                  "equals": 2
+                }
+              }
+            ]
+          },
+          "onFail": {
+            "mn": "Хамгаалагдсан 2 захиалга татагдаж жагсахгүй байна — token-оо уншиж, дамжуулсан эсэхээ шалга."
+          }
+        },
+        {
+          "id": "c4",
+          "type": "js.consoleClean",
+          "args": {},
+          "onFail": {
+            "mn": "Console дээр алдаа гарч байна. token байхгүй бол сервер алдаа буцаадгийг санаарай."
+          }
+        }
+      ],
+      "hints": [
+        {
+          "level": 1,
+          "xpCost": 0,
+          "text": {
+            "mn": "Эхлээд token-оо унших ёстой: `AsyncStorage.getItem(\"token\")` нь Promise буцаана. `.then((token) => ...)` дотор token бэлэн болно."
+          }
+        },
+        {
+          "level": 2,
+          "xpCost": 1,
+          "text": {
+            "mn": "Token уншсаны дараа л сервер рүү хандана: `getItem(...).then((token) => fetchOrders(token).then((data) => setOrders(data)))`."
+          }
+        },
+        {
+          "level": 3,
+          "xpCost": 3,
+          "text": {
+            "mn": "useEffect дотор:"
+          },
+          "code": "useEffect(() => {\n  AsyncStorage.getItem(\"token\").then((token) => {\n    fetchOrders(token).then((data) => setOrders(data));\n  });\n}, []);"
+        }
+      ],
+      "solution": {
+        "patch": [
+          {
+            "op": "replace",
+            "path": "src/App.jsx",
+            "content": "import { View, Text, StyleSheet } from \"react-native\";\nimport { useState, useEffect } from \"react\";\nimport AsyncStorage from \"@react-native-async-storage/async-storage\";\nimport { registerRootComponent } from \"expo\";\n\nAsyncStorage.setItem(\"token\", \"tok_bat@shop.mn\");\n\nconst fetchOrders = (token) =>\n  new Promise((res, rej) =>\n    setTimeout(() => (token ? res([{ id: \"o1\", total: 129000 }, { id: \"o2\", total: 59000 }]) : rej(new Error(\"401\"))), 200),\n  );\n\nfunction App() {\n  const [orders, setOrders] = useState([]);\n\n  useEffect(() => {\n    let alive = true;\n    AsyncStorage.getItem(\"token\").then((token) => {\n      fetchOrders(token).then((data) => { if (alive) setOrders(data); });\n    });\n    return () => { alive = false; };\n  }, []);\n\n  return (\n    <View style={styles.s}>\n      <Text style={styles.h}>Миний захиалгууд ({orders.length})</Text>\n      {orders.map((o) => (\n        <Text key={o.id} testID=\"order\" style={styles.row}>{o.total}₮</Text>\n      ))}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  s: { flex: 1, padding: 24, gap: 8 },\n  h: { fontSize: 20, fontWeight: \"bold\" },\n  row: { fontSize: 16, paddingVertical: 6 },\n});\n\nregisterRootComponent(App);\n"
+          }
+        ],
+        "explanation": {
+          "mn": "Хамгаалагдсан хүсэлт нь token шаарддаг. Эхлээд `AsyncStorage.getItem`-оор утсанд хадгалсан token-оо уншиж, дараа нь `fetchOrders(token)`-д дамжуулна. Token байгаа тул сервер захиалгуудыг буцаана — байхгүй бол 401 алдаа өгнө. Ингэснээр апп ↔ сервер ↔ нэвтрэлтийн бүтэн гинж бүрдэж, Shop.mn мобайл апп жинхэнэ backend-тэй болно! 🎉"
+        },
+        "xpPenalty": 14
+      },
+      "xp": 24,
+      "estimatedMinutes": 16,
+      "skills": ["react-native", "mobile-data", "backend"]
+    }
+  ],
+  "quiz": [
+    {
+      "id": "q1",
+      "question": {
+        "mn": "Хамгаалагдсан өгөгдөл татахын өмнө юуг эхлээд хийх ёстой вэ?"
+      },
+      "options": [
+        {
+          "mn": "Шууд fetchOrders() дуудна"
+        },
+        {
+          "mn": "AsyncStorage-аас хадгалсан token-оо уншина"
+        },
+        {
+          "mn": "Нууц үгээ дахин асууна"
+        },
+        {
+          "mn": "Апп-аа хаана"
+        }
+      ],
+      "correct": 1,
+      "explanation": {
+        "mn": "Хамгаалагдсан хүсэлтэд token хэрэгтэй тул эхлээд `getItem`-оор хадгалсан token-оо уншиж, дараа нь серверт дамжуулна."
+      },
+      "hint": {
+        "mn": "Сервер таныг таних юу дутагдаж байна вэ?"
+      }
+    },
+    {
+      "id": "q2",
+      "question": {
+        "mn": "Сервер token байхгүй хүсэлтэд яагаад алдаа (401) буцаадаг вэ?"
+      },
+      "options": [
+        {
+          "mn": "Хувийн өгөгдлийг зөвхөн нэвтэрсэн хүн харах ёстой тул"
+        },
+        {
+          "mn": "Сервер эвдэрсэн"
+        },
+        {
+          "mn": "Санамсаргүй"
+        },
+        {
+          "mn": "Хурд сайжруулахын тулд"
+        }
+      ],
+      "correct": 0,
+      "explanation": {
+        "mn": "Захиалгын түүх зэрэг хувийн өгөгдлийг хэн ч харж болохгүй — token байхгүй бол сервер «хэн бэ?» гэдгийг мэдэхгүй тул 401 (эрхгүй) буцаана."
+      },
+      "hint": {
+        "mn": "Захиалгын түүх нийтийн үү, хувийн уу?"
+      }
+    }
+  ],
+  "completion": {
+    "xp": 40,
+    "badge": "rn-connect"
+  },
+  "status": "published",
+  "version": 1,
+  "authors": ["delgermaa"]
+}

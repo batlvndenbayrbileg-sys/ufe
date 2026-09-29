@@ -162,6 +162,15 @@
       },
       "badgeId": "rn-auth",
       "moduleIds": ["rn26-auth"]
+    },
+    {
+      "id": "s18",
+      "order": 18,
+      "title": {
+        "mn": "Апп ↔ сервер холболт"
+      },
+      "badgeId": "rn-connect",
+      "moduleIds": ["rn27-connect"]
     }
   ]
 }
