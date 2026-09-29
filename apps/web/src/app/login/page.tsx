@@ -11,7 +11,7 @@ export default function LoginPage() {
   return (
     <AuthShell
       aside={<AuthAside />}
-      brand={<BrandLockup size={26} />}
+      brand={<BrandLockup size={34} />}
       title="Тавтай морил"
       subtitle="Үргэлжлүүлэхийн тулд нэвтэрнэ үү."
       footer={

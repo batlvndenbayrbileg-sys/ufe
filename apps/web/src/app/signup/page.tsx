@@ -10,7 +10,7 @@ export default function SignupPage() {
   return (
     <AuthShell
       aside={<AuthAside />}
-      brand={<BrandLockup size={26} />}
+      brand={<BrandLockup size={34} />}
       title="Бүртгэл үүсгэх"
       subtitle="Хэдхэн секундэд бүртгүүлээд эхэл."
       footer={

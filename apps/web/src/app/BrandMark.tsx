@@ -23,6 +23,6 @@ export function BrandMark({ size = 26, adaptive = false }: { size?: number; adap
 }
 
 /** The "iSMD" wordmark for the app/site header — adapts to dark mode. */
-export function BrandLockup({ size = 30 }: { size?: number }) {
+export function BrandLockup({ size = 40 }: { size?: number }) {
   return <BrandMark size={size} adaptive />;
 }

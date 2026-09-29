@@ -10,7 +10,7 @@ export default function ForgotPage() {
   return (
     <AuthShell
       aside={<AuthAside />}
-      brand={<BrandLockup size={26} />}
+      brand={<BrandLockup size={34} />}
       title="Нууц үг сэргээх"
       subtitle="Имэйл болон шинэ нууц үгээ оруулна уу."
       footer={
