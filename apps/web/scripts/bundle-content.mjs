@@ -39,6 +39,25 @@ for (const slug of SLUGS) {
   bundle[slug] = { ...course, stages, skills };
 }
 
+// GUARD: a missing or short course must FAIL the build — never ship a bundle
+// that would 500 at runtime. This turns "content not bundled" from a silent
+// production outage into a loud build error.
+const EXPECT_MIN_LESSONS = { "internet-programming": 100, "mobile-programming": 120 };
+for (const [slug, min] of Object.entries(EXPECT_MIN_LESSONS)) {
+  const c = bundle[slug];
+  if (!c) throw new Error(`bundle-content: required course "${slug}" is missing from the bundle`);
+  let lessons = 0;
+  for (const st of c.stages)
+    for (const mo of st.moduleObjects)
+      for (const l of mo.lessonObjects) {
+        lessons += 1;
+        if (!Array.isArray(l.tasks) || l.tasks.length === 0)
+          throw new Error(`bundle-content: lesson "${l.id}" has no gradable tasks`);
+      }
+  if (lessons < min)
+    throw new Error(`bundle-content: course "${slug}" bundled only ${lessons} lessons (< ${min}) — content is incomplete`);
+}
+
 const out = join(appDir, "src", "content.bundle.generated.json");
 writeFileSync(out, JSON.stringify(bundle));
 const counts = Object.entries(bundle).map(

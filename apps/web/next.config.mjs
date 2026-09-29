@@ -27,6 +27,11 @@ const PRISMA_RUNTIME_FILES = [
 // the repo root (outputFileTracingRoot), same as the Prisma globs above.
 const CONTENT_FILES = ["../../content/courses/**/*"];
 
+// The checker reads sql.js at runtime to grade `runtime:"sqlite"` lessons
+// (packages/checkers/src/server.ts). Force its asm build into the trace so the
+// submit route can grade SQL lessons on serverless.
+const SQLJS_FILES = ["../../node_modules/sql.js/dist/sql-asm.js"];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -44,8 +49,8 @@ const nextConfig = {
   // slash. Without the correct paths nft traces nothing and the function fails
   // at runtime with "Cannot find module '@prisma/client'".
   outputFileTracingIncludes: {
-    "/api/**": [...PRISMA_RUNTIME_FILES, ...CONTENT_FILES],
-    "/api/**/*": [...PRISMA_RUNTIME_FILES, ...CONTENT_FILES],
+    "/api/**": [...PRISMA_RUNTIME_FILES, ...CONTENT_FILES, ...SQLJS_FILES],
+    "/api/**/*": [...PRISMA_RUNTIME_FILES, ...CONTENT_FILES, ...SQLJS_FILES],
     // Server components that read content at runtime too: the lesson workspace
     // page and the landing/catalogue page. Without content in THEIR trace they
     // 500 the same way the content APIs do.
@@ -82,6 +87,10 @@ const nextConfig = {
     return config;
   },
   poweredByHeader: false,
+  // Speed up `next build`: ESLint runs as its own turbo task (and in CI), so
+  // re-running it during the production build is redundant and slow. TypeScript
+  // checking stays ON — it's the deploy-time safety net for type errors.
+  eslint: { ignoreDuringBuilds: true },
 };
 
 export default withNextIntl(nextConfig);
