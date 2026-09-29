@@ -17,9 +17,7 @@
         "mn": "React Native эхлэл"
       },
       "badgeId": "rn-starter",
-      "moduleIds": [
-        "rn1-basics"
-      ]
+      "moduleIds": ["rn1-basics"]
     },
     {
       "id": "s2",
@@ -28,9 +26,7 @@
         "mn": "Дүрс ба гүйлгээ"
       },
       "badgeId": "rn-visual",
-      "moduleIds": [
-        "rn2-visual"
-      ]
+      "moduleIds": ["rn2-visual"]
     },
     {
       "id": "s3",
@@ -39,9 +35,7 @@
         "mn": "Харилцан үйлдэл"
       },
       "badgeId": "rn-interactive",
-      "moduleIds": [
-        "rn3-interaction"
-      ]
+      "moduleIds": ["rn3-interaction"]
     },
     {
       "id": "s4",
@@ -50,9 +44,7 @@
         "mn": "Жагсаалт (FlatList)"
       },
       "badgeId": "rn-lists",
-      "moduleIds": [
-        "rn4-lists"
-      ]
+      "moduleIds": ["rn4-lists"]
     },
     {
       "id": "s5",
@@ -61,10 +53,7 @@
         "mn": "Дэлгэц ба өгөгдөл"
       },
       "badgeId": "rn-app",
-      "moduleIds": [
-        "rn5-screens",
-        "rn6-data"
-      ]
+      "moduleIds": ["rn5-screens", "rn6-data"]
     },
     {
       "id": "s6",
@@ -73,10 +62,7 @@
         "mn": "Layout ба загвар"
       },
       "badgeId": "rn-layout",
-      "moduleIds": [
-        "rn7-layout",
-        "rn8-styling"
-      ]
+      "moduleIds": ["rn7-layout", "rn8-styling"]
     },
     {
       "id": "s7",
@@ -85,10 +71,7 @@
         "mn": "Форм ба оролт"
       },
       "badgeId": "rn-forms",
-      "moduleIds": [
-        "rn9-forms",
-        "rn10-validation"
-      ]
+      "moduleIds": ["rn9-forms", "rn10-validation"]
     },
     {
       "id": "s8",
@@ -97,10 +80,7 @@
         "mn": "Жагсаалтын нарийвчлал"
       },
       "badgeId": "rn-lists-pro",
-      "moduleIds": [
-        "rn11-flatlist-adv",
-        "rn12-sectionlist"
-      ]
+      "moduleIds": ["rn11-flatlist-adv", "rn12-sectionlist"]
     },
     {
       "id": "s9",
@@ -109,10 +89,7 @@
         "mn": "Навигаци"
       },
       "badgeId": "rn-nav",
-      "moduleIds": [
-        "rn13-navigation",
-        "rn14-tabs"
-      ]
+      "moduleIds": ["rn13-navigation", "rn14-tabs"]
     },
     {
       "id": "s10",
@@ -121,10 +98,7 @@
         "mn": "Сүлжээ ба өгөгдөл"
       },
       "badgeId": "rn-network",
-      "moduleIds": [
-        "rn15-networking",
-        "rn16-mutations"
-      ]
+      "moduleIds": ["rn15-networking", "rn16-mutations"]
     },
     {
       "id": "s11",
@@ -133,11 +107,7 @@
         "mn": "Hooks ба төлөв удирдлага"
       },
       "badgeId": "rn-hooks",
-      "moduleIds": [
-        "rn17-hooks",
-        "rn18-context",
-        "rn19-reducer"
-      ]
+      "moduleIds": ["rn17-hooks", "rn18-context", "rn19-reducer"]
     },
     {
       "id": "s12",
@@ -146,10 +116,7 @@
         "mn": "Анимаци ба Modal"
       },
       "badgeId": "rn-polish",
-      "moduleIds": [
-        "rn20-animation",
-        "rn21-modal-device"
-      ]
+      "moduleIds": ["rn20-animation", "rn21-modal-device"]
     },
     {
       "id": "s13",
@@ -158,9 +125,7 @@
         "mn": "Чанар ба гаргалт"
       },
       "badgeId": "rn-pro",
-      "moduleIds": [
-        "rn22-quality"
-      ]
+      "moduleIds": ["rn22-quality"]
     },
     {
       "id": "s14",
@@ -169,9 +134,34 @@
         "mn": "Нэмэлт дадлага"
       },
       "badgeId": "rn-practice",
-      "moduleIds": [
-        "rn23-practice"
-      ]
+      "moduleIds": ["rn23-practice"]
+    },
+    {
+      "id": "s15",
+      "order": 15,
+      "title": {
+        "mn": "Өгөгдлийн сан ба SQL"
+      },
+      "badgeId": "rn-database",
+      "moduleIds": ["rn24-sql"]
+    },
+    {
+      "id": "s16",
+      "order": 16,
+      "title": {
+        "mn": "Сервер ба API"
+      },
+      "badgeId": "rn-server",
+      "moduleIds": ["rn25-server"]
+    },
+    {
+      "id": "s17",
+      "order": 17,
+      "title": {
+        "mn": "Нэвтрэлт ба аюулгүй байдал"
+      },
+      "badgeId": "rn-auth",
+      "moduleIds": ["rn26-auth"]
     }
   ]
 }

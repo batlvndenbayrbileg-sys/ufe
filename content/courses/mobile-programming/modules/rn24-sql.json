@@ -1,0 +1,13 @@
+{
+  "id": "rn24-sql",
+  "stageId": "s15",
+  "order": 1,
+  "title": {
+    "mn": "Өгөгдлийн сан ба SQL"
+  },
+  "description": {
+    "mn": "Таны Shop.mn аппын ард ажиллах өгөгдлийн сан. SELECT, WHERE, ORDER BY, GROUP BY, JOIN, INSERT — SQL-ээр бараа, захиалга, хэрэглэгчийн өгөгдлийг асууж, нэмнэ."
+  },
+  "estimatedHours": 7,
+  "lessons": ["rn24-l1", "rn24-l2", "rn24-l3", "rn24-l4", "rn24-l5", "rn24-l6"]
+}

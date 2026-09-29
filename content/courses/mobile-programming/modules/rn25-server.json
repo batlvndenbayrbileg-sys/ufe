@@ -1,0 +1,13 @@
+{
+  "id": "rn25-server",
+  "stageId": "s16",
+  "order": 1,
+  "title": {
+    "mn": "Сервер ба API"
+  },
+  "description": {
+    "mn": "Аппын дуудах API-г өөрөө бүтээ. Request → Response, routing, GET/POST/PUT/DELETE, статус код, шалгалт — RN апп тань энэ сервер рүү хандаж өгөгдөл авна."
+  },
+  "estimatedHours": 8,
+  "lessons": ["rn25-l1", "rn25-l2", "rn25-l3", "rn25-l4", "rn25-l5", "rn25-l6"]
+}

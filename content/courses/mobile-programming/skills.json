@@ -1,7 +1,65 @@
 [
-  { "id": "react-native", "title": { "mn": "React Native" }, "order": 1 },
-  { "id": "mobile-ui", "title": { "mn": "Мобайл UI" }, "order": 2 },
-  { "id": "mobile-state", "title": { "mn": "Төлөв ба үйлдэл" }, "order": 3 },
-  { "id": "mobile-lists", "title": { "mn": "Жагсаалт" }, "order": 4 },
-  { "id": "mobile-data", "title": { "mn": "Өгөгдөл ба хадгалалт" }, "order": 5 }
+  {
+    "id": "react-native",
+    "title": {
+      "mn": "React Native"
+    },
+    "order": 1
+  },
+  {
+    "id": "mobile-ui",
+    "title": {
+      "mn": "Мобайл UI"
+    },
+    "order": 2
+  },
+  {
+    "id": "mobile-state",
+    "title": {
+      "mn": "Төлөв ба үйлдэл"
+    },
+    "order": 3
+  },
+  {
+    "id": "mobile-lists",
+    "title": {
+      "mn": "Жагсаалт"
+    },
+    "order": 4
+  },
+  {
+    "id": "mobile-data",
+    "title": {
+      "mn": "Өгөгдөл ба хадгалалт"
+    },
+    "order": 5
+  },
+  {
+    "id": "javascript",
+    "title": {
+      "mn": "JavaScript"
+    },
+    "order": 6
+  },
+  {
+    "id": "sql",
+    "title": {
+      "mn": "SQL ба өгөгдлийн сан"
+    },
+    "order": 7
+  },
+  {
+    "id": "backend",
+    "title": {
+      "mn": "Backend ба сервер"
+    },
+    "order": 8
+  },
+  {
+    "id": "security",
+    "title": {
+      "mn": "Аюулгүй байдал"
+    },
+    "order": 9
+  }
 ]
