@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/vendor-runtimes.mjs && next dev",
-    "build": "node scripts/vendor-runtimes.mjs && next build",
+    "dev": "node scripts/bundle-content.mjs && node scripts/vendor-runtimes.mjs && next dev",
+    "build": "node scripts/bundle-content.mjs && node scripts/vendor-runtimes.mjs && next build",
     "start": "node scripts/vendor-runtimes.mjs && next start",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",

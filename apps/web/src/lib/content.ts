@@ -37,6 +37,24 @@ function resolveCourseDir(slug: string): string | null {
   return null;
 }
 
+/**
+ * Content bundled into the JS at build time (scripts/bundle-content.mjs). Loaded
+ * with require() so webpack inlines it statically — the fs reads above rely on
+ * Next's serverless file tracer, which can't follow the dynamic
+ * `modules/${id}.json` paths, so some Vercel deployments shipped without the
+ * files and every course API 500'd. The bundle is present in every function
+ * instance. Used in production; dev still reads from disk for live edits.
+ */
+function bundledCourse(slug: string): ResolvedCourse | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const bundle = require("../content.bundle.generated.json") as Record<string, ResolvedCourse>;
+    return bundle[slug] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 interface ModuleMeta {
   id: string;
   title: { mn: string; en?: string };
@@ -61,13 +79,19 @@ function ensureLoaded(): Loaded {
   const tasks = new Map<string, { task: Task; lesson: Lesson }>();
   const modules = new Map<string, ModuleMeta>();
   for (const slug of COURSE_SLUGS) {
-    const dir = resolveCourseDir(slug);
-    if (!dir) {
+    // Prod: use the content compiled into the bundle (reliable on serverless).
+    // Dev: read from disk so content edits show up live without a rebuild.
+    let course: ResolvedCourse | null =
+      process.env.NODE_ENV === "production" ? bundledCourse(slug) : null;
+    if (!course) {
+      const dir = resolveCourseDir(slug);
+      course = dir ? loadCourse(dir) : null;
+    }
+    if (!course) {
       // The web course must exist; a not-yet-authored extra course is skipped.
       if (slug === DEFAULT_SLUG) throw new Error(`content course not found: ${slug}`);
       continue;
     }
-    const course = loadCourse(dir);
     courses.set(slug, course);
     for (const stage of course.stages) {
       for (const mod of stage.moduleObjects) {
