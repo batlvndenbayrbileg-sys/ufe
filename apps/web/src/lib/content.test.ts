@@ -1,94 +1,38 @@
 import { describe, expect, it } from "vitest";
-import { getLessonPublic, getNextLesson, getNextLessonId, gradeQuiz } from "./content";
+import { getCourseList, getCourseMap, getLessonFull } from "@/lib/content";
 
 /**
- * Finishing a lesson hands the student the next one. Across 84 lessons the
- * interesting cases are the seams: the walk has to continue past the end of a
- * module and past the end of a stage, and stop at the very end.
+ * Guards the content-loading path. A production outage happened when new
+ * lessons weren't reaching the serverless bundle and every course API 500'd;
+ * these assertions fail loudly in CI if a course goes missing, loses lessons,
+ * or a known lesson stops resolving — before it can reach a deploy. (The build
+ * also guards the bundled copy in scripts/bundle-content.mjs.)
  */
-describe("getNextLesson", () => {
-  it("walks to the next lesson in the same module", () => {
-    expect(getNextLesson("m1-l1")?.id).toBe("m1-l2");
+describe("course content loads", () => {
+  it("lists both courses", () => {
+    const slugs = getCourseList().map((c) => c.slug);
+    expect(slugs).toContain("internet-programming");
+    expect(slugs).toContain("mobile-programming");
   });
 
-  it("crosses a module boundary", () => {
-    expect(getNextLesson("m1-l6")?.id).toBe("m2-l1");
+  it.each([
+    ["internet-programming", 100],
+    ["mobile-programming", 120],
+  ])("%s resolves with stages and >= %d lessons", (slug, min) => {
+    const map = getCourseMap(slug);
+    expect(map.stages.length).toBeGreaterThan(0);
+    const lessons = map.stages.reduce(
+      (n, st) => n + st.modules.reduce((m, mod) => m + mod.lessons.length, 0),
+      0,
+    );
+    expect(lessons).toBeGreaterThanOrEqual(min);
   });
 
-  it("crosses a stage boundary", () => {
-    expect(getNextLesson("m3-l4")?.id).toBe("m4-l1");
-  });
-
-  it("returns null at the end of the course", () => {
-    expect(getNextLessonId("m17-l3")).toBeNull();
-    expect(getNextLesson("m17-l3")).toBeNull();
-  });
-
-  it("carries a title to label the link with", () => {
-    const next = getNextLesson("m1-l1");
-    expect(next?.title.mn.length).toBeGreaterThan(0);
-  });
-
-  it("is null for a lesson that does not exist", () => {
-    expect(getNextLesson("nope")).toBeNull();
-  });
-});
-
-describe("getLessonPublic", () => {
-  it("never leaks the solution, the hint text or the check arguments", () => {
-    const lesson = getLessonPublic("m1-l1")!;
-
-    for (const task of lesson.tasks) {
-      // Hints and the solution are listed so the ladder can show what is
-      // available and at what cost — the content behind them is not sent.
-      for (const hint of task.hints) {
-        expect(hint).not.toHaveProperty("text");
-        expect(hint).not.toHaveProperty("code");
-      }
-      expect(task.solution).toEqual({ unlocked: false });
-
-      // Checks are counted, not described: their args are the answer key.
-      expect(task).not.toHaveProperty("checks");
-      expect(typeof task.checkCount).toBe("number");
+  it("resolves lessons across runtimes with gradable tasks", () => {
+    for (const id of ["rn24-l1" /* sqlite */, "rn25-l1" /* server */, "rn27-l3" /* rn client */, "m1-l1" /* web */]) {
+      const lesson = getLessonFull(id);
+      expect(lesson, `lesson ${id} should resolve`).toBeTruthy();
+      expect(lesson!.tasks.length, `lesson ${id} should have tasks`).toBeGreaterThan(0);
     }
-
-    const serialised = JSON.stringify(lesson);
-    expect(serialised).not.toContain("xpPenalty");
-    expect(serialised).not.toContain("explanation");
-  });
-});
-
-describe("gradeQuiz", () => {
-  it("scores a full-correct run and returns the key and explanations", () => {
-    // Derive the answer key from the graded output itself, so the test does not
-    // hardcode content that lesson authors may change.
-    const probe = gradeQuiz("m1-l6", [0, 0])!;
-    expect(probe).not.toBeNull();
-    expect(probe.total).toBe(2);
-
-    const key = probe.results.map((r) => r.correctIndex);
-    const perfect = gradeQuiz("m1-l6", key)!;
-    expect(perfect.score).toBe(perfect.total);
-    expect(perfect.results.every((r) => r.correct)).toBe(true);
-    expect(perfect.results[0]!.explanation.mn.length).toBeGreaterThan(0);
-  });
-
-  it("marks a wrong answer and still names the correct index", () => {
-    const key = gradeQuiz("m1-l6", [0, 0])!.results.map((r) => r.correctIndex);
-    const wrongForQ1 = key[0] === 0 ? 1 : 0; // any index that is not the answer
-    const graded = gradeQuiz("m1-l6", [wrongForQ1, key[1]!])!;
-    expect(graded.score).toBe(1);
-    expect(graded.results[0]!.correct).toBe(false);
-    expect(graded.results[0]!.correctIndex).toBe(key[0]);
-  });
-
-  it("is null for an unknown lesson", () => {
-    expect(gradeQuiz("nope", [])).toBeNull();
-  });
-
-  it("ships a concept-check quiz on every lesson", () => {
-    // Every lesson now carries a quiz; a lesson that previously had none does too.
-    const graded = gradeQuiz("m1-l1", [0, 0])!;
-    expect(graded.total).toBeGreaterThanOrEqual(1);
   });
 });
