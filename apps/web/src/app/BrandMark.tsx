@@ -1,27 +1,28 @@
+import styles from "./BrandMark.module.css";
+
 /**
- * UFE ISMD brand. The logo artwork is public/img/showcase/ufe-header.png
- * (the striped mark + "UFE" wordmark). BrandLockup pairs it with "ISMD" so the
- * full product name "UFE ISMD" reads as one wordmark; BrandMark is the logo
- * image alone for tight spots.
+ * UFE ISMD brand. The logo artwork is public/img/showcase/ismd-logo.png — the
+ * full "iSMD · Information Systems Department" wordmark. Because the artwork is
+ * already a complete lockup, BrandMark renders it on its own and BrandLockup is
+ * an alias kept so existing header call-sites don't have to change; neither adds
+ * a separate "ISMD" text label any more (that would double the wordmark).
+ *
+ * `adaptive` knocks the dark-blue artwork out to white in dark mode — used for
+ * the app header (dark surface). It's left off on the certificate, whose paper
+ * is always white, so the logo stays its branded blue there.
  */
-export function BrandMark({ size = 26 }: { size?: number }) {
+export function BrandMark({ size = 26, adaptive = false }: { size?: number; adaptive?: boolean }) {
   return (
     <img
-      src="/img/showcase/ufe-header.png"
-      alt="UFE"
+      src="/img/showcase/ismd-logo.png"
+      alt="ISMD — Information Systems Department"
       height={size}
-      aria-hidden
-      style={{ display: "block", flex: "none", width: "auto", objectFit: "contain" }}
+      className={adaptive ? `${styles.logo} ${styles.adaptive}` : styles.logo}
     />
   );
 }
 
-/** Logo + "ISMD" → the standard "UFE ISMD" header lockup. */
-export function BrandLockup({ size = 24 }: { size?: number }) {
-  return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-      <BrandMark size={size} />
-      <strong style={{ fontSize: 18, letterSpacing: "-0.01em" }}>ISMD</strong>
-    </span>
-  );
+/** The "iSMD" wordmark for the app/site header — adapts to dark mode. */
+export function BrandLockup({ size = 30 }: { size?: number }) {
+  return <BrandMark size={size} adaptive />;
 }

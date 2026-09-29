@@ -1,0 +1,18 @@
+.logo {
+  display: block;
+  flex: none;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Header lockup: the artwork is dark-blue on transparent, which disappears on a
+   dark header. Knock it out to white in dark mode so the wordmark stays legible.
+   Mirrors the token tri-state: OS-dark (unless forced light) + explicit dark. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .adaptive {
+    filter: brightness(0) invert(1);
+  }
+}
+:root[data-theme="dark"] .adaptive {
+  filter: brightness(0) invert(1);
+}
