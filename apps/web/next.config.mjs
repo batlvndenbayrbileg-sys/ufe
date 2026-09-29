@@ -18,6 +18,15 @@ const PRISMA_RUNTIME_FILES = [
   "../../node_modules/@node-rs/argon2-*/**/*",
 ];
 
+// Course content is read at runtime via fs (see lib/content.ts → loadCourse),
+// with per-module/per-lesson paths built dynamically (`modules/${id}.json`).
+// Next's static tracer cannot infer those, so a serverless function ships
+// WITHOUT the JSON files it reads and every content API 500s ("Cannot find
+// module rn24-sql.json"). Force the whole content tree into the trace so newly
+// added lessons/modules are always bundled. Paths resolve from the app dir into
+// the repo root (outputFileTracingRoot), same as the Prisma globs above.
+const CONTENT_FILES = ["../../content/courses/**/*"];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -35,8 +44,14 @@ const nextConfig = {
   // slash. Without the correct paths nft traces nothing and the function fails
   // at runtime with "Cannot find module '@prisma/client'".
   outputFileTracingIncludes: {
-    "/api/**": PRISMA_RUNTIME_FILES,
-    "/api/**/*": PRISMA_RUNTIME_FILES,
+    "/api/**": [...PRISMA_RUNTIME_FILES, ...CONTENT_FILES],
+    "/api/**/*": [...PRISMA_RUNTIME_FILES, ...CONTENT_FILES],
+    // Server components that read content at runtime too: the lesson workspace
+    // page and the landing/catalogue page. Without content in THEIR trace they
+    // 500 the same way the content APIs do.
+    "/learn/**": CONTENT_FILES,
+    "/learn/**/*": CONTENT_FILES,
+    "/": CONTENT_FILES,
   },
   // Workspace packages ship as TypeScript source and are transpiled by Next.
   transpilePackages: [
