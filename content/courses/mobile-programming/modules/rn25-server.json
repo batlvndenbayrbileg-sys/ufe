@@ -1,7 +1,7 @@
 {
   "id": "rn25-server",
-  "stageId": "s16",
-  "order": 1,
+  "stageId": "s12",
+  "order": 2,
   "title": {
     "mn": "Сервер ба API"
   },

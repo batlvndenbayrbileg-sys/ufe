@@ -1,6 +1,6 @@
 {
   "id": "rn21-modal-device",
-  "stageId": "s12",
+  "stageId": "s10",
   "order": 2,
   "title": {
     "mn": "Modal ба төхөөрөмж"
@@ -9,12 +9,5 @@
     "mn": "Modal, диалог, Dimensions, Platform, safe area, гар."
   },
   "estimatedHours": 6,
-  "lessons": [
-    "rn21-l1",
-    "rn21-l2",
-    "rn21-l3",
-    "rn21-l4",
-    "rn21-l5",
-    "rn21-l6"
-  ]
+  "lessons": ["rn21-l1", "rn21-l2", "rn21-l3", "rn21-l4", "rn21-l5", "rn21-l6"]
 }

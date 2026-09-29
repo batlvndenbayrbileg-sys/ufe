@@ -1,6 +1,6 @@
 {
   "id": "rn24-sql",
-  "stageId": "s15",
+  "stageId": "s12",
   "order": 1,
   "title": {
     "mn": "Өгөгдлийн сан ба SQL"

@@ -1,6 +1,6 @@
 {
   "id": "rn19-reducer",
-  "stageId": "s11",
+  "stageId": "s9",
   "order": 3,
   "title": {
     "mn": "useReducer"
@@ -9,12 +9,5 @@
     "mn": "Нарийн төлвийг action-оор цэгцтэй удирдах."
   },
   "estimatedHours": 6,
-  "lessons": [
-    "rn19-l1",
-    "rn19-l2",
-    "rn19-l3",
-    "rn19-l4",
-    "rn19-l5",
-    "rn19-l6"
-  ]
+  "lessons": ["rn19-l1", "rn19-l2", "rn19-l3", "rn19-l4", "rn19-l5", "rn19-l6"]
 }

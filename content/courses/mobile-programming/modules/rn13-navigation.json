@@ -1,6 +1,6 @@
 {
   "id": "rn13-navigation",
-  "stageId": "s9",
+  "stageId": "s7",
   "order": 1,
   "title": {
     "mn": "Дэлгэц хооронд"
@@ -9,12 +9,5 @@
     "mn": "Олон дэлгэц, параметр дамжуулах, буцах stack — жинхэнэ навигаци."
   },
   "estimatedHours": 6,
-  "lessons": [
-    "rn13-l1",
-    "rn13-l2",
-    "rn13-l3",
-    "rn13-l4",
-    "rn13-l5",
-    "rn13-l6"
-  ]
+  "lessons": ["rn13-l1", "rn13-l2", "rn13-l3", "rn13-l4", "rn13-l5", "rn13-l6"]
 }

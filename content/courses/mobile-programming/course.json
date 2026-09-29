@@ -17,38 +17,20 @@
         "mn": "React Native эхлэл"
       },
       "badgeId": "rn-starter",
-      "moduleIds": ["rn1-basics"]
+      "moduleIds": ["rn1-basics", "rn2-visual"]
     },
     {
       "id": "s2",
       "order": 2,
       "title": {
-        "mn": "Дүрс ба гүйлгээ"
+        "mn": "Харилцан үйлдэл ба жагсаалт"
       },
-      "badgeId": "rn-visual",
-      "moduleIds": ["rn2-visual"]
+      "badgeId": "rn-interactive",
+      "moduleIds": ["rn3-interaction", "rn4-lists"]
     },
     {
       "id": "s3",
       "order": 3,
-      "title": {
-        "mn": "Харилцан үйлдэл"
-      },
-      "badgeId": "rn-interactive",
-      "moduleIds": ["rn3-interaction"]
-    },
-    {
-      "id": "s4",
-      "order": 4,
-      "title": {
-        "mn": "Жагсаалт (FlatList)"
-      },
-      "badgeId": "rn-lists",
-      "moduleIds": ["rn4-lists"]
-    },
-    {
-      "id": "s5",
-      "order": 5,
       "title": {
         "mn": "Дэлгэц ба өгөгдөл"
       },
@@ -56,8 +38,8 @@
       "moduleIds": ["rn5-screens", "rn6-data"]
     },
     {
-      "id": "s6",
-      "order": 6,
+      "id": "s4",
+      "order": 4,
       "title": {
         "mn": "Layout ба загвар"
       },
@@ -65,17 +47,17 @@
       "moduleIds": ["rn7-layout", "rn8-styling"]
     },
     {
-      "id": "s7",
-      "order": 7,
+      "id": "s5",
+      "order": 5,
       "title": {
-        "mn": "Форм ба оролт"
+        "mn": "Форм ба шалгалт"
       },
       "badgeId": "rn-forms",
       "moduleIds": ["rn9-forms", "rn10-validation"]
     },
     {
-      "id": "s8",
-      "order": 8,
+      "id": "s6",
+      "order": 6,
       "title": {
         "mn": "Жагсаалтын нарийвчлал"
       },
@@ -83,8 +65,8 @@
       "moduleIds": ["rn11-flatlist-adv", "rn12-sectionlist"]
     },
     {
-      "id": "s9",
-      "order": 9,
+      "id": "s7",
+      "order": 7,
       "title": {
         "mn": "Навигаци"
       },
@@ -92,8 +74,8 @@
       "moduleIds": ["rn13-navigation", "rn14-tabs"]
     },
     {
-      "id": "s10",
-      "order": 10,
+      "id": "s8",
+      "order": 8,
       "title": {
         "mn": "Сүлжээ ба өгөгдөл"
       },
@@ -101,8 +83,8 @@
       "moduleIds": ["rn15-networking", "rn16-mutations"]
     },
     {
-      "id": "s11",
-      "order": 11,
+      "id": "s9",
+      "order": 9,
       "title": {
         "mn": "Hooks ба төлөв удирдлага"
       },
@@ -110,8 +92,8 @@
       "moduleIds": ["rn17-hooks", "rn18-context", "rn19-reducer"]
     },
     {
-      "id": "s12",
-      "order": 12,
+      "id": "s10",
+      "order": 10,
       "title": {
         "mn": "Анимаци ба Modal"
       },
@@ -119,58 +101,31 @@
       "moduleIds": ["rn20-animation", "rn21-modal-device"]
     },
     {
+      "id": "s11",
+      "order": 11,
+      "title": {
+        "mn": "Чанар ба дадлага"
+      },
+      "badgeId": "rn-pro",
+      "moduleIds": ["rn22-quality", "rn23-practice"]
+    },
+    {
+      "id": "s12",
+      "order": 12,
+      "title": {
+        "mn": "Өгөгдлийн сан ба сервер"
+      },
+      "badgeId": "rn-database",
+      "moduleIds": ["rn24-sql", "rn25-server"]
+    },
+    {
       "id": "s13",
       "order": 13,
       "title": {
-        "mn": "Чанар ба гаргалт"
-      },
-      "badgeId": "rn-pro",
-      "moduleIds": ["rn22-quality"]
-    },
-    {
-      "id": "s14",
-      "order": 14,
-      "title": {
-        "mn": "Нэмэлт дадлага"
-      },
-      "badgeId": "rn-practice",
-      "moduleIds": ["rn23-practice"]
-    },
-    {
-      "id": "s15",
-      "order": 15,
-      "title": {
-        "mn": "Өгөгдлийн сан ба SQL"
-      },
-      "badgeId": "rn-database",
-      "moduleIds": ["rn24-sql"]
-    },
-    {
-      "id": "s16",
-      "order": 16,
-      "title": {
-        "mn": "Сервер ба API"
-      },
-      "badgeId": "rn-server",
-      "moduleIds": ["rn25-server"]
-    },
-    {
-      "id": "s17",
-      "order": 17,
-      "title": {
-        "mn": "Нэвтрэлт ба аюулгүй байдал"
+        "mn": "Нэвтрэлт ба full-stack холболт"
       },
       "badgeId": "rn-auth",
-      "moduleIds": ["rn26-auth"]
-    },
-    {
-      "id": "s18",
-      "order": 18,
-      "title": {
-        "mn": "Апп ↔ сервер холболт"
-      },
-      "badgeId": "rn-connect",
-      "moduleIds": ["rn27-connect"]
+      "moduleIds": ["rn26-auth", "rn27-connect"]
     }
   ]
 }

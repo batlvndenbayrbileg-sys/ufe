@@ -1,7 +1,7 @@
 {
   "id": "rn27-connect",
-  "stageId": "s18",
-  "order": 1,
+  "stageId": "s13",
+  "order": 2,
   "title": {
     "mn": "Апп ↔ сервер холболт"
   },

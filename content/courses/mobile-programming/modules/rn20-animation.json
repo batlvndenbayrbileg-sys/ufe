@@ -1,6 +1,6 @@
 {
   "id": "rn20-animation",
-  "stageId": "s12",
+  "stageId": "s10",
   "order": 1,
   "title": {
     "mn": "Анимаци"
@@ -9,12 +9,5 @@
     "mn": "Animated.Value, fade, гулсах, томрох, interpolate."
   },
   "estimatedHours": 6,
-  "lessons": [
-    "rn20-l1",
-    "rn20-l2",
-    "rn20-l3",
-    "rn20-l4",
-    "rn20-l5",
-    "rn20-l6"
-  ]
+  "lessons": ["rn20-l1", "rn20-l2", "rn20-l3", "rn20-l4", "rn20-l5", "rn20-l6"]
 }

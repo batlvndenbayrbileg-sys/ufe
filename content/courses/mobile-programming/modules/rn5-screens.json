@@ -1,9 +1,13 @@
 {
   "id": "rn5-screens",
-  "stageId": "s5",
+  "stageId": "s3",
   "order": 1,
-  "title": { "mn": "Дэлгэц хооронд" },
-  "description": { "mn": "Жагсаалт ба дэлгэрэнгүй дэлгэцийг useState-ээр сольж, олон дэлгэцтэй апп бүтээ." },
+  "title": {
+    "mn": "Дэлгэц хооронд"
+  },
+  "description": {
+    "mn": "Жагсаалт ба дэлгэрэнгүй дэлгэцийг useState-ээр сольж, олон дэлгэцтэй апп бүтээ."
+  },
   "estimatedHours": 1,
   "lessons": ["rn5-l1", "rn5-l2"]
 }

@@ -1,6 +1,6 @@
 {
   "id": "rn17-hooks",
-  "stageId": "s11",
+  "stageId": "s9",
   "order": 1,
   "title": {
     "mn": "React Hooks гүнзгий"
@@ -9,12 +9,5 @@
     "mn": "useRef, useMemo, useCallback, custom hook, useReducer."
   },
   "estimatedHours": 6,
-  "lessons": [
-    "rn17-l1",
-    "rn17-l2",
-    "rn17-l3",
-    "rn17-l4",
-    "rn17-l5",
-    "rn17-l6"
-  ]
+  "lessons": ["rn17-l1", "rn17-l2", "rn17-l3", "rn17-l4", "rn17-l5", "rn17-l6"]
 }

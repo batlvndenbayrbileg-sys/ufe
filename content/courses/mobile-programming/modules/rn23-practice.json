@@ -1,7 +1,7 @@
 {
   "id": "rn23-practice",
-  "stageId": "s14",
-  "order": 1,
+  "stageId": "s11",
+  "order": 2,
   "title": {
     "mn": "Shop.mn дадлага"
   },
@@ -9,8 +9,5 @@
     "mn": "Сурсан ур чадвараа (useState, useMemo, Pressable) бодит Shop.mn-ийн жижиг хэсгүүдэд нэгтгэн бататгах дадлага."
   },
   "estimatedHours": 1,
-  "lessons": [
-    "rn23-l1",
-    "rn23-l2"
-  ]
+  "lessons": ["rn23-l1", "rn23-l2"]
 }

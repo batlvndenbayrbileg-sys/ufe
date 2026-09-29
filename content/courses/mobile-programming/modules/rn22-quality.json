@@ -1,6 +1,6 @@
 {
   "id": "rn22-quality",
-  "stageId": "s13",
+  "stageId": "s11",
   "order": 1,
   "title": {
     "mn": "Полиш ба гаргах"
@@ -9,12 +9,5 @@
     "mn": "Dark mode, theme, хүртээмж, гүйцэтгэл, апп гаргах."
   },
   "estimatedHours": 6,
-  "lessons": [
-    "rn22-l1",
-    "rn22-l2",
-    "rn22-l3",
-    "rn22-l4",
-    "rn22-l5",
-    "rn22-l6"
-  ]
+  "lessons": ["rn22-l1", "rn22-l2", "rn22-l3", "rn22-l4", "rn22-l5", "rn22-l6"]
 }
