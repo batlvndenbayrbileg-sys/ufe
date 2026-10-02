@@ -341,6 +341,9 @@
   align-items: stretch;
 }
 .courseCard {
+  --card-accent: var(--accent);
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -353,8 +356,24 @@
     transform var(--dur-fast) var(--ease-out),
     box-shadow var(--dur-fast) var(--ease-out);
 }
+/* Colour identity strip along the top edge. */
+.courseCard::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--card-accent);
+  opacity: 0.9;
+}
+.cardWeb {
+  --card-accent: var(--accent);
+}
+.cardMobile {
+  --card-accent: #8b5cf6;
+}
 .courseCard:hover {
-  border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
+  border-color: color-mix(in srgb, var(--card-accent) 40%, var(--border));
+  background: color-mix(in srgb, var(--card-accent) 4%, var(--surface));
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }

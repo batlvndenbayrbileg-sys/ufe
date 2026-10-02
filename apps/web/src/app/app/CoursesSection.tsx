@@ -24,6 +24,12 @@ const ACCENT: Record<string, string | undefined> = {
   "internet-programming": s.accentWeb,
   "mobile-programming": s.accentMobile,
 };
+// Per-course colour identity for the whole card (top strip + hover), so the two
+// tracks read as distinct products at a glance.
+const CARD_ACCENT: Record<string, string | undefined> = {
+  "internet-programming": s.cardWeb,
+  "mobile-programming": s.cardMobile,
+};
 
 /**
  * Every course as an EQUAL card — same layout, icon tile, progress and actions —
@@ -83,7 +89,7 @@ export function CoursesSection() {
           const started = done > 0;
           const Icon = ICON[c.slug] ?? Globe;
           return (
-            <div key={c.id} className={s.courseCard}>
+            <div key={c.id} className={`${s.courseCard} ${CARD_ACCENT[c.slug] ?? ""}`}>
               <div className={s.courseCardHead}>
                 <span className={`${s.courseCardIcon} ${ACCENT[c.slug] ?? ""}`} aria-hidden>
                   <Icon size={22} strokeWidth={2.2} />
