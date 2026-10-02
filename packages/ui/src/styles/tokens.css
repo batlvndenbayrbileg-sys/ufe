@@ -29,6 +29,17 @@
   --accent-text: #1f37b0;
   --on-accent: #ffffff;
 
+  /* Signature gradient — royal blue → violet. The brand's energetic second
+     voice, used on primary CTAs and hero surfaces. --accent-2 pairs with --xp. */
+  --accent-2: #7b5cff;
+  --grad-brand: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  --grad-brand-hover: linear-gradient(135deg, var(--accent-hover) 0%, #6a4bf0 100%);
+  --grad-glow: radial-gradient(
+    60% 80% at 50% 0%,
+    color-mix(in srgb, var(--accent-2) 24%, transparent) 0%,
+    transparent 70%
+  );
+
   /* Semantic (separate from the accent) */
   --success: #0a7a35;
   --success-subtle: #f0fdf4;
@@ -127,6 +138,10 @@
     --accent-subtle: #1b2050;
     --accent-text: #aab6ff;
     --on-accent: #0b0d11;
+    --accent-2: #9f8bff;
+    --grad-brand: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    --grad-brand-hover: linear-gradient(135deg, var(--accent-hover) 0%, #b0a0ff 100%);
+    --grad-glow: radial-gradient(60% 80% at 50% 0%, color-mix(in srgb, var(--accent-2) 30%, transparent) 0%, transparent 70%);
 
     --success: #22c55e;
     --success-subtle: #052e16;
@@ -172,6 +187,10 @@
   --accent-subtle: #1b2050;
   --accent-text: #aab6ff;
   --on-accent: #0b0d11;
+  --accent-2: #9f8bff;
+  --grad-brand: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  --grad-brand-hover: linear-gradient(135deg, var(--accent-hover) 0%, #b0a0ff 100%);
+  --grad-glow: radial-gradient(60% 80% at 50% 0%, color-mix(in srgb, var(--accent-2) 30%, transparent) 0%, transparent 70%);
 
   --success: #22c55e;
   --success-subtle: #052e16;

@@ -57,6 +57,30 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ── timeline (the journey spine) ────────────────────────────────────────── */
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+/* A vertical spine runs behind the stage cards at the medallion's centre. The
+   opaque cards cover it, so it only shows in the gaps — visually threading each
+   numbered medallion to the next like a station on a line. */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 35px;
+  inset-block: 10px;
+  width: 2px;
+  background: linear-gradient(var(--border-strong), var(--border));
+  z-index: 0;
+}
+.timeline > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* ── stage ───────────────────────────────────────────────────────────────── */
 .stage {
   position: relative;
@@ -124,9 +148,12 @@
   border: 1.5px solid var(--border);
 }
 .medallionCurrent {
-  background: var(--accent);
+  background: var(--grad-brand);
   color: var(--on-accent);
-  border-color: var(--accent);
+  border-color: transparent;
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent),
+    var(--shadow-sm);
 }
 .medallionComplete {
   background: color-mix(in srgb, var(--success) 16%, var(--surface));

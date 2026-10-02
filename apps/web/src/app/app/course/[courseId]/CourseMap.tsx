@@ -178,6 +178,7 @@ export function CourseMap() {
           </motion.div>
         ) : null}
 
+        <motion.div className={styles.timeline} variants={container}>
         {map.stages.map((stage) => {
           const count = counts.byStage.get(stage.id) ?? { done: 0, total: 0 };
           const complete = count.total > 0 && count.done === count.total;
@@ -291,6 +292,7 @@ export function CourseMap() {
             </motion.section>
           );
         })}
+        </motion.div>
       </motion.div>
     </AppShell>
   );

@@ -126,19 +126,21 @@
   gap: 6px;
   padding: 12px 22px;
   border-radius: var(--radius);
-  background: var(--accent);
+  background: var(--grad-brand);
   color: var(--on-accent);
   text-decoration: none;
   font-weight: 600;
   white-space: nowrap;
   box-shadow: var(--shadow-sm);
   transition:
-    background var(--dur-fast) var(--ease-out),
+    filter var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--ease-out);
 }
 .heroCta:hover {
-  background: var(--accent-hover);
+  filter: brightness(1.07) saturate(1.05);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 .heroCta:active {
   transform: none;
@@ -455,17 +457,17 @@
   gap: 6px;
   padding: 8px 16px;
   border-radius: var(--radius);
-  background: var(--accent);
+  background: var(--grad-brand);
   color: var(--on-accent);
   text-decoration: none;
   font-weight: 600;
   font-size: var(--text-sm);
   transition:
-    background var(--dur-fast) var(--ease-out),
+    filter var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--ease-out);
 }
 .courseCardPrimary:hover {
-  background: var(--accent-hover);
+  filter: brightness(1.07) saturate(1.05);
   transform: translateY(-1px);
 }
 .courseCardCert {
