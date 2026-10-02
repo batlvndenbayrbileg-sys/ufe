@@ -50,8 +50,11 @@
   padding: var(--space-10) var(--space-8);
   border-radius: var(--radius-xl);
   border: 1px solid var(--border);
+  /* Two-tone brand glow — violet in the top-right, royal blue in the
+     bottom-left — gives the hero depth and the gradient's energy. */
   background:
-    radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, var(--accent) 18%, var(--surface)) 0%, var(--surface) 55%);
+    radial-gradient(90% 120% at 100% 0%, color-mix(in srgb, var(--accent-2) 22%, var(--surface)) 0%, transparent 52%),
+    radial-gradient(90% 120% at 0% 100%, color-mix(in srgb, var(--accent) 15%, var(--surface)) 0%, var(--surface) 55%);
   box-shadow: var(--shadow-sm);
 }
 .heroText {
