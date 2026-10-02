@@ -151,6 +151,9 @@
   gap: var(--space-4);
 }
 .stat {
+  --stat-accent: var(--accent);
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -158,6 +161,24 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background: var(--surface);
+}
+/* A slim coloured rail ties each stat to its metric's colour. */
+.stat::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--stat-accent);
+  opacity: 0.85;
+}
+.statStreak {
+  --stat-accent: var(--streak);
+}
+.statXp {
+  --stat-accent: var(--xp);
+}
+.statLevel {
+  --stat-accent: var(--accent);
 }
 .statIcon {
   line-height: 1;

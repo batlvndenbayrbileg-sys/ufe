@@ -139,7 +139,7 @@ export function Dashboard() {
 
         {/* Gamification at a glance. */}
         <motion.div className={s.stats} variants={rise}>
-          <div className={s.stat}>
+          <div className={`${s.stat} ${s.statStreak}`}>
             <span className={`${s.statIcon} ${s.iconStreak}`}>
               <Flame size={22} strokeWidth={2.2} />
             </span>
@@ -150,7 +150,7 @@ export function Dashboard() {
               <div className={s.statLabel}>Дараалал</div>
             </div>
           </div>
-          <div className={s.stat}>
+          <div className={`${s.stat} ${s.statXp}`}>
             <span className={`${s.statIcon} ${s.iconXp}`}>
               <Zap size={22} strokeWidth={2.2} />
             </span>
@@ -159,7 +159,7 @@ export function Dashboard() {
               <div className={s.statLabel}>Нийт оноо (XP)</div>
             </div>
           </div>
-          <div className={s.stat}>
+          <div className={`${s.stat} ${s.statLevel}`}>
             <span className={`${s.statIcon} ${s.iconLevel}`}>
               <Medal size={22} strokeWidth={2.2} />
             </span>
