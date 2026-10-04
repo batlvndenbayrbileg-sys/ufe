@@ -12,7 +12,7 @@
   transition: width var(--dur) var(--ease-out);
 }
 .accent {
-  background: var(--accent);
+  background: var(--grad-brand);
 }
 .success {
   background: var(--success);

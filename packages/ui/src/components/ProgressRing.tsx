@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { cn } from "../lib/cn";
 import styles from "./ProgressRing.module.css";
 
@@ -23,6 +24,9 @@ export function ProgressRing({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference * (1 - clamped / 100);
+  // SVG strokes can't take a CSS gradient, so the brand gradient is declared as
+  // a per-instance <linearGradient> and referenced by id.
+  const gradId = `ring-grad-${useId().replace(/:/g, "")}`;
   return (
     <div
       className={cn(styles.wrap, className)}
@@ -34,6 +38,12 @@ export function ProgressRing({
       aria-label={label ?? "Явц"}
     >
       <svg width={size} height={size} className={styles.svg}>
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="var(--accent)" />
+            <stop offset="100%" stopColor="var(--accent-2)" />
+          </linearGradient>
+        </defs>
         <circle
           className={styles.trackCircle}
           cx={size / 2}
@@ -52,6 +62,7 @@ export function ProgressRing({
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
+          style={{ stroke: `url(#${gradId})` }}
         />
       </svg>
       {showLabel ? (
