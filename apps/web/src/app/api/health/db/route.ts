@@ -25,11 +25,30 @@ export function GET(_req: NextRequest) {
       return ok({ ok: true, ms: Date.now() - started });
     } catch (e) {
       const err = e as { name?: string; code?: string };
+      const raw = e instanceof Error ? e.message : String(e);
+      // NEVER echo a connection string. Redact the whole URL and any user:pass
+      // pair before anything leaves this handler.
+      const safe = raw
+        .replace(/postgres(ql)?://[^s"']+/gi, "<connection-string-redacted>")
+        .replace(/:[^:@s/]+@/g, ":<redacted>@")
+        .slice(0, 220);
+      const missingEnv = /Environment variable not found:s*(w+)/i.exec(raw);
+      const reason = missingEnv
+        ? `Environment variable not set: ${missingEnv[1]}`
+        : /Can't reach database server/i.test(raw)
+          ? "Can't reach database server"
+          : /authentication failed/i.test(raw)
+            ? "Authentication failed"
+            : /does not exist/i.test(raw)
+              ? "Database or table does not exist"
+              : null;
       return ok({
         ok: false,
         ms: Date.now() - started,
         errorName: err?.name ?? "Unknown",
         prismaCode: err?.code ?? null,
+        reason,
+        safeMessage: safe,
         hint:
           err?.code === "P1001"
             ? "Database unreachable — wrong host/port, paused instance, or network."
