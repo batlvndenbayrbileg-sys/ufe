@@ -124,3 +124,46 @@ export function lessonProgress(taskIds: string[], p = loadProgress()): { passed:
   const passed = taskIds.filter((id) => id in p.passedTasks).length;
   return { passed, total: taskIds.length, done: taskIds.length > 0 && passed === taskIds.length };
 }
+
+/**
+ * Pull the signed-in learner's progress from the server and merge it into the
+ * local blob.
+ *
+ * localStorage is per-device, so a student signing in on a second device saw an
+ * empty course even though every pass was recorded in the DB. Progress must
+ * follow the ACCOUNT. We merge rather than replace: the UNION of passed tasks
+ * and the higher of each total, so work done on this device (including while
+ * signed out) is never thrown away by a sync. Signed-out, or on any network/DB
+ * hiccup, the local blob is returned untouched.
+ */
+export async function syncProgressFromServer(): Promise<Progress> {
+  const local = loadProgress();
+  try {
+    const res = await fetch("/api/me/progress", { cache: "no-store" });
+    if (!res.ok) return local;
+    const body = (await res.json()) as {
+      data?: { signedIn: boolean; progress: Progress | null };
+    };
+    const server = body.data?.progress;
+    if (!body.data?.signedIn || !server) return local;
+
+    const skillXp: Record<string, number> = { ...local.skillXp };
+    for (const [id, xp] of Object.entries(server.skillXp ?? {})) {
+      skillXp[id] = Math.max(skillXp[id] ?? 0, xp);
+    }
+
+    return save({
+      passedTasks: { ...local.passedTasks, ...server.passedTasks },
+      xp: Math.max(local.xp, server.xp),
+      skillXp,
+      streakDays: Math.max(local.streakDays, server.streakDays),
+      // ISO dates compare lexicographically — the later one wins.
+      lastActiveDate:
+        [local.lastActiveDate, server.lastActiveDate].filter(Boolean).sort().pop() ?? null,
+      badges: [...new Set([...local.badges, ...server.badges])],
+      updatedAt: Date.now(),
+    });
+  } catch {
+    return local;
+  }
+}

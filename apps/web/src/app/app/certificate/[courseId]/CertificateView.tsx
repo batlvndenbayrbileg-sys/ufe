@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Award, Printer, ArrowLeft } from "lucide-react";
 import { Spinner } from "@khiye/ui";
-import { loadProgress, type Progress } from "@/lib/progress";
+import { loadProgress, syncProgressFromServer, type Progress } from "@/lib/progress";
 import { courseCompletion, issueCertificate, type CertificateRecord } from "@/lib/certificate";
 import { flattenLessons } from "../../course-types";
 import { useCourseMap } from "../../useCourseMap";
@@ -20,7 +20,10 @@ export function CertificateView({ courseId }: { courseId: string }) {
   const [name, setName] = useState("");
   const [cert, setCert] = useState<CertificateRecord | null>(null);
 
-  useEffect(() => setProgress(loadProgress()), []);
+  useEffect(() => {
+    setProgress(loadProgress());
+    void syncProgressFromServer().then(setProgress);
+  }, []);
 
   const lessons = useMemo(() => (map ? flattenLessons(map) : []), [map]);
   const completion = useMemo(

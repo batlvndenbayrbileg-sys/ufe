@@ -12,7 +12,7 @@ const rise: Variants = {
   hidden: { opacity: 0, y: 14 },
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.2, 0.8, 0.2, 1] } },
 };
-import { loadProgress, lessonProgress, type Progress } from "@/lib/progress";
+import { loadProgress, lessonProgress, syncProgressFromServer, type Progress } from "@/lib/progress";
 import { useIsAdmin } from "@/lib/admin";
 import { getIntroDeck, hasSeenIntro } from "@/lib/courseIntro";
 import { flattenLessons, isLessonAccessible } from "../../course-types";
@@ -33,6 +33,7 @@ export function CourseMap() {
 
   useEffect(() => {
     setProgress(loadProgress());
+    void syncProgressFromServer().then(setProgress);
   }, []);
 
   // Lesson states: done from progress; the first not-done lesson is "current"; rest locked.

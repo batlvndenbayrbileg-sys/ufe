@@ -11,7 +11,7 @@ const rise: Variants = {
   hidden: { opacity: 0, y: 14 },
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.2, 0.8, 0.2, 1] } },
 };
-import { level, loadProgress, lessonProgress, type Progress } from "@/lib/progress";
+import { level, loadProgress, lessonProgress, syncProgressFromServer, type Progress } from "@/lib/progress";
 import { getResumePoint } from "@/lib/resume";
 import { flattenLessons, type MapLesson } from "./course-types";
 import { useCourseMap } from "./useCourseMap";
@@ -29,7 +29,10 @@ export function Dashboard() {
   const [resumeId, setResumeId] = useState<string | null>(null);
 
   useEffect(() => {
+    // Local blob first so the page paints instantly, then the account-wide
+    // progress from the server (localStorage is per-device).
     setProgress(loadProgress());
+    void syncProgressFromServer().then(setProgress);
     setResumeId(getResumePoint()?.lessonId ?? null);
   }, []);
 
