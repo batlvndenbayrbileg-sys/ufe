@@ -334,3 +334,69 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ── "where is this student right now" + the stage track ─────────────────── */
+.thWhere {
+  text-align: left;
+  min-width: 190px;
+}
+.thTrack {
+  text-align: left;
+  min-width: 150px;
+}
+.cellWhere {
+  display: table-cell;
+  max-width: 260px;
+}
+.whereLesson {
+  display: block;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.whereMeta {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cellTrack {
+  white-space: nowrap;
+}
+.trackRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+}
+.trackPips {
+  display: inline-flex;
+  gap: 2px;
+}
+.tPip {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+}
+.tPipDone {
+  background: var(--grad-brand);
+  border-color: transparent;
+}
+.trackCount {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1100px) {
+  .thTrack,
+  .cellTrack {
+    display: none;
+  }
+}

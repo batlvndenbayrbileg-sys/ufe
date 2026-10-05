@@ -5,6 +5,7 @@ import { AppShell, Spinner, ThemeToggle } from "@khiye/ui";
 import { Trophy } from "lucide-react";
 import type { CourseMapData } from "../course-types";
 import { BrandLockup } from "../../BrandMark";
+import { StageBoard } from "./StageBoard";
 import s from "./leaderboard.module.css";
 
 const COURSES = ["internet-programming", "mobile-programming"];
@@ -35,6 +36,7 @@ export function LeaderboardView() {
   const [maps, setMaps] = useState<Record<string, CourseMapData>>({});
   const [course, setCourse] = useState(COURSES[0]!);
   const [moduleId, setModuleId] = useState<string | null>(null);
+  const [view, setView] = useState<"stages" | "modules">("stages");
   const [board, setBoard] = useState<Board | null>(null);
   const [boardLoading, setBoardLoading] = useState(false);
 
@@ -129,7 +131,28 @@ export function LeaderboardView() {
           <h1 className={s.title}>
             <Trophy size={22} strokeWidth={2.2} /> Тэргүүлэгчид
           </h1>
-          <p className={s.sub}>Модуль тус бүрээр хамгийн олон даалгавар бодсон суралцагчид.</p>
+          <p className={s.sub}>
+            {view === "stages"
+              ? "Хэн хэдэн шат дуусгасан — бүх аялал нэг дор."
+              : "Модуль тус бүрээр хамгийн олон даалгавар бодсон суралцагчид."}
+          </p>
+        </div>
+
+        <div className={s.tabs}>
+          <button
+            type="button"
+            className={`${s.tab} ${view === "stages" ? s.tabActive : ""}`}
+            onClick={() => setView("stages")}
+          >
+            Шатууд
+          </button>
+          <button
+            type="button"
+            className={`${s.tab} ${view === "modules" ? s.tabActive : ""}`}
+            onClick={() => setView("modules")}
+          >
+            Модуль
+          </button>
         </div>
 
         <div className={s.tabs}>
@@ -145,6 +168,9 @@ export function LeaderboardView() {
           ))}
         </div>
 
+        {view === "stages" ? (
+          <StageBoard courseSlug={course} />
+        ) : (
         <div className={s.layout}>
           <div className={s.moduleList}>
             {groups.map((g) => (
@@ -203,6 +229,7 @@ export function LeaderboardView() {
             )}
           </div>
         </div>
+        )}
       </div>
     </AppShell>
   );

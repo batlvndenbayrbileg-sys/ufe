@@ -27,6 +27,25 @@ interface Row {
   totalDurationMs: number;
   lastActiveAt: number | null;
   demo?: boolean;
+  /** What they are sitting on right now — the question a teacher actually asks. */
+  current?: {
+    lessonId: string;
+    lessonTitle: string;
+    stageTitle: string | null;
+    courseSlug: string | null;
+    tasksPassed: number;
+    tasksTotal: number;
+  } | null;
+  courses?: Array<{
+    slug: string;
+    title: string;
+    stagesTotal: number;
+    stagesDone: number;
+    stageFlags: boolean[];
+    furthestStageTitle: string | null;
+    lessonsTotal: number;
+    lessonsDone: number;
+  }>;
 }
 
 type SortKey = "xp" | "tasks" | "time" | "active" | "name";
@@ -70,7 +89,7 @@ export function TeacherDashboard() {
   useEffect(() => {
     if (!isStaff) return;
     let alive = true;
-    fetch("/api/admin/students")
+    fetch("/api/admin/roster")
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((res) => {
         const list = (res?.data?.students as Row[] | undefined) ?? [];
@@ -200,6 +219,8 @@ export function TeacherDashboard() {
             <thead>
               <tr>
                 <th>Суралцагч</th>
+                <th className={s.thWhere}>Одоо хаана байна</th>
+                <th className={s.thTrack}>Шатууд</th>
                 <th className={s.thNum}>XP</th>
                 <th className={s.thNum}>Түвшин</th>
                 <th className={s.thNum}>Даалгавар</th>
@@ -225,6 +246,39 @@ export function TeacherDashboard() {
                         {r.name}
                         {r.role !== "STUDENT" ? <Badge tone="neutral" size="sm" style={{ marginLeft: 6 }}>{r.role === "ADMIN" ? "Админ" : "Багш"}</Badge> : null}
                       </span>
+                    </td>
+                    <td className={s.cellWhere}>
+                      {r.current ? (
+                        <>
+                          <span className={s.whereLesson}>{r.current.lessonTitle}</span>
+                          <span className={s.whereMeta}>
+                            {r.current.stageTitle ?? "—"}
+                            {r.current.tasksTotal > 0
+                              ? " · " + r.current.tasksPassed + "/" + r.current.tasksTotal + " даалгавар"
+                              : ""}
+                          </span>
+                        </>
+                      ) : (
+                        <span className={s.whereMeta}>Эхлээгүй</span>
+                      )}
+                    </td>
+                    <td className={s.cellTrack}>
+                      {(r.courses ?? []).map((c) => (
+                        <span
+                          key={c.slug}
+                          className={s.trackRow}
+                          title={c.title + ": " + c.stagesDone + "/" + c.stagesTotal + " шат"}
+                        >
+                          <span className={s.trackPips} aria-hidden>
+                            {c.stageFlags.map((done, i) => (
+                              <span key={i} className={done ? s.tPip + " " + s.tPipDone : s.tPip} />
+                            ))}
+                          </span>
+                          <span className={s.trackCount}>
+                            {c.stagesDone}/{c.stagesTotal}
+                          </span>
+                        </span>
+                      ))}
                     </td>
                     <td className={s.num}>{r.totalXp.toLocaleString()}</td>
                     <td className={s.num}>{r.level}</td>
@@ -295,7 +349,13 @@ function StudentDrawer({ row, onClose }: { row: Row; onClose: () => void }) {
 
 /** A labelled sample roster for when no real learners exist yet. */
 function demoRows(totalLessons: number): Row[] {
-  return demoCohort(totalLessons).students.map((st) => ({
+  const STAGES = 13;
+  return demoCohort(totalLessons).students.map((st) => {
+    const stagesDone = Math.min(
+      STAGES,
+      Math.floor((st.lessonsDone / Math.max(totalLessons, 1)) * STAGES),
+    );
+    return {
     id: st.id,
     name: st.name,
     username: "",
@@ -309,5 +369,29 @@ function demoRows(totalLessons: number): Row[] {
     totalDurationMs: st.lessonsDone * 90_000,
     lastActiveAt: Date.now() - st.lastActiveDays * 86_400_000,
     demo: true,
-  }));
+    current:
+      st.lessonsDone > 0
+        ? {
+            lessonId: "demo",
+            lessonTitle: "Дадлага хичээл",
+            stageTitle: "Шат " + (stagesDone + 1),
+            courseSlug: "internet-programming",
+            tasksPassed: 1,
+            tasksTotal: 2,
+          }
+        : null,
+    courses: [
+      {
+        slug: "internet-programming",
+        title: "Интернэт программчлал",
+        stagesTotal: STAGES,
+        stagesDone,
+        stageFlags: Array.from({ length: STAGES }, (_, i) => i < stagesDone),
+        furthestStageTitle: null,
+        lessonsTotal: totalLessons,
+        lessonsDone: st.lessonsDone,
+      },
+    ],
+    };
+  });
 }

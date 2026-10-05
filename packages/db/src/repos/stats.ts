@@ -269,3 +269,88 @@ export async function moduleLeaderboard(
     tasksPassed: r.tasksPassed,
   }));
 }
+
+/** Where one student stands: what they've finished and what they're on now. */
+export interface StudentProgressDetail {
+  userId: string;
+  /** Lessons finished, for mapping onto stages in the content layer. */
+  completedLessonIds: string[];
+  /** The lesson they are in the middle of (most recently started, unfinished). */
+  currentLessonId: string | null;
+  currentTasksPassed: number;
+  currentTasksTotal: number;
+  /** Most recent activity on any lesson (ms epoch). */
+  lastProgressAt: number | null;
+}
+
+/**
+ * Per-student lesson progress for the roster and the stage leaderboard.
+ *
+ * `listStudents` only carries headline totals, which can't answer "who finished
+ * which stage" or "what is this student working on right now" — both need the
+ * actual lesson ids, mapped onto stages by the content layer (the DB doesn't
+ * know the course shape).
+ */
+export async function listStudentProgressDetail(
+  userIds: string[],
+  client: PrismaClient = defaultPrisma,
+): Promise<Map<string, StudentProgressDetail>> {
+  const out = new Map<string, StudentProgressDetail>();
+  if (userIds.length === 0) return out;
+
+  const rows = await client.lessonProgress.findMany({
+    where: { userId: { in: userIds } },
+    select: {
+      userId: true,
+      lessonId: true,
+      status: true,
+      tasksPassed: true,
+      tasksTotal: true,
+      startedAt: true,
+      completedAt: true,
+    },
+  });
+
+  // Track the best candidate for "current" separately: an unfinished lesson
+  // beats a finished one, and among those the most recently started wins.
+  const bestOpen = new Map<string, { at: number; row: (typeof rows)[number] }>();
+  const bestDone = new Map<string, { at: number; row: (typeof rows)[number] }>();
+
+  for (const r of rows) {
+    const entry =
+      out.get(r.userId) ??
+      ({
+        userId: r.userId,
+        completedLessonIds: [],
+        currentLessonId: null,
+        currentTasksPassed: 0,
+        currentTasksTotal: 0,
+        lastProgressAt: null,
+      } satisfies StudentProgressDetail);
+
+    const touched = Math.max(r.completedAt?.getTime() ?? 0, r.startedAt?.getTime() ?? 0);
+    if (touched > 0) entry.lastProgressAt = Math.max(entry.lastProgressAt ?? 0, touched);
+
+    if (r.status === "COMPLETED") {
+      entry.completedLessonIds.push(r.lessonId);
+      const prev = bestDone.get(r.userId);
+      if (!prev || touched > prev.at) bestDone.set(r.userId, { at: touched, row: r });
+    } else {
+      const prev = bestOpen.get(r.userId);
+      if (!prev || touched > prev.at) bestOpen.set(r.userId, { at: touched, row: r });
+    }
+
+    out.set(r.userId, entry);
+  }
+
+  for (const [userId, entry] of out) {
+    const pick = bestOpen.get(userId) ?? bestDone.get(userId);
+    if (pick) {
+      entry.currentLessonId = pick.row.lessonId;
+      entry.currentTasksPassed = pick.row.tasksPassed;
+      entry.currentTasksTotal = pick.row.tasksTotal;
+    }
+  }
+
+  return out;
+}

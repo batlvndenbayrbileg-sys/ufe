@@ -238,3 +238,160 @@
     min-width: 180px;
   }
 }
+
+/* ── stage board: who has finished which stage ───────────────────────────── */
+.stageBoard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Podium — second, first, third, with first raised. */
+.podium {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  align-items: end;
+}
+.podiumCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-5) var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  min-width: 0;
+}
+.podiumFirst {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-5);
+  box-shadow: var(--shadow-md);
+}
+.podiumEmpty {
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border);
+  min-height: 120px;
+  opacity: 0.4;
+}
+.podiumGold {
+  border-color: color-mix(in srgb, #f5b301 55%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, #f5b301 14%, var(--surface)), var(--surface));
+}
+.podiumSilver {
+  border-color: color-mix(in srgb, #9aa3ae 50%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, #9aa3ae 13%, var(--surface)), var(--surface));
+}
+.podiumBronze {
+  border-color: color-mix(in srgb, #c8794a 50%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, #c8794a 13%, var(--surface)), var(--surface));
+}
+.podiumCrown {
+  color: #f5b301;
+}
+.podiumAvatar {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-full);
+  display: grid;
+  place-items: center;
+  background: var(--grad-brand);
+  color: var(--on-accent);
+  font-weight: 700;
+  font-size: var(--text-lg);
+}
+.podiumName {
+  font-weight: 700;
+  font-size: var(--text-sm);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.podiumStages {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.podiumRank {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-size: var(--text-xs);
+  font-weight: 800;
+  color: var(--text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+/* One row per learner, with the whole journey as a track of pips. */
+.stageRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px var(--space-4);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.stageRow:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+}
+.stageWho {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+.stageWhere {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.track {
+  display: inline-flex;
+  gap: 3px;
+  flex: none;
+}
+.pip {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+}
+.pipDone {
+  background: var(--grad-brand);
+  border-color: transparent;
+}
+.stageCount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: var(--text-sm);
+  min-width: 3.2em;
+  text-align: right;
+  flex: none;
+}
+.streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--streak);
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .track {
+    display: none;
+  }
+}

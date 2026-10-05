@@ -23,10 +23,12 @@ export {
 export {
   getUserStats,
   listStudents,
+  listStudentProgressDetail,
   moduleLeaderboard,
   type UserStats,
   type TaskStatRow,
   type StudentRow,
+  type StudentProgressDetail,
   type LeaderboardEntry,
 } from "./repos/stats";
 

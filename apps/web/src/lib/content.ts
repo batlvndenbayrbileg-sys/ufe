@@ -448,3 +448,37 @@ export function getModuleInfo(moduleId: string): ModuleInfo | null {
   }
   return { moduleId, title: mod.title, courseSlug: mod.courseSlug, lessonIds, taskTotal };
 }
+
+export interface StageIndexEntry {
+  courseSlug: string;
+  courseTitle: { mn: string; en?: string };
+  stageId: string;
+  order: number;
+  title: { mn: string; en?: string };
+  lessonIds: string[];
+}
+
+/**
+ * Every stage with the lessons that make it up.
+ *
+ * The DB records progress per LESSON and knows nothing about the course shape,
+ * so turning "these lessons are done" into "this student finished stage 4" has
+ * to happen here. Used by the stage leaderboard and the teacher roster.
+ */
+export function getStageIndex(): StageIndexEntry[] {
+  const { courses } = ensureLoaded();
+  const out: StageIndexEntry[] = [];
+  for (const [slug, course] of courses) {
+    for (const stage of course.stages) {
+      out.push({
+        courseSlug: slug,
+        courseTitle: course.title,
+        stageId: stage.id,
+        order: stage.order,
+        title: stage.title,
+        lessonIds: stage.moduleObjects.flatMap((m) => m.lessonObjects.map((l) => l.id)),
+      });
+    }
+  }
+  return out;
+}
