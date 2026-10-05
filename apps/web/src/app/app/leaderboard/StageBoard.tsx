@@ -46,7 +46,13 @@ export function StageBoard({ courseSlug }: { courseSlug: string | "all" }) {
     fetch("/api/leaderboard/stages")
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((res) => {
-        if (alive) setEntries((res.data?.entries ?? []) as StageEntry[]);
+        if (!alive) return;
+        if (res.data?.unavailable) {
+          setError("Мэдээлэл түр боломжгүй байна. Хэсэг хүлээгээд дахин оролдоно уу.");
+          setEntries([]);
+          return;
+        }
+        setEntries((res.data?.entries ?? []) as StageEntry[]);
       })
       .catch(() => alive && setError("Тэргүүлэгчдийг ачаалж чадсангүй."));
     return () => {

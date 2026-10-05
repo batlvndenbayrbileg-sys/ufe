@@ -15,7 +15,12 @@ export const dynamic = "force-dynamic";
 export function GET(_req: NextRequest) {
   return route(async () => {
     await requireStaff();
-    const students = await buildRoster({ limit: 500 });
-    return ok({ students });
+    try {
+      const students = await buildRoster({ limit: 500 });
+      return ok({ students });
+    } catch (e) {
+      console.error("[admin/roster] read failed", e);
+      return ok({ students: [], unavailable: true });
+    }
   });
 }

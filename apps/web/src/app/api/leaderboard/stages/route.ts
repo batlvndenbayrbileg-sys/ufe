@@ -16,7 +16,15 @@ export const dynamic = "force-dynamic";
  */
 export function GET(_req: NextRequest) {
   return route(async () => {
-    const roster = await buildRoster({ limit: 500 });
+    // A pooler at capacity shouldn't look like a broken page: report it as
+    // "temporarily unavailable" so the UI can say so and retry.
+    let roster;
+    try {
+      roster = await buildRoster({ limit: 500 });
+    } catch (e) {
+      console.error("[leaderboard/stages] roster read failed", e);
+      return ok({ entries: [], unavailable: true });
+    }
 
     const entries = roster
       .filter((r) => r.role === "STUDENT")

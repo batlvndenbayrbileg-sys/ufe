@@ -13,7 +13,12 @@ export function GET(_req: NextRequest, { params }: { params: Promise<{ moduleId:
     const { moduleId } = await params;
     const info = getModuleInfo(moduleId);
     if (!info) throw errors.notFound("Module", "Модуль олдсонгүй.");
-    const entries = await moduleLeaderboard(info.lessonIds, 20);
-    return ok({ moduleId, title: info.title, taskTotal: info.taskTotal, entries });
+    try {
+      const entries = await moduleLeaderboard(info.lessonIds, 20);
+      return ok({ moduleId, title: info.title, taskTotal: info.taskTotal, entries });
+    } catch (e) {
+      console.error("[leaderboard] read failed", e);
+      return ok({ moduleId, title: info.title, taskTotal: info.taskTotal, entries: [], unavailable: true });
+    }
   });
 }
