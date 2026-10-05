@@ -1346,3 +1346,16 @@
     transform: translate(-50%, 0);
   }
 }
+
+/* A pass that never reached the DB would otherwise look identical to one that
+   did — and the student only finds out on their next device. Say it loudly. */
+.saveWarning {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3);
+  border-radius: var(--radius);
+  background: var(--warning-subtle);
+  border: 1px solid color-mix(in srgb, var(--warning) 35%, var(--border));
+  color: var(--warning);
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+}

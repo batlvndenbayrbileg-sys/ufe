@@ -17,6 +17,8 @@ export interface SubmitResult {
   checks: CheckRow[];
   feedback: { headline: string; body?: string };
   xpAwarded: number;
+  /** Signed in: did the DB actually record this pass? null when signed out. */
+  persisted?: boolean | null;
 }
 
 export function ResultPanel({
@@ -51,6 +53,13 @@ export function ResultPanel({
           </span>
         )}
       </div>
+
+      {result.passed && result.persisted === false ? (
+        <p className={s.saveWarning} role="alert">
+          ⚠️ Явц сервер рүү хадгалагдсангүй — одоохондоо зөвхөн энэ төхөөрөмж дээр
+          байна. Интернэтээ шалгаад «Шалгах» товчийг дахин дарна уу.
+        </p>
+      ) : null}
 
       <ul className={s.checkList}>
         {result.checks.map((c, i) => {

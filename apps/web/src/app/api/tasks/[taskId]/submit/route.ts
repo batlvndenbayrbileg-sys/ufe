@@ -83,6 +83,10 @@ export function POST(req: NextRequest, { params }: { params: Promise<{ taskId: s
     let attemptNo = body.attemptNo ?? 1;
 
     const userId = await getSessionUserId();
+    // Signed in, the DB is the record of record. If that write fails we still
+    // return the verdict, but we SAY SO — a silent failure here is how a
+    // student does the work and finds it gone on their next device.
+    let persisted = !userId ? null : false;
     if (userId) {
       try {
         const award = await awardTaskCompletion({
@@ -96,6 +100,7 @@ export function POST(req: NextRequest, { params }: { params: Promise<{ taskId: s
         });
         xpAwarded = award.xpAwarded;
         attemptNo = award.attemptNo;
+        persisted = true;
       } catch (e) {
         // Never let a persistence hiccup swallow an authoritative verdict.
         console.error("[submit] awardTaskCompletion failed", e);
@@ -113,6 +118,6 @@ export function POST(req: NextRequest, { params }: { params: Promise<{ taskId: s
           ? { headline: "Систем удаашралтай байна. Таны буруу биш — дахин Шалгах товчийг дарна уу." }
           : { headline: "Одоохондоо болоогүй байна." };
 
-    return ok({ passed, attemptNo, checks, feedback, xpAwarded, unlocked });
+    return ok({ passed, attemptNo, checks, feedback, xpAwarded, unlocked, persisted });
   });
 }
